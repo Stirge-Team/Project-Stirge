@@ -5,13 +5,15 @@ public class PlayerMovement : MonoBehaviour
 {
     private Vector2 m_inputDirection = new Vector2();
     private Rigidbody m_playerBody;
+    [Header("Horizontal Movement")]
     [SerializeField] private float m_movementSpeed;
-    [SerializeField] private float m_jumpForce;
-    
+
+    [Header("Vertical Movement")]
+    [SerializeField, Tooltip("The amount of force used to push the player object up.")] private float m_jumpForce;
     public bool IsGrounded {get; private set;}
-    [SerializeField] private float m_coyoteTime;
+    [SerializeField, Tooltip("The window after falling that the player can still jump.")] private float m_coyoteTime;
     private float m_coyoteCountdown;
-    [SerializeField] private float m_groundCheckDistance;
+    [SerializeField, Tooltip("The distance from the center of the player that considers them grounded.")] private float m_groundCheckDistance;
     private LayerMask m_groundCheckLayers;
 
     private Transform m_cameraTransform;
@@ -25,9 +27,10 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-      m_playerBody.AddForce((new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x) * m_movementSpeed);
+      Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x) * m_movementSpeed * Time.deltaTime;
+      m_playerBody.Move(transform.position + attemptedMoveDirection, Quaternion.identity);
     
       RaycastHit hit;
       if(Physics.Raycast(transform.position, Vector3.down, out hit, m_groundCheckDistance, m_groundCheckLayers))
