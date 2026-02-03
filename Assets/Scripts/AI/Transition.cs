@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 
 namespace Stirge.AI
 {
-    [Serializable, CreateAssetMenu(fileName = "Transition", menuName = "StirgeAI/Transition", order = 1)]
+    [System.Serializable, CreateAssetMenu(fileName = "Transition", menuName = "StirgeAI/Transition", order = 1)]
     public class Transition : ScriptableObject
     {
         [Tooltip("If any of these are true, the Transition occurs.")]

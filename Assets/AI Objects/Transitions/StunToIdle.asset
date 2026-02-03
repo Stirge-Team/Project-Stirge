@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 38b03a1e4885f354899d8b713bf01f53, type: 3}
-  m_Name: IdleToWalking
+  m_Name: StunToIdle
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.Transition
   m_conditions:
-  - {fileID: 8541204163872325920, guid: e5fe2430b621ed04a819b1682b35be11, type: 3}
+  - {fileID: 2147866076504685258, guid: fc12e60159fef51488733188b71c68b6, type: 3}
   m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}

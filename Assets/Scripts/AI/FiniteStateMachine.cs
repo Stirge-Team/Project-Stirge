@@ -2,20 +2,17 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    public class FiniteStateMachine : MonoBehaviour
+    public class FiniteStateMachine : Behaviour
     {
         [SerializeField] private State m_currentState;
 
-        // base methods
-        public void _Enter(Agent agent)
+        public override void _Enter(Agent agent)
         {
             m_currentState._Enter(agent);
         }
-        public void _Update(Agent agent)
+        public override void _Update(Agent agent)
         {
             m_currentState._Update(agent);
-                
-            State newState = null;
 
             foreach (Transition transition in m_currentState.Transitions)
             {
@@ -23,22 +20,24 @@ namespace Stirge.AI
                 {
                     if (condition.IsTrue(agent))
                     {
-                        newState = transition.targetState;
-                        break;
+                        m_currentState._Exit(agent);
+                        m_currentState = transition.targetState;
+                        m_currentState._Enter(agent);
+                        return;
                     }
                 }
             }
-
-            if (newState != null)
-            {
-                m_currentState._Exit(agent);
-                m_currentState = newState;
-                m_currentState._Enter(agent);
-            }
         }
-        public void _Exit(Agent agent)
+        public override void _Exit(Agent agent)
         {
             m_currentState._Exit(agent);
+        }
+
+        public void EnterState(Agent agent, State newState)
+        {
+            m_currentState._Exit(agent);
+            m_currentState = newState;
+            m_currentState._Enter(agent);
         }
     }
 }

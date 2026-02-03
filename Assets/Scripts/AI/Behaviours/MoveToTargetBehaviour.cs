@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Stirge.AI
 {
-    public class IdleBehaviour : Behaviour
+    public class MoveToTargetBehaviour : Behaviour
     {
         public override void _Enter(Agent agent)
         {
@@ -12,11 +11,12 @@ namespace Stirge.AI
 
         public override void _Update(Agent agent)
         {
-            
+            agent.CalculatePathToTarget();
         }
 
         public override void _Exit(Agent agent)
         {
+            agent.ClearPath();
             base._Exit(agent);
         }
     }

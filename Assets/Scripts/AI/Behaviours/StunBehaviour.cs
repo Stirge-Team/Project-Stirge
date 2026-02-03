@@ -1,10 +1,9 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Stirge.AI
 {
-    public class IdleBehaviour : Behaviour
-    {
+    public class StunBehaviour : Behaviour
+    {       
         public override void _Enter(Agent agent)
         {
             base._Enter(agent);
@@ -17,6 +16,7 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
+            agent.SetPhysicsMode(false);
             base._Exit(agent);
         }
     }

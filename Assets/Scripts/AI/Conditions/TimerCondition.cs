@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    public class TimeCondition : Condition
+    public class TimerCondition : Condition
     {
         [SerializeField] private float m_timer;
         private float m_currentTimer = 0;
@@ -11,6 +11,7 @@ namespace Stirge.AI
         {
             if (m_currentTimer >= m_timer)
             {
+                m_currentTimer = 0;
                 return true;
             }
             
