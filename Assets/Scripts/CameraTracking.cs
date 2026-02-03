@@ -1,5 +1,6 @@
 using UnityEngine;
 
+namespace Strige.Camera {
 public class CameraTracking : MonoBehaviour
 {
     [SerializeField] private Transform m_trackedTarget;
@@ -16,4 +17,4 @@ public class CameraTracking : MonoBehaviour
       Vector3 relativePos = m_trackedTarget.position - transform.position;
       transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(relativePos, Vector3.up), m_cameraRotationSpeed);
     }
-}
+}}
