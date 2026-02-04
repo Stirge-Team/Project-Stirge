@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using UnityEngine.InputSystem;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -24,7 +26,6 @@ namespace Stirge.AI
 
         [Header("Agent Properties")]
         [SerializeField, Min(0)] private float m_detectionRadius;
-        [SerializeField, Min(0)] private float m_targetRadius;
         [SerializeField, Min(0)] private float m_groundedCheckDistance;
         [SerializeField] private LayerMask m_groundedCheckMask;
 
@@ -32,7 +33,7 @@ namespace Stirge.AI
         private bool m_isGrounded = false;
 
         public float DetectionRadius => m_detectionRadius;
-        public float TargetRadius => m_targetRadius;
+        public float StoppingDistance => m_nav.stoppingDistance;
         public bool IsGrounded => m_isGrounded;
 
         [Header("Combat Properties")]
@@ -43,7 +44,6 @@ namespace Stirge.AI
         private void Start()
         {
             m_target = GameObject.FindGameObjectWithTag("Player").transform;
-            m_nav.stoppingDistance = TargetRadius;
         }
 
         private void OnEnable()
@@ -122,7 +122,7 @@ namespace Stirge.AI
         #region Pathing
         public void CalculatePathToTarget()
         {
-            if (Vector3.Distance(transform.position, TargetPosition) > m_targetRadius && Vector3.Distance(TargetPosition, m_nav.pathEndPosition) > m_targetRadius)
+            if (Vector3.Distance(transform.position, TargetPosition) > StoppingDistance && Vector3.Distance(TargetPosition, m_nav.pathEndPosition) > StoppingDistance)
             {
                 m_nav.SetDestination(TargetPosition);
                 Debug.Log("new Path created");
@@ -169,14 +169,16 @@ namespace Stirge.AI
             transform.position = end;
         }
 
-        public void OnJump()
+        public void OnJump(InputAction.CallbackContext context)
         {
-            ApplyStun(3f);
+            if (context.started)
+                ApplyStun(3f);
         }
 
-        public void OnAttack()
+        public void OnAttack(InputAction.CallbackContext context)
         {
-            ApplyKnockback(300, new Vector2(1, 1), 3);
+            if (context.started)
+                ApplyKnockback(300, new Vector2(1, 1), 3);
         }
         #endregion
 
@@ -187,7 +189,7 @@ namespace Stirge.AI
             Gizmos.DrawWireSphere(transform.position, m_detectionRadius);
 
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(transform.position, m_targetRadius);
+            Gizmos.DrawWireSphere(transform.position, m_nav.stoppingDistance);
 
             Gizmos.color = Color.magenta;
             Gizmos.DrawLine(transform.position, transform.position + Vector3.down * m_groundedCheckDistance);
