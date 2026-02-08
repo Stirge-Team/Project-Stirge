@@ -7,8 +7,11 @@ public class PlayerMovement : MonoBehaviour
 	private Vector2 m_inputDirection = new Vector2();
 	private Rigidbody m_playerBody;
 	[Header("Horizontal Movement")]
-	[SerializeField, Tooltip("The maximum units the player will move every physics tick")]
-	private float m_movementSpeed;
+  [SerializeField, Tooltip("The rate at which the player's horizontal velocity increases.")]
+	private float m_horizontalAccel;
+  [SerializeField, Tooltip("The maximum units the player can move.")]
+  private float m_maxHorizontalVelocity;
+
 
 	[Header("Vertical Movement")]
 	[SerializeField, Tooltip("The amount of force used to push the player object up.")]
@@ -35,10 +38,19 @@ public class PlayerMovement : MonoBehaviour
 	// Update is called once per frame
 	void FixedUpdate()
 	{
-		//Calculates the direction to move the player in givne the current inputs and camera transform
-		Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x) * m_movementSpeed * Time.deltaTime;
-		//Applies the calculated movement to the players current position.
-		m_playerBody.Move(transform.position + attemptedMoveDirection, Quaternion.identity);
+    //Calculates the direction to move the player in givne the current inputs and camera transform
+    Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+    Vector3 playerBodyHorizontalVelocity = new Vector3 (m_playerBody.linearVelocity.x, 0, m_playerBody.linearVelocity.z);
+    Debug.Log($"Velo = {playerBodyHorizontalVelocity.magnitude}");
+    //float velocityDelta = (playerBodyHorizontalVelocity + attemptedMoveDirection * m_movementSpeed * Time.deltaTime).magnitude;
+    //Debug.Log($"Attempting to move in this direction = {attemptedMoveDirection}");
+    transform.LookAt(transform.position + attemptedMoveDirection); //change to a lerp
+    transform.Rotate(-transform.rotation.x, 0, 0);
+    if(playerBodyHorizontalVelocity.magnitude < m_maxHorizontalVelocity)// || velocityDelta < playerBodyHorizontalVelocity.magnitude)
+    //{
+      //Applies the calculated movement to the players current position.
+      m_playerBody.AddForce(m_inputDirection.magnitude * m_horizontalAccel * transform.forward);
+    //}
 		
 		//Ground check
 		RaycastHit hit;
