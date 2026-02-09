@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 146475584391246682}
-  - component: {fileID: 8580492282735984509}
+  - component: {fileID: 3268770672623282611}
   m_Layer: 0
   m_Name: Distance Less Than Condition
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8580492282735984509
+--- !u!114 &3268770672623282611
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,7 +41,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7381625841254775227}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9cae1141fd1c2524491f23f0587789fc, type: 3}
+  m_Script: {fileID: 11500000, guid: 55d1fbad3ec7c754a809be27a8e68edc, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.DistanceLessThanCondition
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.DistanceCondition
   m_distance: 10
+  m_returnTrueIfDistanceIsLower: 1

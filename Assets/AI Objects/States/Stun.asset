@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Stun
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: 5713576353753221356, guid: 5a9663d0416541d4f8e31311c989b505, type: 3}
+  - {fileID: 6774667898740994507, guid: 5ab146358d59c5b4ba28ccde8a9e34cd, type: 3}
   m_transitions:
-  - {fileID: 11400000, guid: eb03b676119d9394991fad0aeb83b4d7, type: 2}
+  - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+    m_conditions:
+    - {fileID: 2147866076504685258, guid: fc12e60159fef51488733188b71c68b6, type: 3}

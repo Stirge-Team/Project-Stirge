@@ -15,4 +15,6 @@ MonoBehaviour:
   m_behaviours:
   - {fileID: 6774667898740994507, guid: 5ab146358d59c5b4ba28ccde8a9e34cd, type: 3}
   m_transitions:
-  - {fileID: 11400000, guid: f686b540ee6b12e488195025aa042073, type: 2}
+  - m_targetState: {fileID: 11400000, guid: 36d4f6570bd09424487a00be66004c82, type: 2}
+    m_conditions:
+    - {fileID: 3809811798658166098, guid: 84c50ef7aba5f4f48b28396695de4ca3, type: 3}

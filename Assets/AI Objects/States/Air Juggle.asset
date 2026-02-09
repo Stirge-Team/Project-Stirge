@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
   m_Name: Air Juggle
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
-  m_behaviours: []
+  m_behaviours:
+  - {fileID: 6774667898740994507, guid: 5ab146358d59c5b4ba28ccde8a9e34cd, type: 3}
   m_transitions: []

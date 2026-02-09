@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5454216359105988317}
   - component: {fileID: 2147866076504685258}
   m_Layer: 0
-  m_Name: Not Stunned Condition
+  m_Name: Stunned Condition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d14d93ece381541a957d1b31492908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.NotStunnedCondition
-  m_returnTrueIfStunned: 0
+  m_returnTrueIfStunned: 1

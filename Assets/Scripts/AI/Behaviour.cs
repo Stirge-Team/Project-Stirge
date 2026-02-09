@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    [System.Serializable]
     public abstract class Behaviour : MonoBehaviour
     {
         public virtual void _Enter(Agent agent) { }

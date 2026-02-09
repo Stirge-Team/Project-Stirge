@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6675452416460308765}
   - component: {fileID: -2354558325498662538}
   m_Layer: 0
-  m_Name: Grounded and Wait Condition
+  m_Name: Knockback to Stun Composite Condition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,3 +47,4 @@ MonoBehaviour:
   m_conditions:
   - {fileID: -2148700359381671500, guid: 33e31da0dee007848ae17070c8f2eb14, type: 3}
   - {fileID: 8541204163872325920, guid: e5fe2430b621ed04a819b1682b35be11, type: 3}
+  - {fileID: 2147866076504685258, guid: 95ee3970d14f03745b4e675774b7253d, type: 3}
