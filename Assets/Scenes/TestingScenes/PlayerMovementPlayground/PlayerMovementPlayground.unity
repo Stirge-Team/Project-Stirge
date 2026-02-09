@@ -430,8 +430,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  m_horizontalAccel: 10
+  m_horizontalGroundedAccel: 40
+  m_horizontalArialAccel: 15
   m_maxHorizontalVelocity: 6.7
+  m_rotationSpeed: 20
   m_jumpForce: 1000
   m_coyoteTime: 0.2
   m_groundCheckDistance: 1.01
@@ -652,7 +654,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 101838407}
-  - component: {fileID: 101838406}
   m_Layer: 0
   m_Name: Cubes
   m_TagString: Untagged
@@ -660,26 +661,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &101838406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 101838405}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
-  m_SerializedVersion: 0
-  m_OverrideArea: 1
-  m_Area: 1
-  m_OverrideGenerateLinks: 0
-  m_GenerateLinks: 0
-  m_IgnoreFromBuild: 0
-  m_ApplyToChildren: 1
-  m_AffectedAgents: ffffffff
 --- !u!4 &101838407
 Transform:
   m_ObjectHideFlags: 0
@@ -914,7 +895,6 @@ GameObject:
   - component: {fileID: 664553062}
   - component: {fileID: 664553061}
   - component: {fileID: 664553060}
-  - component: {fileID: 664553064}
   m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
@@ -1016,26 +996,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &664553064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 664553059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshModifier
-  m_SerializedVersion: 0
-  m_OverrideArea: 0
-  m_Area: 0
-  m_OverrideGenerateLinks: 0
-  m_GenerateLinks: 0
-  m_IgnoreFromBuild: 0
-  m_ApplyToChildren: 1
-  m_AffectedAgents: ffffffff
 --- !u!1 &939077431
 GameObject:
   m_ObjectHideFlags: 0
