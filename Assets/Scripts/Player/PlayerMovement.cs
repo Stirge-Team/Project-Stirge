@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
   private float m_horizontalAerialAccel;
   [SerializeField, Tooltip("The maximum units the player can move.")]
   private float m_maxHorizontalVelocity;
-  [SerializeField, Tooltip("The degrees (in euler) that the player object rotates")]
+  [SerializeField, Tooltip("The degrees that the player object rotates")]
   private float m_rotationSpeed;
 
 
