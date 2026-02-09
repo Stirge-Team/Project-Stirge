@@ -15,6 +15,8 @@ namespace Stirge.AI
         {
             foreach (Behaviour behaviour in m_behaviours)
                 behaviour._Enter(agent);
+
+            Debug.Log($"Entered {name} State.");
         }
         public void _Update(Agent agent)
         {
@@ -25,6 +27,8 @@ namespace Stirge.AI
         {
             foreach (Behaviour behaviour in m_behaviours)
                 behaviour._Exit(agent);
+
+            Debug.Log($"Exited {name} behaviour.");
         }
     }
 }

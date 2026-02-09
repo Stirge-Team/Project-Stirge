@@ -6,6 +6,7 @@ namespace Stirge.AI
     {
         public override void _Enter(Agent agent)
         {
+            agent.SetPhysicsMode(true);
             base._Enter(agent);
         }
 
@@ -16,6 +17,7 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
+            agent.SetPhysicsMode(false);
             base._Exit(agent);
         }
     }

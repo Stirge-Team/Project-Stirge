@@ -6,7 +6,7 @@ namespace Stirge.AI
     {
         public override bool IsTrue(Agent agent)
         {
-            return !agent.IsStunned;
+            return !agent.ContainsMemory("Stun") || !agent.RetrieveMemory<bool>("Stun");
         }
     }
 }

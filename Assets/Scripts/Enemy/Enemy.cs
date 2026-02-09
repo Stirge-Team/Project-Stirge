@@ -13,11 +13,22 @@ namespace Stirge.Enemy
         private int m_currentHealth;
 
         [Header("Combat Details")]
+        [SerializeField] private State m_stunState;
+        [SerializeField] private State m_knockbackState;
+
         public EnemySpawner spawner = null;
+
+        private float m_stunTimer;
 
         private void Start()
         {
             m_currentHealth = m_maxHealth;
+            m_agent.Start();
+        }
+
+        private void OnEnable()
+        {
+            m_agent.OnEnable();
         }
 
         private void Update()
@@ -27,7 +38,26 @@ namespace Stirge.Enemy
                 if (spawner != null)
                     spawner.ReportDeath();
                 Destroy(gameObject);
+                return;
             }
+
+            // update stun
+            if (m_stunTimer > 0)
+            {
+                m_stunTimer -= Time.deltaTime;
+                if (m_stunTimer <= 0)
+                {
+                    m_stunTimer = 0;
+                    m_agent.WriteMemory("Stun", false);
+                }
+            }
+
+            m_agent.Update();
+        }
+
+        private void OnDisable()
+        {
+            m_agent.OnDisable();
         }
 
         private bool IsDead()
@@ -35,10 +65,43 @@ namespace Stirge.Enemy
             return m_currentHealth <= 0;
         }
 
+        #region Combat
+        public void EnterStun(float length)
+        {
+            m_stunTimer = length;
+            m_agent.WriteMemory("Stun", true);
+            m_agent.EnterState(m_stunState);
+        }
+        public void EnterKnockback(float strength, Vector2 direction, float stunLength, float height = 1f)
+        {
+            m_stunTimer = stunLength;
+            m_agent.EnterState(m_knockbackState);
+            m_agent.ApplyKnockback(strength, direction, height);
+        }
+        #endregion
+
+#if UNITY_EDITOR
+        public void OnJump(InputAction.CallbackContext context)
+        {
+            if (context.started)
+                EnterStun(3f);
+        }
+
+        public void OnAttack(InputAction.CallbackContext context)
+        {
+            if (context.started)
+                EnterKnockback(1000, new Vector2(1, 1), 3);
+        }
         public void OnSprint(InputAction.CallbackContext context)
         {
             if (context.started)
                 m_currentHealth--;
         }
+
+        private void OnDrawGizmos()
+        {
+            m_agent.OnDrawGizmos();
+        }
+#endif
     }
 }
