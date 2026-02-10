@@ -85,13 +85,13 @@ namespace Stirge.Enemy
             ApplyStun(length);
             m_agent.EnterState(m_stunState);
         }
-        public void EnterKnockback(float strength, Vector2 direction, float stunLength, float height = 1f)
+        public void EnterKnockback(float strength, Vector2 direction, float stunLength = 0f, float height = 1f)
         {
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
         }
-        public void EnterAirJuggle(float strength, Vector3 direction, float stunLength, float airStallLength)
+        public void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength = 0f)
         {
             ApplyStun(stunLength);
             m_agent.WriteMemory("AirStallLength", airStallLength);
@@ -120,7 +120,7 @@ namespace Stirge.Enemy
         public void DebugAirJuggle(InputAction.CallbackContext context)
         {
             if (context.started)
-                EnterAirJuggle(300f, Vector3.up, 0f, 1f);
+                EnterAirJuggle(300f, Vector3.up, 1.3f, 4f);
         }
 
         private void OnDrawGizmos()

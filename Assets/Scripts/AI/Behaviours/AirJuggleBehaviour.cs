@@ -47,12 +47,11 @@ namespace Stirge.AI
                     {
                         m_state = AirStallState.Stopped;
                         agent.RemoveMemory("AirStallLength");
-                        agent.ResetGravityAcceleration();
-                        agent.TriggerManualTransitions();
+                        agent.SetDefaultGravity();
                     }
                     break;
                 case AirStallState.Stopped:
-                    if (offGround) agent.TriggerManualTransitions();
+                    if (offGround && agent.RetrieveMemory<bool>("Grounded")) agent.TriggerManualTransitions();
                     break;
             }
         }
@@ -66,7 +65,7 @@ namespace Stirge.AI
         {
             Vector3 velocity = agent.GetVelocity();
             print(velocity);
-            return velocity.magnitude < m_airStallSpeedThreshold;
+            return velocity.y < 0;
         }
     }
 }

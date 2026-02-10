@@ -64,7 +64,7 @@ namespace Stirge.AI
             // apply gravity
             if (m_physicsMode && !isGrounded)
             {
-                m_rb.AddForce(0, -m_defualtGravityAcceleration * Time.deltaTime, 0, ForceMode.VelocityChange);
+                m_rb.AddForce(0, -m_gravity * Time.deltaTime, 0, ForceMode.VelocityChange);
             }
         }
 
@@ -129,7 +129,7 @@ namespace Stirge.AI
             m_gravity = value;
         }
 
-        public void ResetGravityAcceleration()
+        public void SetDefaultGravity()
         {
             m_gravity = m_defualtGravityAcceleration;
         }
