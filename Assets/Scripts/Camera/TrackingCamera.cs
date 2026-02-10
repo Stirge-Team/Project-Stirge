@@ -23,6 +23,10 @@ public class TrackingCamera : MonoBehaviour
     private Transform m_primaryTarget;
     [SerializeField, Tooltip("The secondary target for the camera - used for the math on where the camera points")]
     private Transform m_secondaryTarget;
+
+    private Vector3 targetPosition;
+    private Vector3 targetLookPosition;
+    private Vector3 targetDistance; 
     //private Transform m_cameraTransform;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -34,71 +38,71 @@ public class TrackingCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      UpdateRelativeAngle(0.025f);
       //Calc the position the camera should look at
-      Vector3 targetLookDir = Vector3.zero;
-      Vector3 targetPosition = Vector3.zero;
+      Vector3 targetLookPosition = Vector3.zero;
+      targetPosition = Vector3.zero;
       float distanceScaler = 1;
       //If there is no other target just look at the primary
       //(if there are no targets the camera will just use the last known targetPosition)
       if(!m_secondaryTarget)
       {
-        targetLookDir = m_primaryTarget.position;
+        targetLookPosition = m_primaryTarget.position;
       }
       //If there are 2 targets...
       else if (m_primaryTarget && m_secondaryTarget)
       {
-        //Get their distance
-        Vector3 targetDistance = m_secondaryTarget.position - m_primaryTarget.position;
-        
+        //Get the distance from the primary target to the secondary
+        targetDistance = m_secondaryTarget.position - m_primaryTarget.position;
+
+        //Get the target position at the distance between the targets
+        targetLookPosition = m_primaryTarget.position + targetDistance / 2;
+        //if the primary target is above the secondary target
+        if(m_primaryTarget.position.y > m_secondaryTarget.position.y)
+          //set the Y to the primary target's
+          targetLookPosition = new Vector3(targetLookPosition.x, m_primaryTarget.position.y, targetLookPosition.z);
+
         //Get the distance scaler to adjust how far the camera will be from the targets
         distanceScaler = targetDistance.magnitude;
-        //Reduce it by the height the camera will be
-        distanceScaler -= Mathf.Abs(m_relativePosition.y);
         //Make sure its at least 1
         if(distanceScaler < 1)
           distanceScaler = 1;
 
-        //Get the target position at the distance between the targets
-        targetLookDir = m_primaryTarget.position + targetDistance / 2;
-        float topY = 0;
-        if(m_primaryTarget.position.y > m_secondaryTarget.position.y)
-          topY = m_primaryTarget.position.y;
-        else
-          topY = targetLookDir.y;
+        //Start with the look position - thus it becomes the centre
+        targetPosition = new Vector3(targetLookPosition.x, targetLookPosition.y, targetLookPosition.z) + new Vector3(
+            Mathf.Cos(m_relativeAngle) * (distanceScaler/2) * m_relativePosition.x, //Move back from that centre point given the current angle, distance between the targets & any added space
+            m_relativePosition.y, //just moves it up
+            Mathf.Sin(m_relativeAngle) * (distanceScaler/2) * m_relativePosition.x); //Same as the other
 
-        targetPosition = new Vector3(targetLookDir.x, topY, targetLookDir.z) + new Vector3(
-            Mathf.Cos(m_relativeAngle) * m_relativePosition.x, 
-            m_relativePosition.y, 
-            Mathf.Sin(m_relativeAngle) * m_relativePosition.x);
+        /*{
         
-        /*
-        Vector3 distanceToPrimary = m_primaryTarget.position - targetPosition;
-        Vector3 distanceToSecondary = m_secondaryTarget.position - targetPosition;
-        Debug.Log($"Target distances: PRM-{Mathf.Abs(distanceToPrimary.magnitude)} SND-{Mathf.Abs(distanceToSecondary.magnitude)}");
 
+        //Reduce it by the height the camera will be
+        //distanceScaler -= Mathf.Abs(m_relativePosition.y);
+
+
+
+        //Get target distances from the targetPosition;
+        Vector3 distanceToPrimary = new Vector3(m_primaryTarget.position.x, 0, m_primaryTarget.position.z) - new Vector3(targetPosition.x, 0, targetPosition.z);
+        Vector3 distanceToSecondary = new Vector3(m_secondaryTarget.position.x, 0, m_secondaryTarget.position.z) - new Vector3(targetPosition.x, 0, targetPosition.z);
+        
         if(Mathf.Abs(distanceToPrimary.magnitude) < m_targetAvoidanceDistance)
-          //while (distanceToPrimary.magnitude < m_targetAvoidanceDistance)
-          {
-            Debug.Log("Too close to primary target. " + Mathf.Abs(distanceToPrimary.magnitude));
-            targetPosition += distanceToPrimary * 0.2f;
-            distanceToPrimary = m_primaryTarget.position - targetPosition;
-            Debug.Log("New position: " + targetPosition);
-          }
-        if(Mathf.Abs(distanceToSecondary.magnitude) < m_targetAvoidanceDistance)
-          //while (distanceToSecondary.magnitude < m_targetAvoidanceDistance)
-          {
-            Debug.Log("Too close to secondary target. " + Mathf.Abs(distanceToSecondary.magnitude));
-            targetPosition += distanceToSecondary * 0.2f;
-            distanceToSecondary = m_secondaryTarget.position - targetPosition;
-            Debug.Log("New position: " + targetPosition);
-          }
-          */
+        //while (distanceToPrimary.magnitude < m_targetAvoidanceDistance)
+        {
+          Debug.Log("Too close to primary target. " + Mathf.Abs(distanceToPrimary.magnitude));
+          targetPosition -= distanceToPrimary / 2;
+        }
+        else if(Mathf.Abs(distanceToSecondary.magnitude) < m_targetAvoidanceDistance)
+        //while (distanceToSecondary.magnitude < m_targetAvoidanceDistance)
+        {
+          Debug.Log("Too close to secondary target. " + Mathf.Abs(distanceToSecondary.magnitude));
+          targetPosition -= distanceToSecondary / 2;
+        }
 
-        Debug.Log($"Camera Report:\nDistance between targets: {targetDistance} | {distanceScaler} | Target position: {targetPosition}");
+        //Debug.Log($"Camera Report:\nDistance between targets: {targetDistance} | {distanceScaler} | Target position: {targetPosition}");
+      }*/
       }
       //You won't believe what this one does
-      transform.LookAt(targetLookDir);
+      transform.LookAt(targetLookPosition);
       //Calc the relative position of the camera then add that to the target position and apply
       transform.position = targetPosition;
     }
@@ -116,5 +120,18 @@ public class TrackingCamera : MonoBehaviour
       {
         m_relativeAngle -= Mathf.PI * 2;
       }
+    }
+
+    public void OnDrawGizmosSelected()
+    {
+      Gizmos.color = Color.green;
+      Gizmos.DrawSphere(targetPosition, 0.25f);
+
+      Gizmos.color = Color.red;
+      Gizmos.DrawWireSphere(m_primaryTarget.position, m_targetAvoidanceDistance);
+      Gizmos.DrawWireSphere(m_secondaryTarget.position, m_targetAvoidanceDistance);
+
+      Gizmos.color = Color.yellow;
+      Gizmos.DrawWireSphere(m_primaryTarget.position + targetDistance / 2, m_relativePosition.x);
     }
 }}
