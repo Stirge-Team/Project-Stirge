@@ -6,7 +6,7 @@ namespace Stirge.AI
     {
         public override bool IsTrue(Agent agent)
         {
-            return agent.IsGrounded;
+            return agent.RetrieveMemory<bool>("Grounded");
         }
     }
 }

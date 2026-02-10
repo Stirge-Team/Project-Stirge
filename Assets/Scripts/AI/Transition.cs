@@ -2,16 +2,17 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    [System.Serializable, CreateAssetMenu(fileName = "Transition", menuName = "StirgeAI/Transition", order = 1)]
-    public class Transition : ScriptableObject
+    [System.Serializable]
+    //[CreateAssetMenu(fileName = "Transition", menuName = "StirgeAI/Transition", order = 1)]
+    public class Transition
     {
-        [Tooltip("If any of these are true, the Transition occurs.")]
-        [SerializeField] private Condition[] m_conditions;
-
         [Tooltip("The State this Transition moves to.")]
         [SerializeField] private State m_targetState;
 
-        public Condition[] conditions { get { return m_conditions; } }
+        [Tooltip("If any of these are true, the Transition occurs.")]
+        [SerializeField] private Condition[] m_conditions = new Condition[0];
+
         public State targetState { get { return m_targetState; } }
+        public Condition[] conditions { get { return m_conditions; } }
     }
 }
