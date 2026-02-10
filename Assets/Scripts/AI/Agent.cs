@@ -25,6 +25,7 @@ namespace Stirge.AI
         [SerializeField, Min(0)] private float m_defualtGravityAcceleration;
 
         private bool m_physicsMode = false;
+        private float m_gravity;
 
         public float DetectionRadius => m_detectionRadius;
         public float StoppingDistance => m_nav.stoppingDistance;
@@ -35,6 +36,7 @@ namespace Stirge.AI
         public void Start()
         {
             m_target = GameObject.FindGameObjectWithTag("Player").transform;
+            m_gravity = m_defualtGravityAcceleration;
         }
 
         public void OnEnable()
@@ -44,20 +46,8 @@ namespace Stirge.AI
 
         public void Update()
         {
-            bool isGrounded = Physics.Raycast(m_transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-            WriteMemory("Grounded", isGrounded); 
-
-            // in physics mode
-            if (m_physicsMode)
-            {
-                // apply gravity
-                if (!isGrounded)
-                {
-                    m_rb.AddForce(0, -m_defualtGravityAcceleration, 0, ForceMode.VelocityChange);
-                }
-            }
             // not in physics mode
-            else
+            if (!m_physicsMode)
             {
                 // move to match Nav Mesh Agent's position
                 m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
@@ -66,16 +56,32 @@ namespace Stirge.AI
             m_fsm._Update(this);
         }
 
+        public void FixedUpdate()
+        {
+            bool isGrounded = Physics.Raycast(m_transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
+            WriteMemory("Grounded", isGrounded);
+
+            // apply gravity
+            if (m_physicsMode && !isGrounded)
+            {
+                m_rb.AddForce(0, -m_defualtGravityAcceleration * Time.deltaTime, 0, ForceMode.VelocityChange);
+            }
+        }
+
         public void OnDisable()
         {
             m_fsm._Exit(this);
         }
         #endregion
 
-        #region AI Controls
+        #region Controls
         public void EnterState(State newState)
         {
             m_fsm.EnterState(this, newState);
+        }
+        public void TriggerManualTransitions()
+        {
+            m_fsm.TriggerManualTransitions(this);
         }
 
         public void SetTarget(Transform target)
@@ -118,9 +124,23 @@ namespace Stirge.AI
             }
         }
 
+        public void SetGravityAcceleration(float value)
+        {
+            m_gravity = value;
+        }
+
+        public void ResetGravityAcceleration()
+        {
+            m_gravity = m_defualtGravityAcceleration;
+        }
+
+        public void ApplyKnockback(float strength, Vector3 direction)
+        {
+            m_rb.linearVelocity = Vector3.zero;
+            m_rb.AddForce(direction.normalized * strength);
+        }
         public void ApplyKnockback(float strength, Vector2 direction, float height)
         {
-            SetPhysicsMode(true);
             m_rb.linearVelocity = Vector3.zero;
             m_rb.AddForce(new Vector3(direction.x, height, direction.y).normalized * strength);
         }
@@ -130,12 +150,28 @@ namespace Stirge.AI
             if (Vector3.Distance(m_transform.position, TargetPosition) > StoppingDistance && Vector3.Distance(TargetPosition, m_nav.pathEndPosition) > StoppingDistance)
             {
                 m_nav.SetDestination(TargetPosition);
-                Debug.Log("new Path created");
             }
         }
         public void ClearPath()
         {
             m_nav.ResetPath();
+        }
+
+        public Vector3 GetVelocity()
+        {
+            return m_physicsMode ? m_rb.linearVelocity : m_nav.velocity;
+        }
+
+        public void SetVelocity(Vector3 value)
+        {
+            if (m_physicsMode)
+            {
+                m_rb.linearVelocity = value;
+            }
+            else
+            {
+                m_nav.velocity = value;
+            }
         }
 
         /*
@@ -169,7 +205,7 @@ namespace Stirge.AI
             if (m_memory.ContainsKey(key))
             {
                 m_memory[key] = data;
-                Debug.LogWarning($"Overwrote key '{key}' in Agent '{m_transform}' memory.", m_transform);
+                //Debug.LogWarning($"Overwrote key '{key}' in Agent '{m_transform}' memory.", m_transform);
             }
             else
             {

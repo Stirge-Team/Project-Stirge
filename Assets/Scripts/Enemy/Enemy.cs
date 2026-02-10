@@ -15,8 +15,9 @@ namespace Stirge.Enemy
         [Header("Combat Details")]
         [SerializeField] private State m_stunState;
         [SerializeField] private State m_knockbackState;
+        [SerializeField] private State m_airJuggle;
 
-        public EnemySpawner spawner = null;
+        [HideInInspector] public EnemySpawner spawner = null;
 
         private float m_stunTimer;
 
@@ -55,6 +56,11 @@ namespace Stirge.Enemy
             m_agent.Update();
         }
 
+        private void FixedUpdate()
+        {
+            m_agent.FixedUpdate();
+        }
+
         private void OnDisable()
         {
             m_agent.OnDisable();
@@ -66,36 +72,55 @@ namespace Stirge.Enemy
         }
 
         #region Combat
+        private void ApplyStun(float length)
+        {
+            if (length > 0)
+            {
+                m_stunTimer = length;
+                m_agent.WriteMemory("Stun", true);
+            }
+        }
         public void EnterStun(float length)
         {
-            m_stunTimer = length;
-            m_agent.WriteMemory("Stun", true);
+            ApplyStun(length);
             m_agent.EnterState(m_stunState);
         }
         public void EnterKnockback(float strength, Vector2 direction, float stunLength, float height = 1f)
         {
-            m_stunTimer = stunLength;
+            ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
+        }
+        public void EnterAirJuggle(float strength, Vector3 direction, float stunLength, float airStallLength)
+        {
+            ApplyStun(stunLength);
+            m_agent.WriteMemory("AirStallLength", airStallLength);
+            m_agent.EnterState(m_airJuggle);
+            m_agent.ApplyKnockback(strength, direction);
         }
         #endregion
 
 #if UNITY_EDITOR
-        public void OnJump(InputAction.CallbackContext context)
+        public void DebugStun(InputAction.CallbackContext context)
         {
             if (context.started)
                 EnterStun(3f);
         }
 
-        public void OnAttack(InputAction.CallbackContext context)
+        public void DebugKnockback(InputAction.CallbackContext context)
         {
             if (context.started)
-                EnterKnockback(1000, new Vector2(1, 1), 3);
+                EnterKnockback(500f, new Vector2(1, 1), 3f);
         }
-        public void OnSprint(InputAction.CallbackContext context)
+        public void DebugReduceHealth(InputAction.CallbackContext context)
         {
             if (context.started)
                 m_currentHealth--;
+        }
+        public void DebugAirJuggle(InputAction.CallbackContext context)
+        {
+            if (context.started)
+                EnterAirJuggle(300f, Vector3.up, 0f, 1f);
         }
 
         private void OnDrawGizmos()

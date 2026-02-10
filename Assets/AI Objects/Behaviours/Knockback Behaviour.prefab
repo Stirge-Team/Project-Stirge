@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd5eed8e8fa4e5549a972eaa079f44ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.KnockbackBehaviour
+  m_offGroundTime: 0.3
