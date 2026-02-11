@@ -10,20 +10,21 @@ namespace Stirge.AI
             Active,
             Stopped
         }
-        
-        [SerializeField] private float m_airStallSpeedThreshold;
 
         private AirStallState m_state;
-        private float m_airStallLength;
-        private float m_allStallTimer;
+        private float m_airStallTime = 0f;
         
         public override void _Enter(Agent agent)
         {
-            agent.SetPhysicsMode(true);
-            m_state = AirStallState.Waiting;
-            m_airStallLength = agent.RetrieveMemory<float>("AirStallLength");
-            m_allStallTimer = 0;
             base._Enter(agent);
+            agent.SetPhysicsMode(PhysicsMode.Physics);
+            m_airStallTime = agent.RetrieveMemory<float>("AirStall");
+
+            // if no air stall, then skip
+            if (m_airStallTime <= 0)
+                m_state = AirStallState.Stopped;
+            else
+                m_state = AirStallState.Waiting;
         }
         public override void _Update(Agent agent)
         {
@@ -36,36 +37,36 @@ namespace Stirge.AI
                     if (DetermineIfShouldAirStall(agent))
                     {
                         m_state = AirStallState.Active;
-                        agent.SetGravityAcceleration(0f);
-                        agent.SetVelocity(Vector3.zero);
+                        agent.SetPhysicsMode(PhysicsMode.Kinematic);
                     }
                     break;
                 // keep agent suspended in air until time is up
                 case AirStallState.Active:
-                    m_allStallTimer += Time.deltaTime;
-                    if (m_allStallTimer >= m_airStallLength)
+                    m_airStallTime -= Time.deltaTime;
+                    if (m_airStallTime <= 0)
                     {
                         m_state = AirStallState.Stopped;
-                        agent.RemoveMemory("AirStallLength");
-                        agent.SetDefaultGravity();
+                        agent.RemoveMemory("AirStall");
+                        agent.SetPhysicsMode(PhysicsMode.Physics);
                     }
                     break;
                 case AirStallState.Stopped:
-                    if (offGround && agent.RetrieveMemory<bool>("Grounded")) agent.TriggerManualTransitions();
+                    if (offGround && agent.RetrieveMemory<bool>("Grounded"))
+                        agent.TriggerManualTransitions();
                     break;
             }
         }
         public override void _Exit(Agent agent)
         {
-            agent.SetPhysicsMode(false);
             base._Exit(agent);
+            agent.SetPhysicsMode(PhysicsMode.NavMesh);
+            agent.RemoveMemory("AirStall");
+            m_airStallTime = 0f;
         }
 
         private bool DetermineIfShouldAirStall(Agent agent)
         {
-            Vector3 velocity = agent.GetVelocity();
-            print(velocity);
-            return velocity.y < 0;
+            return agent.GetVelocity().y < 0;
         }
     }
 }

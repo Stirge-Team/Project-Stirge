@@ -6,7 +6,7 @@ namespace Stirge.AI
     {
         public override void _Enter(Agent agent)
         {
-            agent.SetPhysicsMode(true);
+            agent.SetPhysicsMode(PhysicsMode.Physics);
             base._Enter(agent);
         }
 
@@ -14,12 +14,13 @@ namespace Stirge.AI
         {
             base._Update(agent);
             
-            if (offGround) agent.TriggerManualTransitions();
+            if (offGround && agent.RetrieveMemory<bool>("Grounded"))
+                agent.TriggerManualTransitions();
         }
 
         public override void _Exit(Agent agent)
         {
-            agent.SetPhysicsMode(false);
+            agent.SetPhysicsMode(PhysicsMode.NavMesh);
             base._Exit(agent);
         }
     }

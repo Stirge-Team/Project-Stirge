@@ -9,7 +9,7 @@ namespace Stirge.AI
         [SerializeField] private bool m_returnTrueIfStunned;
         public override bool IsTrue(Agent agent)
         {
-            return (!agent.ContainsMemory("Stun") || !agent.RetrieveMemory<bool>("Stun") != m_returnTrueIfStunned);
+            return agent.ContainsMemory("Stun") == m_returnTrueIfStunned;
         }
     }
 }

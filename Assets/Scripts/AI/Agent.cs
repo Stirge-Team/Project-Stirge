@@ -4,9 +4,16 @@ using UnityEngine.AI;
 
 namespace Stirge.AI
 {
+    public enum PhysicsMode
+    {
+        NavMesh,
+        Physics,
+        Kinematic
+    }
+
     [System.Serializable]
     public class Agent
-    {
+    {   
         [Header("Agent Components")]
         [SerializeField] private Transform m_transform;
         [SerializeField] private FiniteStateMachine m_fsm;
@@ -24,11 +31,12 @@ namespace Stirge.AI
         [SerializeField] private LayerMask m_groundedCheckMask;
         [SerializeField, Min(0)] private float m_defualtGravityAcceleration;
 
-        private bool m_physicsMode = false;
+        private PhysicsMode m_physicsMode;
         private float m_gravity;
 
         public float DetectionRadius => m_detectionRadius;
         public float StoppingDistance => m_nav.stoppingDistance;
+        public PhysicsMode PhysicsMode => m_physicsMode;
 
         private Dictionary<string, object> m_memory = new Dictionary<string, object>();
 
@@ -37,6 +45,7 @@ namespace Stirge.AI
         {
             m_target = GameObject.FindGameObjectWithTag("Player").transform;
             m_gravity = m_defualtGravityAcceleration;
+            m_physicsMode = PhysicsMode.NavMesh;
         }
 
         public void OnEnable()
@@ -46,11 +55,10 @@ namespace Stirge.AI
 
         public void Update()
         {
-            // not in physics mode
-            if (!m_physicsMode)
+            // move to match Nav Mesh Agent's position
+            if (m_physicsMode == PhysicsMode.NavMesh)
             {
-                // move to match Nav Mesh Agent's position
-                m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
+            m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
             }
 
             m_fsm._Update(this);
@@ -62,7 +70,7 @@ namespace Stirge.AI
             WriteMemory("Grounded", isGrounded);
 
             // apply gravity
-            if (m_physicsMode && !isGrounded)
+            if (m_physicsMode == PhysicsMode.Physics && !isGrounded)
             {
                 m_rb.AddForce(0, -m_gravity * Time.deltaTime, 0, ForceMode.VelocityChange);
             }
@@ -89,49 +97,39 @@ namespace Stirge.AI
             m_target = target;
         }
 
-        public void SetPhysicsMode(bool value)
+        public void SetPhysicsMode(PhysicsMode value)
         {
             if (value != m_physicsMode)
             {
                 m_physicsMode = value;
 
                 // if entering physics mode
-                if (value)
+                switch (m_physicsMode)
                 {
-                    // stop Nav Mesh agent from moving
-                    ClearPath();
+                    case PhysicsMode.NavMesh:
+                        // update the Nav Mesh Agent to the new position of the Agent
+                        // try to make it a point on the Nav Mesh
+                        if (NavMesh.SamplePosition(m_transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+                        {
+                            m_nav.transform.position = hit.position + new Vector3(0, 1f);
+                        }
+                        else
+                        {
+                            m_nav.transform.position = m_transform.position;
+                        }
 
-                    // enable Rigidbody movement
-                    m_rb.isKinematic = false;
-                }
-                // if exiting physics mode
-                else
-                {
-                    // update the Nav Mesh Agent to the new position of the Agent
-                    // try to make it a point on the Nav Mesh
-                    if (NavMesh.SamplePosition(m_transform.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-                    {
-                        m_nav.transform.position = hit.position + new Vector3(0, 1f);
-                    }
-                    else
-                    {
-                        m_nav.transform.position = m_transform.position;
-                    }
-
-                    // disable Rigidbody movement
-                    m_rb.isKinematic = true;
+                        m_rb.isKinematic = true;
+                        break;
+                    case PhysicsMode.Physics:
+                        ClearPath();
+                        m_rb.isKinematic = false;
+                        break;
+                    case PhysicsMode.Kinematic:
+                        ClearPath();
+                        m_rb.isKinematic = true;
+                        break;
                 }
             }
-        }
-
-        public void SetGravityAcceleration(float value)
-        {
-            m_gravity = value;
-        }
-
-        public void SetDefaultGravity()
-        {
-            m_gravity = m_defualtGravityAcceleration;
         }
 
         public void ApplyKnockback(float strength, Vector3 direction)
@@ -159,19 +157,10 @@ namespace Stirge.AI
 
         public Vector3 GetVelocity()
         {
-            return m_physicsMode ? m_rb.linearVelocity : m_nav.velocity;
-        }
-
-        public void SetVelocity(Vector3 value)
-        {
-            if (m_physicsMode)
-            {
-                m_rb.linearVelocity = value;
-            }
+            if (m_physicsMode == PhysicsMode.NavMesh)
+                return m_nav.velocity;
             else
-            {
-                m_nav.velocity = value;
-            }
+                return m_rb.linearVelocity;
         }
 
         /*

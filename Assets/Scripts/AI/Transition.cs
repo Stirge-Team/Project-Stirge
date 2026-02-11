@@ -3,7 +3,6 @@ using UnityEngine;
 namespace Stirge.AI
 {
     [System.Serializable]
-    //[CreateAssetMenu(fileName = "Transition", menuName = "StirgeAI/Transition", order = 1)]
     public class Transition
     {
         [Tooltip("The State this Transition moves to.")]
