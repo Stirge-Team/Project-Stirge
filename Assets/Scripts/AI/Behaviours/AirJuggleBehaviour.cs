@@ -50,10 +50,6 @@ namespace Stirge.AI
                         agent.SetPhysicsMode(PhysicsMode.Physics);
                     }
                     break;
-                case AirStallState.Stopped:
-                    if (offGround && agent.RetrieveMemory<bool>("Grounded"))
-                        agent.TriggerManualTransitions();
-                    break;
             }
         }
         public override void _Exit(Agent agent)

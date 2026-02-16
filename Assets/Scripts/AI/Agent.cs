@@ -87,10 +87,6 @@ namespace Stirge.AI
         {
             m_fsm.EnterState(this, newState);
         }
-        public void TriggerManualTransitions()
-        {
-            m_fsm.TriggerManualTransitions(this);
-        }
 
         public void SetTarget(Transform target)
         {

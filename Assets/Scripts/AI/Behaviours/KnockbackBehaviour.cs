@@ -13,9 +13,6 @@ namespace Stirge.AI
         public override void _Update(Agent agent)
         {
             base._Update(agent);
-            
-            if (offGround && agent.RetrieveMemory<bool>("Grounded"))
-                agent.TriggerManualTransitions();
         }
 
         public override void _Exit(Agent agent)

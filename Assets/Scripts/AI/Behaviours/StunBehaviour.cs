@@ -22,10 +22,6 @@ namespace Stirge.AI
                     agent.RemoveMemory("Stun");
                 }
             }
-            else
-            {
-                agent.TriggerManualTransitions();
-            }
         }
         public override void _Exit(Agent agent)
         {

@@ -2,11 +2,11 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    public class StunnedCondition : Condition
+    public class OffGroundCondition : Condition
     {
         public override bool IsTrue(Agent agent)
         {
-            return agent.ContainsMemory("Stun");
+            return agent.RetrieveMemory<bool>("OffGround");
         }
     }
 }
