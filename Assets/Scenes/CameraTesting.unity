@@ -1467,6 +1467,7 @@ GameObject:
   - component: {fileID: 361566835}
   - component: {fileID: 361566834}
   - component: {fileID: 361566833}
+  - component: {fileID: 361566836}
   m_Layer: 0
   m_Name: playerDummy
   m_TagString: Untagged
@@ -1547,6 +1548,19 @@ Transform:
   - {fileID: 620090019}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &361566836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361566831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0c1912e936856064bb30d30018ae616, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  rate: 30
 --- !u!1 &373304664
 GameObject:
   m_ObjectHideFlags: 0
@@ -4573,7 +4587,7 @@ MonoBehaviour:
   m_cameraRotationSpeed: 60
   m_relativePosition: {x: 5, y: 2}
   m_cameraMoveWait: 3
-  m_cameraPivotSpeed: 1
+  m_cameraPivotSpeed: 0.5
   m_groupDistanceScaling: 0.2
   m_combatRangeCutoff: 5
   m_primaryTarget: {fileID: 361566835}
@@ -4583,7 +4597,7 @@ MonoBehaviour:
   - {fileID: 1130178122}
   - {fileID: 1851388560}
   - {fileID: 1325523712}
-  m_camState: 0
+  m_camState: 1
 --- !u!114 &1118215392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4641,7 +4655,7 @@ GameObject:
   - component: {fileID: 1130178120}
   - component: {fileID: 1130178119}
   m_Layer: 0
-  m_Name: Cylinder (2)
+  m_Name: dedman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
