@@ -2,9 +2,10 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class OffGroundCondition : Condition
     {
-        public override bool IsTrue(Agent agent)
+        protected override bool _IsTrue(Agent agent)
         {
             return agent.RetrieveMemory<bool>("OffGround");
         }

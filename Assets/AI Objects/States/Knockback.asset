@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
   m_Name: Knockback
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
-  m_manualTransitions: 1
   m_behaviours:
   - {fileID: 993709865973894549, guid: 509e3ea46ed97e946980041a21fafb3e, type: 3}
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
     m_conditions:
-    - {fileID: 2147866076504685258, guid: 95ee3970d14f03745b4e675774b7253d, type: 3}
+    - rid: 5052026504465088579
   - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
     m_conditions: []
+  references:
+    version: 2
+    RefIds:
+    - rid: 5052026504465088579
+      type: {class: Condition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 0
+        m_invertValue: 0
