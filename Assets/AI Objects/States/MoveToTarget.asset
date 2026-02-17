@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
   m_Name: MoveToTarget
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
-  m_behaviours:
-  - {fileID: -4316300080828489182, guid: 161e8a0e259ef284cad3900142fba75f, type: 3}
-  m_transitions:
-  - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
-    m_conditions:
-    - {fileID: 6332461476582385992, guid: df7fcf3a904f3844d8f43ff2af98b171, type: 3}
+  m_behaviours: []
+  m_transitions: []
+  references:
+    version: 2
+    RefIds: []

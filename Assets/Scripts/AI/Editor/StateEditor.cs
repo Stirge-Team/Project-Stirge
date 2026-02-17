@@ -14,7 +14,7 @@ namespace Stirge.AI
     public class StateEditor : Editor
     {
         // static list of all valid Conditions
-        private static readonly System.Type[] conditionTypes =
+        public static readonly System.Type[] ConditionTypes =
         {
             typeof(Condition),
             typeof(AirJuggleCondition),
@@ -25,21 +25,24 @@ namespace Stirge.AI
             typeof(TargetInRangeCondition)
         };
         // to display list of Condition names
+        public static string[] StringTypes
+        {
+            get
+            {
+                if (stringTypes == null || stringTypes.Length == 0)
+                {
+                    PopulateStringTypes();
+                }
+                return stringTypes;
+            }
+        }
         private static string[] stringTypes;
 
         private bool m_hasChanged = false;
 
         private void OnEnable()
         {
-            // get all the Conditions from the static list and change them from CamelCase to English
-            stringTypes = conditionTypes.Select(t => t.Name).ToArray();
-            for (int i = 0; i < stringTypes.Length; i++)
-            {
-                // turns camel case into separate words (looks nice)
-                stringTypes[i] = Regex.Replace(Regex.Replace(stringTypes[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
-            }
-            // show Condition as this
-            stringTypes[0] = "Empty Condition";
+            PopulateStringTypes();
         }
 
         public override void OnInspectorGUI()
@@ -71,23 +74,10 @@ namespace Stirge.AI
             SerializedProperty behaviours = serializedObject.FindProperty("m_behaviours");
             EGL.PropertyField(behaviours);
 
-            // draw all Transitions
+            // draw Transitions label
             SerializedProperty transitions = serializedObject.FindProperty("m_transitions");
             EGL.LabelField(new GUIContent("Transitions"), EditorStyles.boldLabel);
-            if (transitions != null && transitions.arraySize > 0)
-            {
-                for (int i = 0; i < transitions.arraySize; i++)
-                {
-                    DrawTransition(transitions.GetArrayElementAtIndex(i), i);
-                }
-            }
-            else
-            {
-                EG.BeginDisabledGroup(true);
-                EGL.TextField("No Transitions!");
-                EG.EndDisabledGroup();
-            }
-                
+
             // add and subtract buttons
             EGL.BeginHorizontal();
             if (GL.Button("Add Transition"))
@@ -101,26 +91,66 @@ namespace Stirge.AI
                 m_hasChanged = true;
             }
             EGL.EndHorizontal();
+
+            // draw all Transitions
+            if (transitions != null && transitions.arraySize > 0)
+            {
+                for (int i = 0; i < transitions.arraySize; i++)
+                {
+                    DrawTransition(transitions.GetArrayElementAtIndex(i));
+                }
+            }
+            else
+            {
+                EG.BeginDisabledGroup(true);
+                EGL.TextField("No Transitions!");
+                EG.EndDisabledGroup();
+            }
         }
 
-        private void DrawTransition(SerializedProperty transition, int index)
-        {           
-            EGL.LabelField("Transition " + index);
-            EG.indentLevel++;
-
+        private void DrawTransition(SerializedProperty transition)
+        {
             // Target State field
             SerializedProperty targetState = transition.FindPropertyRelative("m_targetState");
+
+            string labelText;
+            if (targetState.objectReferenceValue != null)
+            {
+                labelText = "Transition to " + targetState.objectReferenceValue.name;
+            }
+            else
+            {
+                labelText = "Empty Transition";
+            }
+            EGL.LabelField(labelText);
+
+            EG.indentLevel++;
             EGL.PropertyField(targetState, new GUIContent("Target State"));
 
             // draw all Conditions
             SerializedProperty conditions = transition.FindPropertyRelative("m_conditions");
-            EGL.LabelField(new GUIContent("Conditions"));
+            EGL.LabelField(new GUIContent("Conditions"), EditorStyles.boldLabel);
             EG.indentLevel++;
             if (conditions != null)
             {
                 for (int i = 0; i < conditions.arraySize; i++)
                 {
-                    DrawCondition(conditions.GetArrayElementAtIndex(i));
+                    SerializedProperty condition = conditions.GetArrayElementAtIndex(i);
+                    int oldType = condition.FindPropertyRelative("m_typeIndex").intValue;
+
+                    // draw property drawer
+                    EGL.PropertyField(condition, new GUIContent(stringTypes[oldType]));
+
+                    // if changing type
+                    int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
+                    if (newType != oldType)
+                    {
+                        Condition newCondition = System.Activator.CreateInstance(ConditionTypes[newType]) as Condition;
+                        condition.managedReferenceValue = newCondition;
+                        condition.FindPropertyRelative("m_typeIndex").intValue = newType;
+                        m_hasChanged = true;
+                    }
+                    //DrawCondition(conditions.GetArrayElementAtIndex(i));
                 }
             }
             else
@@ -134,13 +164,16 @@ namespace Stirge.AI
 
             // add and remove buttons
             EGL.BeginHorizontal();
-            if (GL.Button("Add Condition"))
+            Rect addButtonRect = EG.IndentedRect(EG.IndentedRect(EGL.GetControlRect()));
+            if (GUI.Button(addButtonRect, "Add Condition"))
             {
                 conditions.InsertArrayElementAtIndex(conditions.arraySize);
                 conditions.GetArrayElementAtIndex(conditions.arraySize - 1).managedReferenceValue = new Condition();
                 m_hasChanged = true;
             }
-            if (conditions != null && conditions.arraySize > 0 && GL.Button("Remove Condition"))
+            Rect removeButtonRect = EGL.GetControlRect();
+            removeButtonRect.width -= EG.indentLevel * 5f;
+            if (conditions != null && conditions.arraySize > 0 && GUI.Button(removeButtonRect, "Remove Condition"))
             {
                 conditions.DeleteArrayElementAtIndex(conditions.arraySize - 1);
                 m_hasChanged = true;
@@ -150,13 +183,15 @@ namespace Stirge.AI
             EG.indentLevel--;
         }
 
-        private void DrawCondition(SerializedProperty condition, string label = "Condition")
+#if UNITY_EDITOR
+        [System.Obsolete]
+        private void DrawCondition(SerializedProperty condition)
         {
+            int currentType = condition.FindPropertyRelative("m_typeIndex").intValue;
             // Condition dropdown to select which Type it is
             EGL.BeginHorizontal();
-            EGL.LabelField(label);
-            SerializedProperty typeIndex = condition.FindPropertyRelative("m_typeIndex");
-            int value = EGL.Popup(typeIndex.intValue, stringTypes);
+            EGL.LabelField(stringTypes[currentType], EditorStyles.boldLabel);
+            int value = EGL.Popup(currentType, stringTypes);
             EGL.EndHorizontal();
 
             // Invert value prop
@@ -172,13 +207,27 @@ namespace Stirge.AI
             }
 
             // attempt the change of Type after so that there are no deletions before stuff is drawn
-            if (value != typeIndex.intValue)
+            if (value != currentType)
             {
-                Condition newCondition = System.Activator.CreateInstance(conditionTypes[value]) as Condition;
+                Condition newCondition = System.Activator.CreateInstance(ConditionTypes[value]) as Condition;
                 condition.managedReferenceValue = newCondition;
                 condition.FindPropertyRelative("m_typeIndex").intValue = value;
                 m_hasChanged = true;
             }
+        }
+#endif
+
+        private static void PopulateStringTypes()
+        {
+            // get all the Conditions from the static list and change them from CamelCase to English
+            stringTypes = ConditionTypes.Select(t => t.Name).ToArray();
+            for (int i = 0; i < stringTypes.Length; i++)
+            {
+                // turns camel case into separate words (looks nice)
+                stringTypes[i] = Regex.Replace(Regex.Replace(stringTypes[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
+            }
+            // show Condition as this
+            stringTypes[0] = "Empty Condition";
         }
     }
 }
