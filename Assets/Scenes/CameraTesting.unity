@@ -1468,6 +1468,9 @@ GameObject:
   - component: {fileID: 361566834}
   - component: {fileID: 361566833}
   - component: {fileID: 361566836}
+  - component: {fileID: 361566838}
+  - component: {fileID: 361566837}
+  - component: {fileID: 361566839}
   m_Layer: 0
   m_Name: playerDummy
   m_TagString: Untagged
@@ -1540,14 +1543,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 361566831}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: -0, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 1, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 620090019}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 270, z: 0}
 --- !u!114 &361566836
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1557,10 +1560,96 @@ MonoBehaviour:
   m_GameObject: {fileID: 361566831}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0c1912e936856064bb30d30018ae616, type: 3}
+  m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
-  rate: 30
+  m_EditorClassIdentifier: Assembly-CSharp::Strige.Player.PlayerMovement
+  m_horizontalGroundedAccel: 100
+  m_horizontalAerialAccel: 1
+  m_maxHorizontalVelocity: 10
+  m_rotationSpeed: 20
+  m_jumpForce: 1000
+  m_coyoteTime: 0
+  m_groundCheckDistance: 2
+--- !u!136 &361566837
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361566831}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &361566838
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361566831}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 0
+--- !u!114 &361566839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361566831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents: []
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: 
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &373304664
 GameObject:
   m_ObjectHideFlags: 0
@@ -4586,10 +4675,13 @@ MonoBehaviour:
   m_cameraMovementSpeed: 7
   m_cameraRotationSpeed: 60
   m_relativePosition: {x: 5, y: 2}
+  m_cameraPivotSpeed: 4
+  m_pivotGapStrength: 1
   m_cameraMoveWait: 3
-  m_cameraPivotSpeed: 0.5
+  m_cameraAutoPivotSpeed: 0.3
   m_groupDistanceScaling: 0.2
   m_combatRangeCutoff: 5
+  m_clumpBias: 0.5
   m_primaryTarget: {fileID: 361566835}
   m_secondaryTargets:
   - {fileID: 374375065}
@@ -4597,7 +4689,7 @@ MonoBehaviour:
   - {fileID: 1130178122}
   - {fileID: 1851388560}
   - {fileID: 1325523712}
-  m_camState: 1
+  m_inputSensitivity: 5
 --- !u!114 &1118215392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10122,7 +10214,7 @@ GameObject:
   - component: {fileID: 2112811418}
   - component: {fileID: 2112811417}
   - component: {fileID: 2112811416}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
