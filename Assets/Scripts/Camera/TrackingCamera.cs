@@ -291,7 +291,7 @@ public class TrackingCamera : MonoBehaviour
     {
       //add the delta of the player input to the desired angle.
       m_cameraMoveCountdown = m_cameraMoveWait;
-      m_playerCameraRotationInput = value.x * m_inputSensitivity * Time.deltaTime;
+      m_playerCameraRotationInput = Mathf.Clamp(value.x, -1, 1) * m_inputSensitivity * Time.deltaTime;
     }
 
     public void ChangeState(CameraStates newState)
