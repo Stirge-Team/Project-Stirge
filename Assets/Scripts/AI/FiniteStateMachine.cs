@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem.LowLevel;
 
 namespace Stirge.AI
 {
@@ -16,9 +15,16 @@ namespace Stirge.AI
         {
             m_currentState._Update(agent);
 
-            if (!m_currentState.ManualTransitions)
+            foreach (Transition transition in m_currentState.Transitions)
             {
-                EvaluateStateTransitions(agent);
+                // returns true if there are no Conditions and returns true for a Condition if it is empty/null
+                if (transition.conditions.Length == 0 || transition.conditions.All(c => c == null || c.IsTrue(agent)))
+                {
+                    m_currentState._Exit(agent);
+                    m_currentState = transition.targetState;
+                    m_currentState._Enter(agent);
+                    return;
+                }
             }
         }
         public override void _Exit(Agent agent)
@@ -31,29 +37,6 @@ namespace Stirge.AI
             m_currentState._Exit(agent);
             m_currentState = newState;
             m_currentState._Enter(agent);
-        }
-
-        public void TriggerManualTransitions(Agent agent)
-        {
-            if (m_currentState.ManualTransitions)
-            {
-                EvaluateStateTransitions(agent);
-            }
-        }
-
-        private void EvaluateStateTransitions(Agent agent)
-        {
-            foreach (Transition transition in m_currentState.Transitions)
-            {
-                // returns true if there are no Conditions and returns true for a Condition if it is empty/null
-                if (transition.conditions.Length == 0 || transition.conditions.All(c => c == null || c.IsTrue(agent)))
-                {
-                    m_currentState._Exit(agent);
-                    m_currentState = transition.targetState;
-                    m_currentState._Enter(agent);
-                    return;
-                }
-            }
         }
     }
 }

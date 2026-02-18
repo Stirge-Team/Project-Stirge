@@ -14,12 +14,11 @@ namespace Stirge.Enemy
 
         [Header("Combat Details")]
         [SerializeField] private State m_stunState;
+        [SerializeField] private State m_airStunState;
         [SerializeField] private State m_knockbackState;
         [SerializeField] private State m_airJuggle;
 
         [HideInInspector] public EnemySpawner spawner = null;
-
-        private float m_stunTimer;
 
         private void Start()
         {
@@ -40,17 +39,6 @@ namespace Stirge.Enemy
                     spawner.ReportDeath();
                 Destroy(gameObject);
                 return;
-            }
-
-            // update stun
-            if (m_stunTimer > 0)
-            {
-                m_stunTimer -= Time.deltaTime;
-                if (m_stunTimer <= 0)
-                {
-                    m_stunTimer = 0;
-                    m_agent.WriteMemory("Stun", false);
-                }
             }
 
             m_agent.Update();
@@ -76,25 +64,27 @@ namespace Stirge.Enemy
         {
             if (length > 0)
             {
-                m_stunTimer = length;
-                m_agent.WriteMemory("Stun", true);
+                m_agent.WriteMemory("Stun", length);
             }
         }
         public void EnterStun(float length)
         {
             ApplyStun(length);
-            m_agent.EnterState(m_stunState);
+            if (m_agent.RetrieveMemory<bool>("Grounded"))
+                m_agent.EnterState(m_stunState);
+            else
+                m_agent.EnterState(m_airStunState);
         }
-        public void EnterKnockback(float strength, Vector2 direction, float stunLength, float height = 1f)
+        public void EnterKnockback(float strength, Vector2 direction, float stunLength = 0f, float height = 1f)
         {
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
         }
-        public void EnterAirJuggle(float strength, Vector3 direction, float stunLength, float airStallLength)
+        public void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength = 0f)
         {
             ApplyStun(stunLength);
-            m_agent.WriteMemory("AirStallLength", airStallLength);
+            m_agent.WriteMemory("AirStall", airStallLength);
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
         }
@@ -120,7 +110,7 @@ namespace Stirge.Enemy
         public void DebugAirJuggle(InputAction.CallbackContext context)
         {
             if (context.started)
-                EnterAirJuggle(300f, Vector3.up, 0f, 1f);
+                EnterAirJuggle(300f, Vector3.up, 1.3f, 4f);
         }
 
         private void OnDrawGizmos()

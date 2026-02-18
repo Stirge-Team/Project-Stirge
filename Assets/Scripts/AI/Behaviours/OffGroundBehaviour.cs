@@ -9,18 +9,23 @@ namespace Stirge.AI
         [SerializeField] protected float m_offGroundTime;
         protected float m_offGroundTimer;
 
-        protected bool offGround => m_offGroundTimer >= m_offGroundTime;
-
         public override void _Enter(Agent agent)
         {
-            m_offGroundTimer = 0;
+            agent.WriteMemory("OffGround", false);
+            m_offGroundTimer = m_offGroundTime;
             base._Enter(agent);
         }
 
         public override void _Update(Agent agent)
         {
-            if (m_offGroundTimer < m_offGroundTime)
-                m_offGroundTimer += Time.deltaTime;
+            if (!agent.RetrieveMemory<bool>("OffGround"))
+            {
+                m_offGroundTimer -= Time.deltaTime;
+                if (m_offGroundTimer <= 0)
+                {
+                    agent.WriteMemory("OffGround", true);
+                }
+            }
         }
     }
 }

@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
-  m_Name: Stun
+  m_Name: Air Stun
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours: []
-  m_transitions: []
+  m_transitions:
+  - m_targetState: {fileID: 0}
+    m_conditions: []
   references:
     version: 2
     RefIds: []

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &852348058731763023
+--- !u!1 &3021086195440603836
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1967851651726813347}
-  - component: {fileID: -2148700359381671500}
+  - component: {fileID: 6992664388064194655}
+  - component: {fileID: -3517943879261667420}
   m_Layer: 0
-  m_Name: Grounded Condition
+  m_Name: Kinematic Behaviour
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1967851651726813347
+--- !u!4 &6992664388064194655
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 852348058731763023}
+  m_GameObject: {fileID: 3021086195440603836}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -32,15 +32,16 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-2148700359381671500
+--- !u!114 &-3517943879261667420
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 852348058731763023}
+  m_GameObject: {fileID: 3021086195440603836}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3736ff6d49d724d4ebd5b35ef9357c8d, type: 3}
+  m_Script: {fileID: 11500000, guid: a42346e13ee80824ba9f7bf7e5d1238a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.GroundedCondition
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.KinematicBehaviour
+  m_exitMode: 1
