@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 
 namespace Strige.Camera {
 public class TrackingCamera : MonoBehaviour
@@ -276,16 +275,41 @@ public class TrackingCamera : MonoBehaviour
       //If this new target isn't already a target
       else if(!m_secondaryTargets.Contains(targetObject) && m_primaryTarget != targetObject)
       {
-        ArrayUtility.Add(ref m_secondaryTargets, targetObject);
+         //create a new tmp array and recreate the main one plus 1 index
+        Transform[] tmp = new Transform[m_secondaryTargets.Length + 1];
+        for(int i = 0; i < m_secondaryTargets.Length; i++)
+        {
+          tmp[i] = m_secondaryTargets[i];
+        }
+        tmp[tmp.Length - 1] = targetObject;
+        m_secondaryTargets = tmp;
       }
     }
     public void RemoveTarget(int arrayIndex)
     {
-      ArrayUtility.RemoveAt(ref m_secondaryTargets, arrayIndex);
+      m_secondaryTargets[arrayIndex] = null;
+      Transform[] tmp = new Transform[m_secondaryTargets.Length - 1];
+      for(int i = 0; i < m_secondaryTargets.Length; i++)
+      {
+        if(i < arrayIndex)
+          tmp[i] = m_secondaryTargets[i];
+        else if (i > arrayIndex)
+          tmp[i - 1] = m_secondaryTargets[i];
+      }
+      m_secondaryTargets = tmp;
     }
     public void RemoveTarget(Transform targetObject)
     {
-      ArrayUtility.Remove(ref m_secondaryTargets, targetObject);
+      if(m_secondaryTargets.Contains(targetObject))
+      {
+        for(int i = 0; i < m_secondaryTargets.Length; i++)
+        {
+          if(m_secondaryTargets[i] == targetObject)
+          {
+            RemoveTarget(i);
+          }
+        }
+      }
     }
     public void OnLook(Vector2 value)
     {
