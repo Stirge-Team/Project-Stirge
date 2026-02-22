@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Strige.Camera;
 
 namespace Strige.Player {
 public class PlayerMovement : MonoBehaviour
@@ -121,4 +122,8 @@ public class PlayerMovement : MonoBehaviour
 			//Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
 		}
 	}
+  public void OnLook(InputValue value)
+  {
+    Object.FindObjectOfType<TrackingCamera>().OnLook(value.Get<Vector2>());
+  }
 }}
