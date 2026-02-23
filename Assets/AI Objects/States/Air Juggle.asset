@@ -13,23 +13,36 @@ MonoBehaviour:
   m_Name: Air Juggle
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: 0}
+  - {fileID: -794739082396857851, guid: c492cd57019fadf4b8376cecee5d9fc3, type: 3}
   m_transitions:
-  - m_targetState: {fileID: 0}
+  - m_targetState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
     m_conditions:
-    - rid: 5052026525319692373
-    - rid: 5052026525319692364
+    - rid: 5052026654975590656
+    - rid: 5052026654975590657
+  - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+    m_conditions:
+    - rid: 5052026654975590614
+    - rid: 5052026654975590649
   references:
     version: 2
     RefIds:
-    - rid: 5052026525319692364
-      type: {class: Condition, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 5052026654975590614
+      type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 0
+        m_typeIndex: 4
         m_invertValue: 0
-    - rid: 5052026525319692373
-      type: {class: DistanceCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 5052026654975590649
+      type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 2
+        m_typeIndex: 5
+        m_invertValue: 1
+    - rid: 5052026654975590656
+      type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 4
         m_invertValue: 0
-        m_distance: 0
+    - rid: 5052026654975590657
+      type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 5
+        m_invertValue: 0

@@ -12,10 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
   m_Name: Air Stun
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
-  m_behaviours: []
+  m_behaviours:
+  - {fileID: -1902846260076245579, guid: 343c25a1fa0db3649984f4f86357c5b6, type: 3}
+  - {fileID: -3517943879261667420, guid: 9eadcda5796291a43ad8ead19e7dc3a4, type: 3}
   m_transitions:
-  - m_targetState: {fileID: 0}
-    m_conditions: []
+  - m_targetState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
+    m_conditions:
+    - rid: 5052026654975590764
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 5052026654975590764
+      type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 5
+        m_invertValue: 1

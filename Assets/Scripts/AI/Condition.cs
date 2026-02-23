@@ -7,7 +7,7 @@ namespace Stirge.AI
     {   
         [SerializeField] private int m_typeIndex = 0;
         [SerializeField] private bool m_invertValue = false;
-        
+
         public bool IsTrue(Agent agent)
         {
             return _IsTrue(agent) == !m_invertValue;
