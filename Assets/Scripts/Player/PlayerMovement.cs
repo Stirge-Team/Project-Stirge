@@ -1,22 +1,28 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Strige.Camera;
+using System;
 
 namespace Strige.Player {
 public class PlayerMovement : MonoBehaviour
 {
+  [System.Serializable]
+  private struct stateVariables
+  {
+    [SerializeField]
+    private string m_name;
+    [Tooltip("The acceleriation of the player")]
+    public float _horizontalAcceleration;
+    [Tooltip("The maximum velocity the player can reach")]
+    public float _maximumHorizontalSpeed;
+    [Tooltip("The speed at which the player turns around to face the given input direction")]
+    public float _rotationSpeed;
+  }
 	private Vector2 m_inputDirection = new Vector2();
 	private Rigidbody m_playerBody;
 	[Header("Horizontal Movement")]
-  [SerializeField, Tooltip("The rate at which the player's horizontal velocity increases on the ground.")]
-	private float m_horizontalGroundedAccel;
-  [SerializeField, Tooltip("The rate at which the player's horizontal velocity increases in the air.")]
-  private float m_horizontalAerialAccel;
-  [SerializeField, Tooltip("The maximum units the player can move.")]
-  private float m_maxHorizontalVelocity;
-  [SerializeField, Tooltip("The degrees that the player object rotates")]
-  private float m_rotationSpeed;
-
+  [SerializeField, Tooltip("These are the values that will be used while the player is 1st: Grounded, 2nd: Aerial")]
+  private stateVariables[] m_StateSettings = new stateVariables[2];
+  private stateVariables m_currentStateSettings => m_StateSettings[Convert.ToInt32(!IsGrounded)];
 
 	[Header("Vertical Movement")]
 	[SerializeField, Tooltip("The amount of force used to push the player object up.")]
@@ -28,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField, Tooltip("The distance from the center of the player that considers them grounded.")]
 	private float m_groundCheckDistance;
 	private LayerMask m_groundCheckLayers;
+  [SerializeField, Tooltip("The maximum speed the player can fall (0 will skip this check0"), Min(0)]
+  private float m_fallSpeedCap = 0;
 
 
 	private Transform m_cameraTransform;
@@ -51,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
     if(attemptedMoveDirection.magnitude > 0)
     {
       //Interperlate the rotations between the current player rotation and the given input direction
-      transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_rotationSpeed);
+      transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed);
     }
     //Quaternion rotationDirDelta = transform.rotation * lookDir;
     //transform.rotation = Quaternion.Lerp(transform.rotation, lookDir, rotationDirDelta.magnitude);
@@ -59,24 +67,28 @@ public class PlayerMovement : MonoBehaviour
     //Resets the rotation so the player object isn't facing down
     transform.Rotate(-transform.rotation.x, 0, 0);
     //Setup the force that will be applied
-    Vector3 moveForce = m_inputDirection.magnitude * transform.forward * ((IsGrounded) ? m_horizontalGroundedAccel : m_horizontalAerialAccel);
+    Vector3 moveForce = m_inputDirection.magnitude * transform.forward * m_currentStateSettings._horizontalAcceleration;
 
     //Finds the player's current horizontal velocity
     Vector3 playerBodyHorizontalVelocity = new Vector3 (m_playerBody.linearVelocity.x, 0, m_playerBody.linearVelocity.z);
     //Estimate what the resulting velocity will be - IDK how acurate this is but it works so don't touch it
     Vector3 estimVelocityDelta = (playerBodyHorizontalVelocity + moveForce * Time.deltaTime);
-    if(estimVelocityDelta.magnitude < m_maxHorizontalVelocity)
+    if(estimVelocityDelta.magnitude < m_currentStateSettings._maximumHorizontalSpeed)
     {
       //Applies the calculated movement to the players current position.
       m_playerBody.AddForce(moveForce);
     }
 		
-		//Ground check
-		RaycastHit hit;
-		//Casts a ray down from the player's center, and outs true if a ground layer object is hit
-		if(Physics.Raycast(transform.position, Vector3.down, out hit, m_groundCheckDistance, m_groundCheckLayers))
+    if(m_fallSpeedCap > 0 && -m_fallSpeedCap > m_playerBody.linearVelocity.y)
+    {
+      //Debug.Log($"Player fall speed: {m_playerBody.linearVelocity.y}");
+      m_playerBody.linearVelocity -= new Vector3(0, m_playerBody.linearVelocity.y + m_fallSpeedCap, 0); 
+    }
+		
+    //Casts a ray down from the player's center, and outs true if a ground layer object is hit
+		if(Physics.CheckSphere(transform.position + Vector3.down * m_groundCheckDistance, 0.5f, m_groundCheckLayers))
 		{
-			Debug.DrawRay(transform.position, Vector3.down * m_groundCheckDistance, Color.green);
+			//Debug.DrawSphere(transform.position + Vector3.down * m_groundCheckDistance, 1, Color.green);
 			//Check if the player is not considered grounded
 			if(!IsGrounded)
 			{
@@ -122,8 +134,4 @@ public class PlayerMovement : MonoBehaviour
 			//Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
 		}
 	}
-  public void OnLook(InputValue value)
-  {
-    Object.FindObjectOfType<TrackingCamera>().OnLook(value.Get<Vector2>());
-  }
 }}
