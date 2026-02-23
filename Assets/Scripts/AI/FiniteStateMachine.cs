@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace Stirge.AI
@@ -16,15 +17,13 @@ namespace Stirge.AI
 
             foreach (Transition transition in m_currentState.Transitions)
             {
-                foreach (Condition condition in transition.conditions)
+                // returns true if there are no Conditions and returns true for a Condition if it is empty/null
+                if (transition.conditions.Length == 0 || transition.conditions.All(c => c == null || c.IsTrue(agent)))
                 {
-                    if (condition.IsTrue(agent))
-                    {
-                        m_currentState._Exit(agent);
-                        m_currentState = transition.targetState;
-                        m_currentState._Enter(agent);
-                        return;
-                    }
+                    m_currentState._Exit(agent);
+                    m_currentState = transition.targetState;
+                    m_currentState._Enter(agent);
+                    return;
                 }
             }
         }

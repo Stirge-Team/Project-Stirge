@@ -3,11 +3,11 @@ using UnityEngine;
 namespace Stirge.AI
 {
     [System.Serializable]
-    public class GroundedCondition : Condition
+    public class StunnedCondition : Condition
     {
         protected override bool _IsTrue(Agent agent)
         {
-            return agent.RetrieveMemory<bool>("Grounded");
+            return agent.ContainsMemory("Stun");
         }
     }
 }

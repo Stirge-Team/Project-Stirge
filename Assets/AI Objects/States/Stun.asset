@@ -13,6 +13,22 @@ MonoBehaviour:
   m_Name: Stun
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: 5713576353753221356, guid: 5a9663d0416541d4f8e31311c989b505, type: 3}
+  - {fileID: -1902846260076245579, guid: 343c25a1fa0db3649984f4f86357c5b6, type: 3}
   m_transitions:
-  - {fileID: 11400000, guid: eb03b676119d9394991fad0aeb83b4d7, type: 2}
+  - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+    m_conditions:
+    - rid: 5052026654975590829
+    - rid: 5052026654975590851
+  references:
+    version: 2
+    RefIds:
+    - rid: 5052026654975590829
+      type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 5
+        m_invertValue: 1
+    - rid: 5052026654975590851
+      type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 3
+        m_invertValue: 0
