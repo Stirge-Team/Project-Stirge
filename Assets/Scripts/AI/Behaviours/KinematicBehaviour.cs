@@ -2,23 +2,23 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    public class KnockbackBehaviour : OffGroundBehaviour
+    public class KinematicBehaviour : Behaviour
     {
+        [SerializeField] private PhysicsMode m_exitMode;
+        
         public override void _Enter(Agent agent)
         {
-            agent.SetPhysicsMode(PhysicsMode.Physics);
-            base._Enter(agent);
+            agent.SetPhysicsMode(PhysicsMode.Kinematic);
         }
 
         public override void _Update(Agent agent)
         {
-            base._Update(agent);
+            
         }
 
         public override void _Exit(Agent agent)
         {
-            agent.SetPhysicsMode(PhysicsMode.NavMesh);
-            base._Exit(agent);
+            agent.SetPhysicsMode(m_exitMode);
         }
     }
 }

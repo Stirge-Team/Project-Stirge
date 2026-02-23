@@ -1,14 +1,11 @@
-using UnityEngine;
-
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class AirJuggleCondition : Condition
-    {
-        [SerializeField] private bool m_returnTrueIfGettingAirJuggled = true;
-        
-        public override bool IsTrue(Agent agent)
+    {        
+        protected override bool _IsTrue(Agent agent)
         {
-            return agent.ContainsMemory("AirStallLength") == m_returnTrueIfGettingAirJuggled;
+            return agent.ContainsMemory("AirStallLength");
         }
     }
 }
