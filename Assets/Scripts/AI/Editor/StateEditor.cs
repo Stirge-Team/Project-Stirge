@@ -122,39 +122,55 @@ namespace Stirge.AI
             {
                 labelText = "Empty Transition";
             }
-            EGL.LabelField(labelText);
+            EGL.LabelField(labelText, EditorStyles.boldLabel);
 
             EG.indentLevel++;
             EGL.PropertyField(targetState, new GUIContent("Target State"));
 
             // draw all Conditions
             SerializedProperty conditions = transition.FindPropertyRelative("m_conditions");
-            EGL.LabelField(new GUIContent("Conditions"), EditorStyles.boldLabel);
-            EG.indentLevel++;
+            //EGL.LabelField(new GUIContent("Conditions"), EditorStyles.boldLabel);
             if (conditions != null)
             {
-                for (int i = 0; i < conditions.arraySize; i++)
+                int[] oldTypes = new int[conditions.arraySize];
+                int oldArraySize = conditions.arraySize;
+
+                // populate old types and also check for null elements
+                for (int i = 0; i < oldArraySize; i++)
                 {
-                    SerializedProperty condition = conditions.GetArrayElementAtIndex(i);
-                    int oldType = condition.FindPropertyRelative("m_typeIndex").intValue;
+                    var condition = conditions.GetArrayElementAtIndex(i);
+                    condition.managedReferenceValue ??= new Condition();
+                    oldTypes[i] = conditions.GetArrayElementAtIndex(i).FindPropertyRelative("m_typeIndex").intValue;
+                }
 
-                    // draw property drawer
-                    EGL.PropertyField(condition, new GUIContent(stringTypes[oldType]));
-
-                    // if changing type
-                    int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
-                    if (newType != oldType)
+                EGL.PropertyField(conditions, new GUIContent("Conditions"));
+                if (oldArraySize == conditions.arraySize)
+                {
+                    for (int i = 0; i < conditions.arraySize; i++)
                     {
-                        Condition newCondition = System.Activator.CreateInstance(ConditionTypes[newType]) as Condition;
-                        condition.managedReferenceValue = newCondition;
-                        condition.FindPropertyRelative("m_typeIndex").intValue = newType;
-                        m_hasChanged = true;
+                        SerializedProperty condition = conditions.GetArrayElementAtIndex(i);
+                        /*
+                        int oldType = condition.FindPropertyRelative("m_typeIndex").intValue;
+
+                        // draw property drawer
+                        EGL.PropertyField(condition, new GUIContent(stringTypes[oldType]));
+                        */
+                        // if changing type
+                        int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
+                        if (newType != oldTypes[i])
+                        {
+                            Condition newCondition = System.Activator.CreateInstance(ConditionTypes[newType]) as Condition;
+                            condition.managedReferenceValue = newCondition;
+                            condition.FindPropertyRelative("m_typeIndex").intValue = newType;
+                            m_hasChanged = true;
+                        }
+                        //DrawCondition(conditions.GetArrayElementAtIndex(i));
                     }
-                    //DrawCondition(conditions.GetArrayElementAtIndex(i));
                 }
             }
             else
             {
+                conditions.managedReferenceValue = new Condition[0];
                 EG.BeginDisabledGroup(true);
                 EGL.TextField("No Conditions!");
                 EG.EndDisabledGroup();
@@ -162,6 +178,7 @@ namespace Stirge.AI
 
             EG.indentLevel--;
 
+            /*
             // add and remove buttons
             EGL.BeginHorizontal();
             Rect addButtonRect = EG.IndentedRect(EG.IndentedRect(EGL.GetControlRect()));
@@ -181,6 +198,7 @@ namespace Stirge.AI
             EGL.EndHorizontal();
 
             EG.indentLevel--;
+            */
         }
 
 #if UNITY_EDITOR

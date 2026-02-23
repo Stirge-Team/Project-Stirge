@@ -8,14 +8,15 @@ namespace Stirge.AI
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            SerializedProperty typeIndex = property.FindPropertyRelative("m_typeIndex");
+            int currentType = typeIndex.intValue;
+
+            label = new GUIContent(StateEditor.StringTypes[currentType]);
             EditorGUI.BeginProperty(position, label, property);
             Rect rectFoldout = new Rect(position.min.x, position.min.y, position.size.x, EditorGUIUtility.singleLineHeight);
             property.isExpanded = EditorGUI.Foldout(rectFoldout, property.isExpanded, label);
             if (property.isExpanded)
             {
-                SerializedProperty typeIndex = property.FindPropertyRelative("m_typeIndex");
-                int currentType = typeIndex.intValue;
-
                 Rect changeTypePopup = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight, position.size.x - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
                 int popupValue = EditorGUI.Popup(changeTypePopup, currentType, StateEditor.StringTypes);
                 if (popupValue != currentType)
@@ -40,8 +41,8 @@ namespace Stirge.AI
             EditorGUI.LabelField(position, StateEditor.StringTypes[currentType]);
             EditorGUI.PropertyField(position, property.FindPropertyRelative("m_invertValue"));
 
-            EditorGUI.EndProperty();
             */
+            EditorGUI.EndProperty();
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
