@@ -430,19 +430,69 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  m_StateSettings:
-  - m_name: Grounded
-    _horizontalAcceleration: 40
-    _maximumHorizontalSpeed: 40
+  m_groundSettings:
+    _horizontalAcceleration: 3000
+    _maximumHorizontalSpeed: 9
     _rotationSpeed: 20
-  - m_name: Aeiral
-    _horizontalAcceleration: 1
-    _maximumHorizontalSpeed: 20
-    _rotationSpeed: 0
-  m_jumpForce: 1000
-  m_coyoteTime: 0.2
+    _fiction: 1000
+    _inputStrength:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  m_aerialSettings:
+    _horizontalAcceleration: 500
+    _maximumHorizontalSpeed: 12
+    _rotationSpeed: 5
+    _fiction: 10
+    _inputStrength:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  m_jumpHeight: 50
   m_groundCheckDistance: 0.51
-  m_fallSpeedCap: 10
+  m_coyoteTime: 0.2
+  m_fallSpeedCap: 1000
+  m_fallTimeSpeedMultiplier: 1
 --- !u!54 &55588140
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -477,7 +527,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 55588138}
-  m_Material: {fileID: 13400000, guid: b5c6fc28399abdeca89d9568afcb3646, type: 2}
+  m_Material: {fileID: 13400000, guid: 62b6a0de4e01eb08da9125c2d9e918c4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -502,7 +552,7 @@ Transform:
   m_GameObject: {fileID: 55588138}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 8.72, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -788,7 +838,6 @@ GameObject:
   - component: {fileID: 621051011}
   - component: {fileID: 621051014}
   - component: {fileID: 621051013}
-  - component: {fileID: 621051012}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -811,27 +860,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 429272662}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &621051012
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621051010}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &621051013
 MeshRenderer:
   m_ObjectHideFlags: 0
