@@ -8,15 +8,15 @@ public class PlayerMovement : MonoBehaviour
   [System.Serializable]
   private struct stateVariables
   {
-    [Tooltip("The acceleriation of the player (deltaTime involved). DO NOT see this value far greater then the maximum speed, this will cause the player to jump around.")]
+    [Tooltip("The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around.")]
     public float _horizontalAcceleration;
-    [Tooltip("The maximum velocity the player can reach")]
+    [Tooltip("The maximum velocity the player can reach. Once reaching this speed, more force will not be applied in the player's current direction of travel.")]
     public float _maximumHorizontalSpeed;
     [Tooltip("The speed at which the player turns around to face the given input direction")]
     public float _rotationSpeed;
-    [Tooltip("The amount of friction/decceleration that is applied in this state (deltaTime involved)")]
+    [Tooltip("A constant force applied to the player. It works to reduce the player's speed down to zero.")]
     public float _friction;
-    [Tooltip("The strength the player's input has on the force applied")]
+    [Tooltip("Scales the user input.")]
     public AnimationCurve _inputStrength;
   }
   //The input from the player
@@ -36,11 +36,11 @@ public class PlayerMovement : MonoBehaviour
 	private float m_jumpHeight = 5f;
   //Grounded bool
 	public bool IsGrounded {get; private set;}
-  [SerializeField, Tooltip("The distance from the center of the player that considers them grounded.")]
+  [SerializeField, Tooltip("The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f.")]
   private float m_groundCheckDistance;
   //The layers that the player considers "ground"
   private LayerMask m_groundCheckLayers;
-	[SerializeField, Tooltip("The window after falling that the player can still jump.")]
+	[SerializeField, Tooltip("The window after falling off an object that the player can still jump.")]
 	private float m_coyoteTime = 0.2f;
   //The remaining time for coyote time
 	private float m_coyoteCountdown;
