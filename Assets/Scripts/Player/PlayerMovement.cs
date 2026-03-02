@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using Strige.Camera;
 
 namespace Strige.Player {
 public class PlayerMovement : MonoBehaviour
@@ -203,5 +204,8 @@ public class PlayerMovement : MonoBehaviour
     Gizmos.DrawWireSphere(transform.position + transform.up * 2 , m_coyoteTime);
     Gizmos.color = Color.orange;
     Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteCountdown);
+  public void OnLook(InputValue value)
+  {
+    Object.FindObjectOfType<TrackingCamera>().OnLook(value.Get<Vector2>());
   }
 }}
