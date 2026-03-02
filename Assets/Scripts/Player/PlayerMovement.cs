@@ -14,8 +14,8 @@ public class PlayerMovement : MonoBehaviour
     public float _maximumHorizontalSpeed;
     [Tooltip("The speed at which the player turns around to face the given input direction")]
     public float _rotationSpeed;
-    [Tooltip("The amount of fiction/decceleration that is applied in this state (deltaTime involved)")]
-    public float _fiction;
+    [Tooltip("The amount of friction/decceleration that is applied in this state (deltaTime involved)")]
+    public float _friction;
     [Tooltip("The strength the player's input has on the force applied")]
     public AnimationCurve _inputStrength;
   }
@@ -84,15 +84,18 @@ public class PlayerMovement : MonoBehaviour
     //Get the player's horizontal velocity
     Vector3 playerBodyHorizontalVelocity = new Vector3 (m_playerBody.linearVelocity.x, 0, m_playerBody.linearVelocity.z);
 
+    Debug.DrawRay(transform.position, playerBodyHorizontalVelocity, Color.blue);
+    Debug.DrawRay(transform.position, attemptedMoveDirection, Color.red);
+
     //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
-    if(playerBodyHorizontalVelocity.magnitude < m_currentStateSettings._maximumHorizontalSpeed)
+    if(playerBodyHorizontalVelocity.magnitude < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(playerBodyHorizontalVelocity.normalized, attemptedMoveDirection) > 90.0f)
     {
       //Apply the force to the player
       m_playerBody.AddForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.magnitude) * m_inputDirection.magnitude * transform.forward * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
     }
 
     //do some decceleration - the clamped value helps when getting the movement down to zero
-    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._fiction * Mathf.Clamp(playerBodyHorizontalVelocity.magnitude, 0, 1) * Time.deltaTime);
+    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._friction * Mathf.Clamp(playerBodyHorizontalVelocity.magnitude, 0, 1) * Time.deltaTime);
     
     //Clamping the players fall speed
     if(m_fallSpeedCap > 0 && -m_fallSpeedCap > m_playerBody.linearVelocity.y)
@@ -162,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
 		//If the player is considered grounded
 		if (IsGrounded)
 		{
+      m_playerBody.linearVelocity = new Vector3(m_playerBody.linearVelocity.x ,0, m_playerBody.linearVelocity.z);
 			//Apply a force up on the player
 			m_playerBody.AddForce(transform.up * Mathf.Sqrt(2 * m_jumpHeight * -Physics.gravity.y), ForceMode.Impulse);
 			//Remove all coyote time 
@@ -169,4 +173,35 @@ public class PlayerMovement : MonoBehaviour
 			//Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
 		}
 	}
+
+  public void OnDrawGizmos()
+  {
+    Gizmos.color = Color.blue;
+    Gizmos.DrawWireSphere(transform.position, m_currentStateSettings._maximumHorizontalSpeed);
+
+    Gizmos.color = Color.green;
+    Gizmos.DrawWireSphere(transform.position, (m_currentStateSettings._horizontalAcceleration - m_currentStateSettings._friction) * 0.0166f);
+
+    Gizmos.color = Color.purple;
+    Gizmos.DrawSphere(transform.position + -transform.up * m_groundCheckDistance, 0.5f);
+    switch(IsGrounded)
+    {
+      case true:
+        Gizmos.DrawSphere(transform.position + transform.up * m_jumpHeight, 0.5f);
+        break;
+      case false:
+        Gizmos.DrawSphere(transform.position + transform.up * (m_jumpHeight - m_lastCheckedHeight), 0.5f);
+        break;
+    }
+
+    Gizmos.color = Color.red;
+    Gizmos.DrawWireCube(transform.position - transform.up * m_fallSpeedCap, Vector3.one);
+    if(m_playerBody)
+    Gizmos.DrawRay(transform.position, transform.up * Mathf.Clamp(m_playerBody.linearVelocity.y, -Mathf.Infinity, 0));
+
+    Gizmos.color = Color.yellow;
+    Gizmos.DrawWireSphere(transform.position + transform.up * 2 , m_coyoteTime);
+    Gizmos.color = Color.orange;
+    Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteCountdown);
+  }
 }}
