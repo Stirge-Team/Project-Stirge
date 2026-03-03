@@ -10,19 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
-  m_Name: Idle
+  m_Name: Respawning
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: 6774667898740994507, guid: 5ab146358d59c5b4ba28ccde8a9e34cd, type: 3}
-  m_transitions:
-  - m_targetState: {fileID: 11400000, guid: 36d4f6570bd09424487a00be66004c82, type: 2}
-    m_conditions:
-    - rid: 5052026654975590782
+  - {fileID: -6454486873077666231, guid: d1850e3e86343084e9403e5984113085, type: 3}
+  m_transitions: []
   references:
     version: 2
-    RefIds:
-    - rid: 5052026654975590782
-      type: {class: TargetInRangeCondition, ns: Stirge.AI, asm: Assembly-CSharp}
-      data:
-        m_typeIndex: 6
-        m_invertValue: 0
+    RefIds: []

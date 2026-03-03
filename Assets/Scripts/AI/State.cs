@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    [CreateAssetMenu(fileName = "State", menuName = "StirgeAI/State", order = 1)]
+    [CreateAssetMenu(fileName = "State", menuName = "Stirge AI/State", order = 1)]
     public class State : ScriptableObject
     {       
         [SerializeField] private List<Behaviour> m_behaviours;

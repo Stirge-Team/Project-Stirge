@@ -113,7 +113,7 @@ namespace Stirge.Enemy
                 EnterAirJuggle(300f, Vector3.up, 1.3f, 4f);
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             m_agent.OnDrawGizmos();
         }
