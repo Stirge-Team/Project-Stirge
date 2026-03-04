@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a69ed2a3f11585f43ac994ee1330d401, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.FiniteStateMachine
-  m_currentState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+  m_currentState: {fileID: 11400000, guid: dd9b18eb3c955534ab217e482a13a18a, type: 2}
 --- !u!1 &4920417054218610179
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,10 +518,6 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: bc5dbca2-689d-4cdd-8e1a-74cf73412993
     m_ActionName: 'Debug/AirJuggle[/Keyboard/r]'
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: f6d83f25-3174-44c5-89a5-4dc5b3195c4a
-    m_ActionName: 'Debug/Air Stun[/Keyboard/t]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard & Mouse
   m_DefaultActionMap: Debug

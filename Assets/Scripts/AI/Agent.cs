@@ -20,10 +20,9 @@ namespace Stirge.AI
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
 
-        private Transform m_target;
-
         public Transform transform => m_transform;
-        public Vector3 TargetPosition => m_target != null ? m_target.position : default;
+        private Vector3 m_targetPosition;
+        public Vector3 TargetPosition => m_targetPosition;
 
         [Header("Agent Properties")]
         [SerializeField, Min(0)] private float m_detectionRadius;
@@ -43,7 +42,6 @@ namespace Stirge.AI
         #region Core
         public void Start()
         {
-            m_target = GameObject.FindGameObjectWithTag("Player").transform;
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
         }
@@ -86,11 +84,6 @@ namespace Stirge.AI
         public void EnterState(State newState)
         {
             m_fsm.EnterState(this, newState);
-        }
-
-        public void SetTarget(Transform target)
-        {
-            m_target = target;
         }
 
         public void SetPhysicsMode(PhysicsMode value)
@@ -139,12 +132,10 @@ namespace Stirge.AI
             m_rb.AddForce(new Vector3(direction.x, height, direction.y).normalized * strength);
         }
 
-        public void CalculatePathToTarget()
+        public void SetTargetPosition(Vector3 pos)
         {
-            if (Vector3.Distance(m_transform.position, TargetPosition) > StoppingDistance && Vector3.Distance(TargetPosition, m_nav.pathEndPosition) > StoppingDistance)
-            {
-                m_nav.SetDestination(TargetPosition);
-            }
+            m_targetPosition = pos;
+            m_nav.SetDestination(pos);
         }
         public void ClearPath()
         {
