@@ -17,15 +17,18 @@ namespace Stirge.AI
 
         public void _Enter(Agent agent)
         {
-            m_transitionTimer = m_timedTransitionDelay;
-            
             foreach (Behaviour behaviour in m_behaviours)
                 behaviour._Enter(agent);
+            
+            m_transitionTimer = m_timedTransitionDelay;
 
             Debug.Log($"Entered {name} State.");
         }
         public void _Update(Agent agent)
         {
+            foreach (Behaviour behaviour in m_behaviours)
+                behaviour._Update(agent);
+            
             // if this state has a timed transition
             if (m_timedTransitionState != null)
             {
@@ -36,9 +39,6 @@ namespace Stirge.AI
                     return;
                 }
             }
-            
-            foreach (Behaviour behaviour in m_behaviours)
-                behaviour._Update(agent);
         }
         public void _Exit(Agent agent)
         {
