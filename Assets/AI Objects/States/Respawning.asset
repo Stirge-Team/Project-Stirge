@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
   m_Name: Respawning
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
-  m_behaviours:
-  - {fileID: -6454486873077666231, guid: d1850e3e86343084e9403e5984113085, type: 3}
+  m_behaviours: []
   m_transitions: []
+  m_timedTransitionState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+  m_timedTransitionDelay: 2
   references:
     version: 2
     RefIds: []

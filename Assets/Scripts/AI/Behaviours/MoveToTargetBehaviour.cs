@@ -23,7 +23,7 @@ namespace Stirge.AI
             if (delta.magnitude < agent.StoppingDistance)
                 return;
             // otherwise set target to a position on a sphere with agent.StoppingDistance radius
-            Vector3 newPosition = currentPos + delta.normalized * agent.StoppingDistance;
+            Vector3 newPosition = targetPos - delta.normalized * agent.StoppingDistance;
 
             agent.SetTargetPosition(newPosition);
         }
