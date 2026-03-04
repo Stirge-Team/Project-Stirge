@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
-using Strige.Camera;
+using Stirge.Camera;
 
-namespace Strige.Player {
+namespace Stirge.Player {
 public class PlayerMovement : MonoBehaviour
 {
   [System.Serializable]
@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
   private float m_lastCheckedHeight = 0;
 
 	private Transform m_cameraTransform;
-	
+	private Transform m_lockOnTarget;
 
 	void Start()
 	{
@@ -71,7 +71,19 @@ public class PlayerMovement : MonoBehaviour
 	void FixedUpdate()
 	{
     //Calculates the direction to move the player in given the current inputs and camera transform
-    Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+    Vector3 attemptedMoveDirection = Vector3.zero;
+    if(m_lockOnTarget != null)
+    {
+      Vector3 directionToTarget = m_lockOnTarget.position - m_cameraTransform.position;
+      directionToTarget = new Vector3(directionToTarget.x,0,directionToTarget.z);
+      directionToTarget = directionToTarget.normalized;
+
+      attemptedMoveDirection = (directionToTarget * m_inputDirection.y + Vector3.Cross(directionToTarget, transform.up) * m_inputDirection.y).normalized;
+    }
+    else
+    {
+      attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+    }
     //Only when the player applies any directional inputs...
     if(attemptedMoveDirection.magnitude > 0)
     {
@@ -175,6 +187,20 @@ public class PlayerMovement : MonoBehaviour
 		}
 	}
 
+  public void AssignLockOnTarget(Transform target)
+  {
+    if(target != m_lockOnTarget)
+    {
+      m_lockOnTarget = target;
+    }
+  }
+  public void CancelLockOn()
+  {
+    if(m_lockOnTarget != null)
+      m_lockOnTarget = null;
+
+  }
+
   public void OnDrawGizmos()
   {
     Gizmos.color = Color.blue;
@@ -204,8 +230,5 @@ public class PlayerMovement : MonoBehaviour
     Gizmos.DrawWireSphere(transform.position + transform.up * 2 , m_coyoteTime);
     Gizmos.color = Color.orange;
     Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteCountdown);
-  public void OnLook(InputValue value)
-  {
-    Object.FindObjectOfType<TrackingCamera>().OnLook(value.Get<Vector2>());
   }
 }}

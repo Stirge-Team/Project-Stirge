@@ -18,7 +18,7 @@ namespace Stirge.AI
         {
             if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out RaycastHit hit, 100))
+                //if (Physics.Raycast(Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue()), out RaycastHit hit, 100))
                 {
                     /*
                     foreach (Agent agent in m_agent)
