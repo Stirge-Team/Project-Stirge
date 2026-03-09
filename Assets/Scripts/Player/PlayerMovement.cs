@@ -195,7 +195,7 @@ public class PlayerMovement : MonoBehaviour
 
   }
 
-  public void OnDrawGizmos()
+  public void OnDrawGizmosSelected()
   {
     Gizmos.color = Color.blue;
     Gizmos.DrawWireSphere(transform.position, m_currentStateSettings._maximumHorizontalSpeed);

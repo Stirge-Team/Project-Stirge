@@ -204,8 +204,19 @@ public class TrackingCamera : MonoBehaviour
             break;
           }
 
+          //follow behind main target
+          //look at the locked on target - wind waker/general zelda
+
           Vector3 betweenTargetPosition = (m_lockedOnTarget.position - m_primaryTarget.position) / 2;
           float distanceScalerForLockOn = Mathf.Clamp(betweenTargetPosition.magnitude * m_groupDistanceScaling, 1, Mathf.Infinity);
+
+          if(m_canAutoRotate)
+          {
+            Debug.DrawRay(m_lockedOnTarget.position, m_primaryTarget.position - m_lockedOnTarget.position, Color.red);
+            float angleBetween = Mathf.Atan2(m_primaryTarget.position.z - m_lockedOnTarget.position.z, m_primaryTarget.position.x - m_lockedOnTarget.position.x);
+            Debug.Log($"The angle between the primary and locked on targets is: {Mathf.Ceil(angleBetween)}");
+            SetDesiredAngle(angleBetween, false);
+          }
 
           m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
               Mathf.Cos(m_viewAngle) * m_relativePosition.x * distanceScalerForLockOn, //Move back from that centre point given the current angle, distance between the targets & any added space
@@ -214,10 +225,6 @@ public class TrackingCamera : MonoBehaviour
 
           m_cameraDesiredLookPoint = m_lockedOnTarget.position;
 
-          if(m_canAutoRotate)
-          {
-            SetDesiredAngle(-Vector3.Angle((m_primaryTarget.position - m_lockedOnTarget.position).normalized, -Vector3.right) * Mathf.Deg2Rad, false);
-          }
           break;
       }
  
@@ -267,13 +274,15 @@ public class TrackingCamera : MonoBehaviour
 
     public void OnDrawGizmosSelected()
     {
-      Gizmos.color = Color.green;
-      Gizmos.DrawSphere(m_cameraDesiredPosition, 0.25f);
-      Gizmos.DrawSphere(m_primaryTarget.position, 0.15f);
-      Gizmos.DrawWireSphere(m_primaryTarget.position, m_combatRangeCutoff);
-
       Gizmos.color = Color.yellow;
+      Gizmos.DrawSphere(m_cameraDesiredPosition, 0.25f);
       Gizmos.DrawSphere(m_cameraDesiredLookPoint, 0.25f);
+      Gizmos.DrawRay(m_primaryTarget.position, new Vector3(Mathf.Cos(m_desiredAngle) * m_relativePosition.x, m_relativePosition.y, Mathf.Sin(m_desiredAngle) * m_relativePosition.x)); 
+
+      Gizmos.color = Color.green;
+      Gizmos.DrawSphere(transform.position, 0.25f);
+      Gizmos.DrawSphere(transform.position + transform.forward * (m_cameraDesiredLookPoint - transform.position).magnitude, 0.25f);
+      Gizmos.DrawRay(m_primaryTarget.position, new Vector3(Mathf.Cos(m_viewAngle) * m_relativePosition.x, m_relativePosition.y, Mathf.Sin(m_viewAngle) * m_relativePosition.x));
 
       foreach(var targ in m_secondaryTargets)
       {
@@ -282,7 +291,7 @@ public class TrackingCamera : MonoBehaviour
         else
           Gizmos.color = Color.red;
 
-        Gizmos.DrawSphere(targ.position, 0.5f);
+        Gizmos.DrawSphere(targ.position, 0.25f);
       }
     }
 
@@ -365,6 +374,7 @@ public class TrackingCamera : MonoBehaviour
 
     private void LockOnStart()
     {
+      m_lockedOnTarget = null;
       //Check that there are targets to pull from
       if(m_secondaryTargets.Length <= 0)
       {
