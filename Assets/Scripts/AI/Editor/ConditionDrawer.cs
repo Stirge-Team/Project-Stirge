@@ -17,14 +17,14 @@ namespace Stirge.AI
             property.isExpanded = EditorGUI.Foldout(rectFoldout, property.isExpanded, label);
             if (property.isExpanded)
             {
-                Rect changeTypePopup = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight, position.size.x - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
+                Rect changeTypePopup = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight, position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
                 int popupValue = EditorGUI.Popup(changeTypePopup, currentType, StateEditor.StringTypes);
                 if (popupValue != currentType)
                 {
                     typeIndex.intValue = popupValue;
                 }
 
-                Rect rectInvertProp = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 2, position.size.x - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
+                Rect rectInvertProp = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 2, position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
                 SerializedProperty invertValueProp = property.FindPropertyRelative("m_invertValue");
                 EditorGUI.PropertyField(rectInvertProp, invertValueProp);
 
@@ -33,6 +33,8 @@ namespace Stirge.AI
                     Rect rectDistance = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 3, position.size.x - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
                     SerializedProperty distanceProp = property.FindPropertyRelative("m_distance");
                     EditorGUI.PropertyField(rectDistance, distanceProp);
+                    if (distanceProp.floatValue < 0)
+                        distanceProp.floatValue = 0;
                 }
             }
 

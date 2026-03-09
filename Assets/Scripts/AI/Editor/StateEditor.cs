@@ -74,10 +74,27 @@ namespace Stirge.AI
             SerializedProperty behaviours = serializedObject.FindProperty("m_behaviours");
             EGL.PropertyField(behaviours);
 
-            // draw Transitions label
-            SerializedProperty transitions = serializedObject.FindProperty("m_transitions");
-            EGL.LabelField(new GUIContent("Transitions"), EditorStyles.boldLabel);
+            // draw Timed Transition properties
+            SerializedProperty timedTransition = serializedObject.FindProperty("m_timedTransitionState");
+            SerializedProperty timedTransitionDelay = serializedObject.FindProperty("m_timedTransitionDelay");
+            EGL.LabelField("Timed Transition", EditorStyles.boldLabel);
+            EG.indentLevel++;
+            // show label saying to leave blank if no timed transition wanted
+            EG.BeginDisabledGroup(true);
+            EGL.TextField("Leave blank for no Timed Transition.");
+            EG.EndDisabledGroup();
+            EGL.PropertyField(timedTransition, new GUIContent("Target State"));
+            EGL.PropertyField(timedTransitionDelay, new GUIContent("Delay", "Time in seconds from entering this State that a Transition will ooccur to the Timed Transition State."));
+            EG.indentLevel--;
 
+            // empty line
+            EGL.Space(12f);
+
+            // draw Transitions
+            SerializedProperty transitions = serializedObject.FindProperty("m_transitions");
+            EGL.PropertyField(transitions);
+
+            /*
             // add and subtract buttons
             EGL.BeginHorizontal();
             if (GL.Button("Add Transition"))
@@ -91,23 +108,25 @@ namespace Stirge.AI
                 m_hasChanged = true;
             }
             EGL.EndHorizontal();
+            */
 
-            // draw all Transitions
-            if (transitions != null && transitions.arraySize > 0)
-            {
-                for (int i = 0; i < transitions.arraySize; i++)
-                {
-                    DrawTransition(transitions.GetArrayElementAtIndex(i));
-                }
-            }
-            else
-            {
-                EG.BeginDisabledGroup(true);
-                EGL.TextField("No Transitions!");
-                EG.EndDisabledGroup();
-            }
         }
 
+        private static void PopulateStringTypes()
+        {
+            // get all the Conditions from the static list and change them from CamelCase to English
+            stringTypes = ConditionTypes.Select(t => t.Name).ToArray();
+            for (int i = 0; i < stringTypes.Length; i++)
+            {
+                // turns camel case into separate words (looks nice)
+                stringTypes[i] = Regex.Replace(Regex.Replace(stringTypes[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
+            }
+            // show Condition as this
+            stringTypes[0] = "Empty Condition";
+        }
+
+#if UNITY_EDITOR
+        [System.Obsolete]
         private void DrawTransition(SerializedProperty transition)
         {
             // Target State field
@@ -201,7 +220,6 @@ namespace Stirge.AI
             */
         }
 
-#if UNITY_EDITOR
         [System.Obsolete]
         private void DrawCondition(SerializedProperty condition)
         {
@@ -234,18 +252,5 @@ namespace Stirge.AI
             }
         }
 #endif
-
-        private static void PopulateStringTypes()
-        {
-            // get all the Conditions from the static list and change them from CamelCase to English
-            stringTypes = ConditionTypes.Select(t => t.Name).ToArray();
-            for (int i = 0; i < stringTypes.Length; i++)
-            {
-                // turns camel case into separate words (looks nice)
-                stringTypes[i] = Regex.Replace(Regex.Replace(stringTypes[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
-            }
-            // show Condition as this
-            stringTypes[0] = "Empty Condition";
-        }
     }
 }
