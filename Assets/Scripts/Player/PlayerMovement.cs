@@ -4,6 +4,7 @@ using System;
 using Stirge.Camera;
 
 namespace Stirge.Player {
+[RequireComponent(typeof(MovementMotor))]
 public class PlayerMovement : MonoBehaviour
 {
   [System.Serializable]
@@ -23,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
   //The input from the player
 	private Vector2 m_inputDirection = new Vector2();
   //I bet you can't guess what this one is for
-	private Rigidbody m_playerBody;
+	//private Rigidbody m_playerBody;
 	[Header("Horizontal Movement Settings")]
   [SerializeField, Tooltip("These are the values that will be used while the player is grounded")]
   private stateVariables m_groundSettings;
@@ -58,13 +59,16 @@ public class PlayerMovement : MonoBehaviour
 	private Transform m_cameraTransform;
 	private Transform m_lockOnTarget;
 
+  private MovementMotor m_motor;
+
 	void Start()
 	{
 		//Gets all relivant components
-		m_playerBody = GetComponent<Rigidbody>();
-		m_cameraTransform = UnityEngine.Camera.main.transform;
+		m_motor = GetComponent<MovementMotor>();
+    m_cameraTransform = UnityEngine.Camera.main.transform;
 		//Sets layers for the ground check - may make this changable in future
 		m_groundCheckLayers = LayerMask.GetMask("Ground");
+    m_motor.SetActive(true, true);
 	}
 
 	// Update is called once per frame
@@ -94,28 +98,22 @@ public class PlayerMovement : MonoBehaviour
     //Stop the player from looking at the ground
     transform.Rotate(-transform.rotation.x, 0, 0);
 
-    //Get the player's horizontal velocity
-    Vector3 playerBodyHorizontalVelocity = new Vector3 (m_playerBody.linearVelocity.x, 0, m_playerBody.linearVelocity.z);
-
-    Debug.DrawRay(transform.position, playerBodyHorizontalVelocity, Color.blue);
+    Debug.DrawRay(transform.position, m_motor._horizontalVelocity, Color.blue);
     Debug.DrawRay(transform.position, attemptedMoveDirection, Color.red);
 
     //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
-    if(playerBodyHorizontalVelocity.magnitude < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(playerBodyHorizontalVelocity.normalized, attemptedMoveDirection) > 90.0f)
+    if(m_motor._horizontalSpeed < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f)
     {
       //Apply the force to the player
-      m_playerBody.AddForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.magnitude) * m_inputDirection.magnitude * transform.forward * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
+      m_motor.ApplyForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.magnitude) * m_inputDirection.magnitude * transform.forward * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
     }
 
     //do some decceleration - the clamped value helps when getting the movement down to zero
-    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._friction * Mathf.Clamp(playerBodyHorizontalVelocity.magnitude, 0, 1) * Time.deltaTime);
+    m_motor.ApplyForce(m_motor._horizontalDirection * -m_currentStateSettings._friction * Mathf.Clamp(m_motor._horizontalSpeed, 0, 1) * Time.deltaTime);
     
     //Clamping the players fall speed
-    if(m_fallSpeedCap > 0 && -m_fallSpeedCap > m_playerBody.linearVelocity.y)
-    {
-      m_playerBody.linearVelocity -= new Vector3(0, m_playerBody.linearVelocity.y + m_fallSpeedCap, 0); 
-    }
-		
+    m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
+
     //Casts a sphere down from the player's center, and outs true if a ground layer object is hit
 		if(Physics.CheckSphere(transform.position + Vector3.down * m_groundCheckDistance, 0.5f, m_groundCheckLayers))
 		{
@@ -156,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
           m_currentFallTime += Time.deltaTime;
         
           //Add a little more force to the player when they have been falling for a while.
-          m_playerBody.AddForce(-transform.up * m_currentFallTime * m_fallTimeSpeedMultiplier);
+          m_motor.ApplyForce(-transform.up * m_currentFallTime * m_fallTimeSpeedMultiplier);
         }
         //Update the last height if the player is height than before
         else if(m_lastCheckedHeight < transform.position.y)
@@ -178,9 +176,9 @@ public class PlayerMovement : MonoBehaviour
 		//If the player is considered grounded
 		if (IsGrounded)
 		{
-      m_playerBody.linearVelocity = new Vector3(m_playerBody.linearVelocity.x ,0, m_playerBody.linearVelocity.z);
+      m_motor.ResetVelocity(false, true, false);
 			//Apply a force up on the player
-			m_playerBody.AddForce(transform.up * Mathf.Sqrt(2 * m_jumpHeight * -Physics.gravity.y), ForceMode.Impulse);
+			m_motor.ApplyForce(transform.up * Mathf.Sqrt(2 * m_jumpHeight * -Physics.gravity.y), ForceMode.Impulse);
 			//Remove all coyote time 
 			m_coyoteCountdown = 0;
 			//Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
@@ -207,7 +205,7 @@ public class PlayerMovement : MonoBehaviour
     Gizmos.DrawWireSphere(transform.position, m_currentStateSettings._maximumHorizontalSpeed);
 
     Gizmos.color = Color.green;
-    Gizmos.DrawWireSphere(transform.position, (m_currentStateSettings._horizontalAcceleration - m_currentStateSettings._friction) * 0.0166f);
+    Gizmos.DrawWireSphere(transform.position, (m_currentStateSettings._horizontalAcceleration - m_currentStateSettings._friction));
 
     Gizmos.color = Color.purple;
     Gizmos.DrawSphere(transform.position + -transform.up * m_groundCheckDistance, 0.5f);
@@ -223,8 +221,8 @@ public class PlayerMovement : MonoBehaviour
 
     Gizmos.color = Color.red;
     Gizmos.DrawWireCube(transform.position - transform.up * m_fallSpeedCap, Vector3.one);
-    if(m_playerBody)
-    Gizmos.DrawRay(transform.position, transform.up * Mathf.Clamp(m_playerBody.linearVelocity.y, -Mathf.Infinity, 0));
+    if(m_motor)
+      Gizmos.DrawRay(transform.position, transform.up * Mathf.Clamp(m_motor._verticalVelocity, -Mathf.Infinity, 0));
 
     Gizmos.color = Color.yellow;
     Gizmos.DrawWireSphere(transform.position + transform.up * 2 , m_coyoteTime);

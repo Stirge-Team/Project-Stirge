@@ -258,7 +258,6 @@ GameObject:
   - component: {fileID: 42272679}
   - component: {fileID: 42272678}
   - component: {fileID: 42272677}
-  - component: {fileID: 42272681}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -377,27 +376,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 42272676}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.08529212, y: -0.20491172, z: -0.017927464, w: 0.9748924}
-  m_LocalPosition: {x: 0, y: 5, z: -10}
+  m_LocalRotation: {x: 0.11706946, y: 0.36059523, z: -0.045676023, w: 0.92421836}
+  m_LocalPosition: {x: -15.823409, y: 6.9912543, z: -21.29102}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -10, y: -23.74, z: 0}
---- !u!114 &42272681
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 42272676}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b90bd62f3eedfefaa892cf1359a5656, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraTracking
-  m_trackedTarget: {fileID: 55588142}
-  m_cameraRotationSpeed: 0.5
 --- !u!1 &55588138
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,6 +394,7 @@ GameObject:
   - component: {fileID: 55588142}
   - component: {fileID: 55588141}
   - component: {fileID: 55588140}
+  - component: {fileID: 55588144}
   - component: {fileID: 55588139}
   - component: {fileID: 55588143}
   m_Layer: 0
@@ -431,10 +417,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   m_groundSettings:
-    _horizontalAcceleration: 3000
+    _horizontalAcceleration: 30
     _maximumHorizontalSpeed: 9
     _rotationSpeed: 20
-    _friction: 2000
+    _friction: 20
     _inputStrength:
       serializedVersion: 2
       m_Curve:
@@ -460,7 +446,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   m_aerialSettings:
-    _horizontalAcceleration: 500
+    _horizontalAcceleration: 5
     _maximumHorizontalSpeed: 12
     _rotationSpeed: 5
     _friction: 0
@@ -589,6 +575,18 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &55588144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55588138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a90ae4b04dc02aa49f84500bc72a0b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.MovementMotor
 --- !u!1 &93446100
 GameObject:
   m_ObjectHideFlags: 0
