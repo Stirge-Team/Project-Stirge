@@ -212,10 +212,7 @@ public class TrackingCamera : MonoBehaviour
 
           if(m_canAutoRotate)
           {
-            Debug.DrawRay(m_lockedOnTarget.position, m_primaryTarget.position - m_lockedOnTarget.position, Color.red);
-            float angleBetween = Mathf.Atan2(m_primaryTarget.position.z - m_lockedOnTarget.position.z, m_primaryTarget.position.x - m_lockedOnTarget.position.x);
-            Debug.Log($"The angle between the primary and locked on targets is: {Mathf.Ceil(angleBetween)}");
-            SetDesiredAngle(angleBetween, false);
+            SetDesiredAngle(Mathf.Atan2(m_primaryTarget.position.z - m_lockedOnTarget.position.z, m_primaryTarget.position.x - m_lockedOnTarget.position.x), false);
           }
 
           m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
@@ -293,6 +290,12 @@ public class TrackingCamera : MonoBehaviour
 
         Gizmos.DrawSphere(targ.position, 0.25f);
       }
+
+      Gizmos.color = Color.red;
+      Gizmos.DrawWireSphere(m_primaryTarget.position, m_combatRangeCutoff);
+
+      Gizmos.color = Color.blue;
+      Gizmos.DrawWireSphere(m_primaryTarget.position, m_lockOnRange);
     }
 
     public void AssignTarget(Transform targetObject, bool newPrimary = false)
@@ -366,6 +369,10 @@ public class TrackingCamera : MonoBehaviour
             LockOnStart();
             break;
           default:
+            if(m_camState == CameraStates.LockOn)
+            {
+              m_primaryTarget.GetComponent<Player.PlayerMovement>().CancelLockOn();
+            }
             m_camState = newState;
             break;
         }
