@@ -4110,7 +4110,7 @@ MonoBehaviour:
   m_cameraMoveWait: 3
   m_cameraAutoPivotSpeed: 0.3
   m_groupDistanceScaling: 0
-  m_combatRangeCutoff: 0
+  m_combatRangeCutoff: 15
   m_clumpBias: 0.5
   m_primaryTarget: {fileID: 2045072624}
   m_secondaryTargets:
@@ -4120,8 +4120,8 @@ MonoBehaviour:
   - {fileID: 284243763}
   m_toggleLockOn: 0
   m_usePrimaryForward: 0
-  m_lockOnRange: 50
-  m_lockOnDisengauge: 0
+  m_lockOnRange: 15
+  m_lockOnDisengauge: 1
   m_lockOnIncludeTargetsOutOfRange: 0
   m_inputSensitivity: 1
 --- !u!114 &1642650731
