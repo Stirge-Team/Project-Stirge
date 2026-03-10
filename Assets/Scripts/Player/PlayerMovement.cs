@@ -77,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
     {
       transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(m_lockOnTarget.position - transform.position), m_currentStateSettings._rotationSpeed);
     }
-    else if(attemptedMoveDirection.magnitude > 0)
+    else if(attemptedMoveDirection.sqrMagnitude > 0)
     {
       //Interperlate the rotations between the current player rotation and the given input direction
       transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed);
@@ -94,15 +94,15 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 cameraForward2d = new Vector3(m_cameraTransform.forward.x, 0f, m_cameraTransform.forward.z).normalized;
     //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
-    if(playerBodyHorizontalVelocity.magnitude < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(playerBodyHorizontalVelocity.normalized, attemptedMoveDirection) > 90.0f)
+    if(playerBodyHorizontalVelocity.sqrMagnitude < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(playerBodyHorizontalVelocity.normalized, attemptedMoveDirection) > 90.0f)
     {
       //Apply the force to the player
       //Strength * Input *  * Speed * Time
-      m_playerBody.AddForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.magnitude) * attemptedMoveDirection * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
+      m_playerBody.AddForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude) * attemptedMoveDirection * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
     }
 
     //do some decceleration - the clamped value helps when getting the movement down to zero
-    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._friction * Mathf.Clamp(playerBodyHorizontalVelocity.magnitude, 0, 1) * Time.deltaTime);
+    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._friction * Mathf.Clamp(playerBodyHorizontalVelocity.sqrMagnitude, 0, 1) * Time.deltaTime);
     
     //Clamping the players fall speed
     if(m_fallSpeedCap > 0 && -m_fallSpeedCap > m_playerBody.linearVelocity.y)
