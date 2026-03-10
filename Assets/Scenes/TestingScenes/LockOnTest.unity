@@ -651,7 +651,7 @@ Transform:
   m_GameObject: {fileID: 284243759}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10, y: 1, z: 0}
+  m_LocalPosition: {x: -2, y: 1, z: 2}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3566,7 +3566,7 @@ Transform:
   m_GameObject: {fileID: 1511976506}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 1, z: 0}
+  m_LocalPosition: {x: 2, y: 1, z: -2}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4102,28 +4102,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f2d6ecf0468ff589b2f4c8f214412a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strige.Camera.TrackingCamera
-  m_cameraMovementSpeed: 30
-  m_cameraRotationSpeed: 60
-  m_relativePosition: {x: 5, y: 3}
-  m_cameraPivotSpeed: 1
-  m_pivotGapStrength: 1
-  m_cameraMoveWait: 3
-  m_cameraAutoPivotSpeed: 0.3
-  m_groupDistanceScaling: 0
-  m_combatRangeCutoff: 15
-  m_clumpBias: 0.5
+  m_exploreSettings:
+    _movementSpeed: 20
+    _rotationSpeed: 10
+    _relativePosition: {x: 5, y: 3}
+    _pivotSpeed: 5
+    _pivotGapStrength: 1
+    _autoMoveWait: 5
+    _autoPivotSpeed: 0.3
+    _inputSensitivity: 2
   m_primaryTarget: {fileID: 2045072624}
   m_secondaryTargets:
   - {fileID: 1727095156}
   - {fileID: 1511976510}
   - {fileID: 1690804069}
   - {fileID: 284243763}
+  m_combatSettings:
+    _movementSpeed: 10
+    _rotationSpeed: 5
+    _relativePosition: {x: 4, y: 4}
+    _pivotSpeed: 5
+    _pivotGapStrength: 1
+    _autoMoveWait: 2
+    _autoPivotSpeed: 7
+    _inputSensitivity: 2
+  m_groupDistanceScaling: 0.2
+  m_combatRangeCutoff: 15
+  m_clumpBias: 0.5
+  m_lockOnSettings:
+    _movementSpeed: 5
+    _rotationSpeed: 10
+    _relativePosition: {x: 6, y: 2}
+    _pivotSpeed: 5
+    _pivotGapStrength: 1
+    _autoMoveWait: 1
+    _autoPivotSpeed: 5
+    _inputSensitivity: 2
   m_toggleLockOn: 0
   m_usePrimaryForward: 0
   m_lockOnRange: 15
   m_lockOnDisengauge: 1
   m_lockOnIncludeTargetsOutOfRange: 0
-  m_inputSensitivity: 1
+  m_lockOnOffset: -90
 --- !u!114 &1642650731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4260,7 +4280,7 @@ Transform:
   m_GameObject: {fileID: 1690804065}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: -2, y: 1, z: -2}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4484,7 +4504,7 @@ Transform:
   m_GameObject: {fileID: 1727095152}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 10}
+  m_LocalPosition: {x: 2, y: 1, z: 2}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5451,7 +5471,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   m_groundSettings:
     _horizontalAcceleration: 3000
-    _maximumHorizontalSpeed: 9
+    _maximumHorizontalSpeed: 18
     _rotationSpeed: 20
     _friction: 2000
     _inputStrength:
@@ -5571,7 +5591,7 @@ Transform:
   m_GameObject: {fileID: 2045072619}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
