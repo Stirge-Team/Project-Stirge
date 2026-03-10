@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
       attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
     }
     //Only when the player applies any directional inputs...
-    if(attemptedMoveDirection.magnitude > 0)
+    if(attemptedMoveDirection.sqrMagnitude > 0)
     {
       //Interperlate the rotations between the current player rotation and the given input direction
       transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed);
@@ -105,7 +105,7 @@ public class PlayerMovement : MonoBehaviour
     if(m_motor._horizontalSpeed < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f)
     {
       //Apply the force to the player
-      m_motor.ApplyForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.magnitude) * m_inputDirection.magnitude * transform.forward * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
+      m_motor.ApplyForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.sqrMagnitude * transform.forward * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
     }
 
     //do some decceleration - the clamped value helps when getting the movement down to zero
