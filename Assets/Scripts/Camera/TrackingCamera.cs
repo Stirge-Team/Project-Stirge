@@ -84,6 +84,8 @@ public class TrackingCamera : MonoBehaviour
     [SerializeField, Tooltip("Should (if none are in range) targets outside of range be used as lock on targets.")]
     private bool m_lockOnIncludeTargetsOutOfRange = false;
     private Transform m_lockedOnTarget = null;
+    [SerializeField, Tooltip("How many degrees to the side the lock on camera should be."), Range(-90, 90)]
+    private float m_lockOnOffset = 5.0f;
 
     [Header("Inputs")]
     [SerializeField, Tooltip("How sensitive the camera movement is")]
@@ -212,7 +214,7 @@ public class TrackingCamera : MonoBehaviour
 
           if(m_canAutoRotate)
           {
-            SetDesiredAngle(Mathf.Atan2(m_primaryTarget.position.z - m_lockedOnTarget.position.z, m_primaryTarget.position.x - m_lockedOnTarget.position.x), false);
+            SetDesiredAngle(Mathf.Atan2(m_primaryTarget.position.z - m_lockedOnTarget.position.z, m_primaryTarget.position.x - m_lockedOnTarget.position.x) + m_lockOnOffset * Mathf.Deg2Rad, false);
           }
 
           m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
