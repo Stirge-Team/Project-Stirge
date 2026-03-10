@@ -6,12 +6,12 @@ public class MovementMotor : MonoBehaviour
 {
   private Rigidbody m_rb;
   private bool m_isActive;
-  public Vector3 _horizontalVelocity {get; private set;}
+  public Vector3 _horizontalVelocity => new Vector3(Mathf.Floor(m_rb.linearVelocity.x * 100) / 100, 0, Mathf.Floor(m_rb.linearVelocity.z * 100) / 100);//{get; private set;}
   public float _horizontalSpeed => _horizontalVelocity.sqrMagnitude;
   public Vector3 _horizontalDirection => _horizontalVelocity.normalized;
-  public float _verticalVelocity {get; private set;}
+  public float _verticalVelocity => m_rb.linearVelocity.y;// {get; private set;}
   // Start is called once before the first execution of Update after the MonoBehaviour is created
-  void Start()
+  void Awake()
   {
     m_rb = GetComponent<Rigidbody>();
   }
@@ -42,13 +42,7 @@ public class MovementMotor : MonoBehaviour
     }
   }
 
-  void Update()
-  {
-    _horizontalVelocity = new Vector3(Mathf.Floor(m_rb.linearVelocity.x * 100) / 100, 0, Mathf.Floor(m_rb.linearVelocity.z * 100) / 100);
-    _verticalVelocity = m_rb.linearVelocity.y;
-  }
-
-  public void ApplyForce(Vector3 force, ForceMode mode = ForceMode.Impulse)
+  public void ApplyForce(Vector3 force, ForceMode mode = ForceMode.Force)
   {
     if(m_isActive)
     {
