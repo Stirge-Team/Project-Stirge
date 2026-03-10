@@ -71,11 +71,15 @@ public class PlayerMovement : MonoBehaviour
 	void FixedUpdate()
 	{
     //Calculates the direction to move the player in given the current inputs and camera transform
+    //CHANGED IN THAT COMMIT
     Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
     //Only when the player applies any directional inputs...
     if(m_lockOnTarget != null)
     {
-      transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(m_lockOnTarget.position - transform.position), m_currentStateSettings._rotationSpeed);
+      //CHANGE IN THAT COMMIT
+      var lockOnLookAt = Quaternion.LookRotation(m_lockOnTarget.position - transform.position);
+      lockOnLookAt = Quaternion.Euler(0, lockOnLookAt.eulerAngles.y, lockOnLookAt.eulerAngles.z);
+      transform.rotation = Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed);
     }
     else if(attemptedMoveDirection.sqrMagnitude > 0)
     {
