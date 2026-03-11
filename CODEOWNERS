@@ -3,3 +3,15 @@
 
 # Camera scripts
 Assets/Scripts/Camera/ @SkeleKing04
+
+# AI
+Assets/Scripts/AI/ @halenf
+
+# Enemy
+Assets/Scripts/Enemy/ @halenf
+
+# Input
+Assets/Scripts/Input/ @halenf
+
+# (Unused) Behaviour Tree
+Assets/Scripts/BehaviourTree/ @halenf
