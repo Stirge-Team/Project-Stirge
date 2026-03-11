@@ -17,17 +17,6 @@ namespace Stirge.Input
 
     public class PlayerInputProcessing : MonoBehaviour
     {
-        private class PerformedInput
-        {
-            public PerformedInput(AttackInput _input)
-            {
-                input = _input;
-            }
-
-            public AttackInput input;
-            public float lifetime = 0f;
-        }
-
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
         
@@ -36,7 +25,7 @@ namespace Stirge.Input
         // if combos are never going to have branching paths, this can just become an AttackBinding
         private Dictionary<AttackInput, Attack> m_comboBindings = new();
 
-        private List<PerformedInput> m_sequence = new();
+        private List<AttackInput> m_sequence = new();
 
         private float m_bufferTimer = 0;
 
@@ -85,7 +74,7 @@ namespace Stirge.Input
                     AttackInput input = 0;
                     for (int i = index; i < size + index; i++) // i = 0; i < 3; // i = 0; i < 2; // i = 1; i < 3; // i = 0; i < 1 // i = 1; i < 2 // i = 2; i < 3;
                     {
-                        input |= m_sequence[i].input; // A,B,X // A,B // B,X // A // B // X
+                        input |= m_sequence[i]; // A,B,X // A,B // B,X // A // B // X
                     }
                     if (ProcessInput(input))
                         return;
@@ -124,7 +113,7 @@ namespace Stirge.Input
         {
             if (m_sequence.Count == MaxSequenceLength)
                 m_sequence.RemoveAt(0);
-            m_sequence.Add(new PerformedInput(input));
+            m_sequence.Add(input);
         }
         #endregion
 
@@ -175,7 +164,7 @@ namespace Stirge.Input
             string text = string.Empty;
             for (int i = 0; i < m_sequence.Count; i++)
             {
-                text += m_sequence[i].input.ToString() + ", ";
+                text += m_sequence[i].ToString() + ", ";
             }
 
             if (text != string.Empty)
