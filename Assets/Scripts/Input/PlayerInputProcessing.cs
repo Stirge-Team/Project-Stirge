@@ -33,7 +33,7 @@ namespace Stirge.Input
         {
             if (m_bufferTimer <= 0)
             {
-                UpdateSequence(Time.deltaTime);
+                ProcessSequence();
                 m_sequence.Clear();
                 m_bufferTimer = m_inputBufferTime;
             }
@@ -56,7 +56,7 @@ namespace Stirge.Input
         #endregion
 
         #region Sequence Processing
-        private void UpdateSequence(float deltaTime)
+        private void ProcessSequence()
         {
             // this prioritises long inputs first by first checking input length of 'size', then 'size - 1' until it has checked each input individually (size = 1)
             // or an action has been processed, at which point it stops
