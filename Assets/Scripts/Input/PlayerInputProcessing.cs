@@ -169,6 +169,9 @@ namespace Stirge.Input
 
         private void UpdateText()
         {
+            if (m_sequenceDisplay == null || m_usedAttackDisplay == null)
+                return;
+
             string text = string.Empty;
             for (int i = 0; i < m_sequence.Count; i++)
             {
@@ -191,6 +194,8 @@ namespace Stirge.Input
 
         private void ShowUsedAttack(string attackName)
         {
+            if (m_usedAttackDisplay == null)
+                return;
             m_usedAttackDisplay.text = "Used '" + attackName + "'!";
             m_usedAttackTimer = 1.5f;
         }
