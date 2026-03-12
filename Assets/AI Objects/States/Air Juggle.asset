@@ -21,12 +21,14 @@ MonoBehaviour:
     - rid: 5052026654975590657
   - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
     m_conditions:
-    - rid: 5052026654975590614
+    - rid: 858786852842504257
     - rid: 5052026654975590649
+  m_timedTransitionState: {fileID: 0}
+  m_timedTransitionDelay: 0
   references:
     version: 2
     RefIds:
-    - rid: 5052026654975590614
+    - rid: 858786852842504257
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_typeIndex: 4
