@@ -1,22 +1,23 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using Stirge.Camera;
 
-namespace Strige.Player {
+namespace Stirge.Player {
 public class PlayerMovement : MonoBehaviour
 {
   [System.Serializable]
   private struct stateVariables
   {
-    [Tooltip("The acceleriation of the player (deltaTime involved). DO NOT see this value far greater then the maximum speed, this will cause the player to jump around.")]
+    [Tooltip("The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around.")]
     public float _horizontalAcceleration;
-    [Tooltip("The maximum velocity the player can reach")]
+    [Tooltip("The maximum velocity the player can reach. Once reaching this speed, more force will not be applied in the player's current direction of travel.")]
     public float _maximumHorizontalSpeed;
     [Tooltip("The speed at which the player turns around to face the given input direction")]
     public float _rotationSpeed;
-    [Tooltip("The amount of fiction/decceleration that is applied in this state (deltaTime involved)")]
-    public float _fiction;
-    [Tooltip("The strength the player's input has on the force applied")]
+    [Tooltip("A constant force applied to the player. It works to reduce the player's speed down to zero.")]
+    public float _friction;
+    [Tooltip("Scales the user input.")]
     public AnimationCurve _inputStrength;
   }
   //The input from the player
@@ -36,11 +37,11 @@ public class PlayerMovement : MonoBehaviour
 	private float m_jumpHeight = 5f;
   //Grounded bool
 	public bool IsGrounded {get; private set;}
-  [SerializeField, Tooltip("The distance from the center of the player that considers them grounded.")]
+  [SerializeField, Tooltip("The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f.")]
   private float m_groundCheckDistance;
   //The layers that the player considers "ground"
   private LayerMask m_groundCheckLayers;
-	[SerializeField, Tooltip("The window after falling that the player can still jump.")]
+	[SerializeField, Tooltip("The window after falling off an object that the player can still jump.")]
 	private float m_coyoteTime = 0.2f;
   //The remaining time for coyote time
 	private float m_coyoteCountdown;
@@ -55,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
   private float m_lastCheckedHeight = 0;
 
 	private Transform m_cameraTransform;
-	
+	private Transform m_lockOnTarget;
 
 	void Start()
 	{
@@ -70,7 +71,19 @@ public class PlayerMovement : MonoBehaviour
 	void FixedUpdate()
 	{
     //Calculates the direction to move the player in given the current inputs and camera transform
-    Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+    Vector3 attemptedMoveDirection = Vector3.zero;
+    if(m_lockOnTarget != null)
+    {
+      Vector3 directionToTarget = m_lockOnTarget.position - m_cameraTransform.position;
+      directionToTarget = new Vector3(directionToTarget.x,0,directionToTarget.z);
+      directionToTarget = directionToTarget.normalized;
+
+      attemptedMoveDirection = (directionToTarget * m_inputDirection.y + Vector3.Cross(directionToTarget, transform.up) * m_inputDirection.y).normalized;
+    }
+    else
+    {
+      attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+    }
     //Only when the player applies any directional inputs...
     if(attemptedMoveDirection.magnitude > 0)
     {
@@ -84,15 +97,18 @@ public class PlayerMovement : MonoBehaviour
     //Get the player's horizontal velocity
     Vector3 playerBodyHorizontalVelocity = new Vector3 (m_playerBody.linearVelocity.x, 0, m_playerBody.linearVelocity.z);
 
+    Debug.DrawRay(transform.position, playerBodyHorizontalVelocity, Color.blue);
+    Debug.DrawRay(transform.position, attemptedMoveDirection, Color.red);
+
     //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
-    if(playerBodyHorizontalVelocity.magnitude < m_currentStateSettings._maximumHorizontalSpeed)
+    if(playerBodyHorizontalVelocity.magnitude < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(playerBodyHorizontalVelocity.normalized, attemptedMoveDirection) > 90.0f)
     {
       //Apply the force to the player
       m_playerBody.AddForce(m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.magnitude) * m_inputDirection.magnitude * transform.forward * m_currentStateSettings._horizontalAcceleration * Time.deltaTime);
     }
 
     //do some decceleration - the clamped value helps when getting the movement down to zero
-    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._fiction * Mathf.Clamp(playerBodyHorizontalVelocity.magnitude, 0, 1) * Time.deltaTime);
+    m_playerBody.AddForce(playerBodyHorizontalVelocity.normalized * -m_currentStateSettings._friction * Mathf.Clamp(playerBodyHorizontalVelocity.magnitude, 0, 1) * Time.deltaTime);
     
     //Clamping the players fall speed
     if(m_fallSpeedCap > 0 && -m_fallSpeedCap > m_playerBody.linearVelocity.y)
@@ -162,6 +178,7 @@ public class PlayerMovement : MonoBehaviour
 		//If the player is considered grounded
 		if (IsGrounded)
 		{
+      m_playerBody.linearVelocity = new Vector3(m_playerBody.linearVelocity.x ,0, m_playerBody.linearVelocity.z);
 			//Apply a force up on the player
 			m_playerBody.AddForce(transform.up * Mathf.Sqrt(2 * m_jumpHeight * -Physics.gravity.y), ForceMode.Impulse);
 			//Remove all coyote time 
@@ -169,4 +186,49 @@ public class PlayerMovement : MonoBehaviour
 			//Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
 		}
 	}
+
+  public void AssignLockOnTarget(Transform target)
+  {
+    if(target != m_lockOnTarget)
+    {
+      m_lockOnTarget = target;
+    }
+  }
+  public void CancelLockOn()
+  {
+    if(m_lockOnTarget != null)
+      m_lockOnTarget = null;
+
+  }
+
+  public void OnDrawGizmos()
+  {
+    Gizmos.color = Color.blue;
+    Gizmos.DrawWireSphere(transform.position, m_currentStateSettings._maximumHorizontalSpeed);
+
+    Gizmos.color = Color.green;
+    Gizmos.DrawWireSphere(transform.position, (m_currentStateSettings._horizontalAcceleration - m_currentStateSettings._friction) * 0.0166f);
+
+    Gizmos.color = Color.purple;
+    Gizmos.DrawSphere(transform.position + -transform.up * m_groundCheckDistance, 0.5f);
+    switch(IsGrounded)
+    {
+      case true:
+        Gizmos.DrawSphere(transform.position + transform.up * m_jumpHeight, 0.5f);
+        break;
+      case false:
+        Gizmos.DrawSphere(transform.position + transform.up * (m_jumpHeight - m_lastCheckedHeight), 0.5f);
+        break;
+    }
+
+    Gizmos.color = Color.red;
+    Gizmos.DrawWireCube(transform.position - transform.up * m_fallSpeedCap, Vector3.one);
+    if(m_playerBody)
+    Gizmos.DrawRay(transform.position, transform.up * Mathf.Clamp(m_playerBody.linearVelocity.y, -Mathf.Infinity, 0));
+
+    Gizmos.color = Color.yellow;
+    Gizmos.DrawWireSphere(transform.position + transform.up * 2 , m_coyoteTime);
+    Gizmos.color = Color.orange;
+    Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteCountdown);
+  }
 }}

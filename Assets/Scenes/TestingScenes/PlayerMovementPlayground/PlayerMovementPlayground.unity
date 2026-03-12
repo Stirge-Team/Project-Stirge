@@ -434,7 +434,7 @@ MonoBehaviour:
     _horizontalAcceleration: 3000
     _maximumHorizontalSpeed: 9
     _rotationSpeed: 20
-    _fiction: 1000
+    _friction: 2000
     _inputStrength:
       serializedVersion: 2
       m_Curve:
@@ -463,7 +463,7 @@ MonoBehaviour:
     _horizontalAcceleration: 500
     _maximumHorizontalSpeed: 12
     _rotationSpeed: 5
-    _fiction: 10
+    _friction: 0
     _inputStrength:
       serializedVersion: 2
       m_Curve:
@@ -488,7 +488,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  m_jumpHeight: 50
+  m_jumpHeight: 5
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
   m_fallSpeedCap: 1000

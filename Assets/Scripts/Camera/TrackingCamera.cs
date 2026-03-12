@@ -2,8 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.InputSystem;
 
-namespace Strige.Camera {
+namespace Stirge.Camera {
 public class TrackingCamera : MonoBehaviour
 {
     //camera needs to track between 2 objects
@@ -55,6 +56,7 @@ public class TrackingCamera : MonoBehaviour
     [SerializeField, Tooltip("The speed at which the camera AUTO-pivots around it's origin")]
     private float m_cameraAutoPivotSpeed = 0.3f;
     private float m_cameraMoveCountdown;
+    private bool m_canAutoRotate => m_cameraMoveCountdown <= 0;
 
     [Header("Group Target Settings")]
     [SerializeField, Tooltip("How strong the distance scaling should be during group situations (multiplicative)")]
@@ -69,6 +71,19 @@ public class TrackingCamera : MonoBehaviour
     private Transform m_primaryTarget;
     [SerializeField, Tooltip("The secondary targets for the camera - used for the math on where the camera points. The 0th index of the array is for the lockon target")]
     private Transform[] m_secondaryTargets;
+
+    [Header("Lock On")]
+    [SerializeField, Tooltip("Should the player have to hold the lock on input or not?")]
+    private bool m_toggleLockOn = true;
+    [SerializeField, Tooltip("Uses the primary target's forward for finding the targets instead of the camera's")]
+    private bool m_usePrimaryForward = false;
+    [SerializeField, Tooltip("How far the lock on reaches.")]
+    private float m_lockOnRange = 10;
+    [SerializeField, Tooltip("Should the lock on release when the locked on target is out of range?")]
+    private bool m_lockOnDisengauge = false;
+    [SerializeField, Tooltip("Should (if none are in range) targets outside of range be used as lock on targets.")]
+    private bool m_lockOnIncludeTargetsOutOfRange = false;
+    private Transform m_lockedOnTarget = null;
 
     [Header("Inputs")]
     [SerializeField, Tooltip("How sensitive the camera movement is")]
@@ -90,7 +105,7 @@ public class TrackingCamera : MonoBehaviour
 
     private void Awake()
     {
-      m_camState = CameraStates.Explore;
+      ChangeState(CameraStates.LockOn);
     }
 
     void Update()
@@ -98,7 +113,6 @@ public class TrackingCamera : MonoBehaviour
       switch (m_camState)
       {
         case CameraStates.Explore:
-
           //Find the distance between the camera and the primary target
           float primaryDistanceFromCamera = (new Vector3(m_primaryTarget.position.x - transform.position.x, 0, m_primaryTarget.position.z - transform.position.z)).magnitude;
 
@@ -110,6 +124,13 @@ public class TrackingCamera : MonoBehaviour
 
           //Get the distance from the desired position and primary target (ignoring the Y), and look in that direction, so its looking a bit past the target
           m_cameraDesiredLookPoint = m_primaryTarget.position + (m_primaryTarget.position - new Vector3(m_cameraDesiredPosition.x, m_primaryTarget.position.y, m_cameraDesiredPosition.z)).normalized * primaryDistanceFromCamera;
+
+          if(m_canAutoRotate)
+          {
+            float primTargetAngle = m_primaryTarget.rotation.eulerAngles.y * Mathf.Deg2Rad;
+            SetDesiredAngle(-primTargetAngle + Mathf.PI * 1.5f, false);
+          }
+
           break;
 
         case CameraStates.Combat:
@@ -162,29 +183,53 @@ public class TrackingCamera : MonoBehaviour
           }
 
           //The furthest valid target will be used to scale the camera closer or further from combat
-          float distanceScaler = furthestTargetDistance * m_groupDistanceScaling;
-          if(distanceScaler < 1)
-            distanceScaler = 1;
+          float distanceScaler = Mathf.Clamp(furthestTargetDistance * m_groupDistanceScaling, 1, Mathf.Infinity);
 
           m_cameraDesiredPosition = m_cameraDesiredLookPoint + new Vector3(
               Mathf.Cos(m_viewAngle) * m_relativePosition.x * distanceScaler, //Move back from that centre point given the current angle, distance between the targets & any added space
               m_relativePosition.y, //just moves it up
               Mathf.Sin(m_viewAngle) * m_relativePosition.x * distanceScaler); //Same as the other
 
+          if(m_canAutoRotate)
+          {
+            SetDesiredAngle(Vector3.Angle((m_primaryTarget.position - m_cameraDesiredLookPoint).normalized, -Vector3.forward) * Mathf.Deg2Rad, false);
+          }
           break;
         case CameraStates.LockOn:
-          //code here
+          //camera positioning
+          //
+          if((m_lockedOnTarget.position - m_primaryTarget.position).magnitude > m_lockOnRange && m_lockOnDisengauge)
+          {
+            ChangeState(CameraStates.Explore);
+            break;
+          }
+
+          Vector3 betweenTargetPosition = (m_lockedOnTarget.position - m_primaryTarget.position) / 2;
+          float distanceScalerForLockOn = Mathf.Clamp(betweenTargetPosition.magnitude * m_groupDistanceScaling, 1, Mathf.Infinity);
+
+          m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
+              Mathf.Cos(m_viewAngle) * m_relativePosition.x * distanceScalerForLockOn, //Move back from that centre point given the current angle, distance between the targets & any added space
+              m_relativePosition.y, //just moves it up
+              Mathf.Sin(m_viewAngle) * m_relativePosition.x * distanceScalerForLockOn);
+
+          m_cameraDesiredLookPoint = m_lockedOnTarget.position;
+
+          if(m_canAutoRotate)
+          {
+            SetDesiredAngle(-Vector3.Angle((m_primaryTarget.position - m_lockedOnTarget.position).normalized, -Vector3.right) * Mathf.Deg2Rad, false);
+          }
           break;
       }
  
       //Apply the given position and rotation to the camera
       transform.position = Vector3.Lerp(transform.position, m_cameraDesiredPosition, Time.deltaTime * m_cameraMovementSpeed);
       transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_cameraDesiredLookPoint - transform.position), Time.deltaTime * m_cameraRotationSpeed);
-      //Run the auto rotation check
-      AutoRotateCamera();
-      //If the player recently gave an input - update the camera's rotation
+     
       if(m_cameraMoveCountdown > 0)
+      {
         SetDesiredAngle(m_playerCameraRotationInput);
+        m_cameraMoveCountdown -= Time.deltaTime;
+      }
       //Lerp the target angle to the desired on for nice smooth camera rotation
       m_viewAngle = Mathf.Lerp(m_viewAngle, m_desiredAngle, (m_cameraMoveCountdown <= 0 ? m_cameraAutoPivotSpeed : m_cameraPivotSpeed)* Time.deltaTime * (1 + Mathf.Abs(m_desiredAngle - m_viewAngle) * m_pivotGapStrength));
     }
@@ -217,29 +262,6 @@ public class TrackingCamera : MonoBehaviour
           m_viewAngle += Mathf.PI * 2;
         else if (angleDiff < 0)
           m_viewAngle -= Mathf.PI * 2;
-      }
-    }
-
-    private void AutoRotateCamera()
-    {
-      //Check if the countdown has been reached
-      if(m_cameraMoveCountdown <= 0)
-      {
-        //Check the state
-        switch(m_camState)
-        {
-          case CameraStates.Explore: //Move behind the player
-            float primTargetAngle = m_primaryTarget.rotation.eulerAngles.y * Mathf.Deg2Rad;
-            SetDesiredAngle(-primTargetAngle + Mathf.PI * 1.5f, false);
-            break;
-          case CameraStates.Combat: //Move alongside the combat
-            SetDesiredAngle(Vector3.Angle((m_primaryTarget.position - m_cameraDesiredLookPoint).normalized, -Vector3.forward) * Mathf.Deg2Rad, false);
-            break;
-        }
-      }
-      else //Reduce the countdown value
-      {
-        m_cameraMoveCountdown -= Time.deltaTime;
       }
     }
 
@@ -311,18 +333,90 @@ public class TrackingCamera : MonoBehaviour
         }
       }
     }
-    public void OnLook(Vector2 value)
+    public void OnLook(InputValue value)
     {
+      Vector2 lookInput = value.Get<Vector2>();
       //add the delta of the player input to the desired angle.
       m_cameraMoveCountdown = m_cameraMoveWait;
-      m_playerCameraRotationInput = Mathf.Clamp(value.x, -1, 1) * m_inputSensitivity * Time.deltaTime;
+      m_playerCameraRotationInput = Mathf.Clamp(lookInput.x, -1, 1) * m_inputSensitivity * Time.deltaTime;
+    }
+
+    public void OnLockOn()
+    {
+      ChangeState(CameraStates.LockOn);
     }
 
     public void ChangeState(CameraStates newState)
     {
+      Debug.Log($"Attempting camera state change from {m_camState} to {newState}.");
       if(m_camState != newState)
       {
-        m_camState = newState;
+        switch(newState)
+        {
+          case CameraStates.LockOn:
+            LockOnStart();
+            break;
+          default:
+            m_camState = newState;
+            break;
+        }
       }
     }
+
+    private void LockOnStart()
+    {
+      //Check that there are targets to pull from
+      if(m_secondaryTargets.Length <= 0)
+      {
+        Debug.Log("There are no targets to lock on to!");
+        return;
+      }
+
+      Vector3[] targDists = new Vector3[m_secondaryTargets.Length];
+      float closestAngle = Mathf.Infinity;
+      bool secondPass = false;
+
+      //While there is no target - 180 is used here as Vector3.Angle returns a max of 180 and will only fire if a valid target is found.
+      while (closestAngle > 180)
+      {
+        //Go though all the targets
+        for(int i = 0; i < m_secondaryTargets.Length; i++)
+        {
+          //Get the distance for the target
+          targDists[i] = new Vector3(m_secondaryTargets[i].position.x, 0, m_secondaryTargets[i].position.z) - new Vector3(transform.position.x, 0, transform.position.z);
+
+          //Check they are in range - skip them if not
+          if(targDists[i].magnitude > m_lockOnRange)
+            continue;
+
+          //Find the angle between the target and the forward direction
+          float newAngle = Vector3.Angle(targDists[i].normalized, m_usePrimaryForward ? m_primaryTarget.forward : transform.forward);
+          Debug.Log($"Angle of {m_secondaryTargets[i].name} = {newAngle}");
+          //Check if that new angle is smaller then the last target
+          if(newAngle < closestAngle)
+          {
+            //Assign that target as the new lock on target
+            m_lockedOnTarget = m_secondaryTargets[i];
+            closestAngle = newAngle;
+          }
+        }
+        //If no valid target has been found
+        if(closestAngle > 180)
+          //Check if we have done a 2nd pass
+          if(m_lockOnIncludeTargetsOutOfRange && !secondPass)
+            secondPass = true;
+          else
+          {
+            Debug.Log("No valid target found, lock on state cannot be activated.");
+            return;
+          }
+        else //we've found one
+          break;
+      }
+
+      //Change the state
+      m_camState = CameraStates.LockOn;
+      //pass target to player
+      m_primaryTarget.GetComponent<Player.PlayerMovement>().AssignLockOnTarget(m_lockedOnTarget);
+      }
 }}
