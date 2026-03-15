@@ -36,35 +36,47 @@ public class TrackingCamera : MonoBehaviour
     // - I'm picturing the pokemon combat screen positions for the player and the target
     // - Don't put the camera too far behind the player
     // - Keep the smooth movement
+    [System.Serializable]
+    private struct cameraSettings
+    {
+      [Header("Position and Movement")]
+      [Tooltip("The speed at which the camera will move to it's desiered position")]
+      //private float m_cameraMovementSpeed = 1;
+      public float _movementSpeed;
+      [Tooltip("The speed at which the camera will rotate to face it's target")]
+      //private float m_cameraRotationSpeed = 60;
+      public float _rotationSpeed;
+      [Tooltip("The position relative to the look position that the camera should be")]
+      //private Vector2 m_relativePosition;
+      public Vector2 _relativePosition;
+      [Tooltip("The speed at which the camera pivots around it's origin")]
+      //private float m_cameraPivotSpeed = 1;
+      public float _pivotSpeed;
+      [Tooltip("How much the distance between the desiered and target camera angle should affect the pivot speed.")]
+      //private float m_pivotGapStrength = 1;
+      public float _pivotGapStrength;
 
-    [Header("Position and Movement")]
-    [SerializeField, Tooltip("The speed at which the camera will move to it's desiered position")]
-    private float m_cameraMovementSpeed = 1;
-    [SerializeField, Tooltip("The speed at which the camera will rotate to face it's target")]
-    private float m_cameraRotationSpeed = 60;
-    [SerializeField, Tooltip("The position relative to the look position that the camera should be")]
-    private Vector2 m_relativePosition;
-    [SerializeField, Tooltip("The speed at which the camera pivots around it's origin")]
-    private float m_cameraPivotSpeed = 1;
-    [SerializeField, Tooltip("How much the distance between the desiered and target camera angle should affect the pivot speed.")]
-    private float m_pivotGapStrength = 1;
+      [Header("Auto-Movement Settings")]
+      [Tooltip("How long the game should respect the player's change to the camera position before attempting to move itself")]
+      //private float m_cameraMoveWait = 3;
+      public float _autoMoveWait;
+      [Tooltip("The speed at which the camera AUTO-pivots around it's origin")]
+      //private float m_cameraAutoPivotSpeed = 0.3f;
+      public float _autoPivotSpeed;
+
+      [Header("Inputs")]
+      [Tooltip("How sensitive the camera movement is")]
+      //private float m_inputSensitivity;
+      public float _inputSensitivity;
+    }
+
     private float m_viewAngle;
 
-    [Header("Auto-Movement Settings")]
-    [SerializeField, Tooltip("How long the game should respect the player's change to the camera position before attempting to move itself")]
-    private float m_cameraMoveWait = 3;
-    [SerializeField, Tooltip("The speed at which the camera AUTO-pivots around it's origin")]
-    private float m_cameraAutoPivotSpeed = 0.3f;
     private float m_cameraMoveCountdown;
     private bool m_canAutoRotate => m_cameraMoveCountdown <= 0;
 
-    [Header("Group Target Settings")]
-    [SerializeField, Tooltip("How strong the distance scaling should be during group situations (multiplicative)")]
-    private float m_groupDistanceScaling = 1;
-    [SerializeField, Tooltip("How far until a target is out of range of the player in combat")]
-    private float m_combatRangeCutoff;
-    [SerializeField, Tooltip("How biased the camera should be to enemies in range while in the combat camera mode (should it look closer to the enemies or the player?)"), Range(0, 1)]
-    private float m_clumpBias = 0.5f;
+    [SerializeField]
+    private cameraSettings m_exploreSettings;
 
     [Header("Targets")]
     [SerializeField, Tooltip("The primary target for the camera - used for position and as the default object to look at")]
@@ -72,7 +84,19 @@ public class TrackingCamera : MonoBehaviour
     [SerializeField, Tooltip("The secondary targets for the camera - used for the math on where the camera points. The 0th index of the array is for the lockon target")]
     private Transform[] m_secondaryTargets;
 
-    [Header("Lock On")]
+    [Header("Combat Settings")]
+    [SerializeField]
+    private cameraSettings m_combatSettings;
+    [SerializeField, Tooltip("How strong the distance scaling should be during group situations (multiplicative)")]
+    private float m_groupDistanceScaling = 1;
+    [SerializeField, Tooltip("How far until a target is out of range of the player in combat")]
+    private float m_combatRangeCutoff;
+    [SerializeField, Tooltip("How biased the camera should be to enemies in range while in the combat camera mode (should it look closer to the enemies or the player?)"), Range(0, 1)]
+    private float m_clumpBias = 0.5f;
+
+    [Header("Lock On Settings")]
+    [SerializeField]
+    private cameraSettings m_lockOnSettings;
     [SerializeField, Tooltip("Should the player have to hold the lock on input or not?")]
     private bool m_toggleLockOn = true;
     [SerializeField, Tooltip("Uses the primary target's forward for finding the targets instead of the camera's")]
@@ -84,12 +108,25 @@ public class TrackingCamera : MonoBehaviour
     [SerializeField, Tooltip("Should (if none are in range) targets outside of range be used as lock on targets.")]
     private bool m_lockOnIncludeTargetsOutOfRange = false;
     private Transform m_lockedOnTarget = null;
+    [SerializeField, Tooltip("How many degrees to the side the lock on camera should be."), Range(-90, 90)]
+    private float m_lockOnOffset = 5.0f;
 
-    [Header("Inputs")]
-    [SerializeField, Tooltip("How sensitive the camera movement is")]
-    private float m_inputSensitivity;
+
     private float m_playerCameraRotationInput;
-
+    private cameraSettings m_currentSettings
+    { get
+      {
+        switch (m_camState)
+        {
+          default:
+            return m_exploreSettings;
+          case CameraStates.Combat:
+            return m_combatSettings;
+          case CameraStates.LockOn:
+            return m_lockOnSettings;
+        }
+      }
+    }
     private Vector3 m_cameraDesiredPosition;
     private Vector3 m_cameraDesiredLookPoint;
     private List<Transform> m_cleanTargetList = new();
@@ -105,7 +142,7 @@ public class TrackingCamera : MonoBehaviour
 
     private void Awake()
     {
-      ChangeState(CameraStates.LockOn);
+      ChangeState(CameraStates.Combat);
     }
 
     void Update()
@@ -113,14 +150,25 @@ public class TrackingCamera : MonoBehaviour
       switch (m_camState)
       {
         case CameraStates.Explore:
+          if(m_secondaryTargets.Length > 0)
+            foreach (var targ in m_secondaryTargets)
+            {
+              if((m_primaryTarget.position - targ.position).magnitude <= m_combatRangeCutoff)
+              {
+                Debug.Log($"Target in range found, switching to combat state");
+                ChangeState(CameraStates.Combat);
+                return;
+              }
+            }
+
           //Find the distance between the camera and the primary target
           float primaryDistanceFromCamera = (new Vector3(m_primaryTarget.position.x - transform.position.x, 0, m_primaryTarget.position.z - transform.position.z)).magnitude;
 
           //Take the primary target position and add the relative position values to get the camera position
           m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
-            Mathf.Cos(m_viewAngle) * m_relativePosition.x, //Move back from the centre point given the current angle
-            m_relativePosition.y, //just moves it up
-            Mathf.Sin(m_viewAngle) * m_relativePosition.x); //Same as the other
+            Mathf.Cos(m_viewAngle) * m_exploreSettings._relativePosition.x, //Move back from the centre point given the current angle
+            m_exploreSettings._relativePosition.y, //just moves it up
+            Mathf.Sin(m_viewAngle) * m_exploreSettings._relativePosition.x); //Same as the other
 
           //Get the distance from the desired position and primary target (ignoring the Y), and look in that direction, so its looking a bit past the target
           m_cameraDesiredLookPoint = m_primaryTarget.position + (m_primaryTarget.position - new Vector3(m_cameraDesiredPosition.x, m_primaryTarget.position.y, m_cameraDesiredPosition.z)).normalized * primaryDistanceFromCamera;
@@ -137,7 +185,7 @@ public class TrackingCamera : MonoBehaviour
           //Target check - Exits if there are no targets
           if(m_secondaryTargets.Length == 0)
           {
-            m_camState = CameraStates.Explore;
+            ChangeState(CameraStates.Explore);
             Debug.LogWarning("There are no combat targets for the camera to track... take your schizo pills (or check your code)");
             break;
           }
@@ -154,7 +202,7 @@ public class TrackingCamera : MonoBehaviour
           //If all targets are out of range, stop the combat camera
           if(m_cleanTargetList.Count == 0)
           {
-            m_camState = CameraStates.Explore;
+            ChangeState(CameraStates.Explore);
             Debug.LogWarning("There are no combat targets in range... player ran away!");
             break;
           }
@@ -186,13 +234,16 @@ public class TrackingCamera : MonoBehaviour
           float distanceScaler = Mathf.Clamp(furthestTargetDistance * m_groupDistanceScaling, 1, Mathf.Infinity);
 
           m_cameraDesiredPosition = m_cameraDesiredLookPoint + new Vector3(
-              Mathf.Cos(m_viewAngle) * m_relativePosition.x * distanceScaler, //Move back from that centre point given the current angle, distance between the targets & any added space
-              m_relativePosition.y, //just moves it up
-              Mathf.Sin(m_viewAngle) * m_relativePosition.x * distanceScaler); //Same as the other
+              Mathf.Cos(m_viewAngle) * m_combatSettings._relativePosition.x * distanceScaler, //Move back from that centre point given the current angle, distance between the targets & any added space
+              m_combatSettings._relativePosition.y, //just moves it up
+              Mathf.Sin(m_viewAngle) * m_combatSettings._relativePosition.x * distanceScaler); //Same as the other
 
           if(m_canAutoRotate)
           {
-            SetDesiredAngle(Vector3.Angle((m_primaryTarget.position - m_cameraDesiredLookPoint).normalized, -Vector3.forward) * Mathf.Deg2Rad, false);
+            Vector3 directionToLookPoint = m_primaryTarget.position - m_cameraDesiredLookPoint;
+            directionToLookPoint = new Vector3(directionToLookPoint.x, 0, directionToLookPoint.z).normalized;
+
+            SetDesiredAngle(Mathf.Atan2(directionToLookPoint.z,directionToLookPoint.x) -Mathf.PI / 2f, false);
           }
           break;
         case CameraStates.LockOn:
@@ -204,26 +255,30 @@ public class TrackingCamera : MonoBehaviour
             break;
           }
 
-          Vector3 betweenTargetPosition = (m_lockedOnTarget.position - m_primaryTarget.position) / 2;
+          //follow behind main target
+          //look at the locked on target - wind waker/general zelda
+
+          Vector3 betweenTargetPosition = m_primaryTarget.position + (m_lockedOnTarget.position - m_primaryTarget.position) / 2;
           float distanceScalerForLockOn = Mathf.Clamp(betweenTargetPosition.magnitude * m_groupDistanceScaling, 1, Mathf.Infinity);
-
-          m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
-              Mathf.Cos(m_viewAngle) * m_relativePosition.x * distanceScalerForLockOn, //Move back from that centre point given the current angle, distance between the targets & any added space
-              m_relativePosition.y, //just moves it up
-              Mathf.Sin(m_viewAngle) * m_relativePosition.x * distanceScalerForLockOn);
-
-          m_cameraDesiredLookPoint = m_lockedOnTarget.position;
 
           if(m_canAutoRotate)
           {
-            SetDesiredAngle(-Vector3.Angle((m_primaryTarget.position - m_lockedOnTarget.position).normalized, -Vector3.right) * Mathf.Deg2Rad, false);
+            SetDesiredAngle(Mathf.Atan2(m_primaryTarget.position.z - m_lockedOnTarget.position.z, m_primaryTarget.position.x - m_lockedOnTarget.position.x) + m_lockOnOffset * Mathf.Deg2Rad, false);
           }
+
+          m_cameraDesiredPosition = m_primaryTarget.position + new Vector3(
+              Mathf.Cos(m_viewAngle) * m_lockOnSettings._relativePosition.x * distanceScalerForLockOn, //Move back from that centre point given the current angle, distance between the targets & any added space
+              m_currentSettings._relativePosition.y, //just moves it up
+              Mathf.Sin(m_viewAngle) * m_lockOnSettings._relativePosition.x * distanceScalerForLockOn);
+
+          m_cameraDesiredLookPoint = betweenTargetPosition;
+
           break;
       }
  
       //Apply the given position and rotation to the camera
-      transform.position = Vector3.Lerp(transform.position, m_cameraDesiredPosition, Time.deltaTime * m_cameraMovementSpeed);
-      transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_cameraDesiredLookPoint - transform.position), Time.deltaTime * m_cameraRotationSpeed);
+      transform.position = Vector3.Lerp(transform.position, m_cameraDesiredPosition, Time.deltaTime * m_currentSettings._movementSpeed);
+      transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(m_cameraDesiredLookPoint - transform.position), Time.deltaTime * m_currentSettings._rotationSpeed);
      
       if(m_cameraMoveCountdown > 0)
       {
@@ -231,7 +286,7 @@ public class TrackingCamera : MonoBehaviour
         m_cameraMoveCountdown -= Time.deltaTime;
       }
       //Lerp the target angle to the desired on for nice smooth camera rotation
-      m_viewAngle = Mathf.Lerp(m_viewAngle, m_desiredAngle, (m_cameraMoveCountdown <= 0 ? m_cameraAutoPivotSpeed : m_cameraPivotSpeed)* Time.deltaTime * (1 + Mathf.Abs(m_desiredAngle - m_viewAngle) * m_pivotGapStrength));
+      m_viewAngle = Mathf.Lerp(m_viewAngle, m_desiredAngle, (m_cameraMoveCountdown <= 0 ? m_currentSettings._autoPivotSpeed : m_currentSettings._pivotSpeed)* Time.deltaTime * (1 + Mathf.Abs(m_desiredAngle - m_viewAngle) * m_currentSettings._pivotGapStrength));
     }
 
     public void SetDesiredAngle(float value, bool additive = true)
@@ -267,13 +322,15 @@ public class TrackingCamera : MonoBehaviour
 
     public void OnDrawGizmosSelected()
     {
-      Gizmos.color = Color.green;
-      Gizmos.DrawSphere(m_cameraDesiredPosition, 0.25f);
-      Gizmos.DrawSphere(m_primaryTarget.position, 0.15f);
-      Gizmos.DrawWireSphere(m_primaryTarget.position, m_combatRangeCutoff);
-
       Gizmos.color = Color.yellow;
+      Gizmos.DrawSphere(m_cameraDesiredPosition, 0.25f);
       Gizmos.DrawSphere(m_cameraDesiredLookPoint, 0.25f);
+      Gizmos.DrawRay(m_primaryTarget.position, new Vector3(Mathf.Cos(m_desiredAngle) * m_currentSettings._relativePosition.x, m_currentSettings._relativePosition.y, Mathf.Sin(m_desiredAngle) * m_currentSettings._relativePosition.x)); 
+
+      Gizmos.color = Color.green;
+      Gizmos.DrawSphere(transform.position, 0.25f);
+      Gizmos.DrawSphere(transform.position + transform.forward * (m_cameraDesiredLookPoint - transform.position).magnitude, 0.25f);
+      Gizmos.DrawRay(m_primaryTarget.position, new Vector3(Mathf.Cos(m_viewAngle) * m_currentSettings._relativePosition.x, m_currentSettings._relativePosition.y, Mathf.Sin(m_viewAngle) * m_currentSettings._relativePosition.x));
 
       foreach(var targ in m_secondaryTargets)
       {
@@ -282,8 +339,14 @@ public class TrackingCamera : MonoBehaviour
         else
           Gizmos.color = Color.red;
 
-        Gizmos.DrawSphere(targ.position, 0.5f);
+        Gizmos.DrawSphere(targ.position, 0.25f);
       }
+
+      Gizmos.color = Color.red;
+      Gizmos.DrawWireSphere(m_primaryTarget.position, m_combatRangeCutoff);
+
+      Gizmos.color = Color.blue;
+      Gizmos.DrawWireSphere(m_primaryTarget.position, m_lockOnRange);
     }
 
     public void AssignTarget(Transform targetObject, bool newPrimary = false)
@@ -337,13 +400,20 @@ public class TrackingCamera : MonoBehaviour
     {
       Vector2 lookInput = value.Get<Vector2>();
       //add the delta of the player input to the desired angle.
-      m_cameraMoveCountdown = m_cameraMoveWait;
-      m_playerCameraRotationInput = Mathf.Clamp(lookInput.x, -1, 1) * m_inputSensitivity * Time.deltaTime;
+      m_cameraMoveCountdown = m_currentSettings._autoMoveWait;
+      m_playerCameraRotationInput = Mathf.Clamp(lookInput.x, -1, 1) * m_currentSettings._inputSensitivity * Time.deltaTime;
     }
 
     public void OnLockOn()
     {
-      ChangeState(CameraStates.LockOn);
+      if(m_camState == CameraStates.LockOn)
+      {
+        ChangeState(CameraStates.Combat);
+      }
+      else
+      {
+        ChangeState(CameraStates.LockOn);
+      }
     }
 
     public void ChangeState(CameraStates newState)
@@ -357,6 +427,10 @@ public class TrackingCamera : MonoBehaviour
             LockOnStart();
             break;
           default:
+            if(m_camState == CameraStates.LockOn)
+            {
+              m_primaryTarget.GetComponent<Player.PlayerMovement>().CancelLockOn();
+            }
             m_camState = newState;
             break;
         }
@@ -365,6 +439,7 @@ public class TrackingCamera : MonoBehaviour
 
     private void LockOnStart()
     {
+      m_lockedOnTarget = null;
       //Check that there are targets to pull from
       if(m_secondaryTargets.Length <= 0)
       {

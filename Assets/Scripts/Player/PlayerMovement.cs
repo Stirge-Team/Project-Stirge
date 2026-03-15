@@ -75,14 +75,15 @@ public class PlayerMovement : MonoBehaviour
 	void FixedUpdate()
 	{
     //Calculates the direction to move the player in given the current inputs and camera transform
-    Vector3 attemptedMoveDirection = Vector3.zero;
+    //CHANGED IN THAT COMMIT
+    Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+    //Only when the player applies any directional inputs...
     if(m_lockOnTarget != null)
     {
-      Vector3 directionToTarget = m_lockOnTarget.position - m_cameraTransform.position;
-      directionToTarget = new Vector3(directionToTarget.x,0,directionToTarget.z);
-      directionToTarget = directionToTarget.normalized;
-
-      attemptedMoveDirection = (directionToTarget * m_inputDirection.y + Vector3.Cross(directionToTarget, transform.up) * m_inputDirection.y).normalized;
+      //CHANGE IN THAT COMMIT
+      var lockOnLookAt = Quaternion.LookRotation(m_lockOnTarget.position - transform.position);
+      lockOnLookAt = Quaternion.Euler(0, lockOnLookAt.eulerAngles.y, lockOnLookAt.eulerAngles.z);
+      transform.rotation = Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed);
     }
     else
     {
@@ -101,6 +102,7 @@ public class PlayerMovement : MonoBehaviour
     Debug.DrawRay(transform.position, m_motor._horizontalVelocity, Color.blue);
     Debug.DrawRay(transform.position, attemptedMoveDirection, Color.red);
 
+    Vector3 cameraForward2d = new Vector3(m_cameraTransform.forward.x, 0f, m_cameraTransform.forward.z).normalized;
     //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
     if(m_motor._horizontalSpeed < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f)
     {
@@ -199,7 +201,7 @@ public class PlayerMovement : MonoBehaviour
 
   }
 
-  public void OnDrawGizmos()
+  public void OnDrawGizmosSelected()
   {
     Gizmos.color = Color.blue;
     Gizmos.DrawWireSphere(transform.position, m_currentStateSettings._maximumHorizontalSpeed);
