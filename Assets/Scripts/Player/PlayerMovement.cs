@@ -79,20 +79,16 @@ public class PlayerMovement : MonoBehaviour
     //When we idle with a locked on target
     if(m_lockOnTarget != null && attemptedMoveDirection.sqrMagnitude <= 0)
     {
-      //CHANGE IN THAT COMMIT
       var lockOnLookAt = Quaternion.LookRotation(m_lockOnTarget.position - transform.position);
       lockOnLookAt = Quaternion.Euler(0, lockOnLookAt.eulerAngles.y, lockOnLookAt.eulerAngles.z);
-      transform.rotation = Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed);
+      m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed));
     }
     //Only when the player applies any directional inputs...
     else if(attemptedMoveDirection.sqrMagnitude > 0)
     {
       //Interperlate the rotations between the current player rotation and the given input direction
-      transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed);
+      m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed));
     }
-
-    //Stop the player from looking at the ground
-    transform.Rotate(-transform.rotation.x, 0, 0);
 
     Debug.DrawRay(transform.position, m_motor._horizontalVelocity, Color.blue);
     Debug.DrawRay(transform.position, attemptedMoveDirection, Color.red);

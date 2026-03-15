@@ -108,4 +108,14 @@ public class MovementMotor : MonoBehaviour
       SetVelocity(resetVelo);
     }
   }
+  public void RotateTo(Quaternion newRotation)
+  {
+    if(m_isActive)
+    {
+      transform.rotation = newRotation;
+      //Stop the transform from looking at the ground
+      transform.Rotate(-transform.rotation.x, 0, 0);
+
+    }
+  }
 }}
