@@ -75,22 +75,17 @@ public class PlayerMovement : MonoBehaviour
 	void FixedUpdate()
 	{
     //Calculates the direction to move the player in given the current inputs and camera transform
-    //CHANGED IN THAT COMMIT
     Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
-    //Only when the player applies any directional inputs...
-    if(m_lockOnTarget != null)
+    //When we idle with a locked on target
+    if(m_lockOnTarget != null && attemptedMoveDirection.sqrMagnitude <= 0)
     {
       //CHANGE IN THAT COMMIT
       var lockOnLookAt = Quaternion.LookRotation(m_lockOnTarget.position - transform.position);
       lockOnLookAt = Quaternion.Euler(0, lockOnLookAt.eulerAngles.y, lockOnLookAt.eulerAngles.z);
       transform.rotation = Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed);
     }
-    else
-    {
-      attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
-    }
     //Only when the player applies any directional inputs...
-    if(attemptedMoveDirection.sqrMagnitude > 0)
+    else if(attemptedMoveDirection.sqrMagnitude > 0)
     {
       //Interperlate the rotations between the current player rotation and the given input direction
       transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed);
