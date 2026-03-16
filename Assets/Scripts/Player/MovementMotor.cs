@@ -5,7 +5,6 @@ namespace Stirge.Player {
 public class MovementMotor : MonoBehaviour
 {
   private Rigidbody m_rb;
-  private bool m_isActive;
   public Vector3 _horizontalVelocity => new Vector3(Mathf.Floor(m_rb.linearVelocity.x * 100) / 100, 0, Mathf.Floor(m_rb.linearVelocity.z * 100) / 100);//{get; private set;}
   public float _horizontalSpeed => _horizontalVelocity.sqrMagnitude;
   public Vector3 _horizontalDirection => _horizontalVelocity.normalized;
@@ -20,31 +19,29 @@ public class MovementMotor : MonoBehaviour
   ///</summary>
   public bool Toggle(bool updateKinematic = false)
   {
-    m_isActive = !m_isActive;
-    if(updateKinematic) m_rb.isKinematic = !m_isActive;
-    return m_isActive;
+    enabled = !enabled;
+    if(updateKinematic) m_rb.isKinematic = !enabled;
+    return enabled;
   }
   ///<summary>
   ///Returns true if the active state was changed to the value
   ///</summary>
   public bool SetActive(bool value, bool updateKinematic = false)
   {
-    if(m_isActive == value)
+    bool didChange = false;
+    if(enabled != value)
     {
-      if(updateKinematic) m_rb.isKinematic = !m_isActive;
-      return false;
+      enabled = value;
+      didChange = true;
     }
-    else
-    {
-      m_isActive = value;
-      if(updateKinematic) m_rb.isKinematic = !m_isActive;
-      return true;
-    }
+
+    if(updateKinematic) m_rb.isKinematic = !enabled;
+    return didChange;
   }
 
   public void ApplyForce(Vector3 force, ForceMode mode = ForceMode.Force)
   {
-    if(m_isActive)
+    if(enabled)
     {
       m_rb.AddForce(force, mode);
     }
@@ -52,7 +49,7 @@ public class MovementMotor : MonoBehaviour
 
   public void ClampVerticalVelocity(float min, float max = Mathf.Infinity)
   {
-    if(m_isActive)
+    if(enabled)
     {
       if(min > m_rb.linearVelocity.y)
       {
@@ -66,7 +63,7 @@ public class MovementMotor : MonoBehaviour
   }
   public void ClampHorizontalVelocity(float min, float max)
   {
-    if(m_isActive)
+    if(enabled)
     {
       if(min > _horizontalSpeed)
       {
@@ -80,17 +77,17 @@ public class MovementMotor : MonoBehaviour
   }
   public void SetVelocity(Vector3 value)
   {
-    if(m_isActive)
+    if(enabled)
       m_rb.linearVelocity = value;
   }
   public void SetVelocity(float xVal, float yVal, float zVal)
   {
-    if(m_isActive)
+    if(enabled)
       SetVelocity(new Vector3(xVal, yVal, zVal));
   }
   public void ResetVelocity(bool doX, bool doY, bool doZ)
   {
-    if(m_isActive)
+    if(enabled)
     {
       Vector3 resetVelo = m_rb.linearVelocity;
       if(doX)
@@ -110,7 +107,7 @@ public class MovementMotor : MonoBehaviour
   }
   public void RotateTo(Quaternion newRotation)
   {
-    if(m_isActive)
+    if(enabled)
     {
       transform.rotation = newRotation;
       //Stop the transform from looking at the ground

@@ -81,13 +81,13 @@ public class PlayerMovement : MonoBehaviour
     {
       var lockOnLookAt = Quaternion.LookRotation(m_lockOnTarget.position - transform.position);
       lockOnLookAt = Quaternion.Euler(0, lockOnLookAt.eulerAngles.y, lockOnLookAt.eulerAngles.z);
-      m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed));
+      m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, lockOnLookAt, m_currentStateSettings._rotationSpeed * Time.deltaTime));
     }
     //Only when the player applies any directional inputs...
     else if(attemptedMoveDirection.sqrMagnitude > 0)
     {
       //Interperlate the rotations between the current player rotation and the given input direction
-      m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed));
+      m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), m_currentStateSettings._rotationSpeed * Time.deltaTime));
     }
 
     Debug.DrawRay(transform.position, m_motor._horizontalVelocity, Color.blue);
@@ -95,6 +95,7 @@ public class PlayerMovement : MonoBehaviour
 
     Vector3 cameraForward2d = new Vector3(m_cameraTransform.forward.x, 0f, m_cameraTransform.forward.z).normalized;
     //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
+    //OR if the player's input is in the opposite direction of the player's current direction
     if(m_motor._horizontalSpeed < m_currentStateSettings._maximumHorizontalSpeed || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f)
     {
       //Apply the force to the player
