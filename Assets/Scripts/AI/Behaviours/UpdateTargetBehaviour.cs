@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    public class MoveToTargetBehaviour : Behaviour
+    public class UpdateTargetBehaviour : Behaviour
     {
         public override void _Enter(Agent agent)
         {
@@ -11,16 +11,17 @@ namespace Stirge.AI
 
         public override void _Update(Agent agent)
         {
-            if (agent.TargetPosition != null && Vector3.Distance(agent.transform.position, (Vector3)agent.TargetPosition) > agent.StoppingDistance)
+            // if the target is within range
+            Transform target = agent.RetrieveMemory<Transform>("TargetTransform");
+            if (target != null && Vector3.Distance(agent.transform.position, target.position) <= agent.DetectionRadius)
             {
-                agent.CalculatePath();
+                agent.TargetPosition = target.position;
             }
         }
 
         public override void _Exit(Agent agent)
         {
             base._Exit(agent);
-            agent.ClearPath();
         }
     }
 }

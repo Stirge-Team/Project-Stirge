@@ -11,7 +11,8 @@ namespace Stirge.AI
             SerializedProperty typeIndex = property.FindPropertyRelative("m_typeIndex");
             int currentType = typeIndex.intValue;
 
-            label = new GUIContent(StateEditor.StringTypes[currentType]);
+            string labelText = StateEditor.StringTypes[currentType];
+            label = new GUIContent(labelText.Substring(0, labelText.Length - 10));
             EditorGUI.BeginProperty(position, label, property);
             Rect rectFoldout = new Rect(position.min.x, position.min.y, position.size.x, EditorGUIUtility.singleLineHeight);
             property.isExpanded = EditorGUI.Foldout(rectFoldout, property.isExpanded, label);

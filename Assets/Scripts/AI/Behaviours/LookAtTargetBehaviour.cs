@@ -1,9 +1,11 @@
-using UnityEngine;
+ using UnityEngine;
 
 namespace Stirge.AI
 {
-    public class MoveToTargetBehaviour : Behaviour
+    public class LookAtTargetBehaviour : Behaviour
     {
+        [SerializeField, Min(0)] private float m_maxDegreesDelta;
+
         public override void _Enter(Agent agent)
         {
             base._Enter(agent);
@@ -11,16 +13,15 @@ namespace Stirge.AI
 
         public override void _Update(Agent agent)
         {
-            if (agent.TargetPosition != null && Vector3.Distance(agent.transform.position, (Vector3)agent.TargetPosition) > agent.StoppingDistance)
+            if (agent.TargetPosition != null)
             {
-                agent.CalculatePath();
+                agent.RotateTowards((Vector3)agent.TargetPosition, m_maxDegreesDelta * Time.deltaTime);
             }
         }
 
         public override void _Exit(Agent agent)
         {
             base._Exit(agent);
-            agent.ClearPath();
         }
     }
 }

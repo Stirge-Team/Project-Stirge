@@ -22,7 +22,9 @@ namespace Stirge.AI
             typeof(GroundedCondition),
             typeof(OffGroundCondition),
             typeof(StunnedCondition),
-            typeof(TargetInRangeCondition)
+            typeof(TargetInRangeCondition),
+            typeof(ArrivedAtTargetCondition),
+            typeof(HasTargetCondition)
         };
         // to display list of Condition names
         public static string[] StringTypes

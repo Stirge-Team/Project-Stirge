@@ -13,16 +13,19 @@ MonoBehaviour:
   m_Name: MoveToTarget
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: -4316300080828489182, guid: 161e8a0e259ef284cad3900142fba75f, type: 3}
+  - {fileID: -323293815982477435, guid: 161e8a0e259ef284cad3900142fba75f, type: 3}
+  - {fileID: -1751859386079763582, guid: 3ff53b6dce2198948ac41e67db065c52, type: 3}
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
     m_conditions:
-    - rid: 5052026654975590810
+    - rid: 4991319162164084798
+  m_timedTransitionState: {fileID: 0}
+  m_timedTransitionDelay: 0
   references:
     version: 2
     RefIds:
-    - rid: 5052026654975590810
-      type: {class: TargetInRangeCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 4991319162164084798
+      type: {class: ArrivedAtTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 6
-        m_invertValue: 1
+        m_typeIndex: 7
+        m_invertValue: 0
