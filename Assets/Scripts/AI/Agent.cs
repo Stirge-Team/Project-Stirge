@@ -21,8 +21,12 @@ namespace Stirge.AI
         [SerializeField] private Rigidbody m_rb;
 
         public Transform transform => m_transform;
-        private Vector3 m_targetPosition;
-        public Vector3 TargetPosition => m_targetPosition;
+        private Vector3? m_targetPosition;
+        public Vector3? TargetPosition
+        {
+            get { return m_targetPosition; }
+            set { m_targetPosition = value; }
+        }
 
         [Header("Agent Properties")]
         [SerializeField, Min(0)] private float m_detectionRadius;
@@ -44,6 +48,7 @@ namespace Stirge.AI
         {
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
+            WriteMemory("TargetTransform", GameObject.FindWithTag("Player").transform);
         }
 
         public void OnEnable()
@@ -132,22 +137,34 @@ namespace Stirge.AI
             m_rb.AddForce(new Vector3(direction.x, height, direction.y).normalized * strength);
         }
 
-        public void SetTargetPosition(Vector3 pos)
-        {
-            m_targetPosition = pos;
-            m_nav.SetDestination(pos);
-        }
-        public void ClearPath()
-        {
-            m_nav.ResetPath();
-        }
-
         public Vector3 GetVelocity()
         {
             if (m_physicsMode == PhysicsMode.NavMesh)
                 return m_nav.velocity;
             else
                 return m_rb.linearVelocity;
+        }
+
+        public void RotateTowards(Vector3 pos, float maxDelta)
+        {
+            Vector3 curPos = m_transform.position;
+            Vector3 endForward = (new Vector3(pos.x, 0, pos.z) - new Vector3(curPos.x, 0, curPos.z)).normalized;
+
+            m_transform.forward = Vector3.RotateTowards(m_transform.forward, endForward, maxDelta, 10f);
+            m_nav.transform.rotation = m_transform.rotation;
+        }
+
+        public void CalculatePath()
+        {
+            if (m_targetPosition != null)
+            {
+                m_nav.SetDestination((Vector3)m_targetPosition);
+            }
+        }
+        public void ClearPath()
+        {
+            m_targetPosition = null;
+            m_nav.ResetPath();
         }
 
         /*

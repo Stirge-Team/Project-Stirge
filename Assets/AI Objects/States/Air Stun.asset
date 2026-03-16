@@ -18,12 +18,14 @@ MonoBehaviour:
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
     m_conditions:
-    - rid: 5052026654975590764
+    - rid: 4991319162164084797
+  m_timedTransitionState: {fileID: 0}
+  m_timedTransitionDelay: 0
   references:
     version: 2
     RefIds:
-    - rid: 5052026654975590764
-      type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 4991319162164084797
+      type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 5
-        m_invertValue: 1
+        m_typeIndex: 3
+        m_invertValue: 0
