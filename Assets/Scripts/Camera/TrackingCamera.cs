@@ -377,7 +377,7 @@ public class TrackingCamera : MonoBehaviour
       for(int i = 0; i < m_secondaryTargets.Length; i++)
       {
         if(i < arrayIndex)
-          tmp[i] = m_secondaryTargets[i];
+        tmp[i] = m_secondaryTargets[i];
         else if (i > arrayIndex)
           tmp[i - 1] = m_secondaryTargets[i];
       }
@@ -394,6 +394,18 @@ public class TrackingCamera : MonoBehaviour
             RemoveTarget(i);
           }
         }
+      }
+    }
+    public void CleanSecondaryTargets()
+    {
+      m_secondaryTargets = new Transform[0];
+    }
+    public void ReplaceSecondaryTargets(Transform[] newTargets)
+    {
+      CleanSecondaryTargets();
+      foreach(var targ in newTargets)
+      {
+        AssignTarget(targ);
       }
     }
     public void OnLook(InputValue value)
