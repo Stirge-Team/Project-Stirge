@@ -3945,7 +3945,7 @@ MonoBehaviour:
     _autoMoveWait: 2
     _autoPivotSpeed: 7
     _inputSensitivity: 2
-  m_groupDistanceScaling: 0.2
+  m_groupDistanceScaling: 0
   m_combatRangeCutoff: 15
   m_clumpBias: 0.5
   m_lockOnSettings:
