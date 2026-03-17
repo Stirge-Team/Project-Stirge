@@ -19,8 +19,8 @@ namespace Stirge.Player
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-      GrabAllEnemies(m_GrabEnemiesWaitTime);
-      ValidateEnemies(m_ValidateWaitTime);
+      StartCoroutine(GrabAllEnemies(m_GrabEnemiesWaitTime));
+      StartCoroutine(ValidateEnemies(m_ValidateWaitTime));
     }
 
     private IEnumerator GrabAllEnemies(float waitTime)
