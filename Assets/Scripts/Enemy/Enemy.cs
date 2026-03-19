@@ -1,9 +1,10 @@
-using Stirge.AI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Stirge.Enemy
 {
+    using AI;
+
     public class Enemy : MonoBehaviour
     {
         [SerializeField] private Agent m_agent;

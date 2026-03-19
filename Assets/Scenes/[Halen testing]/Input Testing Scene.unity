@@ -227,6 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
+  m_playerAnimator: {fileID: 0}
   m_inputBufferTime: 0.8
   m_sequenceDisplay: {fileID: 486975317}
   m_usedAttackDisplay: {fileID: 1616122021}
@@ -277,10 +278,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1572352825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 540}
+  m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &486975317
 MonoBehaviour:
@@ -329,8 +330,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -845,8 +846,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 100
-  m_fontSizeBase: 100
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -912,10 +913,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1572352825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1920, y: 540}
+  m_SizeDelta: {x: 0, y: 150}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &1938457037
 GameObject:
@@ -1075,15 +1076,15 @@ MonoBehaviour:
   m_inputManager: {fileID: 474993491}
   m_defaultBindings:
   - attackInput: 1
-    attack: {fileID: 5856438662541555006, guid: afaf51be4ff05df45bf09e5f54b18cbe, type: 3}
+    attackName: Slash
   - attackInput: 2
-    attack: {fileID: 5856438662541555006, guid: 7185b1efe0c875d4287431eb67b77aa7, type: 3}
+    attackName: Punch
   - attackInput: 4
-    attack: {fileID: 5856438662541555006, guid: ed5ab93c9c4f71042aebf4b859df55f7, type: 3}
+    attackName: 
   - attackInput: 3
-    attack: {fileID: 5856438662541555006, guid: 7cea53dccdf12da48821ef73eb604b1f, type: 3}
+    attackName: 
   - attackInput: 15
-    attack: {fileID: 5856438662541555006, guid: cb193f53e8fbf2542ac40aaf9c6136c3, type: 3}
+    attackName: 
 --- !u!4 &1480484848967135267
 Transform:
   m_ObjectHideFlags: 0

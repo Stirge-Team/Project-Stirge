@@ -1,10 +1,12 @@
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 using TMPro;
 
 namespace Stirge.Input
 {
+    using Combat;
+
     [System.Flags]
     public enum AttackInput
     {
@@ -17,13 +19,25 @@ namespace Stirge.Input
 
     public class PlayerInputProcessing : MonoBehaviour
     {
+        #region Singleton
+        public static PlayerInputProcessing Instance {  get; private set; }
+        private void Awake()
+        {
+            if (Instance != null)
+                Destroy(this);
+            else
+                Instance = this;
+        }
+        #endregion
+        [SerializeField] private Animator m_playerAnimator;
+        
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
         
-        private Dictionary<AttackInput, Attack> m_bindings;
-        
+        private Dictionary<AttackInput, string> m_bindings;
+
         // if combos are never going to have branching paths, this can just become an AttackBinding
-        private Dictionary<AttackInput, Attack> m_comboBindings = new();
+        private AttackBinding m_comboBinding;
 
         private List<AttackInput> m_sequence = new();
 
@@ -44,12 +58,11 @@ namespace Stirge.Input
 
 #if UNITY_EDITOR
             UpdateText();
-            
 #endif
         }
 
         #region Bindings
-        public void SetBindings(Dictionary<AttackInput, Attack> bindings)
+        public void SetBindings(Dictionary<AttackInput, string> bindings)
         {
             m_bindings = new(bindings);
         }
@@ -88,21 +101,16 @@ namespace Stirge.Input
 
         public bool ProcessInput(AttackInput input)
         {
-            Attack attackToUse = null;
-            if (m_comboBindings.Count > 0 && m_comboBindings.TryGetValue(input, out attackToUse))
+            if (m_comboBinding != null && m_comboBinding.attackInput == input)
             {
-                // player.UseAttack(attackToUse);
+                m_playerAnimator.Play(m_comboBinding.attackName);
+                return true;
             }
             // check if the player is in a state where they are able to attack
-            else if (m_bindings.TryGetValue(input, out attackToUse))
+            else if (m_bindings.TryGetValue(input, out string attackName))
             {
-                // player.UseAttack(attackToUse);
-                ShowUsedAttack(attackToUse.Name);
-            }
-
-            if (attackToUse != null)
-            {
-                m_comboBindings.Clear();
+                ShowUsedAttack(attackName);
+                m_playerAnimator.Play(attackName);
                 return true;
             }
 
@@ -114,6 +122,18 @@ namespace Stirge.Input
             if (m_sequence.Count == MaxSequenceLength)
                 m_sequence.RemoveAt(0);
             m_sequence.Add(input);
+        }
+        #endregion
+
+        #region Combos
+        public void SetComboBinding(AttackBinding binding)
+        {
+            m_comboBinding = new(binding);
+        }
+
+        public void ClearComboBinding()
+        {
+            m_comboBinding = null;
         }
         #endregion
 
