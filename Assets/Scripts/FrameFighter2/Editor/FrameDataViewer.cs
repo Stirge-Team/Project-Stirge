@@ -9,6 +9,8 @@ using FrameFighter2.Data;
 using static FrameFighter2.Data.HitboxData;
 using static FrameFighter2.Data.EventData;
 using static FrameFighter2.Manager.FrameDataManager;
+using static FrameFighter2.Data.CharacterAnimationData;
+using Stirge.Input;
 
 namespace FrameFighter2.Viewer
 {
@@ -502,8 +504,54 @@ namespace FrameFighter2.Viewer
                                     EditorGUILayout.Space(20);
                                 }
                                 catch{
-                                    Debug.Log("borked it");
+                                    //Debug.Log("borked it");
                                 }
+
+                                //Halen's Combo Input System
+                                EditorGUILayout.LabelField("Combo Input:", EditorStyles.boldLabel);
+
+                                ComboInput comboInput = data.NextComboInput;
+
+                                string nextComboAttack = comboInput.NextComboAttack;
+                                AttackInput comboAttackInput = comboInput.ComboAttackInput;
+                                float comboInputTimeStart = comboInput.ComboInputTimeStart;
+                                float comboInputTimeEnd = comboInput.ComboInputTimeEnd;
+
+                                EditorGUI.BeginChangeCheck();
+
+                                nextComboAttack = EditorGUILayout.TextField("Next Attack In Combo", nextComboAttack);
+
+                                if (nextComboAttack != "")
+                                {
+                                    comboAttackInput = (AttackInput)EditorGUILayout.EnumPopup("Next Input" ,comboAttackInput);
+
+                                    EditorGUILayout.BeginHorizontal();
+                                    comboInputTimeStart = EditorGUILayout.FloatField("Input Start", Mathf.Round(comboInputTimeStart));
+                                    comboInputTimeEnd = EditorGUILayout.FloatField("Input End", Mathf.Round(comboInputTimeEnd));
+                                    EditorGUILayout.EndHorizontal();
+
+                                    EditorGUILayout.MinMaxSlider(ref comboInputTimeStart, ref comboInputTimeEnd, 0, FrameCount(currentClip));
+
+                                }
+                                else
+                                {
+                                    EditorGUILayout.HelpBox("Blank Field means the Animation does not have a combo", MessageType.None);
+                                }
+
+                                if (EditorGUI.EndChangeCheck())
+                                {
+                                    comboInputTimeStart = Mathf.Clamp(MathF.Round(comboInputTimeStart), 0, FrameCount(currentClip));
+                                    comboInputTimeEnd = Mathf.Clamp(MathF.Round(comboInputTimeEnd), comboInputTimeStart, FrameCount(currentClip));
+
+                                    Undo.RecordObject(data, "Created new event data in " + data.name);
+
+                                    data.EditComboData(new(nextComboAttack, comboAttackInput, comboInputTimeStart, comboInputTimeEnd));
+
+                                    EditorUtility.SetDirty(data);
+                                }
+
+                                EditorGUILayout.Space(20);
+
                             }
                             else
                             {

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
+using static FrameFighter2.Data.CharacterAnimationData;
 
 namespace FrameFighter2.Manager
 {
@@ -98,6 +99,8 @@ namespace FrameFighter2.Manager
         private Dictionary<int, List<Collider>> m_hitObjects = new(); //keeps a list of objects that have been triggered 
         private List<HitboxObject> m_activeHitboxes = new();
         private List<EventData> m_activeEvents = new();
+
+        private List<ComboInput> m_activeComboListers = new();
 
         private void Awake()
         {
@@ -205,8 +208,7 @@ namespace FrameFighter2.Manager
 
                             break;
                     }
-                    
-                    //Debug.Log("Event: " + eventData.EventID + " Frame: " + frame);
+                   
                 }
             }
             
@@ -237,6 +239,28 @@ namespace FrameFighter2.Manager
                     i--;
                 }
             }
+
+            //check combo input event (halen)
+            if (m_currentData.NextComboInput.NextComboAttack != "" && m_currentData.NextComboInput.ComboInputTimeStart == frame)
+            {
+                Debug.Log("start combo input checking");
+                m_activeComboListers.Add(m_currentData.NextComboInput);
+            }
+
+            for (int i = 0; i < m_activeComboListers.Count; i++)
+            {
+                ComboInput input = m_activeComboListers[i];
+
+                if (input.ComboInputTimeEnd == frame)
+                {
+                    Debug.Log("End Combo Input checking");
+
+                    m_activeComboListers.Remove(input);
+                    i--;
+                }
+
+            }
+
         }
 
         /// <summary>

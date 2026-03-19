@@ -39,9 +39,7 @@ namespace FrameFighter2.Data
         [SerializeField] private HitboxTypes m_hitboxType;
         [SerializeField] private string m_hitboxParent;
         //event on hitbox
-        [SerializeField] private EventData m_onHit; 
-        
-        
+        [SerializeField] private EventData m_onHit;
 
         public Vector3 Position => m_position;
         public Vector3 Rotation => m_rotation;
@@ -54,7 +52,8 @@ namespace FrameFighter2.Data
         public string HitboxParent => m_hitboxParent;
         public EventData OnHit => m_onHit;
 
-        public HitboxData(Vector3 position, Vector3 rotation, Vector3 scale, float startFrame, float endFrame, int groupID = 0, HitboxShapes hitboxShape = HitboxShapes.Rectangle, HitboxTypes hitboxType = HitboxTypes.Local, string hitboxParent = "", EventData onHit = null)
+        public HitboxData(Vector3 position, Vector3 rotation, Vector3 scale, float startFrame, float endFrame, 
+            int groupID = 0, HitboxShapes hitboxShape = HitboxShapes.Rectangle, HitboxTypes hitboxType = HitboxTypes.Local, string hitboxParent = "", EventData onHit = null)
         {
             m_position = position;
             m_rotation = rotation;

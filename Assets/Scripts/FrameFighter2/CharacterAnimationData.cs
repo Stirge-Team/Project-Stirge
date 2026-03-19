@@ -1,3 +1,4 @@
+using Stirge.Input;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,36 @@ namespace FrameFighter2.Data
 
         public List<HitboxData> HitboxData => m_hitboxData;
         public List<EventData> EventData => m_eventData;
+
+        #region HalenInput
+        [System.Serializable]
+        public class ComboInput
+        {
+            
+            //Combination inputs for halen's input system
+            [SerializeField] private string m_nextComboAttack;
+            [SerializeField] private AttackInput m_comboAttackInput;
+            [SerializeField] private float m_comboInputTimeStart;
+            [SerializeField] private float m_comboInputTimeEnd;
+
+            public string NextComboAttack => m_nextComboAttack;
+            public AttackInput ComboAttackInput => m_comboAttackInput;
+            public float ComboInputTimeStart => m_comboInputTimeStart;
+            public float ComboInputTimeEnd => m_comboInputTimeEnd;
+            
+
+            public ComboInput(string nextComboAttack, AttackInput comboAttackInput, float comboInputTimeStart, float comboInputTimeEnd)
+            {
+                m_nextComboAttack = nextComboAttack;
+                m_comboAttackInput = comboAttackInput;
+                m_comboInputTimeStart = comboInputTimeStart;
+                m_comboInputTimeEnd = comboInputTimeEnd;
+            }
+        }
+        #endregion
+
+        [SerializeField] private ComboInput m_nextComboInput;
+        public ComboInput NextComboInput => m_nextComboInput;
 
         public string[] GetEvents() {
             List<string> events = new List<string>();
@@ -74,6 +105,11 @@ namespace FrameFighter2.Data
         public void ClearHitboxes()
         {
             m_hitboxData = new();
+        }
+
+        public void EditComboData(ComboInput data)
+        {
+            m_nextComboInput = data;
         }
     }
 }

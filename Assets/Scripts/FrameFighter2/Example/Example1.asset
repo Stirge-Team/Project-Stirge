@@ -14,3 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData: []
   m_eventData: []
+  m_nextComboInput:
+    m_nextComboAttack: 
+    m_comboAttackInput: 2
+    m_comboInputTimeStart: 2
+    m_comboInputTimeEnd: 17
