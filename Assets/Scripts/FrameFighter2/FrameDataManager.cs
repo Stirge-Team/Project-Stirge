@@ -138,6 +138,7 @@ namespace FrameFighter2.Manager
                         m_hitObjects = new();
 
                         ActiveEventCancel();
+                        ComboListenerCancel();
 
                         DestroyAllHitboxes();
 
@@ -307,6 +308,11 @@ namespace FrameFighter2.Manager
             }
 
             m_activeEvents = new();
+        }
+
+        private void ComboListenerCancel()
+        {
+            m_activeComboListers = new();
         }
 
         public void DestroyAllHitboxes()
