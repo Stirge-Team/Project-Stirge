@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc25a87e365d9bb429123a3fb7b1f3d2, type: 3}
+  m_Name: AttackTest_1
+  m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
+  m_hitboxData:
+  - m_position: {x: 0, y: 0, z: 0}
+    m_rotation: {x: 0, y: 0, z: 0}
+    m_scale: {x: 1, y: 1, z: 1}
+    m_startFrame: 0
+    m_endFrame: 30
+    m_groupID: 0
+    m_hitboxShape: 0
+    m_hitboxType: 2
+    m_hitboxParent: 01
+    m_onHit:
+      m_eventType: 0
+      m_eventID: 
+      m_shouldEndOnCancel: 0
+      m_startFrame: 0
+      m_endFrame: 0
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: AttackTest_1Event0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 2
+    m_endFrame: 20
+  - m_eventType: 0
+    m_eventID: AttackTest_1Event1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 28
+    m_endFrame: 30

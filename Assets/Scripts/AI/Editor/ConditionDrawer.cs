@@ -11,7 +11,13 @@ namespace Stirge.AI
             SerializedProperty typeIndex = property.FindPropertyRelative("m_typeIndex");
             int currentType = typeIndex.intValue;
 
+            SerializedProperty invertValueProp = property.FindPropertyRelative("m_invertValue");
+
             string labelText = StateEditor.StringTypes[currentType];
+            if (invertValueProp.boolValue)
+            {
+                labelText = "Not " + labelText;
+            }
             label = new GUIContent(labelText.Substring(0, labelText.Length - 10));
             EditorGUI.BeginProperty(position, label, property);
             Rect rectFoldout = new Rect(position.min.x, position.min.y, position.size.x, EditorGUIUtility.singleLineHeight);
@@ -26,7 +32,7 @@ namespace Stirge.AI
                 }
 
                 Rect rectInvertProp = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 2, position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-                SerializedProperty invertValueProp = property.FindPropertyRelative("m_invertValue");
+                
                 EditorGUI.PropertyField(rectInvertProp, invertValueProp);
 
                 if (StateEditor.ConditionTypes[currentType].Name == nameof(DistanceCondition))
