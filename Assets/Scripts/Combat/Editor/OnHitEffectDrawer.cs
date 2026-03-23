@@ -42,6 +42,8 @@ namespace Stirge.Combat
             SerializedProperty damageProp = property.FindPropertyRelative("m_damage");
             SerializedProperty statusesProp = property.FindPropertyRelative("m_statuses");
 
+            EditorGUI.EndFoldoutHeaderGroup();
+
             EditorGUI.BeginProperty(position, label, property);
             Rect foldoutRect = GetNewRect(position);
             property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);

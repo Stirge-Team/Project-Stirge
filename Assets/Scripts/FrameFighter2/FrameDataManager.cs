@@ -288,7 +288,7 @@ namespace FrameFighter2.Manager
                     break;
             }
 
-            hitboxObject.Initialize(this, data.GroupID, data.OnHit.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation);
+            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect);
             m_activeHitboxes.Add(hitboxObject);
         }
         /// <summary>

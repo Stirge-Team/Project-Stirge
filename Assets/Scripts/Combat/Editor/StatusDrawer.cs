@@ -39,6 +39,7 @@ namespace Stirge.Combat
             EditorGUI.BeginProperty(position, label, property);
             Rect foldoutRect = GetNewRect();
             property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);
+            property.isExpanded = true;
             if (property.isExpanded)
             {
                 switch (label.text)
