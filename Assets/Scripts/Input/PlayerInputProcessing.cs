@@ -19,16 +19,6 @@ namespace Stirge.Input
 
     public class PlayerInputProcessing : MonoBehaviour
     {
-        #region Singleton
-        public static PlayerInputProcessing Instance {  get; private set; }
-        private void Awake()
-        {
-            if (Instance != null)
-                Destroy(this);
-            else
-                Instance = this;
-        }
-        #endregion
         [SerializeField] private Animator m_playerAnimator;
         
         [SerializeField] private float m_inputBufferTime = 0.2f;

@@ -50,6 +50,8 @@ namespace Stirge.Combat
                 // draw damage property
                 Rect damageRect = GetNewRect(position);
                 EditorGUI.PropertyField(damageRect, damageProp);
+                if (damageProp.intValue < 0)
+                    damageProp.intValue = 0;
 
                 // draw Statuses array
                 Rect statusesRect = GetNewRect(position);

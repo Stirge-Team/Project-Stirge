@@ -83,7 +83,5 @@ namespace Stirge.Combat
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
         }
-
-        
     }
 }

@@ -369,27 +369,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TestMono
   m_hit:
     m_damage: 0
-    m_statuses:
-    - rid: 4991319228224110773
-    - rid: 4991319228224110774
-    - rid: 4991319228224110775
+    m_statuses: []
   references:
     version: 2
-    RefIds:
-    - rid: 4991319228224110773
-      type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
-      data:
-        m_strength: 0
-        m_airStallLength: 0
-    - rid: 4991319228224110774
-      type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
-      data:
-        m_strength: 0
-    - rid: 4991319228224110775
-      type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
-      data:
-        m_strength: 0
-        m_airStallLength: 0
+    RefIds: []
 --- !u!4 &1949845525
 Transform:
   m_ObjectHideFlags: 0

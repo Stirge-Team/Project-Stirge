@@ -12,14 +12,14 @@ namespace Stirge.Combat
 
         public void OnHit(Enemy enemy)
         {
-            //enemy.TakeDamage(m_damage);
-            //if (!enemy.IsDead)
-            //{
-                //foreach (Status status in m_statuses)
-                //{
-                //    status.Use(enemy);
-                //}
-            //}
+            enemy.TakeDamage(m_damage);
+            if (!enemy.IsDead())
+            {
+                foreach (Status status in m_statuses)
+                {
+                    status.Inflict(enemy);
+                }
+            }
         }
     }
 }

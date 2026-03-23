@@ -34,6 +34,7 @@ namespace Stirge.Enemy
 
         private void Update()
         {
+            // check if enemy is dead this frame
             if (IsDead())
             {
                 if (spawner != null)
@@ -55,12 +56,17 @@ namespace Stirge.Enemy
             m_agent.OnDisable();
         }
 
-        private bool IsDead()
+        public bool IsDead()
         {
             return m_currentHealth <= 0;
         }
 
         #region Combat
+        public void TakeDamage(int damage)
+        {
+            m_currentHealth -= damage;
+        }
+
         private void ApplyStun(float length)
         {
             if (length > 0)
