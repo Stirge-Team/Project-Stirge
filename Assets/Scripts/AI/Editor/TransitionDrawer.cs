@@ -62,10 +62,6 @@ namespace Stirge.AI
                 else
                 {
                     conditionsProp.managedReferenceValue = new Condition[0];
-                    EditorGUI.BeginDisabledGroup(true);
-                    Rect noConditionsTextRect = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 3, position.size.x - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
-                    EditorGUI.TextField(noConditionsTextRect, "No Conditions!");
-                    EditorGUI.EndDisabledGroup();
                 }
             }
 
