@@ -10,22 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
-  m_Name: MoveToTarget
+  m_Name: Air Stun
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: -323293815982477435, guid: 161e8a0e259ef284cad3900142fba75f, type: 3}
-  - {fileID: -1751859386079763582, guid: 3ff53b6dce2198948ac41e67db065c52, type: 3}
+  - rid: 858787297446330434
+  - rid: 858787297446330435
   m_transitions:
-  - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+  - m_targetState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
     m_conditions:
-    - rid: 4991319162164084798
+    - rid: 4991319162164084797
   m_timedTransitionState: {fileID: 0}
   m_timedTransitionDelay: 0
   references:
     version: 2
     RefIds:
-    - rid: 4991319162164084798
-      type: {class: ArrivedAtTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 858787297446330434
+      type: {class: StunBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 
+    - rid: 858787297446330435
+      type: {class: KinematicBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 7
+        m_exitMode: 1
+    - rid: 4991319162164084797
+      type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_typeIndex: 3
         m_invertValue: 0

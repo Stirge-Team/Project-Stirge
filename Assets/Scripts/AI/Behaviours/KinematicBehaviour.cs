@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class KinematicBehaviour : Behaviour
     {
         [SerializeField] private PhysicsMode m_exitMode;
@@ -11,7 +12,7 @@ namespace Stirge.AI
             agent.SetPhysicsMode(PhysicsMode.Kinematic);
         }
 
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
             
         }

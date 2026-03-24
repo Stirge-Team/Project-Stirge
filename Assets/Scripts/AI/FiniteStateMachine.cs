@@ -3,17 +3,23 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class FiniteStateMachine : Behaviour
     {
-        [SerializeField] private State m_currentState;
+        public FiniteStateMachine(State defaultState)
+        {
+            m_currentState = ScriptableObject.Instantiate(defaultState);
+        }
+        
+        private State m_currentState;
 
         public override void _Enter(Agent agent)
         {
             m_currentState._Enter(agent);
         }
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
-            m_currentState._Update(agent);
+            m_currentState._Update(agent, deltaTime);
 
             foreach (Transition transition in m_currentState.Transitions)
             {
@@ -21,7 +27,7 @@ namespace Stirge.AI
                 if (transition.conditions.Length == 0 || transition.conditions.All(c => c == null || c.IsTrue(agent)))
                 {
                     m_currentState._Exit(agent);
-                    m_currentState = transition.targetState;
+                    m_currentState = ScriptableObject.Instantiate(transition.targetState);
                     m_currentState._Enter(agent);
                     return;
                 }
@@ -35,7 +41,7 @@ namespace Stirge.AI
         public void EnterState(Agent agent, State newState)
         {
             m_currentState._Exit(agent);
-            m_currentState = newState;
+            m_currentState = ScriptableObject.Instantiate(newState);
             m_currentState._Enter(agent);
         }
     }

@@ -90,51 +90,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &3962042664786757534
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1241603196854467006}
-  - component: {fileID: 3085938290931971125}
-  m_Layer: 3
-  m_Name: FSM
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1241603196854467006
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3962042664786757534}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.15, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 262305264173794060}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3085938290931971125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3962042664786757534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a69ed2a3f11585f43ac994ee1330d401, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.FiniteStateMachine
-  m_currentState: {fileID: 11400000, guid: dd9b18eb3c955534ab217e482a13a18a, type: 2}
 --- !u!1 &4920417054218610179
 GameObject:
   m_ObjectHideFlags: 0
@@ -308,7 +263,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1241603196854467006}
   - {fileID: 8556642680453478608}
   m_Father: {fileID: 665102905503917911}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -441,9 +395,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.Enemy
   m_agent:
     m_transform: {fileID: 262305264173794060}
-    m_fsm: {fileID: 3085938290931971125}
     m_nav: {fileID: 865616511426848684}
     m_rb: {fileID: 8994596366229947912}
+    m_defaultState: {fileID: 11400000, guid: dd9b18eb3c955534ab217e482a13a18a, type: 2}
     m_detectionRadius: 8
     m_groundedCheckDistance: 1.11
     m_groundedCheckMask:
