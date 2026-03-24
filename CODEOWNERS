@@ -18,3 +18,6 @@ Assets/Scripts/Input/ @halenf
 
 # (Unused) Behaviour Tree
 Assets/Scripts/BehaviourTree/ @halenf
+
+# Art Assets
+Assets/Art/ @Stirge-Team/Artists
