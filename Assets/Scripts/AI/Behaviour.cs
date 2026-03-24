@@ -12,7 +12,7 @@ namespace Stirge.AI
         public static readonly System.Type[] BehaviourTypes =
         {
             typeof(AirJuggleBehaviour),
-            typeof(KinematicBehaviour),
+            typeof(PhysicsBehaviour),
             typeof(KnockbackBehaviour),
             typeof(LookAtTargetBehaviour),
             typeof(MoveToTargetBehaviour),
