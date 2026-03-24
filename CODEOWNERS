@@ -10,6 +10,9 @@ Assets/Scripts/Player/ @SkeleKing04
 # AI
 Assets/Scripts/AI/ @halenf
 
+# Combat
+Assets/Scripts/Combat/ @halenf
+
 # Enemy
 Assets/Scripts/Enemy/ @halenf
 
@@ -18,3 +21,6 @@ Assets/Scripts/Input/ @halenf
 
 # (Unused) Behaviour Tree
 Assets/Scripts/BehaviourTree/ @halenf
+
+# Halen testing scenes
+Assets/Scenes/[Halen testing]/ @halenf
