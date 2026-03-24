@@ -124,33 +124,33 @@ namespace FrameFighter2.Manager
             //check if the animation has changed
             if(state.fullPathHash != m_currentStateHash)
             {
-                //reset variables
+                //change current state hash
                 m_currentStateHash = state.fullPathHash;
-
-                m_currentClip = m_anim.GetCurrentAnimatorClipInfo(0)[0].clip;
-
+                //get currently playing clip
+                m_currentClip = (m_anim.GetCurrentAnimatorClipInfo(0).Length != 0) ? m_anim.GetCurrentAnimatorClipInfo(0)[0].clip : null;
+                //loop and find the data for the currently playing animation
                 for (int i = 0; i < m_clipList.Length; i++)
                 {
                     if (m_currentClip == m_clipList[i])
                     {
                         m_currentData = m_characterAnimData[i];
-                        //reset the currently hit objects
-                        m_hitObjects = new();
-
-                        ActiveEventCancel();
-                        ComboListenerCancel();
-
-                        DestroyAllHitboxes();
-
-                        m_lastLoopCount = 0;
                         break;
                     }
                 }
 
+                //reset the currently hit objects
+                m_hitObjects = new();
+                //reset listeners
+                ActiveEventCancel();
+                ComboListenerCancel();
+                //reset hitboxes
+                DestroyAllHitboxes();
+                //reset other variables
+                m_lastLoopCount = 0;
                 m_lastFrame = -1;
             }
 
-            if (m_currentData == null) return;
+            if (m_currentData == null || m_currentClip == null) return;
 
             //check if animation has looped to reset objects hit
             int loopCount = Mathf.FloorToInt(state.normalizedTime);
