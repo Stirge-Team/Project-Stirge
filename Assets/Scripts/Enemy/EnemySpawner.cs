@@ -48,14 +48,23 @@ namespace Stirge.Enemy
                 }
             }
         }
-
         public void DebugKnockback(InputAction.CallbackContext context)
         {
             if (context.started)
             {
                 foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    enemy.EnterKnockback(500f, new Vector2(1, 1), 1.3f);
+                    enemy.EnterKnockback(500f, new Vector2(1, 1), 1.3f, 0);
+                }
+            }
+        }
+        public void DebugAirJuggle(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                foreach (Enemy enemy in m_spawnedEnemies)
+                {
+                    enemy.EnterAirJuggle(300f, Vector3.up, 1.3f, 0);
                 }
             }
         }
@@ -69,18 +78,6 @@ namespace Stirge.Enemy
                 }
             }
         }
-        public void DebugAirJuggle(InputAction.CallbackContext context)
-        {
-            if (context.started)
-            {
-                foreach (Enemy enemy in m_spawnedEnemies)
-                {
-                    enemy.EnterAirJuggle(300f, Vector3.up, 1.3f);
-                }
-            }
-        }
-
-        
 #endif
     }
 }
