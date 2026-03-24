@@ -66,30 +66,24 @@ namespace Stirge.Enemy
             m_currentHealth -= damage;
         }
 
-        private void ApplyStun(float length)
+        public void EnterStun(float length)
         {
             if (length > 0)
             {
                 m_agent.WriteMemory("Stun", length);
             }
-        }
-        public void EnterStun(float length)
-        {
-            ApplyStun(length);
             if (m_agent.RetrieveMemory<bool>("Grounded"))
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);
         }
-        public void EnterKnockback(float strength, Vector2 direction, float stunLength = 0f, float height = 1f)
+        public void EnterKnockback(float strength, Vector2 direction, float height = 1f)
         {
-            ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
         }
-        public void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength = 0f)
+        public void EnterAirJuggle(float strength, Vector3 direction, float airStallLength)
         {
-            ApplyStun(stunLength);
             m_agent.WriteMemory("AirStall", airStallLength);
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);

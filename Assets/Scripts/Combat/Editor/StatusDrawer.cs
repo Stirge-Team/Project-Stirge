@@ -50,6 +50,7 @@ namespace Stirge.Combat
                         break;
                     case nameof(Knockback):
                         DrawPropertyField("m_strength");
+                        DrawPropertyField("m_height");
                         break;
                     case nameof(Stun):
                         DrawPropertyField("m_stunLength");
@@ -73,9 +74,9 @@ namespace Stirge.Combat
                 switch (typeName)
                 {
                     case nameof(AirJuggle):
+                    case nameof(Knockback):
                         totalLines += 2;
                         break;
-                    case nameof(Knockback):
                     case nameof(Stun):
                         totalLines++;
                         break;

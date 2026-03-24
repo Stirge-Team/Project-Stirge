@@ -24,7 +24,8 @@ namespace Stirge.Combat
     [System.Serializable]
     public class Knockback : Status
     {
-        [SerializeField] private float m_strength;
+        [SerializeField, Min(0f)] private float m_strength;
+        [SerializeField, Min(0f)] private float m_height;
 
         public override void Inflict(Enemy enemy)
         {
