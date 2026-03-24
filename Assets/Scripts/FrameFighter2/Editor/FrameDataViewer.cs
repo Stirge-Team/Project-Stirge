@@ -11,6 +11,7 @@ using static FrameFighter2.Data.EventData;
 using static FrameFighter2.Manager.FrameDataManager;
 using static FrameFighter2.Data.CharacterAnimationData;
 using Stirge.Input;
+using Stirge.Combat;
 
 namespace FrameFighter2.Viewer
 {
@@ -183,8 +184,9 @@ namespace FrameFighter2.Viewer
                                         var hitboxShape = dataTemp.HitboxShape;
                                         var hitboxType = dataTemp.HitboxType;
                                         string hitboxParent = dataTemp.HitboxParent;
-                                        EventData onTrigger = dataTemp.OnHit;
+                                        EventData onTrigger = dataTemp.OnHitEvent;
                                         SerializedObject serializedObject = new(m_manager);
+                                        OnHitEffect onHitEffect = dataTemp.OnHitEffect;
 
                                         //Hitbox editing
                                         EditorGUI.BeginChangeCheck();
@@ -310,6 +312,17 @@ namespace FrameFighter2.Viewer
 
                                         EditorGUILayout.Space(10);
 
+                                        //OnHitEffect
+
+
+                                        //SerializedProperty onHitEffectSerialized = serializedObject.FindProperty("m_characterAnimData").GetArrayElementAtIndex(m_selectedAnimIndex);
+
+                                        SerializedObject scriptableOjbect = new(m_manager.AnimData[m_selectedAnimIndex]);
+                                        SerializedProperty onHitEffectSerialized = scriptableOjbect.FindProperty("m_hitboxData").GetArrayElementAtIndex(i).FindPropertyRelative("m_onHitEffect");
+
+                                        EditorGUILayout.PropertyField(onHitEffectSerialized);
+
+                                        //FindPropertyRelative("m_hitboxData").GetArrayElementAtIndex(i);
 
                                         //apply changes
                                         if (EditorGUI.EndChangeCheck())
@@ -324,9 +337,10 @@ namespace FrameFighter2.Viewer
 
                                             scale = new(Mathf.Clamp(scale.x, 0, Mathf.Infinity), Mathf.Clamp(scale.y, 0, Mathf.Infinity), Mathf.Clamp(scale.z, 0, Mathf.Infinity));
 
-                                            data.EditHitBox(i, new(position, rotation, scale, frameStart, frameEnd, groupID, hitboxShape, hitboxType, hitboxParent, onTrigger));
+                                            data.EditHitBox(i, new(position, rotation, scale, frameStart, frameEnd, groupID, hitboxShape, hitboxType, hitboxParent, onTrigger, onHitEffect));
 
                                             serializedObject.ApplyModifiedProperties();
+                                            scriptableOjbect.ApplyModifiedProperties();
 
                                             AnimationEventCleanup();
 
@@ -919,9 +933,9 @@ namespace FrameFighter2.Viewer
 
             for (int i = hitboxToRemove + 1; i < data.HitboxData.Count; i++)
             {
-                if (data.HitboxData[i].OnHit.DoesExist())
+                if (data.HitboxData[i].OnHitEvent.DoesExist())
                 {
-                    data.HitboxData[i].OnHit.Rename(data.name + "OnHit" + (i - 1));
+                    data.HitboxData[i].OnHitEvent.Rename(data.name + "OnHit" + (i - 1));
 
                     CharacterAnimationEvent currentEvent = m_manager.FindEvent(data.name + "OnHit" + i);
 

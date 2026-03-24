@@ -53,7 +53,7 @@ namespace FrameFighter2.Data
             
             foreach (HitboxData hitboxData in m_hitboxData)
             {
-                if(hitboxData.OnHit.DoesExist()) events.Add(hitboxData.OnHit.EventID);
+                if(hitboxData.OnHitEvent.DoesExist()) events.Add(hitboxData.OnHitEvent.EventID);
             }
             foreach(EventData eventData in m_eventData)
             {

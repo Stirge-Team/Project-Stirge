@@ -1,3 +1,4 @@
+using Stirge.Combat;
 using UnityEngine;
 
 namespace FrameFighter2.Data
@@ -39,7 +40,9 @@ namespace FrameFighter2.Data
         [SerializeField] private HitboxTypes m_hitboxType;
         [SerializeField] private string m_hitboxParent;
         //event on hitbox
-        [SerializeField] private EventData m_onHit;
+        [SerializeField] private EventData m_onHitEvent;
+        //OnHitEffect
+        [SerializeField] private OnHitEffect m_onHitEffect;
 
         public Vector3 Position => m_position;
         public Vector3 Rotation => m_rotation;
@@ -50,10 +53,12 @@ namespace FrameFighter2.Data
         public HitboxShapes HitboxShape => m_hitboxShape;
         public HitboxTypes HitboxType => m_hitboxType;
         public string HitboxParent => m_hitboxParent;
-        public EventData OnHit => m_onHit;
+        public EventData OnHitEvent => m_onHitEvent;
+        public OnHitEffect OnHitEffect => m_onHitEffect;
 
         public HitboxData(Vector3 position, Vector3 rotation, Vector3 scale, float startFrame, float endFrame, 
-            int groupID = 0, HitboxShapes hitboxShape = HitboxShapes.Rectangle, HitboxTypes hitboxType = HitboxTypes.Local, string hitboxParent = "", EventData onHit = null)
+            int groupID = 0, HitboxShapes hitboxShape = HitboxShapes.Rectangle, HitboxTypes hitboxType = HitboxTypes.Local, 
+            string hitboxParent = "", EventData onHit = null, OnHitEffect onHitEffect = null)
         {
             m_position = position;
             m_rotation = rotation;
@@ -64,7 +69,8 @@ namespace FrameFighter2.Data
             m_hitboxShape = hitboxShape;
             m_hitboxType = hitboxType;
             m_hitboxParent = hitboxParent;
-            m_onHit = onHit;
+            m_onHitEvent = onHit;
+            m_onHitEffect = onHitEffect;
         }
     }
 }
