@@ -59,7 +59,9 @@ namespace Stirge.AI
                     case nameof(KnockbackBehaviour):
                         DrawPropertyField("m_offGroundTime");
                         break;
-                    case nameof(KinematicBehaviour):
+                    case nameof(PhysicsBehaviour):
+                        DrawPropertyField("m_maintainPriorMode");
+                        DrawPropertyField("m_enterMode");
                         DrawPropertyField("m_exitMode");
                         break;
                     case nameof(LookAtTargetBehaviour):
@@ -88,9 +90,11 @@ namespace Stirge.AI
                 {
                     case nameof(AirJuggleBehaviour):
                     case nameof(KnockbackBehaviour):
-                    case nameof(KinematicBehaviour):
                     case nameof(LookAtTargetBehaviour):
                         totalLines++;
+                        break;
+                    case nameof(PhysicsBehaviour):
+                        totalLines += 3;
                         break;
                 }
             }

@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
   - rid: 858787297446330434
-  - rid: 858787297446330435
+  - rid: 858787297446330563
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
     m_conditions:
-    - rid: 4991319162164084797
+    - rid: 858787297446330560
   m_timedTransitionState: {fileID: 0}
   m_timedTransitionDelay: 0
   references:
@@ -27,12 +27,14 @@ MonoBehaviour:
     - rid: 858787297446330434
       type: {class: StunBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data: 
-    - rid: 858787297446330435
-      type: {class: KinematicBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 858787297446330560
+      type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
+        m_typeIndex: 5
+        m_invertValue: 1
+    - rid: 858787297446330563
+      type: {class: PhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maintainPriorMode: 0
+        m_enterMode: 2
         m_exitMode: 1
-    - rid: 4991319162164084797
-      type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
-      data:
-        m_typeIndex: 3
-        m_invertValue: 0
