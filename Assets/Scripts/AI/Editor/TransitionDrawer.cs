@@ -52,7 +52,7 @@ namespace Stirge.AI
                             int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
                             if (newType != oldTypes[i])
                             {
-                                Condition newCondition = System.Activator.CreateInstance(StateEditor.ConditionTypes[newType]) as Condition;
+                                Condition newCondition = System.Activator.CreateInstance(Condition.ConditionTypes[newType]) as Condition;
                                 condition.managedReferenceValue = newCondition;
                                 condition.FindPropertyRelative("m_typeIndex").intValue = newType;
                             }

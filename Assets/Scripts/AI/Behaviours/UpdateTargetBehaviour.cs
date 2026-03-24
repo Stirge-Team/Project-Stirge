@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class UpdateTargetBehaviour : Behaviour
     {
         public override void _Enter(Agent agent)
@@ -9,7 +10,7 @@ namespace Stirge.AI
             base._Enter(agent);
         }
 
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
             // if the target is within range
             Transform target = agent.RetrieveMemory<Transform>("TargetTransform");

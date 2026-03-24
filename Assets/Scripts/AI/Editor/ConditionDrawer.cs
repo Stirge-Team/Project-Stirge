@@ -13,7 +13,7 @@ namespace Stirge.AI
 
             SerializedProperty invertValueProp = property.FindPropertyRelative("m_invertValue");
 
-            string labelText = StateEditor.StringTypes[currentType];
+            string labelText = StateEditor.ConditionNames[currentType];
             if (invertValueProp.boolValue)
             {
                 labelText = "Not " + labelText;
@@ -25,7 +25,7 @@ namespace Stirge.AI
             if (property.isExpanded)
             {
                 Rect changeTypePopup = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight, position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-                int popupValue = EditorGUI.Popup(changeTypePopup, currentType, StateEditor.StringTypes);
+                int popupValue = EditorGUI.Popup(changeTypePopup, currentType, StateEditor.ConditionNames);
                 if (popupValue != currentType)
                 {
                     typeIndex.intValue = popupValue;
@@ -35,7 +35,7 @@ namespace Stirge.AI
                 
                 EditorGUI.PropertyField(rectInvertProp, invertValueProp);
 
-                if (StateEditor.ConditionTypes[currentType].Name == nameof(DistanceCondition))
+                if (Condition.ConditionTypes[currentType].Name == nameof(DistanceCondition))
                 {
                     Rect rectDistance = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 3, position.size.x - EditorGUIUtility.labelWidth, EditorGUIUtility.singleLineHeight);
                     SerializedProperty distanceProp = property.FindPropertyRelative("m_distance");
@@ -62,7 +62,7 @@ namespace Stirge.AI
             {
                 totalLines += 2; // for type popup and invert value prop
                 int currentType = property.FindPropertyRelative("m_typeIndex").intValue;
-                switch (StateEditor.ConditionTypes[currentType].Name)
+                switch (Condition.ConditionTypes[currentType].Name)
                 {
                     case nameof(DistanceCondition):
                         totalLines++; // for distance prop

@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 namespace Stirge.Enemy
 {
@@ -25,8 +26,9 @@ namespace Stirge.Enemy
             m_spawnedEnemies.Add(spawnedEnemy);
         }
 
-        public void ReportDeath()
+        public void ReportDeath(Enemy enemy)
         {
+            m_spawnedEnemies.Remove(enemy);
             SpawnEnemy();
         }
 
@@ -36,6 +38,49 @@ namespace Stirge.Enemy
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(m_spawnLocation.position, 1f);
         }
+        public void DebugStun(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                foreach (Enemy enemy in m_spawnedEnemies)
+                {
+                    enemy.EnterStun(3f);
+                }
+            }
+        }
+
+        public void DebugKnockback(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                foreach (Enemy enemy in m_spawnedEnemies)
+                {
+                    enemy.EnterKnockback(500f, new Vector2(1, 1), 3f);
+                }
+            }
+        }
+        public void DebugReduceHealth(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                foreach (Enemy enemy in m_spawnedEnemies)
+                {
+                    enemy.TakeDamage(1);
+                }
+            }
+        }
+        public void DebugAirJuggle(InputAction.CallbackContext context)
+        {
+            if (context.started)
+            {
+                foreach (Enemy enemy in m_spawnedEnemies)
+                {
+                    enemy.EnterAirJuggle(300f, Vector3.up, 1.3f, 4f);
+                }
+            }
+        }
+
+        
 #endif
     }
 }

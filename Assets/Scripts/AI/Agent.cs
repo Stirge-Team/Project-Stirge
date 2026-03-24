@@ -15,8 +15,8 @@ namespace Stirge.AI
     public class Agent
     {   
         [Header("Agent Components")]
-        [SerializeField] private Transform m_transform;
         [SerializeField] private FiniteStateMachine m_fsm;
+        [SerializeField] private Transform m_transform;
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
 
@@ -29,6 +29,7 @@ namespace Stirge.AI
         }
 
         [Header("Agent Properties")]
+        [SerializeField] private State m_defaultState;
         [SerializeField, Min(0)] private float m_detectionRadius;
         [SerializeField, Min(0)] private float m_groundedCheckDistance;
         [SerializeField] private LayerMask m_groundedCheckMask;
@@ -44,10 +45,11 @@ namespace Stirge.AI
         private Dictionary<string, object> m_memory = new Dictionary<string, object>();
 
         #region Core
-        public void Start()
+        public void Awake()
         {
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
+            m_fsm = new FiniteStateMachine(m_defaultState);
             WriteMemory("TargetTransform", GameObject.FindWithTag("Player").transform);
         }
 
@@ -56,18 +58,18 @@ namespace Stirge.AI
             m_fsm._Enter(this);
         }
 
-        public void Update()
+        public void Update(float deltaTime)
         {
             // move to match Nav Mesh Agent's position
             if (m_physicsMode == PhysicsMode.NavMesh)
             {
-            m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
+                m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
             }
 
-            m_fsm._Update(this);
+            m_fsm._Update(this, deltaTime);
         }
 
-        public void FixedUpdate()
+        public void FixedUpdate(float deltaTime)
         {
             bool isGrounded = Physics.Raycast(m_transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
             WriteMemory("Grounded", isGrounded);
@@ -75,7 +77,7 @@ namespace Stirge.AI
             // apply gravity
             if (m_physicsMode == PhysicsMode.Physics && !isGrounded)
             {
-                m_rb.AddForce(0, -m_gravity * Time.deltaTime, 0, ForceMode.VelocityChange);
+                m_rb.AddForce(0, -m_gravity * deltaTime, 0, ForceMode.VelocityChange);
             }
         }
 
@@ -216,13 +218,13 @@ namespace Stirge.AI
                 }
                 else
                 {
-                    Debug.LogError($"Memory with key '{key}' cannot be cast to type '{nameof(T)}'.", m_transform);
+                    Debug.LogWarning($"Memory with key '{key}' cannot be cast to type '{nameof(T)}'.", m_transform);
                     return default;
                 }
             }
             else
             {
-                Debug.LogError($"No Memory exists with key '{key}' on Agent '{m_transform}'.", m_transform);
+                Debug.LogWarning($"No Memory exists with key '{key}' on Agent '{m_transform}'.", m_transform);
                 return default;
             }
         }
