@@ -2,7 +2,6 @@ using FrameFighter2.Data;
 using FrameFighter2.Hitbox;
 using System;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Events;
 using static FrameFighter2.Data.CharacterAnimationData;
@@ -113,7 +112,7 @@ namespace FrameFighter2.Manager
                 m_eventLookup[e.EventID] = e.Event;
             }
             //get list of clips attatched to animator for comparison
-            m_clipList = (m_anim.runtimeAnimatorController is AnimatorController animatorController) ? animatorController.animationClips : new AnimationClip[0];
+            m_clipList = (m_anim.runtimeAnimatorController is RuntimeAnimatorController animatorController) ? animatorController.animationClips : new AnimationClip[0];
         }
 
         private void Update()
