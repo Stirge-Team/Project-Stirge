@@ -54,5 +54,6 @@ MonoBehaviour:
     - rid: 1848161946245791837
       type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 150
+        m_strength: 5
         m_height: 5
+        m_stunLength: 2

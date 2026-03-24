@@ -44,5 +44,6 @@ MonoBehaviour:
     - rid: 1848161946245791841
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 200
+        m_strength: 10
         m_airStallLength: 2
+        m_stunLength: 2
