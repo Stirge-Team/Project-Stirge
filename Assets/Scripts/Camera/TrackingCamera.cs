@@ -364,7 +364,8 @@ namespace Stirge.Camera
                     if (
                         (m_lockedOnTarget.position - m_primaryTarget.position).magnitude
                             > m_lockOnRange
-                        && m_lockOnDisengauge
+                            && m_lockOnDisengauge
+                        || m_lockedOnTarget == null
                     )
                     {
                         ChangeState(CameraStates.Explore);
