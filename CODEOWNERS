@@ -23,4 +23,4 @@ Assets/Scripts/Input/ @halenf
 Assets/Scripts/BehaviourTree/ @halenf
 
 # Halen testing scenes
-Assets/Scenes/[Halen testing]/ @halenf
+Assets/Scenes/\[Halen testing\]/ @halenf
