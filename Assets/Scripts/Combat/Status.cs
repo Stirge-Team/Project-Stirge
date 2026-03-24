@@ -26,11 +26,12 @@ namespace Stirge.Combat
     {
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_height;
+        [SerializeField, Min(0f)] private float m_stunLength;
 
         public override void Inflict(Enemy enemy)
         {
             Vector2 dir = new Vector2(enemy.transform.forward.x, enemy.transform.forward.z);
-            enemy.EnterKnockback(m_strength, -dir);
+            enemy.EnterKnockback(m_strength, -dir, 1f, m_stunLength);
         }
     }
 
@@ -39,11 +40,12 @@ namespace Stirge.Combat
     {
         [SerializeField] private float m_strength;
         [SerializeField] private float m_airStallLength;
+        [SerializeField, Min(0f)] private float m_stunLength;
 
         public override void Inflict(Enemy enemy)
         {
             Vector2 dir = new Vector2(enemy.transform.forward.x, enemy.transform.forward.z);
-            enemy.EnterAirJuggle(m_strength, -dir, m_airStallLength);
+            enemy.EnterAirJuggle(m_strength, -dir, m_airStallLength, m_stunLength);
         }
     }
 }
