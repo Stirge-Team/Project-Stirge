@@ -55,7 +55,7 @@ namespace Stirge.Enemy
             {
                 foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    enemy.EnterKnockback(500f, new Vector2(1, 1), 3f);
+                    enemy.EnterKnockback(500f, new Vector2(1, 1), 1.3f);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace Stirge.Enemy
             {
                 foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    enemy.EnterAirJuggle(300f, Vector3.up, 1.3f, 4f);
+                    enemy.EnterAirJuggle(300f, Vector3.up, 1.3f);
                 }
             }
         }
