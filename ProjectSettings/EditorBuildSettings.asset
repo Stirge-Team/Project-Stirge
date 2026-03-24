@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/TestingScenes/StressTesting/StressTest.unity
+    guid: 10e52217f10ff14c09ec12af32552afb
+  - enabled: 1
+    path: Assets/Scenes/TestingScenes/StressTesting/LevelEnvironment.unity
+    guid: c6690661e190090ae90499d115cf99fc
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

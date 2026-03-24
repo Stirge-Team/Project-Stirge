@@ -361,11 +361,12 @@ namespace Stirge.Camera
                 case CameraStates.LockOn:
                     //camera positioning
                     //
+                    if (m_lockedOnTarget == null)
+                        ChangeState(CameraStates.Explore);
                     if (
                         (m_lockedOnTarget.position - m_primaryTarget.position).magnitude
                             > m_lockOnRange
-                            && m_lockOnDisengauge
-                        || m_lockedOnTarget == null
+                        && m_lockOnDisengauge
                     )
                     {
                         ChangeState(CameraStates.Explore);
@@ -411,6 +412,21 @@ namespace Stirge.Camera
                         betweenTargetPosition + m_primaryTarget.transform.position;
 
                     break;
+            }
+
+            //Correcting the position of the camera if its blocked by a wall or something
+            Vector3 dirToCamera = m_cameraDesiredPosition - m_primaryTarget.position;
+            Physics.Raycast(
+                m_primaryTarget.position,
+                dirToCamera.normalized,
+                out RaycastHit hit,
+                dirToCamera.sqrMagnitude,
+                LayerMask.GetMask("Default")
+            );
+            if (hit.collider != null)
+            {
+                Debug.Log("yer");
+                m_cameraDesiredPosition = hit.point;
             }
 
             //Apply the given position and rotation to the camera

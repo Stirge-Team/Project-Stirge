@@ -5849,7 +5849,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 989d111b09f324fd28b92b2905c2f8b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.EnemyToCamPasser
-  m_range: 15
+  m_range: 10
   m_GrabEnemiesWaitTime: 1
   m_ValidateWaitTime: 2
 --- !u!114 &2045072627
