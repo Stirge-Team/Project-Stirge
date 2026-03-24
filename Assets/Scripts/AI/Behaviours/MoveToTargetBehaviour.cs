@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class MoveToTargetBehaviour : Behaviour
     {
         public override void _Enter(Agent agent)
@@ -9,7 +10,7 @@ namespace Stirge.AI
             base._Enter(agent);
         }
 
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
             if (agent.TargetPosition != null && Vector3.Distance(agent.transform.position, (Vector3)agent.TargetPosition) > agent.StoppingDistance)
             {

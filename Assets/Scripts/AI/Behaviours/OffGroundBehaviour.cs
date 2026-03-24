@@ -16,16 +16,22 @@ namespace Stirge.AI
             base._Enter(agent);
         }
 
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
             if (!agent.RetrieveMemory<bool>("OffGround"))
             {
-                m_offGroundTimer -= Time.deltaTime;
+                m_offGroundTimer -= deltaTime;
                 if (m_offGroundTimer <= 0)
                 {
                     agent.WriteMemory("OffGround", true);
                 }
             }
+        }
+
+        public override void _Exit(Agent agent)
+        {
+            agent.WriteMemory("OffGround", true);
+            base._Exit(agent);
         }
     }
 }

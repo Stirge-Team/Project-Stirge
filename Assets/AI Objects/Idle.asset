@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Idle
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - {fileID: -7812315904582959465, guid: 9c196600d22c9564e868ee27fe5923c9, type: 3}
-  - {fileID: -1751859386079763582, guid: 3ff53b6dce2198948ac41e67db065c52, type: 3}
+  - rid: 858787297446330436
+  - rid: 858787297446330437
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 36d4f6570bd09424487a00be66004c82, type: 2}
     m_conditions:
@@ -25,6 +25,13 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 858787297446330436
+      type: {class: LookAtTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maxDegreesDelta: 5
+    - rid: 858787297446330437
+      type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 
     - rid: 4991319162164084988
       type: {class: ArrivedAtTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:

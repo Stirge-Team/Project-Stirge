@@ -19,5 +19,19 @@ namespace Stirge.AI
         {
             return true;
         }
+
+        // static list of all valid Conditions
+        public static readonly System.Type[] ConditionTypes =
+        {
+            typeof(Condition),
+            typeof(AirJuggleCondition),
+            typeof(DistanceCondition),
+            typeof(GroundedCondition),
+            typeof(OffGroundCondition),
+            typeof(StunnedCondition),
+            typeof(TargetInRangeCondition),
+            typeof(ArrivedAtTargetCondition),
+            typeof(HasTargetCondition)
+        };
     }
 }

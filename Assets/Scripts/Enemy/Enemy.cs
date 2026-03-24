@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Stirge.Enemy
 {
@@ -21,10 +20,10 @@ namespace Stirge.Enemy
 
         [HideInInspector] public EnemySpawner spawner = null;
 
-        private void Start()
+        private void Awake()
         {
             m_currentHealth = m_maxHealth;
-            m_agent.Start();
+            m_agent.Awake();
         }
 
         private void OnEnable()
@@ -38,17 +37,17 @@ namespace Stirge.Enemy
             if (IsDead())
             {
                 if (spawner != null)
-                    spawner.ReportDeath();
+                    spawner.ReportDeath(this);
                 Destroy(gameObject);
                 return;
             }
 
-            m_agent.Update();
+            m_agent.Update(Time.deltaTime);
         }
 
         private void FixedUpdate()
         {
-            m_agent.FixedUpdate();
+            m_agent.FixedUpdate(Time.deltaTime);
         }
 
         private void OnDisable()
@@ -98,28 +97,6 @@ namespace Stirge.Enemy
         #endregion
 
 #if UNITY_EDITOR
-        public void DebugStun(InputAction.CallbackContext context)
-        {
-            if (context.started)
-                EnterStun(3f);
-        }
-
-        public void DebugKnockback(InputAction.CallbackContext context)
-        {
-            if (context.started)
-                EnterKnockback(500f, new Vector2(1, 1), 3f);
-        }
-        public void DebugReduceHealth(InputAction.CallbackContext context)
-        {
-            if (context.started)
-                m_currentHealth--;
-        }
-        public void DebugAirJuggle(InputAction.CallbackContext context)
-        {
-            if (context.started)
-                EnterAirJuggle(300f, Vector3.up, 1.3f, 4f);
-        }
-
         private void OnDrawGizmosSelected()
         {
             m_agent.OnDrawGizmos();

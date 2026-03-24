@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class KnockbackBehaviour : OffGroundBehaviour
     {
         public override void _Enter(Agent agent)
@@ -10,9 +11,9 @@ namespace Stirge.AI
             base._Enter(agent);
         }
 
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
-            base._Update(agent);
+            base._Update(agent, deltaTime);
         }
 
         public override void _Exit(Agent agent)
