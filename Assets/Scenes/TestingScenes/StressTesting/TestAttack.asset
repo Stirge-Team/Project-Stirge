@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TestAttack
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 0, z: 0}
+  - m_position: {x: 0, y: 2.32, z: 0}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 1, y: 2, z: 1}
+    m_scale: {x: 2.53, y: 1.4, z: 1}
     m_startFrame: 6
     m_endFrame: 10
     m_groupID: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 2
+      m_damage: 3
       m_statuses:
       - rid: 1848161946245791837
   m_eventData:

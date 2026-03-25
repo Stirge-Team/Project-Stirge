@@ -133,10 +133,11 @@ namespace Stirge.AI
             m_rb.linearVelocity = Vector3.zero;
             m_rb.AddForce(direction.normalized * strength, ForceMode.VelocityChange);
         }
-        public void ApplyKnockback(float strength, Vector2 direction, float height)
+
+        public void ApplyKnockback(float strength, Vector3 direction, float height)
         {
-            m_rb.linearVelocity = Vector3.zero;
-            m_rb.AddForce(new Vector3(direction.x, height, direction.y).normalized * strength, ForceMode.VelocityChange);
+            direction = new(direction.x, height, direction.z);
+            ApplyKnockback(strength, direction);
         }
 
         public Vector3 GetVelocity()

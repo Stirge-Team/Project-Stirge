@@ -958,6 +958,45 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Debug",
+            "id": "8cc3e00b-7c63-4e59-abf9-db0cfb156276",
+            "actions": [
+                {
+                    "name": "Reload Current Scene",
+                    "type": "Button",
+                    "id": "8c0a527d-6209-44d6-a4d7-3f9bad8307ee",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "4e0c1756-e1b2-41aa-9f13-23ceb22e6575",
+                    "path": "<Keyboard>/r",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Reload Current Scene",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f268e308-26dd-49c5-9c79-bd0205a59855",
+                    "path": "<Gamepad>/start",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Reload Current Scene",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

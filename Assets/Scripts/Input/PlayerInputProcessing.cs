@@ -1,12 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using TMPro;
 
 namespace Stirge.Input
 {
-    using Combat;
-
     [System.Flags]
     public enum AttackInput
     {
@@ -45,10 +42,6 @@ namespace Stirge.Input
             {
                 m_bufferTimer -= Time.deltaTime;
             }
-
-#if UNITY_EDITOR
-            UpdateText();
-#endif
         }
 
         #region Bindings
@@ -99,7 +92,6 @@ namespace Stirge.Input
             // check if the player is in a state where they are able to attack
             else if (m_bindings.TryGetValue(input, out string attackName))
             {
-                ShowUsedAttack(attackName);
                 m_playerAnimator.Play(attackName);
                 return true;
             }
@@ -157,48 +149,5 @@ namespace Stirge.Input
             }
         }
         #endregion
-
-#if UNITY_EDITOR
-        #region Debug
-        [Header("DEBUG")]
-        [SerializeField] private TMP_Text m_sequenceDisplay;
-        [SerializeField] private TMP_Text m_usedAttackDisplay;
-
-        private float m_usedAttackTimer;
-
-        private void UpdateText()
-        {
-            if (m_sequenceDisplay == null || m_usedAttackDisplay == null)
-                return;
-
-            string text = string.Empty;
-            for (int i = 0; i < m_sequence.Count; i++)
-            {
-                text += m_sequence[i].ToString() + ", ";
-            }
-
-            if (text != string.Empty)
-            {
-                text = text[..^2];
-            }
-            m_sequenceDisplay.text = text;
-
-            if (m_usedAttackTimer > 0)
-            {
-                m_usedAttackTimer -= Time.deltaTime;
-                if (m_usedAttackTimer <= 0)
-                    m_usedAttackDisplay.text = "";
-            }
-        }
-
-        private void ShowUsedAttack(string attackName)
-        {
-            if (m_usedAttackDisplay == null)
-                return;
-            m_usedAttackDisplay.text = "Used '" + attackName + "'!";
-            m_usedAttackTimer = 1.5f;
-        }
-        #endregion
-#endif
     }
 }

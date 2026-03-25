@@ -18,7 +18,7 @@ MonoBehaviour:
     m_scale: {x: 2, y: 1, z: 1}
     m_startFrame: 6
     m_endFrame: 15
-    m_groupID: 0
+    m_groupID: 1
     m_hitboxShape: 2
     m_hitboxType: 0
     m_hitboxParent: 000001000
@@ -44,6 +44,6 @@ MonoBehaviour:
     - rid: 1848161946245791841
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 10
-        m_airStallLength: 2
+        m_strength: 8
+        m_airStallLength: 1
         m_stunLength: 2
