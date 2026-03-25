@@ -4,17 +4,19 @@ using UnityEditor;
 using UnityEditor.Animations;
 using System;
 using System.Collections.Generic;
-using FrameFighter2.Manager;
-using FrameFighter2.Data;
-using static FrameFighter2.Data.HitboxData;
-using static FrameFighter2.Data.EventData;
-using static FrameFighter2.Manager.FrameDataManager;
-using static FrameFighter2.Data.CharacterAnimationData;
+
 using Stirge.Input;
 using Stirge.Combat;
 
 namespace FrameFighter2.Viewer
 {
+    using Manager;
+    using Data;
+    using static Data.HitboxData;
+    using static Data.EventData;
+    using static Manager.FrameDataManager;
+    using static Data.CharacterAnimationData; 
+    
     public class FrameDataViewer : EditorWindow
     {
         private GameObject m_gameObject;

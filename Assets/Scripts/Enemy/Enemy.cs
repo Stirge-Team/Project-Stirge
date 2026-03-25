@@ -82,7 +82,7 @@ namespace Stirge.Enemy
             else
                 m_agent.EnterState(m_airStunState);
         }
-        public void EnterKnockback(float strength, Vector2 direction, float height, float stunLength)
+        public void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);

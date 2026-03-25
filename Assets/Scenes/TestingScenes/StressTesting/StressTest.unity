@@ -455,6 +455,68 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207047058}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &216133013
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 350343907}
+    m_Modifications:
+    - target: {fileID: -7142415650848673670, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_Name
+      value: MDL_SwordTemp
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 8686905464242370237, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+--- !u!4 &216133014 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5257779854330061456, guid: f1cc882c5b67b0c4dadec9dc1883807b, type: 3}
+  m_PrefabInstance: {fileID: 216133013}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &288545331
 GameObject:
   m_ObjectHideFlags: 0
@@ -1267,7 +1329,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &350343907
 Transform:
   m_ObjectHideFlags: 0
@@ -1276,13 +1338,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 350343906}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071065, y: 0.00000008940696, z: -0, w: 0.7071071}
-  m_LocalPosition: {x: -0, y: 0.111, z: -1.008}
-  m_LocalScale: {x: 0.1, y: 1, z: 0.1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0, y: 0.1, z: -0.31}
+  m_LocalScale: {x: 0.51, y: 0.51, z: 0.51}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 216133014}
   m_Father: {fileID: 2118515599}
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!23 &350343908
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1290,7 +1353,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 350343906}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1350,6 +1413,7 @@ GameObject:
   m_Component:
   - component: {fileID: 360177126}
   - component: {fileID: 360177125}
+  - component: {fileID: 360177127}
   m_Layer: 0
   m_Name: SceneLoader
   m_TagString: Untagged
@@ -1387,6 +1451,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &360177127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360177124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b07ba04ae2c58145bf529990415b9a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneRestarter
 --- !u!1 &427393934
 GameObject:
   m_ObjectHideFlags: 0
@@ -3907,7 +3983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd060d3806dad3a4594af1e26ae7dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
-  m_enemyPrefab: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
+  m_enemyPrefab: {fileID: 1055941552344043229, guid: 342f97e0187e9d440b5933a061fac243, type: 3}
   m_targetEnemyCount: 5
   m_spawnLocation: {fileID: 1509259609}
 --- !u!4 &1509259609
@@ -5738,6 +5814,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 360177127}
+        m_TargetAssemblyTypeName: SceneRestarter, Assembly-CSharp
+        m_MethodName: ReloadCurrentScene
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 8c0a527d-6209-44d6-a4d7-3f9bad8307ee
+    m_ActionName: 'Debug/Reload Current Scene[/Keyboard/r]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -5939,8 +6031,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
   m_playerAnimator: {fileID: 1463943177}
   m_inputBufferTime: 0.2
-  m_sequenceDisplay: {fileID: 0}
-  m_usedAttackDisplay: {fileID: 0}
 --- !u!4 &2118515599 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2070800186664943551, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}

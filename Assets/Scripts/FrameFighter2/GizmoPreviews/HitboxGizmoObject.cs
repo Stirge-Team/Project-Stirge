@@ -6,7 +6,6 @@ using static FrameFighter2.Viewer.HitboxGizmoPreview;
 
 namespace FrameFighter2.Viewer 
 {
-
     public class HitboxGizmoObject : MonoBehaviour
     {
         [ExecuteAlways]
@@ -95,5 +94,5 @@ namespace FrameFighter2.Viewer
             }
         }
     }
-#endif
 }
+#endif

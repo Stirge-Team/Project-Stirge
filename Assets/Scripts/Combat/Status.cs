@@ -30,8 +30,8 @@ namespace Stirge.Combat
 
         public override void Inflict(Enemy enemy)
         {
-            Vector2 dir = new Vector2(enemy.transform.forward.x, enemy.transform.forward.z);
-            enemy.EnterKnockback(m_strength, -dir, 1f, m_stunLength);
+            Vector3 dir = -enemy.transform.GetChild(0).forward;
+            enemy.EnterKnockback(m_strength, dir, 1f, m_stunLength);
         }
     }
 
@@ -44,8 +44,7 @@ namespace Stirge.Combat
 
         public override void Inflict(Enemy enemy)
         {
-            Vector2 dir = new Vector2(enemy.transform.forward.x, enemy.transform.forward.z);
-            enemy.EnterAirJuggle(m_strength, -dir, m_airStallLength, m_stunLength);
+            enemy.EnterAirJuggle(m_strength, Vector3.up, m_airStallLength, m_stunLength);
         }
     }
 }

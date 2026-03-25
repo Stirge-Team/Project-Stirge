@@ -63,7 +63,8 @@ namespace Stirge.AI
             // move to match Nav Mesh Agent's position
             if (m_physicsMode == PhysicsMode.NavMesh)
             {
-                m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
+                Vector3 navPosition = m_nav.transform.position;
+                m_transform.SetPositionAndRotation(new Vector3(navPosition.x, navPosition.y - 1f, navPosition.z), m_nav.transform.rotation);
             }
 
             m_fsm._Update(this, deltaTime);
@@ -133,10 +134,11 @@ namespace Stirge.AI
             m_rb.linearVelocity = Vector3.zero;
             m_rb.AddForce(direction.normalized * strength, ForceMode.VelocityChange);
         }
-        public void ApplyKnockback(float strength, Vector2 direction, float height)
+
+        public void ApplyKnockback(float strength, Vector3 direction, float height)
         {
-            m_rb.linearVelocity = Vector3.zero;
-            m_rb.AddForce(new Vector3(direction.x, height, direction.y).normalized * strength, ForceMode.VelocityChange);
+            direction = new(direction.x, height, direction.z);
+            ApplyKnockback(strength, direction);
         }
 
         public Vector3 GetVelocity()
