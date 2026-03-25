@@ -63,8 +63,7 @@ namespace Stirge.AI
             // move to match Nav Mesh Agent's position
             if (m_physicsMode == PhysicsMode.NavMesh)
             {
-                Vector3 navPosition = m_nav.transform.position;
-                m_transform.SetPositionAndRotation(new Vector3(navPosition.x, navPosition.y - 1f, navPosition.z), m_nav.transform.rotation);
+                m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
             }
 
             m_fsm._Update(this, deltaTime);
