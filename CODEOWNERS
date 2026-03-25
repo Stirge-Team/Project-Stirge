@@ -22,6 +22,9 @@ Assets/Scripts/Enemy/ @halenf
 # Input
 Assets/Scripts/Input/ @halenf
 
+# Scene management
+Assets/Scripts/Management/ @halenf @Skeleking04
+
 # (Unused) Behaviour Tree
 Assets/Scripts/BehaviourTree/ @halenf
 
