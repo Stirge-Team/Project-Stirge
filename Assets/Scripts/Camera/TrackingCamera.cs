@@ -416,13 +416,9 @@ namespace Stirge.Camera
 
             //Correcting the position of the camera if its blocked by a wall or something
             Vector3 dirToCamera = m_cameraDesiredPosition - m_primaryTarget.position;
-            Physics.Raycast(
-                m_primaryTarget.position,
-                dirToCamera.normalized,
-                out RaycastHit hit,
-                dirToCamera.sqrMagnitude,
-                LayerMask.GetMask("Default")
-            );
+            Ray camCheck = new Ray(m_primaryTarget.position, dirToCamera);
+            Debug.DrawRay(m_primaryTarget.position, dirToCamera.normalized * m_currentSettings._relativePosition.magnitude, Color.green);
+            Physics.Raycast(m_primaryTarget.position, dirToCamera.normalized, out RaycastHit hit, m_currentSettings._relativePosition.magnitude, LayerMask.GetMask("Default"));
             if (hit.collider != null)
             {
                 Debug.Log("yer");
