@@ -63,7 +63,7 @@ namespace Stirge.Camera
             //private float m_pivotGapStrength = 1;
             public float _pivotGapStrength;
 
-            [Header("Auto-Movement Settings")]
+            /*[Header("Auto-Movement Settings")]
             [Tooltip(
                 "How long the game should respect the player's change to the camera position before attempting to move itself"
             )]
@@ -74,6 +74,7 @@ namespace Stirge.Camera
             //private float m_cameraAutoPivotSpeed = 0.3f;
             public float _autoPivotSpeed;
 
+*/
             [Header("Inputs")]
             [Tooltip("How sensitive the camera movement is")]
             //private float m_inputSensitivity;
@@ -83,7 +84,8 @@ namespace Stirge.Camera
         private float m_viewAngle;
 
         private float m_cameraMoveCountdown;
-        private bool m_canAutoRotate => m_cameraMoveCountdown <= 0;
+
+        //private bool m_canAutoRotate => m_cameraMoveCountdown <= 0;
 
         [SerializeField]
         private cameraSettings m_exploreSettings;
@@ -162,12 +164,12 @@ namespace Stirge.Camera
         private bool m_lockOnIncludeTargetsOutOfRange = false;
         private Transform m_lockedOnTarget = null;
 
-        [
+        /*[
             SerializeField,
             Tooltip("How many degrees to the side the lock on camera should be."),
             Range(-90, 90)
         ]
-        private float m_lockOnOffset = 5.0f;
+        private float m_lockOnOffset = 5.0f;*/
 
         private float m_playerCameraRotationInput;
         private cameraSettings m_currentSettings
@@ -254,12 +256,12 @@ namespace Stirge.Camera
                             )
                         ).normalized * primaryDistanceFromCamera;
 
-                    if (m_canAutoRotate)
+                    /*if (m_canAutoRotate)
                     {
                         float primTargetAngle =
                             m_primaryTarget.rotation.eulerAngles.y * Mathf.Deg2Rad;
                         SetDesiredAngle(-primTargetAngle + Mathf.PI * 1.5f, false);
-                    }
+                    }*/
 
                     break;
 
@@ -341,7 +343,7 @@ namespace Stirge.Camera
                                 * distanceScaler
                         ); //Same as the other
 
-                    if (m_canAutoRotate)
+                    /*if (m_canAutoRotate)
                     {
                         Vector3 directionToLookPoint =
                             m_primaryTarget.position - m_cameraDesiredLookPoint;
@@ -356,7 +358,7 @@ namespace Stirge.Camera
                                 - Mathf.PI / 2f,
                             false
                         );
-                    }
+                    }*/
                     break;
                 case CameraStates.LockOn:
                     //camera positioning
@@ -384,7 +386,7 @@ namespace Stirge.Camera
                         Mathf.Infinity
                     );
 
-                    if (m_canAutoRotate)
+                    /*if (m_canAutoRotate)
                     {
                         SetDesiredAngle(
                             Mathf.Atan2(
@@ -394,7 +396,7 @@ namespace Stirge.Camera
                                 + m_lockOnOffset * Mathf.Deg2Rad,
                             false
                         );
-                    }
+                    }*/
 
                     m_cameraDesiredPosition =
                         m_primaryTarget.position
@@ -417,13 +419,18 @@ namespace Stirge.Camera
             //Correcting the position of the camera if its blocked by a wall or something
             Vector3 dirToCamera = m_cameraDesiredPosition - m_primaryTarget.position;
             Ray camCheck = new Ray(m_primaryTarget.position, dirToCamera);
-            Debug.DrawRay(m_primaryTarget.position, dirToCamera.normalized * m_currentSettings._relativePosition.magnitude, Color.green);
-            Physics.Raycast(m_primaryTarget.position, dirToCamera.normalized, out RaycastHit hit, m_currentSettings._relativePosition.magnitude, LayerMask.GetMask("Default"));
-            if (hit.collider != null)
-            {
-                Debug.Log("yer");
-                m_cameraDesiredPosition = hit.point;
-            }
+            Debug.DrawRay(
+                m_primaryTarget.position,
+                dirToCamera.normalized * m_currentSettings._relativePosition.magnitude,
+                Color.green
+            );
+            Physics.Raycast(
+                m_primaryTarget.position,
+                dirToCamera.normalized,
+                out RaycastHit hit,
+                m_currentSettings._relativePosition.magnitude,
+                LayerMask.GetMask("Default")
+            );
 
             //Apply the given position and rotation to the camera
             transform.position = Vector3.Lerp(
@@ -437,27 +444,19 @@ namespace Stirge.Camera
                 Time.deltaTime * m_currentSettings._rotationSpeed
             );
 
-            if (m_cameraMoveCountdown > 0)
+            SetDesiredAngle(m_playerCameraRotationInput);
+            /*if (m_cameraMoveCountdown > 0)
             {
-                SetDesiredAngle(m_playerCameraRotationInput);
                 m_cameraMoveCountdown -= Time.deltaTime;
-            }
+            }*/
             //Lerp the target angle to the desired on for nice smooth camera rotation
-            m_viewAngle = Mathf.Lerp(
-                m_viewAngle,
-                m_desiredAngle,
-                (
-                    m_cameraMoveCountdown <= 0
-                        ? m_currentSettings._autoPivotSpeed
-                        : m_currentSettings._pivotSpeed
-                )
-                    * Time.deltaTime
-                    * (
-                        1
-                        + Mathf.Abs(m_desiredAngle - m_viewAngle)
-                            * m_currentSettings._pivotGapStrength
-                    )
-            );
+            m_viewAngle =
+                Mathf.Lerp(m_viewAngle, m_desiredAngle, m_currentSettings._pivotSpeed)
+                * Time.deltaTime
+                * (
+                    1
+                    + Mathf.Abs(m_desiredAngle - m_viewAngle) * m_currentSettings._pivotGapStrength
+                );
         }
 
         public void SetDesiredAngle(float value, bool additive = true)
@@ -602,11 +601,11 @@ namespace Stirge.Camera
             }
         }
 
-        public void OnLook(InputValue value)
+        public void OnLook(InputAction.CallbackContext context)
         {
-            Vector2 lookInput = value.Get<Vector2>();
+            Vector2 lookInput = context.ReadValue<Vector2>();
             //add the delta of the player input to the desired angle.
-            m_cameraMoveCountdown = m_currentSettings._autoMoveWait;
+            //m_cameraMoveCountdown = m_currentSettings._autoMoveWait;
             m_playerCameraRotationInput =
                 Mathf.Clamp(lookInput.x, -1, 1)
                 * m_currentSettings._inputSensitivity
