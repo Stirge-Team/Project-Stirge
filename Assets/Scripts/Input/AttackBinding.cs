@@ -23,6 +23,13 @@ namespace Stirge.Input
             return new KeyValuePair<AttackInput, string>(attackInput, attackName);
         }
 
+        public static Dictionary<AttackInput, string> ConvertToDictionary(AttackBinding binding)
+        {
+            return new Dictionary<AttackInput, string>
+            {
+                { binding.attackInput, binding.attackName }
+            };
+        }
         public static Dictionary<AttackInput, string> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
         {
             return new Dictionary<AttackInput, string>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
