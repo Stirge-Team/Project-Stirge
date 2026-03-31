@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Stirge.AI
 {
     [System.Serializable]

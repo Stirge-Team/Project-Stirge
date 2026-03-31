@@ -1,4 +1,3 @@
-using Stirge.Combat;
 using UnityEditor;
 using UnityEngine;
 
