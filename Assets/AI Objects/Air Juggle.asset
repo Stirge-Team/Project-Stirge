@@ -33,7 +33,6 @@ MonoBehaviour:
     - rid: 858786852842504257
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 4
         m_invertValue: 0
     - rid: 858787297446330433
       type: {class: AirJuggleBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
@@ -42,25 +41,20 @@ MonoBehaviour:
     - rid: 858787297446330510
       type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 3
         m_invertValue: 0
     - rid: 858787297446330511
       type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 5
         m_invertValue: 1
     - rid: 858787297446330532
       type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 3
         m_invertValue: 0
     - rid: 858787297446330533
       type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 5
         m_invertValue: 0
     - rid: 4991319162164084796
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 4
         m_invertValue: 0

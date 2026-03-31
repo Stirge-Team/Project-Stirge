@@ -45,6 +45,7 @@ namespace Stirge.AI
 
         private void OnEnable()
         {
+            PopulateBehaviourNames();
             PopulateConditionNames();
         }
 
@@ -148,11 +149,9 @@ namespace Stirge.AI
                 // turns camel case into separate words (looks nice)
                 conditionNames[i] = Regex.Replace(Regex.Replace(conditionNames[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
             }
-            // show Condition as this
-            conditionNames[0] = "Empty Condition";
         }
 
-#if UNITY_EDITOR
+        /*
         [System.Obsolete]
         private void DrawTransition(SerializedProperty transition)
         {
@@ -195,12 +194,12 @@ namespace Stirge.AI
                     for (int i = 0; i < conditions.arraySize; i++)
                     {
                         SerializedProperty condition = conditions.GetArrayElementAtIndex(i);
-                        /*
+                        //
                         int oldType = condition.FindPropertyRelative("m_typeIndex").intValue;
 
                         // draw property drawer
                         EGL.PropertyField(condition, new GUIContent(stringTypes[oldType]));
-                        */
+                        //
                         // if changing type
                         int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
                         if (newType != oldTypes[i])
@@ -224,7 +223,7 @@ namespace Stirge.AI
 
             EG.indentLevel--;
 
-            /*
+            //
             // add and remove buttons
             EGL.BeginHorizontal();
             Rect addButtonRect = EG.IndentedRect(EG.IndentedRect(EGL.GetControlRect()));
@@ -244,7 +243,7 @@ namespace Stirge.AI
             EGL.EndHorizontal();
 
             EG.indentLevel--;
-            */
+            //
         }
 
         [System.Obsolete]
@@ -278,6 +277,6 @@ namespace Stirge.AI
                 m_hasChanged = true;
             }
         }
-#endif
+        */
     }
 }

@@ -6,8 +6,31 @@ namespace Stirge.AI
     [CustomPropertyDrawer(typeof(Transition))]
     public class TransitionDrawer : PropertyDrawer
     {
+        private int m_selectedCondition;
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
+            int totalLines = 0;
+
+            void DrawPropertyField(string propertyName)
+            {
+                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
+                Rect propRect = GetNewRect();
+                EditorGUI.PropertyField(propRect, propToDraw);
+
+                if (propToDraw.propertyType == SerializedPropertyType.Float)
+                {
+                    if (propToDraw.floatValue < 0)
+                        propToDraw.floatValue = 0;
+                }
+            }
+
+            Rect GetNewRect()
+            {
+                totalLines++;
+                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
+            }
+
             SerializedProperty targetStateProp = property.FindPropertyRelative("m_targetState");
 
             if (targetStateProp.objectReferenceValue != null)
@@ -20,57 +43,35 @@ namespace Stirge.AI
             }
 
             EditorGUI.BeginProperty(position, label, property);
-            Rect rectFoldout = new Rect(position.min.x, position.min.y, position.size.x, EditorGUIUtility.singleLineHeight);
-            property.isExpanded = EditorGUI.Foldout(rectFoldout, property.isExpanded, label);
+            property.isExpanded = EditorGUI.Foldout(GetNewRect(), property.isExpanded, label);
             if (property.isExpanded)
             {
-                Rect targetStateRect = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight, position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-                EditorGUI.PropertyField(targetStateRect, targetStateProp);
+                // draw the target state for the Transition
+                DrawPropertyField("m_targetState");
 
-                Rect conditionsRect = new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * 2, position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
+                // draw conditions list
+                DrawPropertyField("m_conditions");
+
+                // add extra lines for conditions height
                 SerializedProperty conditionsProp = property.FindPropertyRelative("m_conditions");
-                if (conditionsProp != null)
-                {
-                    int[] oldTypes = new int[conditionsProp.arraySize];
-                    int oldArraySize = conditionsProp.arraySize;
+                if (conditionsProp.isExpanded)
+                    totalLines += (int)(EditorGUI.GetPropertyHeight(conditionsProp) / EditorGUIUtility.singleLineHeight);
 
-                    // populate old types and also check for null elements
-                    for (int i = 0; i < oldArraySize; i++)
-                    {
-                        var condition = conditionsProp.GetArrayElementAtIndex(i);
-                        condition.managedReferenceValue ??= new Condition();
-                        oldTypes[i] = conditionsProp.GetArrayElementAtIndex(i).FindPropertyRelative("m_typeIndex").intValue;
-                    }
-                    
-                    EditorGUI.PropertyField(conditionsRect, conditionsProp);
+                // draw popup for adding new Conditions
+                m_selectedCondition = EditorGUI.Popup(GetNewRect(), m_selectedCondition, StateEditor.ConditionNames);
 
-                    if (oldArraySize == conditionsProp.arraySize)
-                    {
-                        for (int i = 0; i < conditionsProp.arraySize; i++)
-                        {
-                            SerializedProperty condition = conditionsProp.GetArrayElementAtIndex(i);
-                            int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
-                            if (newType != oldTypes[i])
-                            {
-                                Condition newCondition = System.Activator.CreateInstance(Condition.ConditionTypes[newType]) as Condition;
-                                condition.managedReferenceValue = newCondition;
-                                condition.FindPropertyRelative("m_typeIndex").intValue = newType;
-                            }
-                        }
-                    }
-                }
-                else
+                // create new Condition button
+                if (GUI.Button(GetNewRect(), new GUIContent("Add new " + StateEditor.ConditionNames[m_selectedCondition])))
                 {
-                    conditionsProp.managedReferenceValue = new Condition[0];
+                    Condition newCondition = System.Activator.CreateInstance(Condition.ConditionTypes[m_selectedCondition]) as Condition;
+                    conditionsProp.arraySize++;
+                    SerializedProperty newConditionProp = conditionsProp.GetArrayElementAtIndex(conditionsProp.arraySize - 1);
+                    newConditionProp.managedReferenceValue = newCondition;
+                    newConditionProp.isExpanded = true;
+                    conditionsProp.isExpanded = true;
                 }
             }
 
-            /*
-            int currentType = property.FindPropertyRelative("m_typeIndex").intValue;
-            EditorGUI.LabelField(position, StateEditor.StringTypes[currentType]);
-            EditorGUI.PropertyField(position, property.FindPropertyRelative("m_invertValue"));
-
-            */
             EditorGUI.EndProperty();
         }
 
@@ -80,9 +81,10 @@ namespace Stirge.AI
 
             if (property.isExpanded)
             {
-                totalLines++; // target state prop
+                totalLines += 4; // for target state, new Condition popup, new Conditio button, and size of Conditions array prop
                 SerializedProperty conditionsProp = property.FindPropertyRelative("m_conditions");
-                totalLines += (int)(EditorGUI.GetPropertyHeight(conditionsProp) / EditorGUIUtility.singleLineHeight);
+                if (conditionsProp.isExpanded)
+                    totalLines += (int)(EditorGUI.GetPropertyHeight(conditionsProp) / EditorGUIUtility.singleLineHeight);
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);

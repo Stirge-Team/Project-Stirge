@@ -1,6 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Stirge.Combat
 {
@@ -73,6 +72,7 @@ namespace Stirge.Combat
                     typeName = string.Empty;
                 else
                     typeName = typeName[30..];
+
                 switch (typeName)
                 {
                     case nameof(AirJuggle):

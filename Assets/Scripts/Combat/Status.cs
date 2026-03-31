@@ -8,6 +8,13 @@ namespace Stirge.Combat
     public abstract class Status
     {
         public abstract void Inflict(Enemy enemy);
+
+        public static readonly System.Type[] StatusTypes =
+        {
+            typeof(AirJuggle),
+            typeof(Knockback),
+            typeof(Stun)
+        };
     }
 
     [System.Serializable]

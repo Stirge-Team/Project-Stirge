@@ -8,14 +8,6 @@ namespace Stirge.Combat
     [CustomPropertyDrawer(typeof(OnHitEffect))]
     public class OnHitEffectDrawer : PropertyDrawer
     {
-        private int selectedStatus;
-        private readonly System.Type[] StatusTypes =
-        {
-            typeof(AirJuggle),
-            typeof(Knockback),
-            typeof(Stun)
-        };
-
         public string[] StringTypes
         {
             get
@@ -29,48 +21,55 @@ namespace Stirge.Combat
         }
         private string[] m_stringTypes;
 
+        private int m_selectedStatus;
+
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             int totalLines = 0;
 
-            Rect GetNewRect(Rect position)
+            void DrawPropertyField(string propertyName)
+            {
+                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
+                Rect propRect = GetNewRect();
+                EditorGUI.PropertyField(propRect, propToDraw);
+
+                if (propToDraw.propertyType == SerializedPropertyType.Float)
+                {
+                    if (propToDraw.floatValue < 0)
+                        propToDraw.floatValue = 0;
+                }
+            }
+
+            Rect GetNewRect()
             {
                 totalLines++;
                 return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
             }
 
-            SerializedProperty damageProp = property.FindPropertyRelative("m_damage");
-            SerializedProperty statusesProp = property.FindPropertyRelative("m_statuses");
-
             EditorGUI.EndFoldoutHeaderGroup();
 
             EditorGUI.BeginProperty(position, label, property);
-            Rect foldoutRect = GetNewRect(position);
-            property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);
+            property.isExpanded = EditorGUI.Foldout(GetNewRect(), property.isExpanded, label);
             if (property.isExpanded)
             {
                 // draw damage property
-                Rect damageRect = GetNewRect(position);
-                EditorGUI.PropertyField(damageRect, damageProp);
-                if (damageProp.intValue < 0)
-                    damageProp.intValue = 0;
+                DrawPropertyField("m_damage");
 
                 // draw Statuses array
-                Rect statusesRect = GetNewRect(position);
+                DrawPropertyField("m_statuses");
+
+                // add extra lines for height of array
+                SerializedProperty statusesProp = property.FindPropertyRelative("m_statuses");
                 if (statusesProp.isExpanded)
                     totalLines += (int)(EditorGUI.GetPropertyHeight(statusesProp) / EditorGUIUtility.singleLineHeight);
 
                 // draw popup for picking new Statuses
-                Rect statusPopupRect = GetNewRect(position);
-                selectedStatus = EditorGUI.Popup(statusPopupRect, selectedStatus, StringTypes);
-
-                EditorGUI.PropertyField(statusesRect, statusesProp);
+                m_selectedStatus = EditorGUI.Popup(GetNewRect(), m_selectedStatus, StringTypes);
 
                 // create new Status button
-                Rect newStatusButtonRect = GetNewRect(position);
-                if (GUI.Button(newStatusButtonRect, "Add new " + StringTypes[selectedStatus] + " Status"))
+                if (GUI.Button(GetNewRect(), "Add new " + StringTypes[m_selectedStatus] + " Status"))
                 {
-                    Status newStatus = System.Activator.CreateInstance(StatusTypes[selectedStatus]) as Status;
+                    Status newStatus = System.Activator.CreateInstance(Status.StatusTypes[m_selectedStatus]) as Status;
                     statusesProp.arraySize++;
                     SerializedProperty newStatusProp = statusesProp.GetArrayElementAtIndex(statusesProp.arraySize - 1);
                     newStatusProp.managedReferenceValue = newStatus;
@@ -99,7 +98,7 @@ namespace Stirge.Combat
         private void PopulateStringTypes()
         {
             // get all the Statuses from the list and change them from CamelCase to English
-            m_stringTypes = StatusTypes.Select(t => t.Name).ToArray();
+            m_stringTypes = Status.StatusTypes.Select(t => t.Name).ToArray();
             for (int i = 0; i < m_stringTypes.Length; i++)
             {
                 // turns camel case into separate words (looks nice)

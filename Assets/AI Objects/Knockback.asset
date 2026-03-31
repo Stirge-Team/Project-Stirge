@@ -36,25 +36,20 @@ MonoBehaviour:
     - rid: 858787297446330468
       type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 3
         m_invertValue: 0
     - rid: 858787297446330469
       type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 5
         m_invertValue: 0
     - rid: 5052026654975590872
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 4
         m_invertValue: 0
     - rid: 5052026654975590905
       type: {class: GroundedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 3
         m_invertValue: 0
     - rid: 5052026654975590924
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 4
         m_invertValue: 0
