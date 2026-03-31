@@ -21,14 +21,20 @@ namespace Stirge.Input
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
         
-        private Dictionary<AttackInput, string> m_bindings;
+        private Dictionary<AttackInput, string> m_groundedBindings;
+        private Dictionary<AttackInput, string> m_airBindings;
 
         // if combos are never going to have branching paths, this can just become an AttackBinding
-        private AttackBinding m_comboBinding;
+        private Dictionary<AttackInput, string> m_comboBindings;
 
         private List<AttackInput> m_sequence = new();
 
         private float m_bufferTimer = 0;
+
+        private void Start()
+        {
+            m_comboBindings = new();
+        }
 
         private void Update()
         {
@@ -45,9 +51,26 @@ namespace Stirge.Input
         }
 
         #region Bindings
-        public void SetBindings(Dictionary<AttackInput, string> bindings)
+        public void SetGroundedBindings(Dictionary<AttackInput, string> bindings)
         {
-            m_bindings = new(bindings);
+            m_groundedBindings = new(bindings);
+        }
+        public void SetAirBindings(Dictionary<AttackInput, string> bindings)
+        {
+            m_airBindings = new(bindings);
+        }
+
+        public void SetComboBinding(AttackBinding binding)
+        {
+            m_comboBindings = AttackBinding.ConvertToDictionary(binding);
+        }
+        public void SetComboBinding(Dictionary<AttackInput, string> bindings)
+        {
+            m_comboBindings = new(bindings);
+        }
+        public void ClearComboBinding()
+        {
+            m_comboBindings = null;
         }
         #endregion
 
@@ -84,13 +107,25 @@ namespace Stirge.Input
 
         public bool ProcessInput(AttackInput input)
         {
-            if (m_comboBinding != null && m_comboBinding.attackInput == input)
+            if (m_comboBindings.TryGetValue(input, out string attackName))
             {
-                m_playerAnimator.Play(m_comboBinding.attackName);
+                m_playerAnimator.Play(attackName);
                 return true;
             }
             // check if the player is in a state where they are able to attack
-            else if (m_bindings.TryGetValue(input, out string attackName))
+            
+            bool grounded = m_playerAnimator.GetBool("IsGrounded");
+            // grounded bindings
+            if (grounded)
+            {
+                if (m_groundedBindings.TryGetValue(input, out attackName))
+                {
+                    m_playerAnimator.Play(attackName);
+                    return true;
+                }
+            }
+            // air bindings
+            else if (m_airBindings.TryGetValue(input, out attackName))
             {
                 m_playerAnimator.Play(attackName);
                 return true;
@@ -104,18 +139,6 @@ namespace Stirge.Input
             if (m_sequence.Count == MaxSequenceLength)
                 m_sequence.RemoveAt(0);
             m_sequence.Add(input);
-        }
-        #endregion
-
-        #region Combos
-        public void SetComboBinding(AttackBinding binding)
-        {
-            m_comboBinding = new(binding);
-        }
-
-        public void ClearComboBinding()
-        {
-            m_comboBinding = null;
         }
         #endregion
 
