@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 namespace Stirge.AI
 {
@@ -19,6 +19,7 @@ namespace Stirge.AI
         [SerializeField] private Transform m_transform;
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
+        [SerializeField] private Animator m_anim;
 
         public Transform transform => m_transform;
         private Vector3? m_targetPosition;
@@ -168,6 +169,12 @@ namespace Stirge.AI
         {
             m_targetPosition = null;
             m_nav.ResetPath();
+        }
+
+        public void UseAttack(string attackName)
+        {
+            if (m_anim.HasState(-1, Animator.StringToHash(attackName)))
+                m_anim.Play(attackName);
         }
 
         /*
