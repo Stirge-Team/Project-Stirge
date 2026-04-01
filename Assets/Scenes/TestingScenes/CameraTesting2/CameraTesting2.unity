@@ -3048,7 +3048,7 @@ MonoBehaviour:
   m_LegacyPriority: 0
   Target:
     TrackingTarget: {fileID: 2045072624}
-    LookAtTarget: {fileID: 1509259609}
+    LookAtTarget: {fileID: 1653957224}
     CustomLookAtTarget: 1
   Lens:
     FieldOfView: 60
@@ -3222,7 +3222,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 875886607}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.032431524, y: -0.60783035, z: 0.02485812, w: 0.7930149}
+  m_LocalRotation: {x: 0.000000018553383, y: 0.97520006, z: -0.2213252, w: 0.00000008174966}
   m_LocalPosition: {x: 0, y: 2.503529, z: 5.2314153}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3247,6 +3247,7 @@ MonoBehaviour:
   m_lockOnRange: 10
   m_lockOnDisengauge: 0
   m_lockOnTargetFailOver: 0
+  m_lockOnWeight: 0.5
 --- !u!1 &925962919
 GameObject:
   m_ObjectHideFlags: 0
@@ -4282,6 +4283,7 @@ GameObject:
   - component: {fileID: 1417187482}
   - component: {fileID: 1417187481}
   - component: {fileID: 1417187480}
+  - component: {fileID: 1417187483}
   m_Layer: 0
   m_Name: State-Driven Camera
   m_TagString: Untagged
@@ -4388,6 +4390,18 @@ Transform:
   - {fileID: 875886612}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1417187483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417187479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 483496819d541a26599b6fc504324dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Camera.CameraStateManager
 --- !u!1 &1455924862
 GameObject:
   m_ObjectHideFlags: 0
@@ -5003,8 +5017,6 @@ GameObject:
   - component: {fileID: 1642650727}
   - component: {fileID: 1642650726}
   - component: {fileID: 1642650729}
-  - component: {fileID: 1642650730}
-  - component: {fileID: 1642650731}
   - component: {fileID: 1642650732}
   m_Layer: 0
   m_Name: Main Camera
@@ -5131,111 +5143,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1642650730
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642650725}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88f2d6ecf0468ff589b2f4c8f214412a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Strige.Camera.TrackingCamera
-  m_exploreSettings:
-    _movementSpeed: 20
-    _rotationSpeed: 10
-    _relativePosition: {x: 5, y: 3}
-    _pivotSpeed: 5
-    _pivotGapStrength: 1
-    _inputSensitivity: 2
-  m_primaryTarget: {fileID: 2045072624}
-  m_secondaryTargets: []
-  m_combatSettings:
-    _movementSpeed: 10
-    _rotationSpeed: 5
-    _relativePosition: {x: 4, y: 4}
-    _pivotSpeed: 5
-    _pivotGapStrength: 1
-    _inputSensitivity: 2
-  m_groupDistanceScaling: 0.2
-  m_combatRangeCutoff: 15
-  m_clumpBias: 0.5
-  m_lockOnSettings:
-    _movementSpeed: 5
-    _rotationSpeed: 10
-    _relativePosition: {x: 6, y: 2}
-    _pivotSpeed: 5
-    _pivotGapStrength: 1
-    _inputSensitivity: 2
-  m_toggleLockOn: 0
-  m_usePrimaryForward: 0
-  m_lockOnRange: 15
-  m_lockOnDisengauge: 1
-  m_lockOnIncludeTargetsOutOfRange: 0
---- !u!114 &1642650731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642650725}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
-  m_Actions: {fileID: -944628639613478452, guid: 1f4fc056dbe4f9583adc4cb3ce23857f, type: 3}
-  m_NotificationBehavior: 2
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1642650730}
-        m_TargetAssemblyTypeName: Stirge.Camera.TrackingCamera, Assembly-CSharp
-        m_MethodName: OnLook
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 86de45e5-6ab8-4e00-a240-63476863dc01
-    m_ActionName: 'Camera/Look[/Mouse/delta,/Gamepad/rightStick]'
-  - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1642650730}
-        m_TargetAssemblyTypeName: Stirge.Camera.TrackingCamera, Assembly-CSharp
-        m_MethodName: OnLockOn
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 411a0348-c321-4f9b-9c03-ddb6d94b2846
-    m_ActionName: 'Camera/LockOn[/Keyboard/tab,/Gamepad/leftShoulder,/Gamepad/rightShoulder]'
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Camera
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!114 &1642650732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6967,7 +6874,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045072619}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 989d111b09f324fd28b92b2905c2f8b7, type: 3}
   m_Name: 

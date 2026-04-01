@@ -7,16 +7,15 @@ namespace Stirge.Camera
 {
     public class EnemyGroupHandler : MonoBehaviour
     {
-        private CinemachineStateDrivenCamera m_cameraRig;
         [SerializeField]
         private float m_range = 10f;
         [SerializeField]
         private Transform m_rangeOrigin;
         private CinemachineTargetGroup m_groupScript;
+        private bool m_isActive => CameraStateManager.Instance.State != "LockOn";
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-            m_cameraRig = FindFirstObjectByType<CinemachineStateDrivenCamera>();
             m_groupScript = GetComponent<CinemachineTargetGroup>();
         }
 
@@ -24,7 +23,7 @@ namespace Stirge.Camera
         void FixedUpdate()
         {
             //If in the lock on state - cancel
-            if(m_cameraRig.LiveChild.Name == "LockOnCam")
+            if(!m_isActive)
                 return;
 
             foreach (var ene in FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None))
@@ -50,10 +49,11 @@ namespace Stirge.Camera
             }
 
             //if the current state is the combat state and the only target is the origin point
-            if (m_groupScript.Targets.Count == 1 && m_cameraRig.LiveChild.Name == "CombatCam" && m_groupScript.Targets[0].Object == m_rangeOrigin)
+            if (m_groupScript.Targets.Count <= 1 && CameraStateManager.Instance.State == "Combat" && m_groupScript.Targets[0].Object == m_rangeOrigin)
             {
+                Debug.Log("Only the origin remains. Returning to the explore camera & clearing all targets");
                 //exit the combat state
-                m_cameraRig.GetComponent<Animator>().SetTrigger("Explore");
+                CameraStateManager.Instance.ChangeCameraState("Explore");
                 //and clear the targets
                 m_groupScript.Targets = new();
             }
@@ -61,9 +61,10 @@ namespace Stirge.Camera
             else if(m_groupScript.Targets.Count > 0)
             {
                 //update the camera state to this one from the explore state
-                if (m_cameraRig.LiveChild.Name == "ExploreCam")
+                if (CameraStateManager.Instance.State == "Explore")
                 {
-                    m_cameraRig.GetComponent<Animator>().SetTrigger("Combat");
+                    Debug.Log("Combat targets found, switching to combat state");
+                    CameraStateManager.Instance.ChangeCameraState("Combat");
                     //and add the origin to the list
                     AttemptAddMember(m_rangeOrigin, 1f, 1);
                 }
@@ -88,6 +89,8 @@ namespace Stirge.Camera
                 if(newMember == target.Object)
                     return;
             }
+            
+            Debug.Log($"Adding {newMember.name} to the group of targets.");
 
             m_groupScript.AddMember(newMember, weight, radius);
         }
