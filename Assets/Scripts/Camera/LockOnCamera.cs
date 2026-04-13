@@ -1,3 +1,4 @@
+using Stirge.Player;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,10 +23,17 @@ public class LockOnCamera : MonoBehaviour
     private bool m_lockOnTargetFailOver = false;
     [SerializeField, Range(0, 1)]
     private float m_lockOnWeight = 0.5f;
+    private PlayerMovement m_playerObject;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         m_groupScript = FindFirstObjectByType<CinemachineTargetGroup>();
+        m_playerObject = FindAnyObjectByType<PlayerMovement>();
+        if(!m_playerObject)
+            {
+                Debug.LogError($"Player object not found! Removing lock on camera. Ensure you have a \"PlayerMovement\" script attached to your player object if this behavior was unintened.");
+                Destroy(this);
+            }
     }
 
     // Update is called once per frame
@@ -77,6 +85,7 @@ public class LockOnCamera : MonoBehaviour
                     m_groupScript.Targets = new();
                     m_groupScript.AddMember(closestTarget, m_lockOnWeight, 1f);
                     m_groupScript.AddMember(m_originPoint, 1 - m_lockOnWeight, 1f);
+                    m_playerObject.AssignLockOnTarget(closestTarget);
                 }
             }
             //leave this state if we're already in it
@@ -84,6 +93,7 @@ public class LockOnCamera : MonoBehaviour
             {
                 Debug.Log("Leaving the lock on camera to the explore camera");
                 CameraStateManager.Instance.ChangeCameraState("Explore");
+                m_playerObject.CancelLockOn();
             }
     }
 }
