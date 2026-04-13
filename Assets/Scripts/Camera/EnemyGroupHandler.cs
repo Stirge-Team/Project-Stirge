@@ -33,7 +33,7 @@ namespace Stirge.Camera
                     continue;
 
                 //Get this enemy's transform
-                Transform eneTrans = ene.GetComponent<Transform>();
+                Transform eneTrans = ene.transform.parent.GetChild(0).transform;
 
                 //Check if the distance from the origin is within range
                 if (Vector3.Distance(eneTrans.position, m_rangeOrigin.position) <= m_range)
