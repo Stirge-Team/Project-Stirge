@@ -33,9 +33,19 @@ namespace Stirge.Management
                     _isDead = true;
                 }
             }
+            public void Revive()
+            {
+                if(_isDead)
+                {
+                    _isDead = false;
+                    Debug.Log($"A entity has been revived!");
+                }
+                else Debug.LogWarning($"The entity you are to revive isn't dead.");
+            }
         }
         [SerializeField]
-        public Health _health;
+        private Health m_health;
+        public Health _getHealth => m_health;
         //EVENTS
         [SerializeField, Tooltip("Events to call only when this entity's health increases.")]
         private UnityEvent<float> _healEvents;
@@ -53,7 +63,7 @@ namespace Stirge.Management
         void Start()
         {
             //Set the health
-            _health.Initialise();
+            m_health.Initialise();
         }
         //TESTFUNCTION - BUTTONS ARE DUMB
         public void ButtonUpdateHealth(float amount)
@@ -62,20 +72,25 @@ namespace Stirge.Management
         }
         public void UpdateHealth(float amount, bool clamp = true, Object sender = null)
         {
-            if(_health._isDead) return;
+            if(m_health._isDead) return;
 
             //check if there are any overriding events.
             if (!m_overrideBaseFunction)
             {
-                _health.UpdateHealth(amount, clamp, sender);
+                m_health.UpdateHealth(amount, clamp, sender);
             }
-            _extraEvents.Invoke(_health, amount, clamp, sender);
+            _extraEvents.Invoke(m_health, amount, clamp, sender);
 
             //call events
-            if (_health._isDead) { _deathEvents.Invoke();}
+            if (m_health._isDead) { _deathEvents.Invoke();}
             if (amount != 0) _modifyEvents.Invoke(amount);
             if (amount > 0) _healEvents.Invoke(amount);
             if (amount < 0) _damageEvents.Invoke(amount);
+        }
+        public void ReviveEntity()
+        {
+            m_health.Revive();
+            UpdateHealth(m_health._maxHealth);
         }
     }
 }

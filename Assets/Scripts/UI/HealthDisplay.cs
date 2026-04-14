@@ -60,13 +60,13 @@ namespace Stirge.UI
         private EntityHealth m_healthToDisplay;
         [SerializeField]
         private DynamicHealthBar m_healthBar;
-        private IEnumerator m_healthBarUpdate => m_healthBar.UpdateDisplay(m_healthToDisplay._health._healthPercent);
+        private IEnumerator m_healthBarUpdate => m_healthBar.UpdateDisplay(m_healthToDisplay._getHealth._healthPercent);
         [SerializeField]
         private DynamicHealthBar m_damageBar;
-        private IEnumerator m_damageBarUpdate => m_damageBar.UpdateDisplay(m_healthToDisplay._health._healthPercent);
+        private IEnumerator m_damageBarUpdate => m_damageBar.UpdateDisplay(m_healthToDisplay._getHealth._healthPercent);
         [SerializeField]
         private DynamicHealthBar m_healBar;
-        private IEnumerator m_healBarUpdate => m_healBar.UpdateDisplay(m_healthToDisplay._health._healthPercent);
+        private IEnumerator m_healBarUpdate => m_healBar.UpdateDisplay(m_healthToDisplay._getHealth._healthPercent);
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Awake()
         {
