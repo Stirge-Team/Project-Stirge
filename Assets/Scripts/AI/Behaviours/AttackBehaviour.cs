@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class AttackBehaviour : Behaviour
     {
         [SerializeField] private string m_attackName;

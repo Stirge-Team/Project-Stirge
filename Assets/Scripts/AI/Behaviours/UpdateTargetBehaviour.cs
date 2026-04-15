@@ -13,10 +13,9 @@ namespace Stirge.AI
         public override void _Update(Agent agent, float deltaTime)
         {
             // if the target is within range
-            Transform target = agent.RetrieveMemory<Transform>("TargetTransform");
-            if (target != null && Vector3.Distance(agent.transform.position, target.position) <= agent.DetectionRadius)
+            if (agent.TargetObject != null && Vector3.Distance(agent.transform.position, agent.TargetObject.position) <= agent.DetectionRadius)
             {
-                agent.TargetPosition = target.position;
+                agent.TargetPosition = agent.TargetObject.position;
             }
         }
 

@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
   - rid: 3283391335129940030
+  - rid: 4780262389965389896
   m_transitions: []
   m_timedTransitionState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
-  m_timedTransitionDelay: 1
+  m_timedTransitionDelay: 1.5
   references:
     version: 2
     RefIds:
@@ -24,3 +25,7 @@ MonoBehaviour:
       type: {class: AttackBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_attackName: DefaultAttack
+    - rid: 4780262389965389896
+      type: {class: LookAtTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maxDegreesDelta: 360

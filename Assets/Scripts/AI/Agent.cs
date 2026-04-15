@@ -22,12 +22,6 @@ namespace Stirge.AI
         [SerializeField] private Animator m_anim;
 
         public Transform transform => m_transform;
-        private Vector3? m_targetPosition;
-        public Vector3? TargetPosition
-        {
-            get { return m_targetPosition; }
-            set { m_targetPosition = value; }
-        }
 
         [Header("Agent Properties")]
         [SerializeField] private State m_defaultState;
@@ -36,9 +30,17 @@ namespace Stirge.AI
         [SerializeField] private LayerMask m_groundedCheckMask;
         [SerializeField, Min(0)] private float m_defualtGravityAcceleration;
 
+        private Transform m_targetObject;
+        private Vector3? m_targetPosition;
         private PhysicsMode m_physicsMode;
         private float m_gravity;
 
+        public Transform TargetObject => m_targetObject;
+        public Vector3? TargetPosition
+        {
+            get { return m_targetPosition; }
+            set { m_targetPosition = value; }
+        }
         public float DetectionRadius => m_detectionRadius;
         public float StoppingDistance => m_nav.stoppingDistance;
         public PhysicsMode PhysicsMode => m_physicsMode;
@@ -51,7 +53,7 @@ namespace Stirge.AI
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
             m_fsm = new FiniteStateMachine(m_defaultState);
-            WriteMemory("TargetTransform", GameObject.FindWithTag("Player").transform);
+            m_targetObject = GameObject.FindWithTag("Player").transform;
         }
 
         public void OnEnable()
@@ -92,6 +94,11 @@ namespace Stirge.AI
         public void EnterState(State newState)
         {
             m_fsm.EnterState(this, newState);
+        }
+
+        public void SetNewTarget(Transform target)
+        {
+            m_targetObject = target;
         }
 
         public void SetPhysicsMode(PhysicsMode value)
@@ -173,7 +180,7 @@ namespace Stirge.AI
 
         public void UseAttack(string attackName)
         {
-            if (m_anim.HasState(-1, Animator.StringToHash(attackName)))
+            if (m_anim.HasState(0, Animator.StringToHash(attackName)))
                 m_anim.Play(attackName);
         }
 
