@@ -342,7 +342,7 @@ GameObject:
   - component: {fileID: 72453619}
   - component: {fileID: 72453618}
   m_Layer: 5
-  m_Name: HealthDisplayCube
+  m_Name: healthDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -395,8 +395,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1195281490}
-  - {fileID: 1405839698}
   - {fileID: 565100465}
+  - {fileID: 1405839698}
   - {fileID: 612704592}
   m_Father: {fileID: 1982568589}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 84147358}
   - component: {fileID: 84147359}
   m_Layer: 5
-  m_Name: HealthDisplaySphere
+  m_Name: healthDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -562,8 +562,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2045408738}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 2045408745}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateHealth
         m_Mode: 4
         m_Arguments:
@@ -972,7 +972,7 @@ GameObject:
   - component: {fileID: 505315770}
   - component: {fileID: 505315771}
   m_Layer: 5
-  m_Name: healthchanger
+  m_Name: healthChanger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1036,7 +1036,7 @@ GameObject:
   - component: {fileID: 553035424}
   - component: {fileID: 553035425}
   m_Layer: 5
-  m_Name: healthchangersCube
+  m_Name: healthChanger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1590,7 +1590,7 @@ GameObject:
   - component: {fileID: 776740645}
   - component: {fileID: 776740644}
   m_Layer: 5
-  m_Name: ReviveButton (1)
+  m_Name: reviveButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1660,8 +1660,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2045408738}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 2045408745}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ReviveEntity
         m_Mode: 1
         m_Arguments:
@@ -1793,8 +1793,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1464279697}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 1464279703}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateMax
         m_Mode: 4
         m_Arguments:
@@ -2417,7 +2417,7 @@ GameObject:
   - component: {fileID: 1365520300}
   - component: {fileID: 1365520298}
   m_Layer: 5
-  m_Name: ReviveButton
+  m_Name: reviveButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2467,8 +2467,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1464279697}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 1464279703}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ReviveEntity
         m_Mode: 1
         m_Arguments:
@@ -2548,7 +2548,7 @@ GameObject:
   - component: {fileID: 1382417200}
   - component: {fileID: 1382417201}
   m_Layer: 5
-  m_Name: healthchanger (1)
+  m_Name: maxHealthChanger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2751,59 +2751,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1439247077
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1439247079}
-  - component: {fileID: 1439247078}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &1439247078
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439247077}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &1439247079
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439247077}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.33, y: -1.2, z: -0.81}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1464279696
 GameObject:
   m_ObjectHideFlags: 0
@@ -2818,6 +2765,7 @@ GameObject:
   - component: {fileID: 1464279698}
   - component: {fileID: 1464279697}
   - component: {fileID: 1464279702}
+  - component: {fileID: 1464279703}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -2837,72 +2785,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerHealth
-  m_health:
-    m_baseHealth: 10
-  _healEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _modifyEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 72453618}
-        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthDisplay
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 72453618}
-        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthDisplay
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  _damageEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _deathEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1464279702}
-        m_TargetAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
-        m_MethodName: set_isKinematic
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1365520298}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
-        m_MethodName: set_interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  _extraEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  m_overrideBaseFunction: 0
+  m_baseHealth: 10
 --- !u!65 &1464279698
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3023,6 +2906,70 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1464279703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464279696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e2d6f9eea4e31dcc91a563fb53fc9e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.BaseEntityHealthInterp
+  _healEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 72453618}
+        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthDisplay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _modifyEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  _damageEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 72453618}
+        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthDisplay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _deathEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1365520298}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  _extraEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_overrideBaseFunction: 0
 --- !u!1 &1710848563
 GameObject:
   m_ObjectHideFlags: 0
@@ -3243,8 +3190,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2045408738}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 2045408745}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateHealth
         m_Mode: 4
         m_Arguments:
@@ -3376,8 +3323,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1464279697}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 1464279703}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateMax
         m_Mode: 4
         m_Arguments:
@@ -3509,8 +3456,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2045408738}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 2045408745}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateMax
         m_Mode: 4
         m_Arguments:
@@ -3587,10 +3534,10 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 84147358}
-  - {fileID: 776740643}
   - {fileID: 505315770}
   - {fileID: 1382417200}
+  - {fileID: 84147358}
+  - {fileID: 776740643}
   m_Father: {fileID: 1828445492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -3863,8 +3810,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1464279697}
-        m_TargetAssemblyTypeName: Stirge.Player.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 1464279703}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateHealth
         m_Mode: 4
         m_Arguments:
@@ -4299,8 +4246,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2045408738}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 2045408745}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateMax
         m_Mode: 4
         m_Arguments:
@@ -4364,6 +4311,7 @@ GameObject:
   - component: {fileID: 2045408738}
   - component: {fileID: 2045408743}
   - component: {fileID: 2045408744}
+  - component: {fileID: 2045408745}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -4383,84 +4331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerHealth
-  m_health:
-    m_baseHealth: 10
-  _healEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _modifyEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 84147359}
-        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthDisplay
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 84147359}
-        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
-        m_MethodName: UpdateHealthDisplay
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  _damageEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _deathEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2045408744}
-        m_TargetAssemblyTypeName: UnityEngine.Rigidbody, UnityEngine
-        m_MethodName: set_isKinematic
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 776740644}
-        m_TargetAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
-        m_MethodName: set_interactable
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  _extraEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2045408743}
-        m_TargetAssemblyTypeName: SimpleDefenceCheck, Assembly-CSharp
-        m_MethodName: PassDefenceCheck
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_overrideBaseFunction: 1
+  m_baseHealth: 10
 --- !u!135 &2045408739
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4594,6 +4465,82 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2045408745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045408737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e2d6f9eea4e31dcc91a563fb53fc9e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.BaseEntityHealthInterp
+  _healEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 84147359}
+        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthDisplay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _modifyEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  _damageEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 84147359}
+        m_TargetAssemblyTypeName: Stirge.UI.HealthDisplay, Assembly-CSharp
+        m_MethodName: UpdateHealthDisplay
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _deathEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 776740644}
+        m_TargetAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+        m_MethodName: set_interactable
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
+  _extraEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2045408743}
+        m_TargetAssemblyTypeName: SimpleDefenceCheck, Assembly-CSharp
+        m_MethodName: PassDefenceCheck
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_overrideBaseFunction: 1
 --- !u!1 &2064083974
 GameObject:
   m_ObjectHideFlags: 0
@@ -4814,8 +4761,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1464279697}
-        m_TargetAssemblyTypeName: Stirge.Player.EntityHealth, Assembly-CSharp
+      - m_Target: {fileID: 1464279703}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
         m_MethodName: ButtonUpdateHealth
         m_Mode: 4
         m_Arguments:
@@ -4874,4 +4821,3 @@ SceneRoots:
   - {fileID: 1835507103}
   - {fileID: 1464279701}
   - {fileID: 2045408742}
-  - {fileID: 1439247079}
