@@ -1,96 +1,96 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Stirge.Management
 {
     public class EntityHealth : MonoBehaviour
     {
-        [System.Serializable]
-        public class Health
+        [System.Flags]
+        public enum MaxHealthChangeBehaviour
         {
-            [SerializeField, Tooltip("The initial health of this entity.")]
-            private float m_baseHealth;
-            public float _maxHealth { get; private set; }
-            public float _currentHealth { get; private set; }
-            public float _healthPercent => _currentHealth / m_baseHealth;
-            public bool _isDead { get; private set; }
+            MatchReductions = 1,
+            MatchIncreases = 2,
+            MatchAny = 3,
+            EquivalentReduction = 4,
+            EquivalentIncrease = 8,
+            EquivalentAny = 12,
+            ClampToNewMax = 16,
+            ClampOnlyIfNoExtraHealth = 32,
+            //Set the current health to the new maximum
+            Set = 64
+        };
+        [SerializeField, Tooltip("The initial health of this entity.")]
+        private float m_baseHealth;
+        public float _maxHealth { get; private set; }
+        public float _currentHealth { get; private set; }
+        public float _healthPercent => _currentHealth / _maxHealth;
+        public bool _isDead { get; private set; }
 
-            public void Initialise()
+        public void Start()
+        {
+            _maxHealth = _currentHealth = m_baseHealth;
+        }
+        public void ModifyHealth(float amount, bool clamp = true, Object sender = null)
+        {
+            _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, clamp ? _maxHealth : Mathf.Infinity);
+            Debug.Log($"This entity's health changed by {amount}{(sender ? $" by {sender}." : ".")} Now {_currentHealth}/{_maxHealth}.");
+            CheckHealth();
+        }
+        public void ModifyHealth(bool attemptRevive, float amount, bool clamp = true, Object sender = null)
+        {
+            if(attemptRevive)
+                Revive();
+            ModifyHealth(amount, clamp, sender);
+        }
+        public void CheckHealth()
+        {
+            if (_currentHealth <= 0)
             {
-                _maxHealth = _currentHealth = m_baseHealth;
+                Debug.Log("This entity has died!");
+                _isDead = true;
             }
-            public void UpdateHealth(float amount, bool clamp = true, Object sender = null)
+        }
+        public void Revive(bool reset = false)
+        {
+            if (_isDead)
             {
-                _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, clamp ? _maxHealth : Mathf.Infinity);
-                Debug.Log($"Player's health changed by {amount}{(sender ? $" by {sender}." : ".")} Now {_currentHealth}/{m_baseHealth}.");
-                CheckHealth();
-            }
-            public void CheckHealth()
-            {
-                if (_currentHealth <= 0)
+                _isDead = false;
+                if(reset)
                 {
-                    Debug.Log("The player has died!");
-                    _isDead = true;
+                    _maxHealth = _currentHealth = m_baseHealth;
                 }
+                Debug.Log($"A entity has been revived!");
             }
-            public void Revive()
-            {
-                if(_isDead)
-                {
-                    _isDead = false;
-                    Debug.Log($"A entity has been revived!");
-                }
-                else Debug.LogWarning($"The entity you are to revive isn't dead.");
-            }
+            else Debug.LogWarning($"The entity you are to revive isn't dead.");
         }
-        [SerializeField]
-        private Health m_health;
-        public Health _getHealth => m_health;
-        //EVENTS
-        [SerializeField, Tooltip("Events to call only when this entity's health increases.")]
-        private UnityEvent<float> _healEvents;
-        [SerializeField, Tooltip("Events to call when this entity's health is changed")]
-        private UnityEvent<float> _modifyEvents;
-        [SerializeField, Tooltip("Events to call only when this entity takes damage")]
-        private UnityEvent<float> _damageEvents;
-        [SerializeField, Tooltip("Events to call when this entity's health reaches 0")]
-        private UnityEvent _deathEvents;
-        [SerializeField, Tooltip("Events to do alongside the health modification. Allows other scripts to access the health values.")]
-        private UnityEvent<Health, float, bool, Object> _extraEvents;
-        [SerializeField, Tooltip("Enable this if you want the base health modification function to be overriden.")]
-        private bool m_overrideBaseFunction;
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        public void ModifiyMaximumHealth(float amount, MaxHealthChangeBehaviour behaviour, Object sender = null)
         {
-            //Set the health
-            m_health.Initialise();
-        }
-        //TESTFUNCTION - BUTTONS ARE DUMB
-        public void ButtonUpdateHealth(float amount)
-        {
-            UpdateHealth(amount);
-        }
-        public void UpdateHealth(float amount, bool clamp = true, Object sender = null)
-        {
-            if(m_health._isDead) return;
+            //either clamp reguardless or clamp if the entity's health is equal or less than the current maximum.
+            bool doClamp = behaviour.HasFlag(MaxHealthChangeBehaviour.ClampToNewMax) || (_currentHealth <= _maxHealth && behaviour.HasFlag(MaxHealthChangeBehaviour.ClampOnlyIfNoExtraHealth));
+            //prepare to find the delta
+            float maxHealthDelta = _maxHealth;
+            //apply change to the maximum health
+            _maxHealth = Mathf.Clamp(_maxHealth + amount, 0, Mathf.Infinity);
+            //find the delta
+            maxHealthDelta = _maxHealth / maxHealthDelta;
 
-            //check if there are any overriding events.
-            if (!m_overrideBaseFunction)
+            //apply the same change to the current health (if intended)
+            if ((behaviour.HasFlag(MaxHealthChangeBehaviour.MatchReductions) && amount < 0) || (behaviour.HasFlag(MaxHealthChangeBehaviour.MatchIncreases) && amount > 0))
             {
-                m_health.UpdateHealth(amount, clamp, sender);
+                ModifyHealth(amount, doClamp, sender);
             }
-            _extraEvents.Invoke(m_health, amount, clamp, sender);
-
-            //call events
-            if (m_health._isDead) { _deathEvents.Invoke();}
-            if (amount != 0) _modifyEvents.Invoke(amount);
-            if (amount > 0) _healEvents.Invoke(amount);
-            if (amount < 0) _damageEvents.Invoke(amount);
-        }
-        public void ReviveEntity()
-        {
-            m_health.Revive();
-            UpdateHealth(m_health._maxHealth);
+            //otherwise, apply the delta of the max health to the current (if intended)
+            else if ((behaviour.HasFlag(MaxHealthChangeBehaviour.EquivalentReduction) && amount < 0) || (behaviour.HasFlag(MaxHealthChangeBehaviour.EquivalentIncrease) && amount > 0))
+            {
+                ModifyHealth(-_currentHealth * (1 - maxHealthDelta), doClamp, sender);
+            }
+            else if (behaviour.HasFlag(MaxHealthChangeBehaviour.Set))
+            {
+                ModifyHealth(_maxHealth - _currentHealth, doClamp, sender);
+            }
+            else //otherwise, just clamp/check the current health
+            {
+                ModifyHealth(0, doClamp, sender);
+            }
         }
     }
 }
