@@ -1,6 +1,9 @@
 # Global owners
 * @Stirge-Team/Programmers
 
+# General scripts
+Assets/Scripts/ @Stirge-Team/Programmers
+
 # Camera scripts
 Assets/Scripts/Camera/ @SkeleKing04
 
@@ -10,11 +13,22 @@ Assets/Scripts/Player/ @SkeleKing04
 # AI
 Assets/Scripts/AI/ @halenf
 
+# Combat
+Assets/Scripts/Combat/ @halenf
+
 # Enemy
 Assets/Scripts/Enemy/ @halenf
 
 # Input
 Assets/Scripts/Input/ @halenf
 
+# Scene management
+Assets/Scripts/Management/ @halenf @Skeleking04
+
 # (Unused) Behaviour Tree
 Assets/Scripts/BehaviourTree/ @halenf
+
+# Art Assets
+Assets/Art/ @Stirge-Team/Artists
+# Halen testing scenes
+Assets/Scenes/\[Halen testing\]/ @halenf

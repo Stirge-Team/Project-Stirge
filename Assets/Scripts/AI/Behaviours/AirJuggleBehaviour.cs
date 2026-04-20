@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class AirJuggleBehaviour : OffGroundBehaviour
     {
         private enum AirStallState
@@ -26,9 +27,9 @@ namespace Stirge.AI
             else
                 m_state = AirStallState.Waiting;
         }
-        public override void _Update(Agent agent)
+        public override void _Update(Agent agent, float deltaTime)
         {
-            base._Update(agent);
+            base._Update(agent, deltaTime);
 
             switch (m_state)
             {
@@ -42,7 +43,7 @@ namespace Stirge.AI
                     break;
                 // keep agent suspended in air until time is up
                 case AirStallState.Active:
-                    m_airStallTime -= Time.deltaTime;
+                    m_airStallTime -= deltaTime;
                     if (m_airStallTime <= 0)
                     {
                         m_state = AirStallState.Stopped;

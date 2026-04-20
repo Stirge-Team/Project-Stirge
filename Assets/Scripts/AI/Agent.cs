@@ -15,16 +15,21 @@ namespace Stirge.AI
     public class Agent
     {   
         [Header("Agent Components")]
-        [SerializeField] private Transform m_transform;
         [SerializeField] private FiniteStateMachine m_fsm;
+        [SerializeField] private Transform m_transform;
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
 
         public Transform transform => m_transform;
-        private Vector3 m_targetPosition;
-        public Vector3 TargetPosition => m_targetPosition;
+        private Vector3? m_targetPosition;
+        public Vector3? TargetPosition
+        {
+            get { return m_targetPosition; }
+            set { m_targetPosition = value; }
+        }
 
         [Header("Agent Properties")]
+        [SerializeField] private State m_defaultState;
         [SerializeField, Min(0)] private float m_detectionRadius;
         [SerializeField, Min(0)] private float m_groundedCheckDistance;
         [SerializeField] private LayerMask m_groundedCheckMask;
@@ -40,10 +45,12 @@ namespace Stirge.AI
         private Dictionary<string, object> m_memory = new Dictionary<string, object>();
 
         #region Core
-        public void Start()
+        public void Awake()
         {
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
+            m_fsm = new FiniteStateMachine(m_defaultState);
+            WriteMemory("TargetTransform", GameObject.FindWithTag("Player").transform);
         }
 
         public void OnEnable()
@@ -51,18 +58,18 @@ namespace Stirge.AI
             m_fsm._Enter(this);
         }
 
-        public void Update()
+        public void Update(float deltaTime)
         {
             // move to match Nav Mesh Agent's position
             if (m_physicsMode == PhysicsMode.NavMesh)
             {
-            m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
+                m_transform.SetPositionAndRotation(m_nav.transform.position, m_nav.transform.rotation);
             }
 
-            m_fsm._Update(this);
+            m_fsm._Update(this, deltaTime);
         }
 
-        public void FixedUpdate()
+        public void FixedUpdate(float deltaTime)
         {
             bool isGrounded = Physics.Raycast(m_transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
             WriteMemory("Grounded", isGrounded);
@@ -70,7 +77,7 @@ namespace Stirge.AI
             // apply gravity
             if (m_physicsMode == PhysicsMode.Physics && !isGrounded)
             {
-                m_rb.AddForce(0, -m_gravity * Time.deltaTime, 0, ForceMode.VelocityChange);
+                m_rb.AddForce(0, -m_gravity * deltaTime, 0, ForceMode.VelocityChange);
             }
         }
 
@@ -124,22 +131,13 @@ namespace Stirge.AI
         public void ApplyKnockback(float strength, Vector3 direction)
         {
             m_rb.linearVelocity = Vector3.zero;
-            m_rb.AddForce(direction.normalized * strength);
-        }
-        public void ApplyKnockback(float strength, Vector2 direction, float height)
-        {
-            m_rb.linearVelocity = Vector3.zero;
-            m_rb.AddForce(new Vector3(direction.x, height, direction.y).normalized * strength);
+            m_rb.AddForce(direction.normalized * strength, ForceMode.VelocityChange);
         }
 
-        public void SetTargetPosition(Vector3 pos)
+        public void ApplyKnockback(float strength, Vector3 direction, float height)
         {
-            m_targetPosition = pos;
-            m_nav.SetDestination(pos);
-        }
-        public void ClearPath()
-        {
-            m_nav.ResetPath();
+            direction = new(direction.x, height, direction.z);
+            ApplyKnockback(strength, direction);
         }
 
         public Vector3 GetVelocity()
@@ -148,6 +146,28 @@ namespace Stirge.AI
                 return m_nav.velocity;
             else
                 return m_rb.linearVelocity;
+        }
+
+        public void RotateTowards(Vector3 pos, float maxDelta)
+        {
+            Vector3 curPos = m_transform.position;
+            Vector3 endForward = (new Vector3(pos.x, 0, pos.z) - new Vector3(curPos.x, 0, curPos.z)).normalized;
+
+            m_transform.forward = Vector3.RotateTowards(m_transform.forward, endForward, maxDelta, 10f);
+            m_nav.transform.rotation = m_transform.rotation;
+        }
+
+        public void CalculatePath()
+        {
+            if (m_targetPosition != null)
+            {
+                m_nav.SetDestination((Vector3)m_targetPosition);
+            }
+        }
+        public void ClearPath()
+        {
+            m_targetPosition = null;
+            m_nav.ResetPath();
         }
 
         /*
@@ -199,13 +219,13 @@ namespace Stirge.AI
                 }
                 else
                 {
-                    Debug.LogError($"Memory with key '{key}' cannot be cast to type '{nameof(T)}'.", m_transform);
+                    Debug.LogWarning($"Memory with key '{key}' cannot be cast to type '{nameof(T)}'.", m_transform);
                     return default;
                 }
             }
             else
             {
-                Debug.LogError($"No Memory exists with key '{key}' on Agent '{m_transform}'.", m_transform);
+                Debug.LogWarning($"No Memory exists with key '{key}' on Agent '{m_transform}'.", m_transform);
                 return default;
             }
         }

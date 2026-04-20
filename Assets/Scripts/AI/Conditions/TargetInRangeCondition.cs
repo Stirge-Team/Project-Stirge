@@ -7,7 +7,10 @@ namespace Stirge.AI
     {
         protected override bool _IsTrue(Agent agent)
         {
-            return Vector3.Distance(agent.transform.position, GameObject.FindWithTag("Player").transform.position) <= agent.DetectionRadius;
+            if (agent.TargetPosition != null)
+                return Vector3.Distance(agent.transform.position, (Vector3)agent.TargetPosition) <= agent.DetectionRadius;
+            else
+                return false;
         }
     }
 }

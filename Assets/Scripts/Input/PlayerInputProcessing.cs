@@ -1,7 +1,6 @@
 using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.InputSystem;
-using TMPro;
+using System.Collections.Generic;
 
 namespace Stirge.Input
 {
@@ -17,17 +16,25 @@ namespace Stirge.Input
 
     public class PlayerInputProcessing : MonoBehaviour
     {
+        [SerializeField] private Animator m_playerAnimator;
+        
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
         
-        private Dictionary<AttackInput, Attack> m_bindings;
-        
+        private Dictionary<AttackInput, string> m_groundedBindings;
+        private Dictionary<AttackInput, string> m_airBindings;
+
         // if combos are never going to have branching paths, this can just become an AttackBinding
-        private Dictionary<AttackInput, Attack> m_comboBindings = new();
+        private Dictionary<AttackInput, string> m_comboBindings;
 
         private List<AttackInput> m_sequence = new();
 
         private float m_bufferTimer = 0;
+
+        private void Start()
+        {
+            m_comboBindings = new();
+        }
 
         private void Update()
         {
@@ -41,17 +48,29 @@ namespace Stirge.Input
             {
                 m_bufferTimer -= Time.deltaTime;
             }
-
-#if UNITY_EDITOR
-            UpdateText();
-            
-#endif
         }
 
         #region Bindings
-        public void SetBindings(Dictionary<AttackInput, Attack> bindings)
+        public void SetGroundedBindings(Dictionary<AttackInput, string> bindings)
         {
-            m_bindings = new(bindings);
+            m_groundedBindings = new(bindings);
+        }
+        public void SetAirBindings(Dictionary<AttackInput, string> bindings)
+        {
+            m_airBindings = new(bindings);
+        }
+
+        public void SetComboBinding(AttackBinding binding)
+        {
+            m_comboBindings = AttackBinding.ConvertToDictionary(binding);
+        }
+        public void SetComboBinding(Dictionary<AttackInput, string> bindings)
+        {
+            m_comboBindings = new(bindings);
+        }
+        public void ClearComboBinding()
+        {
+            m_comboBindings = null;
         }
         #endregion
 
@@ -88,21 +107,27 @@ namespace Stirge.Input
 
         public bool ProcessInput(AttackInput input)
         {
-            Attack attackToUse = null;
-            if (m_comboBindings.Count > 0 && m_comboBindings.TryGetValue(input, out attackToUse))
+            if (m_comboBindings.TryGetValue(input, out string attackName))
             {
-                // player.UseAttack(attackToUse);
+                m_playerAnimator.Play(attackName);
+                return true;
             }
             // check if the player is in a state where they are able to attack
-            else if (m_bindings.TryGetValue(input, out attackToUse))
+            
+            bool grounded = m_playerAnimator.GetBool("IsGrounded");
+            // grounded bindings
+            if (grounded)
             {
-                // player.UseAttack(attackToUse);
-                ShowUsedAttack(attackToUse.Name);
+                if (m_groundedBindings.TryGetValue(input, out attackName))
+                {
+                    m_playerAnimator.Play(attackName);
+                    return true;
+                }
             }
-
-            if (attackToUse != null)
+            // air bindings
+            else if (m_airBindings.TryGetValue(input, out attackName))
             {
-                m_comboBindings.Clear();
+                m_playerAnimator.Play(attackName);
                 return true;
             }
 
@@ -147,48 +172,5 @@ namespace Stirge.Input
             }
         }
         #endregion
-
-#if UNITY_EDITOR
-        #region Debug
-        [Header("DEBUG")]
-        [SerializeField] private TMP_Text m_sequenceDisplay;
-        [SerializeField] private TMP_Text m_usedAttackDisplay;
-
-        private float m_usedAttackTimer;
-
-        private void UpdateText()
-        {
-            if (m_sequenceDisplay == null || m_usedAttackDisplay == null)
-                return;
-
-            string text = string.Empty;
-            for (int i = 0; i < m_sequence.Count; i++)
-            {
-                text += m_sequence[i].ToString() + ", ";
-            }
-
-            if (text != string.Empty)
-            {
-                text = text[..^2];
-            }
-            m_sequenceDisplay.text = text;
-
-            if (m_usedAttackTimer > 0)
-            {
-                m_usedAttackTimer -= Time.deltaTime;
-                if (m_usedAttackTimer <= 0)
-                    m_usedAttackDisplay.text = "";
-            }
-        }
-
-        private void ShowUsedAttack(string attackName)
-        {
-            if (m_usedAttackDisplay == null)
-                return;
-            m_usedAttackDisplay.text = "Used '" + attackName + "'!";
-            m_usedAttackTimer = 1.5f;
-        }
-        #endregion
-#endif
     }
 }

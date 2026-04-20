@@ -304,9 +304,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
+      propertyPath: m_agent.m_startingState
+      value: 
+      objectReference: {fileID: 11400000, guid: dd9b18eb3c955534ab217e482a13a18a, type: 2}
     - target: {fileID: 8564547062903745466, guid: b8073e1796063d54b962337c094a523a, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8564547062903745466, guid: b8073e1796063d54b962337c094a523a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -484,7 +492,7 @@ Transform:
   m_GameObject: {fileID: 682709209}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 10}
+  m_LocalPosition: {x: 11.71, y: 2, z: 2.88}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -629,13 +637,14 @@ GameObject:
   m_Component:
   - component: {fileID: 1284260309}
   - component: {fileID: 1284260308}
+  - component: {fileID: 1284260310}
   m_Layer: 0
   m_Name: Enemy Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1284260308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -667,6 +676,100 @@ Transform:
   - {fileID: 682709210}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1284260310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1284260307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInput
+  m_Actions: {fileID: -944628639613478452, guid: 0d761cf4f6410cf44b539fbb7b41df92, type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284260308}
+        m_TargetAssemblyTypeName: Stirge.Enemy.EnemySpawner, Assembly-CSharp
+        m_MethodName: DebugStun
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 579023c8-adb2-457b-9ab0-a509fb0e7448
+    m_ActionName: 'Debug/Stun[/Keyboard/q]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284260308}
+        m_TargetAssemblyTypeName: Stirge.Enemy.EnemySpawner, Assembly-CSharp
+        m_MethodName: DebugKnockback
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4ef0d80d-85b8-4563-b0de-eae7aec42c1a
+    m_ActionName: 'Debug/Knockback[/Keyboard/w]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284260308}
+        m_TargetAssemblyTypeName: Stirge.Enemy.EnemySpawner, Assembly-CSharp
+        m_MethodName: DebugReduceHealth
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 422d6ba7-0f68-4039-ad41-d7e0a9adf768
+    m_ActionName: 'Debug/Reduce Health[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1284260308}
+        m_TargetAssemblyTypeName: Stirge.Enemy.EnemySpawner, Assembly-CSharp
+        m_MethodName: DebugAirJuggle
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: bc5dbca2-689d-4cdd-8e1a-74cf73412993
+    m_ActionName: 'Debug/AirJuggle[/Keyboard/r]'
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Keyboard & Mouse
+  m_DefaultActionMap: Debug
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 354577707}
 --- !u!1 &1312936400
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,7 +925,7 @@ Transform:
   m_GameObject: {fileID: 1429451191}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 14.493, y: 2.076, z: -14.436}
+  m_LocalPosition: {x: 12, y: 2, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

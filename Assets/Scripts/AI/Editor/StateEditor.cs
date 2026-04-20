@@ -1,48 +1,52 @@
 // https://docs.unity3d.com/6000.3/Documentation/Manual/UIE-HowTo-CreateCustomInspector.html
 
-using UnityEditor;
 using UnityEngine;
-using EGL = UnityEditor.EditorGUILayout;
-using GL = UnityEngine.GUILayout;
-using EG = UnityEditor.EditorGUI;
+using UnityEditor;
 using System.Linq;
 using System.Text.RegularExpressions;
+using EG = UnityEditor.EditorGUI;
+using EGL = UnityEditor.EditorGUILayout;
+using GL = UnityEngine.GUILayout;
 
 namespace Stirge.AI
 {
     [CustomEditor(typeof(State))]
     public class StateEditor : Editor
     {
-        // static list of all valid Conditions
-        public static readonly System.Type[] ConditionTypes =
-        {
-            typeof(Condition),
-            typeof(AirJuggleCondition),
-            typeof(DistanceCondition),
-            typeof(GroundedCondition),
-            typeof(OffGroundCondition),
-            typeof(StunnedCondition),
-            typeof(TargetInRangeCondition)
-        };
-        // to display list of Condition names
-        public static string[] StringTypes
+        public static string[] BehaviourNames
         {
             get
             {
-                if (stringTypes == null || stringTypes.Length == 0)
+                if (behaviourNames == null || behaviourNames.Length == 0)
                 {
-                    PopulateStringTypes();
+                    PopulateBehaviourNames();
                 }
-                return stringTypes;
+                return behaviourNames;
             }
         }
-        private static string[] stringTypes;
+        // to display list of Condition names
+        public static string[] ConditionNames
+        {
+            get
+            {
+                if (conditionNames == null || conditionNames.Length == 0)
+                {
+                    PopulateConditionNames();
+                }
+                return conditionNames;
+            }
+        }
+        private static string[] behaviourNames;
+        private static string[] conditionNames;
+
+        private int m_selectedBehaviour;
 
         private bool m_hasChanged = false;
 
         private void OnEnable()
         {
-            PopulateStringTypes();
+            PopulateBehaviourNames();
+            PopulateConditionNames();
         }
 
         public override void OnInspectorGUI()
@@ -71,8 +75,22 @@ namespace Stirge.AI
         private void OnGUI()
         {
             // behaviours
-            SerializedProperty behaviours = serializedObject.FindProperty("m_behaviours");
-            EGL.PropertyField(behaviours);
+            SerializedProperty behavioursProp = serializedObject.FindProperty("m_behaviours");
+            EGL.PropertyField(behavioursProp);
+
+            // draw popup for adding new Behaviours
+            m_selectedBehaviour = EGL.Popup(m_selectedBehaviour, BehaviourNames);
+
+            // create new Behaviour button
+            if (GL.Button("Add new " + BehaviourNames[m_selectedBehaviour]))
+            {
+                Behaviour newBehaviour = System.Activator.CreateInstance(Behaviour.BehaviourTypes[m_selectedBehaviour]) as Behaviour;
+                behavioursProp.arraySize++;
+                SerializedProperty newBehaviourProp = behavioursProp.GetArrayElementAtIndex(behavioursProp.arraySize - 1);
+                newBehaviourProp.managedReferenceValue = newBehaviour;
+                newBehaviourProp.isExpanded = true;
+                behavioursProp.isExpanded = true;
+            }
 
             // draw Timed Transition properties
             SerializedProperty timedTransition = serializedObject.FindProperty("m_timedTransitionState");
@@ -112,20 +130,28 @@ namespace Stirge.AI
 
         }
 
-        private static void PopulateStringTypes()
+        private static void PopulateBehaviourNames()
         {
             // get all the Conditions from the static list and change them from CamelCase to English
-            stringTypes = ConditionTypes.Select(t => t.Name).ToArray();
-            for (int i = 0; i < stringTypes.Length; i++)
+            behaviourNames = Behaviour.BehaviourTypes.Select(t => t.Name).ToArray();
+            for (int i = 0; i < behaviourNames.Length; i++)
             {
                 // turns camel case into separate words (looks nice)
-                stringTypes[i] = Regex.Replace(Regex.Replace(stringTypes[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
+                behaviourNames[i] = Regex.Replace(Regex.Replace(behaviourNames[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
             }
-            // show Condition as this
-            stringTypes[0] = "Empty Condition";
+        }
+        private static void PopulateConditionNames()
+        {
+            // get all the Conditions from the static list and change them from CamelCase to English
+            conditionNames = Condition.ConditionTypes.Select(t => t.Name).ToArray();
+            for (int i = 0; i < conditionNames.Length; i++)
+            {
+                // turns camel case into separate words (looks nice)
+                conditionNames[i] = Regex.Replace(Regex.Replace(conditionNames[i], @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2"), @"(\p{Ll})(\P{Ll})", "$1 $2");
+            }
         }
 
-#if UNITY_EDITOR
+        /*
         [System.Obsolete]
         private void DrawTransition(SerializedProperty transition)
         {
@@ -168,17 +194,17 @@ namespace Stirge.AI
                     for (int i = 0; i < conditions.arraySize; i++)
                     {
                         SerializedProperty condition = conditions.GetArrayElementAtIndex(i);
-                        /*
+                        //
                         int oldType = condition.FindPropertyRelative("m_typeIndex").intValue;
 
                         // draw property drawer
                         EGL.PropertyField(condition, new GUIContent(stringTypes[oldType]));
-                        */
+                        //
                         // if changing type
                         int newType = condition.FindPropertyRelative("m_typeIndex").intValue;
                         if (newType != oldTypes[i])
                         {
-                            Condition newCondition = System.Activator.CreateInstance(ConditionTypes[newType]) as Condition;
+                            Condition newCondition = System.Activator.CreateInstance(Condition.ConditionTypes[newType]) as Condition;
                             condition.managedReferenceValue = newCondition;
                             condition.FindPropertyRelative("m_typeIndex").intValue = newType;
                             m_hasChanged = true;
@@ -197,7 +223,7 @@ namespace Stirge.AI
 
             EG.indentLevel--;
 
-            /*
+            //
             // add and remove buttons
             EGL.BeginHorizontal();
             Rect addButtonRect = EG.IndentedRect(EG.IndentedRect(EGL.GetControlRect()));
@@ -217,7 +243,7 @@ namespace Stirge.AI
             EGL.EndHorizontal();
 
             EG.indentLevel--;
-            */
+            //
         }
 
         [System.Obsolete]
@@ -226,8 +252,8 @@ namespace Stirge.AI
             int currentType = condition.FindPropertyRelative("m_typeIndex").intValue;
             // Condition dropdown to select which Type it is
             EGL.BeginHorizontal();
-            EGL.LabelField(stringTypes[currentType], EditorStyles.boldLabel);
-            int value = EGL.Popup(currentType, stringTypes);
+            EGL.LabelField(conditionNames[currentType], EditorStyles.boldLabel);
+            int value = EGL.Popup(currentType, conditionNames);
             EGL.EndHorizontal();
 
             // Invert value prop
@@ -245,12 +271,12 @@ namespace Stirge.AI
             // attempt the change of Type after so that there are no deletions before stuff is drawn
             if (value != currentType)
             {
-                Condition newCondition = System.Activator.CreateInstance(ConditionTypes[value]) as Condition;
+                Condition newCondition = System.Activator.CreateInstance(Condition.ConditionTypes[value]) as Condition;
                 condition.managedReferenceValue = newCondition;
                 condition.FindPropertyRelative("m_typeIndex").intValue = value;
                 m_hasChanged = true;
             }
         }
-#endif
+        */
     }
 }
