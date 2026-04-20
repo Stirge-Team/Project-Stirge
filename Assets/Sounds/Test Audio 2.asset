@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa6fea4181a83ec4fbd5a11cc5e86545, type: 3}
+  m_Name: Test Audio 2
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Sound.SoundClip
+  m_audioSource: {fileID: 8300000, guid: 2f6b36e6effd4e14591a4f88590eea71, type: 3}
+  m_mixerGroup: {fileID: 471240434583270543, guid: d836fe3832ac26b4c95e80045022dda6, type: 2}
+  m_mute: 0
+  m_bypassEffects: 0
+  m_bypassListenerEffects: 0
+  m_bypassReverbZones: 0
+  m_loop: 1
+  m_priority: 128
+  m_volume: 1
+  m_pitch: 1
+  m_stereoPan: 0
+  m_spatialBlend: 0

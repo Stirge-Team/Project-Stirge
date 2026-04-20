@@ -10,9 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa6fea4181a83ec4fbd5a11cc5e86545, type: 3}
-  m_Name: New Sound Clip
+  m_Name: Test Audio 3
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Sound.SoundClip
-  m_mixerGroup: {fileID: 0}
+  m_audioSource: {fileID: 8300000, guid: 390e6dc25875a8e4586511ae2323ef0d, type: 3}
+  m_mixerGroup: {fileID: 8635374375456492117, guid: d836fe3832ac26b4c95e80045022dda6, type: 2}
+  m_mute: 0
+  m_bypassEffects: 0
+  m_bypassListenerEffects: 0
+  m_bypassReverbZones: 0
+  m_loop: 0
   m_priority: 128
   m_volume: 1
   m_pitch: 1
