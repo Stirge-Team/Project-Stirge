@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Stirge.AI
 {
-    [CreateAssetMenu(fileName = "State", menuName = "Stirge AI/State", order = 1)]
+    [CreateAssetMenu(fileName = "New State", menuName = "Stirge/AI State", order = 1)]
     public class State : ScriptableObject
     {       
         [SerializeReference] private Behaviour[] m_behaviours = new Behaviour[0];
