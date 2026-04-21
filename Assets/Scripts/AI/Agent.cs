@@ -14,8 +14,9 @@ namespace Stirge.AI
     [System.Serializable]
     public class Agent
     {   
-        [Header("Agent Components")]
-        [SerializeField] private FiniteStateMachine m_fsm;
+        private FiniteStateMachine m_fsm;
+
+        [Header("Components")]
         [SerializeField] private Transform m_transform;
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
@@ -23,7 +24,7 @@ namespace Stirge.AI
 
         public Transform transform => m_transform;
 
-        [Header("Agent Properties")]
+        [Header("Properties")]
         [SerializeField] private State m_defaultState;
         [SerializeField, Min(0)] private float m_detectionRadius;
         [SerializeField, Min(0)] private float m_groundedCheckDistance;

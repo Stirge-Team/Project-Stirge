@@ -3,45 +3,29 @@ using UnityEngine;
 namespace Stirge.Enemy
 {
     using AI;
+    using Combat;
 
-    public class Enemy : MonoBehaviour
+    public class Enemy : CombatEntity
     {
         [SerializeField] private Agent m_agent;
         
-        [Header("Enemy Stats")]
-        [SerializeField, Min(1)] private int m_maxHealth;
-        private int m_currentHealth;
-
-        [Header("Combat Details")]
+        [Header("Combat States")]
         [SerializeField] private State m_stunState;
         [SerializeField] private State m_airStunState;
         [SerializeField] private State m_knockbackState;
         [SerializeField] private State m_airJuggle;
 
-        [HideInInspector] public EnemySpawner spawner = null;
-
-        private void Awake()
+        #region Unity Events
+        // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
+        // If Enemy updates first, it may use unupdated values of Health and states of Statuses such as Stun from the previous frame
+        protected override void Awake()
         {
-            m_currentHealth = m_maxHealth;
+            base.Awake();
             m_agent.Awake();
         }
-
-        private void OnEnable()
+        protected override void Update()
         {
-            m_agent.OnEnable();
-        }
-
-        private void Update()
-        {
-            // check if enemy is dead this frame
-            if (IsDead())
-            {
-                if (spawner != null)
-                    spawner.ReportDeath(this);
-                Destroy(gameObject);
-                return;
-            }
-
+            base.Update();
             m_agent.Update(Time.deltaTime);
         }
 
@@ -49,23 +33,17 @@ namespace Stirge.Enemy
         {
             m_agent.FixedUpdate(Time.deltaTime);
         }
-
+        private void OnEnable()
+        {
+            m_agent.OnEnable();
+        }
         private void OnDisable()
         {
             m_agent.OnDisable();
         }
+        #endregion
 
-        public bool IsDead()
-        {
-            return m_currentHealth <= 0;
-        }
-
-        #region Combat
-        public void TakeDamage(int damage)
-        {
-            m_currentHealth -= damage;
-        }
-
+        #region CombatEntity
         private void ApplyStun(float length)
         {
             if (length > 0)
@@ -74,26 +52,32 @@ namespace Stirge.Enemy
             }
         }
 
-        public void EnterStun(float length)
+        public override bool EnterStun(float length)
         {
             ApplyStun(length);
             if (m_agent.RetrieveMemory<bool>("Grounded"))
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);
+
+            return true;
         }
-        public void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
+
+            return true;
         }
-        public void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             ApplyStun(stunLength);
             m_agent.WriteMemory("AirStall", airStallLength);
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
+
+            return true;
         }
         #endregion
 

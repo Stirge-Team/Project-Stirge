@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    [System.Serializable]
     public class FiniteStateMachine : Behaviour
     {
         public FiniteStateMachine(State defaultState)

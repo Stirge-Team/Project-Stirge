@@ -2,12 +2,10 @@ using UnityEngine;
 
 namespace Stirge.Combat
 {
-    using Enemy;
-
     [System.Serializable]
     public abstract class Status
     {
-        public abstract void Inflict(Enemy enemy);
+        public abstract void Inflict(CombatEntity entity);
 
         public static readonly System.Type[] StatusTypes =
         {
@@ -22,9 +20,9 @@ namespace Stirge.Combat
     {
         [SerializeField, Min(0)] private float m_stunLength;
 
-        public override void Inflict(Enemy enemy)
+        public override void Inflict(CombatEntity entity)
         {
-            enemy.EnterStun(m_stunLength);
+            entity.EnterStun(m_stunLength);
         }
     }
 
@@ -35,10 +33,10 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_height;
         [SerializeField, Min(0f)] private float m_stunLength;
 
-        public override void Inflict(Enemy enemy)
+        public override void Inflict(CombatEntity entity)
         {
-            Vector3 dir = -enemy.transform.GetChild(0).forward;
-            enemy.EnterKnockback(m_strength, dir, 1f, m_stunLength);
+            Vector3 dir = -entity.transform.GetChild(0).forward;
+            entity.EnterKnockback(m_strength, dir, 1f, m_stunLength);
         }
     }
 
@@ -49,9 +47,9 @@ namespace Stirge.Combat
         [SerializeField] private float m_airStallLength;
         [SerializeField, Min(0f)] private float m_stunLength;
 
-        public override void Inflict(Enemy enemy)
+        public override void Inflict(CombatEntity entity)
         {
-            enemy.EnterAirJuggle(m_strength, Vector3.up, m_airStallLength, m_stunLength);
+            entity.EnterAirJuggle(m_strength, Vector3.up, m_airStallLength, m_stunLength);
         }
     }
 }
