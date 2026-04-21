@@ -23,6 +23,7 @@ namespace Stirge.Combat
         {
             CombatEntity spawnedEntity = Instantiate(m_combatEntityPrefab, m_spawnLocation.position, m_spawnLocation.rotation);
             spawnedEntity.spawner = this;
+            spawnedEntity.name = m_combatEntityPrefab.name;
             m_spawnedEntities.Add(spawnedEntity);
         }
 

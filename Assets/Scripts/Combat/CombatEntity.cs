@@ -11,7 +11,7 @@ namespace Stirge.Combat
 
         [HideInInspector] public CombatEntitySpawner spawner = null;
 
-        [SerializeField] protected List<Status> m_statuses;
+        [SerializeField] protected List<Status> m_statuses = new();
 
         #region UnityEvents
         protected virtual void Awake()
