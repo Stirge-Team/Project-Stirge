@@ -28,6 +28,17 @@ namespace Stirge.Combat
                 Destroy(gameObject);
                 return;
             }
+
+            // update Statuses
+            foreach (Status status in m_statuses)
+            {
+                if (status.IsCleared)
+                {
+                    m_statuses.Remove(status);
+                    continue;
+                }
+                status.Update(this);
+            }
         }
         #endregion
 

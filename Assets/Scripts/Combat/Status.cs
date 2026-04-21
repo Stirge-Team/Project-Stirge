@@ -5,14 +5,18 @@ namespace Stirge.Combat
     [System.Serializable]
     public abstract class Status
     {
-        public abstract void Inflict(CombatEntity entity);
-
         public static readonly System.Type[] StatusTypes =
         {
             typeof(AirJuggle),
             typeof(Knockback),
             typeof(Stun)
         };
+
+        private bool m_isCleared = false;
+        public bool IsCleared => m_isCleared;
+
+        public abstract void Inflict(CombatEntity entity);
+        public virtual void Update(CombatEntity entity) { }
     }
 
     [System.Serializable]
