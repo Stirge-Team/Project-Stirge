@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 2920065731834999269}
   - component: {fileID: 5301017458216903579}
   - component: {fileID: 5256876837077168771}
-  - component: {fileID: 6616462782147276866}
   - component: {fileID: 3353919659384064465}
   - component: {fileID: 5079235152578265304}
   m_Layer: 7
@@ -38,6 +37,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4417360331099796648}
+  - {fileID: 2521300203340706763}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!136 &1532762708043262146
@@ -330,6 +330,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 8c0a527d-6209-44d6-a4d7-3f9bad8307ee
     m_ActionName: 'Debug/Reload Current Scene[/Keyboard/r]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Stirge.Camera.LockOnCamera, Assembly-CSharp
+        m_MethodName: TriggerLockOn
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 7632880b-c7ad-4946-8c9a-2b426b2e9419
+    m_ActionName: 'Player/LockOn[/Keyboard/tab]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -347,21 +363,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a90ae4b04dc02aa49f84500bc72a0b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.MovementMotor
---- !u!114 &6616462782147276866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253332100919465643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 989d111b09f324fd28b92b2905c2f8b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.EnemyToCamPasser
-  m_range: 10
-  m_GrabEnemiesWaitTime: 1
-  m_ValidateWaitTime: 2
 --- !u!114 &3353919659384064465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -374,9 +375,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17fcc1a313f313da1889e0d681272eef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerAnimationControllerHandler
+  m_controller: {fileID: 6992374104284298522}
   m_playerMovement: {fileID: 2920065731834999269}
   m_motor: {fileID: 5256876837077168771}
-  m_controller: {fileID: 6992374104284298522}
   m_movementParameter: IsMoving
   m_isGroundedParameter: IsGrounded
   m_speedScale: 1
@@ -485,6 +486,57 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7936315792857511250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2521300203340706763}
+  - component: {fileID: 5026468824895456652}
+  m_Layer: 0
+  m_Name: Attack Binder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2521300203340706763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7936315792857511250}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -41.89088, y: 1.6089399, z: -49.49998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6634666910204183250}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5026468824895456652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7936315792857511250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f0ed661c6c82a74c8176570bfa91ca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.DefaultAttackBindingDefinition
+  m_inputManager: {fileID: 5079235152578265304}
+  m_bindingType: 0
+  m_defaultBindings:
+  - attackInput: 2
+    attackName: TestAttack
+  - attackInput: 4
+    attackName: TestLauncher
 --- !u!1001 &6610752918078484151
 PrefabInstance:
   m_ObjectHideFlags: 0

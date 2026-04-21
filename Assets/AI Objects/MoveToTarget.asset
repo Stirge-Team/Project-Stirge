@@ -16,6 +16,9 @@ MonoBehaviour:
   - rid: 858787297446330439
   - rid: 858787297446330440
   m_transitions:
+  - m_targetState: {fileID: 11400000, guid: 0895e3d5165c40f4e8104ad28f69c02c, type: 2}
+    m_conditions:
+    - rid: 4780262389965389888
   - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
     m_conditions:
     - rid: 4991319162164084798
@@ -30,8 +33,11 @@ MonoBehaviour:
     - rid: 858787297446330440
       type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data: 
+    - rid: 4780262389965389888
+      type: {class: TargetInRangeCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 0
     - rid: 4991319162164084798
       type: {class: ArrivedAtTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 7
         m_invertValue: 0
