@@ -1,0 +1,13 @@
+#ROOTNAMESPACEBEGIN#using UnityEngine;
+
+namespace Stirge.AI
+{
+    public class #SCRIPTNAME# : Condition
+    {
+        #NOTRIM#protected override bool _IsTrue(Agent agent)
+        {
+            return base.IsTrue(agent);
+        }
+    }
+}
+#ROOTNAMESPACEEND#
