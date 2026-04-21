@@ -35,10 +35,8 @@ MonoBehaviour:
     - rid: 4991319162164084988
       type: {class: ArrivedAtTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 7
         m_invertValue: 1
     - rid: 4991319162164084989
       type: {class: HasTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 8
         m_invertValue: 0
