@@ -142,6 +142,10 @@ PrefabInstance:
       propertyPath: m_agent.m_anim
       value: 
       objectReference: {fileID: 1583925866581794966}
+    - target: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
+      propertyPath: m_agent.m_modelTransform
+      value: 
+      objectReference: {fileID: 7906550009322288669}
     - target: {fileID: 8564547062903745466, guid: b8073e1796063d54b962337c094a523a, type: 3}
       propertyPath: m_Name
       value: Slicer Enemy

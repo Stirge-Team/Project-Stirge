@@ -18,6 +18,7 @@ namespace Stirge.AI
 
         [Header("Components")]
         [SerializeField] private Transform m_transform;
+        [SerializeField] private Transform m_modelTransform;
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Animator m_anim;
@@ -183,6 +184,16 @@ namespace Stirge.AI
         {
             if (m_anim.HasState(0, Animator.StringToHash(attackName)))
                 m_anim.Play(attackName);
+        }
+
+        public void ApplyRootMotion()
+        {
+            if (m_modelTransform != null)
+            {
+                m_nav.transform.position = m_modelTransform.position;
+                m_transform.position = m_modelTransform.position;
+                m_modelTransform.localPosition = Vector3.zero;
+            }
         }
 
         /*

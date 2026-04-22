@@ -6,6 +6,7 @@ namespace Stirge.AI
     public class AttackBehaviour : Behaviour
     {
         [SerializeField] private string m_attackName;
+        [SerializeField] private bool m_hasRootMotion = false;
         
         public override void _Enter(Agent agent)
         {
@@ -20,6 +21,10 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
+            if (m_hasRootMotion)
+            {
+                agent.ApplyRootMotion();
+            }
             base._Exit(agent);
         }
     }

@@ -60,6 +60,7 @@ namespace Stirge.AI
                         break;
                     case nameof(AttackBehaviour):
                         DrawPropertyField("m_attackName");
+                        DrawPropertyField("m_hasRootMotion");
                         break;
                     case nameof(PhysicsBehaviour):
                         DrawPropertyField("m_maintainPriorMode");
@@ -91,10 +92,12 @@ namespace Stirge.AI
                 switch (typeName)
                 {
                     case nameof(AirJuggleBehaviour):
-                    case nameof(AttackBehaviour):
                     case nameof(KnockbackBehaviour):
                     case nameof(LookAtTargetBehaviour):
                         totalLines++;
+                        break;
+                    case nameof(AttackBehaviour):
+                        totalLines += 2;
                         break;
                     case nameof(PhysicsBehaviour):
                         totalLines += 3;
