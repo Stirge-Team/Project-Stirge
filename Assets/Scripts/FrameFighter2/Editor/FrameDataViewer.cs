@@ -53,6 +53,24 @@ namespace FrameFighter2.Viewer
 
         private bool m_lockSelection = false;
 
+        //Functions for creating and using a temp animation preview object
+        private static GameObject m_previewAnimationCloneObject;
+        private GameObject PreviewAnimationClone()
+        {
+            if (m_previewAnimationCloneObject == null)
+            {
+                m_previewAnimationCloneObject = Instantiate(m_gameObject);
+                m_previewAnimationCloneObject.transform.position = m_gameObject.transform.position;
+                m_previewAnimationCloneObject.hideFlags = HideFlags.HideAndDontSave;
+            }
+
+            return m_previewAnimationCloneObject;
+        }
+        private static void DestroyPereviewAnimClone()
+        {
+            DestroyImmediate(m_previewAnimationCloneObject);
+            m_previewAnimationCloneObject = null;
+        }
 
         [MenuItem("Tools/Frame Data Viewer")]
         public static void ShowWindow()
@@ -66,6 +84,8 @@ namespace FrameFighter2.Viewer
             {
                 ResetAnimaton(m_clips[0]);
             }
+
+            Clear();
         }
 
         public void OnGUI()
@@ -118,6 +138,12 @@ namespace FrameFighter2.Viewer
 
                         if (EditorGUI.EndChangeCheck())
                         {
+                            //if the selected clip index is currently larger than the animation data count, create a new blank slot (stops errors if the animator is updated while the window is open)
+                            while (m_manager && m_selectedAnimIndex > m_manager.AnimData.Count - 1)
+                            {
+                                m_manager.AnimData.Add(null);
+                            }
+
                             //sets timeline to 0 and updates preview
                             ResetAnimaton(currentClip);
                             CreatePreviews();
@@ -723,7 +749,14 @@ namespace FrameFighter2.Viewer
                 //sets frame data manager
                 m_manager = m_gameObject.GetComponent<FrameDataManager>();
 
-                if (m_manager)
+                if (m_animator != null)
+                {
+                    //hides selected object create new preview clone
+                    SceneVisibilityManager.instance.Hide(m_gameObject, true);
+                    PreviewAnimationClone();
+                }
+
+                if (m_manager != null)
                 {
                     CharacterAnimationData data = (m_manager.AnimData.Count > 0) ? m_manager.AnimData[0] : null;
                     if (data) CreatePreviews();
@@ -756,7 +789,7 @@ namespace FrameFighter2.Viewer
             if (clip == null || m_animator == null) return;
 
             // Apply to animator
-            clip.SampleAnimation(m_gameObject, m_animPlayback * FramerateDelta(clip));
+            clip.SampleAnimation(PreviewAnimationClone(), m_animPlayback * FramerateDelta(clip));
 
             // Refresh Scene View
             SceneView.RepaintAll();
@@ -982,12 +1015,14 @@ namespace FrameFighter2.Viewer
         /// </summary>
         private void Clear()
         {
+            if (m_gameObject != null) SceneVisibilityManager.instance.Show(m_gameObject, true);
             m_gameObject = null;
             m_clips = null;
             m_animator = null;
             m_manager = null;
             m_selectedAnimIndex = 0;
-            
+
+            DestroyPereviewAnimClone();
         }
 
         private void ResetAnimaton(AnimationClip clip)
@@ -1090,10 +1125,10 @@ namespace FrameFighter2.Viewer
                 HitboxTypes types = data.HitboxData[i].HitboxType;
                 string path = data.HitboxData[i].HitboxParent;
 
-                Transform parent = m_gameObject.transform;
-                
+                Transform parent = PreviewAnimationClone().transform;
+
                 //finds bone to attatch to if applicable
-                if(types == HitboxTypes.AttachedToBone)
+                if (types == HitboxTypes.AttachedToBone)
                 {
                     parent = FindObjectTransformFromPath(path);
                 }
@@ -1110,6 +1145,20 @@ namespace FrameFighter2.Viewer
             }
         }
 
+        [InitializeOnLoad]
+        static class PreviewCleanup
+        {
+            static PreviewCleanup()
+            {
+                EditorApplication.playModeStateChanged += _ =>
+                {
+                    DestroyPereviewAnimClone();
+                };
+
+                AssemblyReloadEvents.beforeAssemblyReload += DestroyPereviewAnimClone;
+
+            }
+        }
     }
 
 }
