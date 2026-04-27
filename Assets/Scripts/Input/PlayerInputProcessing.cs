@@ -70,7 +70,7 @@ namespace Stirge.Input
         }
         public void ClearComboBinding()
         {
-            m_comboBindings = null;
+            m_comboBindings = new();
         }
         #endregion
 
@@ -110,6 +110,7 @@ namespace Stirge.Input
             if (m_comboBindings.TryGetValue(input, out string attackName))
             {
                 m_playerAnimator.Play(attackName);
+                ClearComboBinding();
                 return true;
             }
             // check if the player is in a state where they are able to attack

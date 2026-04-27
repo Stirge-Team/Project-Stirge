@@ -530,7 +530,7 @@ MonoBehaviour:
   m_bindingType: 0
   m_defaultBindings:
   - attackInput: 8
-    attackName: TestAttack
+    attackName: TestString1
   - attackInput: 2
     attackName: TestLauncher
 --- !u!1001 &6610752918078484151
@@ -1114,6 +1114,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 11400000, guid: 1a7309668d24b70a4949c5834790b588, type: 2}
   - {fileID: 11400000, guid: 21acf07377a3abe0d8ba98d8b976a247, type: 2}
+  - {fileID: 11400000, guid: 9130691532d77d61fb0ef3ce7f238004, type: 2}
+  - {fileID: 11400000, guid: aeb7afd0269c608be881ba1a41f90784, type: 2}
+  - {fileID: 11400000, guid: 6eaa0761d4271d7fcaa60b75717f429e, type: 2}
 --- !u!95 &6992374104284298522 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: -7840867231617242486, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
