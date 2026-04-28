@@ -17,10 +17,10 @@ namespace Stirge.Input
     public class PlayerInputProcessing : MonoBehaviour
     {
         [SerializeField] private Animator m_playerAnimator;
-        
+
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
-        
+
         private Dictionary<AttackInput, string> m_groundedBindings;
         private Dictionary<AttackInput, string> m_airBindings;
 
@@ -30,8 +30,19 @@ namespace Stirge.Input
         private List<AttackInput> m_sequence = new();
 
         private float m_bufferTimer = 0;
+        public static PlayerInputProcessing Instance { get; private set; }
 
-        private void Start()
+        private void Awake()
+        {
+            if (Instance != null)
+            {
+                Destroy(Instance); // you could do Instance.gameObject but if the PIP is attached to the player then that would destroy the player, up to you
+            }
+
+            Instance = this;
+            Init();
+        }
+        private void Init()
         {
             m_comboBindings = new();
         }
@@ -114,7 +125,7 @@ namespace Stirge.Input
                 return true;
             }
             // check if the player is in a state where they are able to attack
-            
+
             bool grounded = m_playerAnimator.GetBool("IsGrounded");
             // grounded bindings
             if (grounded)

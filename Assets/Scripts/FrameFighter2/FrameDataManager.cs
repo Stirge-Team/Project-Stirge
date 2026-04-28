@@ -245,7 +245,7 @@ namespace FrameFighter2.Manager
             if (m_currentData.NextComboInput.NextComboAttack != "" && m_currentData.NextComboInput.ComboInputTimeStart == frame)
             {
                 //clear the last lot of combos - this is a safety check and should'nt be clearing anything.
-                FindAnyObjectByType<PlayerInputProcessing>().ClearComboBinding();
+                PlayerInputProcessing.Instance.ClearComboBinding();
                 m_activeComboListers.Clear();
 
                 Debug.Log($"Start combo input checking for animation {m_currentData.name} from frame {m_currentData.NextComboInput.ComboInputTimeStart} to frame {m_currentData.NextComboInput.ComboInputTimeEnd}.");
@@ -253,14 +253,14 @@ namespace FrameFighter2.Manager
                 //create and add the combo binding
                 Dictionary<AttackInput, string> comboBind = new();
                 comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
-                FindAnyObjectByType<PlayerInputProcessing>().SetComboBinding(comboBind);
+                PlayerInputProcessing.Instance.SetComboBinding(comboBind);
 
                 m_activeComboListers.Add(m_currentData.NextComboInput);
             }
             else if(m_currentData.NextComboInput.NextComboAttack == "")
             {
                 //Remove any lingering combo data if this attack has none
-                FindAnyObjectByType<PlayerInputProcessing>().ClearComboBinding();
+                PlayerInputProcessing.Instance.ClearComboBinding();
             }
 
             for (int i = 0; i < m_activeComboListers.Count; i++)
@@ -272,7 +272,7 @@ namespace FrameFighter2.Manager
                     Debug.Log($"End combo input checking for animation {m_currentData.name} as its now frame {m_currentData.NextComboInput.ComboInputTimeEnd}.");
 
                     m_activeComboListers.Remove(input);
-                    FindAnyObjectByType<PlayerInputProcessing>().ClearComboBinding();
+                    PlayerInputProcessing.Instance.ClearComboBinding();
                     i--;
                 }
 
