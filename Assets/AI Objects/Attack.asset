@@ -23,4 +23,5 @@ MonoBehaviour:
     - rid: 3283391948847841352
       type: {class: AttackingBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_attackData: {fileID: 0}
+        m_attackName: 
+        m_hasRootMotion: 0
