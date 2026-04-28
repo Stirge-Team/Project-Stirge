@@ -5,13 +5,24 @@ namespace Stirge.Combat
 {
     public abstract class CombatEntity : MonoBehaviour
     {
-        [Header("Combat Details")]
+        [Header("Components")]
+        [SerializeField] protected Animator m_anim;
+
+        [Header("Combat Properties")]
         [SerializeField, Min(1)] protected int m_maxHealth;
-        protected int m_currentHealth;
+        public bool isAttacking;
 
         [HideInInspector] public CombatEntitySpawner spawner = null;
+        protected int m_currentHealth;
 
+        [Header("Status")]
         [SerializeField] protected List<Status> m_statuses = new();
+
+        private float m_stunTime = 0;
+
+        [Header("Ground Check Properties")]
+        [SerializeField, Min(0)] protected float m_groundedCheckDistance;
+        [SerializeField] protected LayerMask m_groundedCheckMask;
 
         #region UnityEvents
         protected virtual void Awake()
@@ -29,20 +40,11 @@ namespace Stirge.Combat
                 return;
             }
 
-            // update Statuses
-            foreach (Status status in m_statuses)
-            {
-                if (status.IsCleared)
-                {
-                    m_statuses.Remove(status);
-                    continue;
-                }
-                status.Update(this);
-            }
+            UpdateStatuses(Time.deltaTime);
         }
         #endregion
 
-        #region Damage
+        #region Death State
         public void TakeDamage(int damage)
         {
             m_currentHealth -= damage;
@@ -56,7 +58,55 @@ namespace Stirge.Combat
         }
         #endregion
 
+        #region Attacks
+        public void UseAttack(string attackName)
+        {
+            if (m_anim.HasState(0, Animator.StringToHash(attackName)))
+            {
+                m_anim.Play(attackName);
+
+                // get the length of the attack to play
+                isAttacking = true;
+            }
+        }
+        #endregion
+
+        public abstract bool IsGrounded();
+
         #region Statuses
+        public bool IsStunned()
+        {
+            return m_stunTime > 0;
+        }
+
+        public void InflictStatus(Status status)
+        {
+            m_statuses.Add(status);
+        }
+
+        private void UpdateStatuses(float deltaTime)
+        {
+            // update Stun
+            if (m_stunTime > 0)
+            {
+                m_stunTime -= deltaTime;
+                if (m_stunTime <= 0)
+                {
+                    m_stunTime = 0;
+                    // no longer stunned
+                }
+            }
+            
+            foreach (Status status in m_statuses)
+            {
+                if (status.IsCleared)
+                {
+                    m_statuses.Remove(status);
+                    continue;
+                }
+                status.Update(this);
+            }
+        }
         public abstract bool EnterStun(float stunLength);
         public abstract bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength);
         public abstract bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength);

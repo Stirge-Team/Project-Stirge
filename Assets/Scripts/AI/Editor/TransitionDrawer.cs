@@ -23,6 +23,10 @@ namespace Stirge.AI
                     if (propToDraw.floatValue < 0)
                         propToDraw.floatValue = 0;
                 }
+                if (propToDraw.isArray && propToDraw.isExpanded)
+                {
+                    totalLines += (int)(EditorGUI.GetPropertyHeight(propToDraw) / EditorGUIUtility.singleLineHeight);
+                }
             }
 
             Rect GetNewRect()
@@ -52,17 +56,13 @@ namespace Stirge.AI
                 // draw conditions list
                 DrawPropertyField("m_conditions");
 
-                // add extra lines for conditions height
-                SerializedProperty conditionsProp = property.FindPropertyRelative("m_conditions");
-                if (conditionsProp.isExpanded)
-                    totalLines += (int)(EditorGUI.GetPropertyHeight(conditionsProp) / EditorGUIUtility.singleLineHeight);
-
                 // draw popup for adding new Conditions
                 m_selectedCondition = EditorGUI.Popup(GetNewRect(), m_selectedCondition, StateEditor.ConditionNames);
 
                 // create new Condition button
                 if (GUI.Button(GetNewRect(), new GUIContent("Add new " + StateEditor.ConditionNames[m_selectedCondition])))
                 {
+                    SerializedProperty conditionsProp = property.FindPropertyRelative("m_conditions");
                     Condition newCondition = System.Activator.CreateInstance(Condition.ConditionTypes[m_selectedCondition]) as Condition;
                     conditionsProp.arraySize++;
                     SerializedProperty newConditionProp = conditionsProp.GetArrayElementAtIndex(conditionsProp.arraySize - 1);

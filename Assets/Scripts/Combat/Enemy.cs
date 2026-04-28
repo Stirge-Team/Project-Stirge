@@ -44,18 +44,23 @@ namespace Stirge.Enemy
         #endregion
 
         #region CombatEntity
+        public override bool IsGrounded()
+        {
+            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
+        }
         private void ApplyStun(float length)
         {
             if (length > 0)
             {
-                m_agent.WriteMemory("Stun", length);
+                m_agent.Enemy.InflictStatus(new Stun(length));
             }
         }
 
         public override bool EnterStun(float length)
         {
             ApplyStun(length);
-            if (m_agent.RetrieveMemory<bool>("Grounded"))
+            // different State for when Grounded
+            if (IsGrounded())
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);
@@ -73,7 +78,7 @@ namespace Stirge.Enemy
         public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             ApplyStun(stunLength);
-            m_agent.WriteMemory("AirStall", airStallLength);
+            m_agent.Enemy.InflictStatus(new AirJuggle(strength, airStallLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
 
@@ -85,6 +90,9 @@ namespace Stirge.Enemy
         private void OnDrawGizmosSelected()
         {
             m_agent.OnDrawGizmos();
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
         }
 #endif
     }

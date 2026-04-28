@@ -30,7 +30,6 @@ MonoBehaviour:
     - rid: 858787297446330560
       type: {class: StunnedCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_typeIndex: 5
         m_invertValue: 1
     - rid: 858787297446330563
       type: {class: PhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}

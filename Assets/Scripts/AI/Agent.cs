@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 namespace Stirge.AI
 {
+    using Enemy;
+    
     public enum PhysicsMode
     {
         NavMesh,
@@ -17,25 +19,32 @@ namespace Stirge.AI
         private FiniteStateMachine m_fsm;
 
         [Header("Components")]
+        [SerializeField] private Enemy m_enemy;
         [SerializeField] private Transform m_transform;
         [SerializeField] private Transform m_modelTransform;
         [SerializeField] private NavMeshAgent m_nav;
         [SerializeField] private Rigidbody m_rb;
-        [SerializeField] private Animator m_anim;
 
-        public Transform transform => m_transform;
+        public Enemy Enemy => m_enemy;
+        public Transform Transform => m_transform;
 
         [Header("Properties")]
         [SerializeField] private State m_defaultState;
         [SerializeField, Min(0)] private float m_detectionRadius;
-        [SerializeField, Min(0)] private float m_groundedCheckDistance;
-        [SerializeField] private LayerMask m_groundedCheckMask;
         [SerializeField, Min(0)] private float m_defualtGravityAcceleration;
 
         private Transform m_targetObject;
         private Vector3? m_targetPosition;
         private PhysicsMode m_physicsMode;
         private float m_gravity;
+
+        /// <summary>
+        /// Used to determine whether the Agent has left the ground during aerial AI Behaviours.<br />
+        /// Avoids aerial Behaviours from instantly exiting after a velocity is applied.<br />
+        /// See <see cref="OffGroundBehaviour"/> and its children for some more info.
+        /// </summary>
+        [HideInInspector] public bool isOffGround;
+        [HideInInspector] public float airStallLength;
 
         public Transform TargetObject => m_targetObject;
         public Vector3? TargetPosition
@@ -76,11 +85,8 @@ namespace Stirge.AI
 
         public void FixedUpdate(float deltaTime)
         {
-            bool isGrounded = Physics.Raycast(m_transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-            WriteMemory("Grounded", isGrounded);
-
             // apply gravity
-            if (m_physicsMode == PhysicsMode.Physics && !isGrounded)
+            if (m_physicsMode == PhysicsMode.Physics && !m_enemy.IsGrounded())
             {
                 m_rb.AddForce(0, -m_gravity * deltaTime, 0, ForceMode.VelocityChange);
             }
@@ -182,8 +188,7 @@ namespace Stirge.AI
 
         public void UseAttack(string attackName)
         {
-            if (m_anim.HasState(0, Animator.StringToHash(attackName)))
-                m_anim.Play(attackName);
+            m_enemy.UseAttack(attackName);
         }
 
         public void ApplyRootMotion()
@@ -194,6 +199,15 @@ namespace Stirge.AI
                 m_transform.position = m_modelTransform.position;
                 m_modelTransform.localPosition = Vector3.zero;
             }
+        }
+
+        public float GetNavSpeed()
+        {
+            return m_nav.speed;
+        }
+        public void SetNavSpeed(float speed)
+        {
+            m_nav.speed = speed;
         }
 
         /*
@@ -280,9 +294,6 @@ namespace Stirge.AI
 
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(m_transform.position, m_nav.stoppingDistance);
-
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(m_transform.position, m_transform.position + Vector3.down * m_groundedCheckDistance);
         }
 #endif
     }

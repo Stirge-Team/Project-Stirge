@@ -29,7 +29,8 @@ MonoBehaviour:
     RefIds:
     - rid: 858787297446330439
       type: {class: MoveToTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
-      data: 
+      data:
+        m_speed: 0
     - rid: 858787297446330440
       type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data: 

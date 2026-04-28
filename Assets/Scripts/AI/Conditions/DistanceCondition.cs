@@ -9,7 +9,7 @@ namespace Stirge.AI
 
         protected override bool _IsTrue(Agent agent)
         {
-            return Vector3.Distance(agent.transform.position, (Vector3)agent.TargetPosition) <= m_distance;
+            return Vector3.Distance(agent.Transform.position, (Vector3)agent.TargetPosition) <= m_distance;
         }
     }        
 }
