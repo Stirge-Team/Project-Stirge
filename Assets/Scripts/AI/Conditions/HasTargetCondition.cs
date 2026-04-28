@@ -7,7 +7,7 @@ namespace Stirge.AI
     {
         protected override bool _IsTrue(Agent agent)
         {
-            return agent.TargetPosition != null;
+            return agent.TargetObject != null;
         }
     }
 }
