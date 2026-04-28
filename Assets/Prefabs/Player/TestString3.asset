@@ -13,15 +13,15 @@ MonoBehaviour:
   m_Name: TestString3
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 1, z: -2}
+  - m_position: {x: 0, y: 2, z: 0}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 3, y: 1, z: 1}
-    m_startFrame: 10
-    m_endFrame: 30
+    m_scale: {x: 1, y: 4, z: 1}
+    m_startFrame: 12
+    m_endFrame: 20
     m_groupID: 0
-    m_hitboxShape: 2
-    m_hitboxType: 0
-    m_hitboxParent: 
+    m_hitboxShape: 0
+    m_hitboxType: 2
+    m_hitboxParent: 0000020000
     m_onHitEvent:
       m_eventType: 0
       m_eventID: 
