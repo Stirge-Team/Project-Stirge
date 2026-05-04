@@ -21,6 +21,10 @@ namespace Stirge.AI
                     if (propToDraw.floatValue < 0)
                         propToDraw.floatValue = 0;
                 }
+                if (propToDraw.isArray && propToDraw.isExpanded)
+                {
+                    totalLines += (int)(EditorGUI.GetPropertyHeight(propToDraw) / EditorGUIUtility.singleLineHeight);
+                }
             }
 
             Rect GetNewRect()
@@ -58,9 +62,6 @@ namespace Stirge.AI
                     case nameof(KnockbackBehaviour):
                         DrawPropertyField("m_offGroundTime");
                         break;
-                    case nameof(AttackBehaviour):
-                        DrawPropertyField("m_attackName");
-                        break;
                     case nameof(PhysicsBehaviour):
                         DrawPropertyField("m_maintainPriorMode");
                         DrawPropertyField("m_enterMode");
@@ -68,6 +69,13 @@ namespace Stirge.AI
                         break;
                     case nameof(LookAtTargetBehaviour):
                         DrawPropertyField("m_maxDegreesDelta");
+                        break;
+                    case nameof(MoveToTargetBehaviour):
+                        DrawPropertyField("m_speed");
+                        break;
+                    case nameof(AttackingBehaviour):
+                        DrawPropertyField("m_attackName");
+                        DrawPropertyField("m_hasRootMotion");
                         break;
                 }
             }
@@ -91,10 +99,13 @@ namespace Stirge.AI
                 switch (typeName)
                 {
                     case nameof(AirJuggleBehaviour):
-                    case nameof(AttackBehaviour):
                     case nameof(KnockbackBehaviour):
                     case nameof(LookAtTargetBehaviour):
+                    case nameof(MoveToTargetBehaviour):
                         totalLines++;
+                        break;
+                    case nameof(AttackingBehaviour):
+                        totalLines += 2;
                         break;
                     case nameof(PhysicsBehaviour):
                         totalLines += 3;

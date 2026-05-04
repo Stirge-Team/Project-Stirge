@@ -5,14 +5,24 @@ namespace Stirge.AI
     [System.Serializable]
     public class MoveToTargetBehaviour : Behaviour
     {
+        [Tooltip("If set to 0, will use the default speed set on the Nav Mesh Agent on the prefab.")]
+        [SerializeField, Min(0)] private float m_speed;
+
+        private float m_oldSpeed;
+        
         public override void _Enter(Agent agent)
         {
+            if (m_speed > 0)
+            {
+                m_oldSpeed = agent.GetNavSpeed();
+                agent.SetNavSpeed(m_speed);
+            }
             base._Enter(agent);
         }
 
         public override void _Update(Agent agent, float deltaTime)
         {
-            if (agent.TargetPosition != null && Vector3.Distance(agent.transform.position, (Vector3)agent.TargetPosition) > agent.StoppingDistance)
+            if (agent.TargetPosition != null && Vector3.Distance(agent.Transform.position, (Vector3)agent.TargetPosition) > agent.StoppingDistance)
             {
                 agent.CalculatePath();
             }
@@ -20,8 +30,13 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
-            base._Exit(agent);
             agent.ClearPath();
+
+            // reset speed if it was changed
+            if (m_speed > 0)
+                agent.SetNavSpeed(m_oldSpeed);
+
+            base._Exit(agent);
         }
     }
 }

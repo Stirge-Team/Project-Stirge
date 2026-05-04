@@ -19,7 +19,7 @@ namespace Stirge.AI
         {
             base._Enter(agent);
             agent.SetPhysicsMode(PhysicsMode.Physics);
-            m_airStallTime = agent.RetrieveMemory<float>("AirStall");
+            m_airStallTime = agent.airStallLength;
 
             // if no air stall, then skip
             if (m_airStallTime <= 0)
@@ -47,7 +47,7 @@ namespace Stirge.AI
                     if (m_airStallTime <= 0)
                     {
                         m_state = AirStallState.Stopped;
-                        agent.RemoveMemory("AirStall");
+                        agent.airStallLength = 0f;
                         agent.SetPhysicsMode(PhysicsMode.Physics);
                     }
                     break;
@@ -57,7 +57,7 @@ namespace Stirge.AI
         {
             base._Exit(agent);
             agent.SetPhysicsMode(PhysicsMode.NavMesh);
-            agent.RemoveMemory("AirStall");
+            agent.airStallLength = 0f;
             m_airStallTime = 0f;
         }
 

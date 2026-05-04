@@ -2,11 +2,15 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    using Combat;
+
     [System.Serializable]
-    public class AttackBehaviour : Behaviour
+    public class AttackingBehaviour : Behaviour
     {
+        //[SerializeField] private EnemyAttackData m_attackData;
         [SerializeField] private string m_attackName;
-        
+        [SerializeField] private bool m_hasRootMotion = false;
+
         public override void _Enter(Agent agent)
         {
             agent.UseAttack(m_attackName);
@@ -20,6 +24,10 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
+            if (m_hasRootMotion)
+                agent.ApplyRootMotion();
+
+            agent.Enemy.isAttacking = false;
             base._Exit(agent);
         }
     }

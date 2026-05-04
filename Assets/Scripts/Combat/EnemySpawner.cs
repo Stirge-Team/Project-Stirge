@@ -2,20 +2,22 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
-namespace Stirge.Enemy
+namespace Stirge.Combat
 {
+    using Enemy;
+
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private Enemy m_enemyPrefab;
-        [SerializeField, Min(0)] private int m_targetEnemyCount;
+        [SerializeField, Min(0)] private int m_targetSpawnCount;
         [SerializeField] private Transform m_spawnLocation;
 
         private List<Enemy> m_spawnedEnemies;
 
         private void Start()
         {
-            m_spawnedEnemies = new List<Enemy>();
-            for (int i = 0; i < m_targetEnemyCount; i++)
+            m_spawnedEnemies = new();
+            for (int i = 0; i < m_targetSpawnCount; i++)
                 SpawnEnemy();
         }
 
@@ -23,6 +25,7 @@ namespace Stirge.Enemy
         {
             Enemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation.position, m_spawnLocation.rotation);
             spawnedEnemy.spawner = this;
+            spawnedEnemy.name = m_enemyPrefab.name;
             m_spawnedEnemies.Add(spawnedEnemy);
         }
 

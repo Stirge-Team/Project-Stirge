@@ -21,6 +21,10 @@ namespace Stirge.AI
                     if (propToDraw.floatValue < 0)
                         propToDraw.floatValue = 0;
                 }
+                if (propToDraw.isArray && propToDraw.isExpanded)
+                {
+                    totalLines += (int)(EditorGUI.GetPropertyHeight(propToDraw) / EditorGUIUtility.singleLineHeight);
+                }
             }
 
             Rect GetNewRect()
@@ -75,8 +79,13 @@ namespace Stirge.AI
             if (property.isExpanded && typeName != "")
             {
                 totalLines++; // for invert value prop
-                if (typeName == nameof(DistanceCondition))
-                    totalLines++; // for distance prop
+
+                switch (typeName)
+                {
+                    case nameof(DistanceCondition):
+                        totalLines++;
+                        break;
+                }
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
