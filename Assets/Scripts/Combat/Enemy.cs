@@ -87,7 +87,7 @@ namespace Stirge.Enemy
         public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             ApplyStun(stunLength);
-            m_agent.Enemy.InflictStatus(new AirJuggle(strength, airStallLength));
+            InflictStatus(new AirJuggle(strength, airStallLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
 
