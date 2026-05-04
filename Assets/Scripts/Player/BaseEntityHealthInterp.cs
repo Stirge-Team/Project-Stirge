@@ -67,7 +67,7 @@ namespace Stirge.Management
         }
         public void ButtonUpdateMax(float amount)
         {
-            ModifiyMaximumHealth(amount, EntityHealth.MaxHealthChangeBehaviour.MatchIncreases);
+            ModifiyMaximumHealth(amount, EntityHealth.MaxHealthChangeBehaviour.EquivalentAny);
         }
     }
 }
