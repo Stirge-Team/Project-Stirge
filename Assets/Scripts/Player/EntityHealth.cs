@@ -47,7 +47,7 @@ namespace Stirge.Management
         #region Health
         public void ModifyHealth(float amount, bool clamp = true, Object sender = null)
         {
-            if ((amount < 0 && m_invincibility == InvincibilityType.NoDamageHealth) || m_invincibility == InvincibilityType.NoModifiationsHealth)
+            if ((amount < 0 && m_invincibility.HasFlag(InvincibilityType.NoDamageHealth)) || m_invincibility.HasFlag(InvincibilityType.NoModifiationsHealth))
                 amount = 0;
 
             _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, clamp ? _maxHealth : Mathf.Infinity);
@@ -64,18 +64,18 @@ namespace Stirge.Management
         public void CheckHealth()
         {
             if (_healthPercent <= 0)
-                if (m_invincibility != InvincibilityType.Immortality)
+                if (m_invincibility.HasFlag(InvincibilityType.Immortality))
+                {
+                    if(_currentHealth <= 0) _currentHealth = 1;
+                    if(_maxHealth <= 0) _maxHealth = 1;
+                    Debug.Log($"But {name} is immortal!");
+                }
+                else
                 {
                     Debug.Log($"{name} has died!");
                     _isDead = true;
                     StopAllCoroutines();
                     m_invincibility = 0;
-                }
-                else if (m_invincibility == InvincibilityType.Immortality)
-                {
-                    if(_currentHealth <= 0) _currentHealth = 1;
-                    if(_maxHealth <= 0) _maxHealth = 1;
-                    Debug.Log($"But {name} is immortal!");
                 }
         }
         #endregion
@@ -95,7 +95,7 @@ namespace Stirge.Management
         #region Max Health
         public void ModifiyMaximumHealth(float amount, MaxHealthChangeBehaviour behaviour, Object sender = null)
         {
-            if ((amount < 0 && m_invincibility == InvincibilityType.NoDamageMaxHealth) || m_invincibility == InvincibilityType.NoModifiationsMaxHealth)
+            if ((amount < 0 && m_invincibility.HasFlag(InvincibilityType.NoDamageMaxHealth)) || m_invincibility.HasFlag(InvincibilityType.NoModifiationsMaxHealth))
                 amount = 0;
 
             //either clamp reguardless or clamp if the entity's health is equal or less than the current maximum.
