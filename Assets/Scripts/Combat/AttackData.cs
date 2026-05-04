@@ -7,7 +7,7 @@ namespace Stirge.Combat.Attacks
     [CreateAssetMenu(fileName = "New Attack data", menuName = "Stirge/Attack Data", order = 1)]
     public class AttackData : ScriptableObject
     {
-        [SerializeField] private AttackNode m_root;
+        [SerializeReference] private AttackNode m_root;
 
         public SequenceData EvaluateSequence()
         {

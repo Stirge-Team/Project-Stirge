@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 using EG = UnityEditor.EditorGUI;
 using EGL = UnityEditor.EditorGUILayout;
 using GL = UnityEngine.GUILayout;
@@ -13,6 +14,7 @@ namespace Stirge.AI
     [CustomEditor(typeof(State))]
     public class StateEditor : Editor
     {
+        #region Names
         public static string[] BehaviourNames
         {
             get
@@ -38,6 +40,7 @@ namespace Stirge.AI
         }
         private static string[] behaviourNames;
         private static string[] conditionNames;
+        #endregion
 
         private int m_selectedBehaviour;
 
