@@ -74,8 +74,7 @@ namespace Stirge.AI
                         DrawPropertyField("m_speed");
                         break;
                     case nameof(AttackingBehaviour):
-                        DrawPropertyField("m_attackName");
-                        DrawPropertyField("m_hasRootMotion");
+                        DrawPropertyField("m_attackData");
                         break;
                 }
             }
@@ -104,11 +103,12 @@ namespace Stirge.AI
                     case nameof(MoveToTargetBehaviour):
                         totalLines++;
                         break;
-                    case nameof(AttackingBehaviour):
-                        totalLines += 2;
-                        break;
                     case nameof(PhysicsBehaviour):
                         totalLines += 3;
+                        break;
+                    case nameof(AttackingBehaviour):
+                        SerializedProperty attackDataProp = property.FindPropertyRelative("m_attackData");
+                        totalLines += (int)(EditorGUI.GetPropertyHeight(attackDataProp) / EditorGUIUtility.singleLineHeight);
                         break;
                 }
             }

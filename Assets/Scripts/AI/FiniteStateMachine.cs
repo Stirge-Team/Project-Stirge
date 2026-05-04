@@ -13,6 +13,8 @@ namespace Stirge.AI
         
         private State m_currentState;
 
+        public State CurrentState => m_currentState;
+
         public override void _Enter(Agent agent)
         {
             m_currentState._Enter(agent);

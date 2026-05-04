@@ -81,10 +81,10 @@ namespace Stirge.AI
 
             if (property.isExpanded)
             {
-                totalLines += 4; // for target state, new Condition popup, new Conditio button, and size of Conditions array prop
+                totalLines += 4; // for target state, new Condition popup, new Condition button, and size of Conditions array prop
                 SerializedProperty conditionsProp = property.FindPropertyRelative("m_conditions");
                 if (conditionsProp.isExpanded)
-                    totalLines += (int)(EditorGUI.GetPropertyHeight(conditionsProp) / EditorGUIUtility.singleLineHeight);
+                    totalLines += (int)(EditorGUI.GetPropertyHeight(conditionsProp) / (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing));
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);

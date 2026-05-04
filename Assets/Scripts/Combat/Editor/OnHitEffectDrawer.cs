@@ -89,7 +89,7 @@ namespace Stirge.Combat
                 totalLines += 4; // for damage, Status label, popup, and button
 
                 SerializedProperty statusesProp = property.FindPropertyRelative("m_statuses");
-                totalLines += (int)(EditorGUI.GetPropertyHeight(statusesProp) / EditorGUIUtility.singleLineHeight);
+                totalLines += (int)(EditorGUI.GetPropertyHeight(statusesProp) / EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing);
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
