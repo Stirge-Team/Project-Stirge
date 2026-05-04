@@ -15,18 +15,27 @@ namespace Stirge.Enemy
         [SerializeField] private State m_knockbackState;
         [SerializeField] private State m_airJuggle;
 
+        [HideInInspector] public EnemySpawner spawner = null;
+
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
         // If Enemy updates first, it may use unupdated values of Health and states of Statuses such as Stun from the previous frame
-        protected override void Awake()
+        protected override void AwakeThis()
         {
-            base.Awake();
             m_agent.Awake();
         }
-        protected override void Update()
+        protected override void UpdateThis(float deltaTime)
         {
-            base.Update();
-            m_agent.Update(Time.deltaTime);
+            // check if enemy is dead this frame
+            if (IsDead())
+            {
+                if (spawner != null)
+                    spawner.ReportDeath(this);
+                Destroy(gameObject);
+                return;
+            }
+
+            m_agent.Update(deltaTime);
         }
 
         private void FixedUpdate()

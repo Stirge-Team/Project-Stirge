@@ -4,33 +4,35 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat
 {
-    public class CombatEntitySpawner : MonoBehaviour
+    using Enemy;
+
+    public class EnemySpawner : MonoBehaviour
     {
-        [SerializeField] private CombatEntity m_combatEntityPrefab;
+        [SerializeField] private Enemy m_enemyPrefab;
         [SerializeField, Min(0)] private int m_targetSpawnCount;
         [SerializeField] private Transform m_spawnLocation;
 
-        private List<CombatEntity> m_spawnedEntities;
+        private List<Enemy> m_spawnedEnemies;
 
         private void Start()
         {
-            m_spawnedEntities = new();
+            m_spawnedEnemies = new();
             for (int i = 0; i < m_targetSpawnCount; i++)
-                SpawnCombatEntity();
+                SpawnEnemy();
         }
 
-        private void SpawnCombatEntity()
+        private void SpawnEnemy()
         {
-            CombatEntity spawnedEntity = Instantiate(m_combatEntityPrefab, m_spawnLocation.position, m_spawnLocation.rotation);
-            spawnedEntity.spawner = this;
-            spawnedEntity.name = m_combatEntityPrefab.name;
-            m_spawnedEntities.Add(spawnedEntity);
+            Enemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation.position, m_spawnLocation.rotation);
+            spawnedEnemy.spawner = this;
+            spawnedEnemy.name = m_enemyPrefab.name;
+            m_spawnedEnemies.Add(spawnedEnemy);
         }
 
-        public void ReportDeath(CombatEntity enemy)
+        public void ReportDeath(Enemy enemy)
         {
-            m_spawnedEntities.Remove(enemy);
-            SpawnCombatEntity();
+            m_spawnedEnemies.Remove(enemy);
+            SpawnEnemy();
         }
 
 #if UNITY_EDITOR
@@ -43,9 +45,9 @@ namespace Stirge.Combat
         {
             if (context.started)
             {
-                foreach (CombatEntity entity in m_spawnedEntities)
+                foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    entity.EnterStun(3f);
+                    enemy.EnterStun(3f);
                 }
             }
         }
@@ -53,9 +55,9 @@ namespace Stirge.Combat
         {
             if (context.started)
             {
-                foreach (CombatEntity entity in m_spawnedEntities)
+                foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    entity.EnterKnockback(10f, new Vector2(1, 1), 1.3f, 0);
+                    enemy.EnterKnockback(10f, new Vector2(1, 1), 1.3f, 0);
                 }
             }
         }
@@ -63,9 +65,9 @@ namespace Stirge.Combat
         {
             if (context.started)
             {
-                foreach (CombatEntity entity in m_spawnedEntities)
+                foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    entity.EnterAirJuggle(6f, Vector3.up, 1.3f, 0);
+                    enemy.EnterAirJuggle(6f, Vector3.up, 1.3f, 0);
                 }
             }
         }
@@ -73,9 +75,9 @@ namespace Stirge.Combat
         {
             if (context.started)
             {
-                foreach (CombatEntity entity in m_spawnedEntities)
+                foreach (Enemy enemy in m_spawnedEnemies)
                 {
-                    entity.TakeDamage(1);
+                    enemy.TakeDamage(1);
                 }
             }
         }

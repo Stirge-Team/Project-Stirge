@@ -12,7 +12,6 @@ namespace Stirge.Combat
         [SerializeField, Min(1)] protected int m_maxHealth;
         public bool isAttacking;
 
-        [HideInInspector] public CombatEntitySpawner spawner = null;
         protected int m_currentHealth;
 
         [Header("Status")]
@@ -25,23 +24,20 @@ namespace Stirge.Combat
         [SerializeField] protected LayerMask m_groundedCheckMask;
 
         #region UnityEvents
-        protected virtual void Awake()
+        private void Awake()
         {
             m_currentHealth = m_maxHealth;
+            AwakeThis();
         }
-        protected virtual void Update()
+        private void Update()
         {
-            // check if enemy is dead this frame
-            if (IsDead())
-            {
-                if (spawner != null)
-                    spawner.ReportDeath(this);
-                Destroy(gameObject);
-                return;
-            }
-
             UpdateStatuses(Time.deltaTime);
+
+            UpdateThis(Time.deltaTime);
         }
+
+        protected virtual void AwakeThis() { }
+        protected virtual void UpdateThis(float deltaTime) { }
         #endregion
 
         #region Death State
