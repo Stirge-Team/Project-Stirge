@@ -16,6 +16,8 @@ GameObject:
   - component: {fileID: 5256876837077168771}
   - component: {fileID: 3353919659384064465}
   - component: {fileID: 5079235152578265304}
+  - component: {fileID: 4312719870174949881}
+  - component: {fileID: 5249485535610746317}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -342,6 +344,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 1636b98b-4793-427c-b0d1-fa9d7eef7ff1
     m_ActionName: 'Player/HelmSplitter[/Mouse/leftButton,/Gamepad/buttonNorth]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5249485535610746317}
+        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
+        m_MethodName: ButtonUpdateHealth
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: -1
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c
+    m_ActionName: 'Player/Hurtself[/Gamepad/buttonWest]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -391,6 +409,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
   m_playerAnimator: {fileID: 6992374104284298522}
   m_inputBufferTime: 0.2
+--- !u!114 &4312719870174949881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
+  m_baseHealth: 10
+--- !u!114 &5249485535610746317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e2d6f9eea4e31dcc91a563fb53fc9e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.BaseEntityHealthInterp
+  _healEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  _modifyEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  _damageEvents:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6992374104284298522}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: Play
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: TestHit
+          m_BoolArgument: 0
+        m_CallState: 2
+  _deathEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  _extraEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_overrideBaseFunction: 0
 --- !u!1 &5722074012237408405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1081,7 +1152,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
           m_MethodName: HaltHorizontalVelocity
           m_Mode: 6
@@ -1094,6 +1165,134 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - m_eventID: TestAttackEvent1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 0}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestLauncherEvent0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestLauncherEvent1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestString1Event0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestString1Event1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestString2Event0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestString2Event1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestString3Event0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestString3Event1
     m_event:
     - m_PersistentCalls:
         m_Calls:

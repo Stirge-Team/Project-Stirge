@@ -31,7 +31,17 @@ MonoBehaviour:
     m_onHitEffect:
       m_damage: 1
       m_statuses: []
-  m_eventData: []
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: TestString2Event0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 0
+    m_endFrame: 0
+  - m_eventType: 0
+    m_eventID: TestString2Event1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 50
+    m_endFrame: 50
   m_nextComboInput:
     m_nextComboAttack: TestString3
     m_comboAttackInput: 8
