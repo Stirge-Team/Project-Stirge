@@ -3,16 +3,13 @@ using UnityEngine;
 namespace Stirge.Enemy
 {
     using AI;
+    using Combat;
 
-    public class Enemy : MonoBehaviour
+    public class Enemy : CombatEntity
     {
         [SerializeField] private Agent m_agent;
         
-        [Header("Enemy Stats")]
-        [SerializeField, Min(1)] private int m_maxHealth;
-        private int m_currentHealth;
-
-        [Header("Combat Details")]
+        [Header("Combat States")]
         [SerializeField] private State m_stunState;
         [SerializeField] private State m_airStunState;
         [SerializeField] private State m_knockbackState;
@@ -20,18 +17,14 @@ namespace Stirge.Enemy
 
         [HideInInspector] public EnemySpawner spawner = null;
 
-        private void Awake()
+        #region Unity Events
+        // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
+        // If Enemy updates first, it may use unupdated values of Health and states of Statuses such as Stun from the previous frame
+        protected override void AwakeThis()
         {
-            m_currentHealth = m_maxHealth;
             m_agent.Awake();
         }
-
-        private void OnEnable()
-        {
-            m_agent.OnEnable();
-        }
-
-        private void Update()
+        protected override void UpdateThis(float deltaTime)
         {
             // check if enemy is dead this frame
             if (IsDead())
@@ -42,58 +35,63 @@ namespace Stirge.Enemy
                 return;
             }
 
-            m_agent.Update(Time.deltaTime);
+            m_agent.Update(deltaTime);
         }
 
         private void FixedUpdate()
         {
             m_agent.FixedUpdate(Time.deltaTime);
         }
-
+        private void OnEnable()
+        {
+            m_agent.OnEnable();
+        }
         private void OnDisable()
         {
             m_agent.OnDisable();
         }
+        #endregion
 
-        public bool IsDead()
+        #region CombatEntity
+        public override bool IsGrounded()
         {
-            return m_currentHealth <= 0;
+            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
         }
-
-        #region Combat
-        public void TakeDamage(int damage)
-        {
-            m_currentHealth -= damage;
-        }
-
         private void ApplyStun(float length)
         {
             if (length > 0)
             {
-                m_agent.WriteMemory("Stun", length);
+                m_agent.Enemy.InflictStatus(new Stun(length));
             }
         }
 
-        public void EnterStun(float length)
+        public override bool EnterStun(float length)
         {
             ApplyStun(length);
-            if (m_agent.RetrieveMemory<bool>("Grounded"))
+            // different State for when Grounded
+            if (IsGrounded())
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);
+
+            return true;
         }
-        public void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
+
+            return true;
         }
-        public void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             ApplyStun(stunLength);
-            m_agent.WriteMemory("AirStall", airStallLength);
+            InflictStatus(new AirJuggle(strength, airStallLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
+
+            return true;
         }
         #endregion
 
@@ -101,6 +99,9 @@ namespace Stirge.Enemy
         private void OnDrawGizmosSelected()
         {
             m_agent.OnDrawGizmos();
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
         }
 #endif
     }

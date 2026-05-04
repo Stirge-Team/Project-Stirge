@@ -19,6 +19,7 @@ namespace Stirge.AI
         {
             typeof(AirJuggleCondition),
             typeof(ArrivedAtTargetCondition),
+            typeof(AttackingCondition),
             typeof(DistanceCondition),
             typeof(GroundedCondition),
             typeof(HasTargetCondition),
