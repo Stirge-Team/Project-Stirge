@@ -32,7 +32,17 @@ MonoBehaviour:
       m_damage: 1
       m_statuses:
       - rid: 1848161946245791841
-  m_eventData: []
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: TestLauncherEvent0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 0
+    m_endFrame: 0
+  - m_eventType: 0
+    m_eventID: TestLauncherEvent1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 27
+    m_endFrame: 30
   m_nextComboInput:
     m_nextComboAttack: 
     m_comboAttackInput: 0
@@ -45,5 +55,4 @@ MonoBehaviour:
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_strength: 8
-        m_airStallLength: 1
-        m_stunLength: 2
+        m_stallLength: 0

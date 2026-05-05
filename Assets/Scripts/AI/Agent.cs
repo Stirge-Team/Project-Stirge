@@ -86,7 +86,7 @@ namespace Stirge.AI
         public void FixedUpdate(float deltaTime)
         {
             // apply gravity
-            if (m_physicsMode == PhysicsMode.Physics && !m_enemy.IsGrounded())
+            if (m_physicsMode == PhysicsMode.Physics && !m_enemy.m_isGrounded())
             {
                 m_rb.AddForce(0, -m_gravity * deltaTime, 0, ForceMode.VelocityChange);
             }

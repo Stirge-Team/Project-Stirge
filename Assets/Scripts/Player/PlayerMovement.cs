@@ -1,12 +1,13 @@
 using System;
 using Stirge.Camera;
+using Stirge.Combat;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Stirge.Player
 {
     [RequireComponent(typeof(MovementMotor))]
-    public class PlayerMovement : MonoBehaviour
+    public class PlayerMovement : CombatEntity
     {
         [System.Serializable]
         private struct stateVariables
@@ -64,12 +65,7 @@ namespace Stirge.Player
         //Grounded bool
         public bool IsGrounded { get; private set; }
 
-        [
-            SerializeField,
-            Tooltip(
-                "The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f."
-            )
-        ]
+        [SerializeField, Tooltip("The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f.")]
         private float m_groundCheckDistance;
 
         //The layers that the player considers "ground"
@@ -258,6 +254,12 @@ namespace Stirge.Player
             }
         }
 
+        //Grounded bool
+        public override bool m_isGrounded()
+        {
+            return IsGrounded;
+        }
+
         //Called from the player input component - updates the input direction value
         public void OnMove(InputAction.CallbackContext context)
         {
@@ -336,6 +338,18 @@ namespace Stirge.Player
             Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteTime);
             Gizmos.color = Color.orange;
             Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteCountdown);
+        }
+        public override bool EnterStun(float stunLength)
+        {
+            throw new NotImplementedException();
+        }
+        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        {
+            throw new NotImplementedException();
+        }
+        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        {
+            throw new NotImplementedException();
         }
     }
 }

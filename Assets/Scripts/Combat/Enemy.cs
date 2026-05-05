@@ -27,7 +27,7 @@ namespace Stirge.Enemy
         protected override void UpdateThis(float deltaTime)
         {
             // check if enemy is dead this frame
-            if (IsDead())
+            if (health._isDead)
             {
                 if (spawner != null)
                     spawner.ReportDeath(this);
@@ -53,7 +53,7 @@ namespace Stirge.Enemy
         #endregion
 
         #region CombatEntity
-        public override bool IsGrounded()
+        public override bool m_isGrounded()
         {
             return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
         }
@@ -69,7 +69,7 @@ namespace Stirge.Enemy
         {
             ApplyStun(length);
             // different State for when Grounded
-            if (IsGrounded())
+            if (m_isGrounded())
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);

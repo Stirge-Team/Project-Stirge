@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Stirge.Management;
 using UnityEngine;
 
 namespace Stirge.Combat
@@ -9,10 +10,13 @@ namespace Stirge.Combat
         [SerializeField] protected Animator m_anim;
 
         [Header("Combat Properties")]
-        [SerializeField, Min(1)] protected int m_maxHealth;
         public bool isAttacking;
+        [SerializeField]
+        protected EntityHealth m_health;
+        public EntityHealth health => m_health;
 
-        protected int m_currentHealth;
+        //[SerializeField, Min(1)] protected int m_maxHealth;
+        //protected int m_currentHealth;
 
         [Header("Status")]
         [SerializeField] protected List<Status> m_statuses = new();
@@ -26,7 +30,6 @@ namespace Stirge.Combat
         #region UnityEvents
         private void Awake()
         {
-            m_currentHealth = m_maxHealth;
             AwakeThis();
         }
         private void Update()
@@ -43,15 +46,10 @@ namespace Stirge.Combat
         #region Death State
         public void TakeDamage(int damage)
         {
-            m_currentHealth -= damage;
+            m_health.ModifyHealth(damage);
             OnDamageTaken(damage);
         }
         protected virtual void OnDamageTaken(int damage) { }
-
-        public bool IsDead()
-        {
-            return m_currentHealth <= 0;
-        }
         #endregion
 
         #region Attacks
@@ -67,7 +65,7 @@ namespace Stirge.Combat
         }
         #endregion
 
-        public abstract bool IsGrounded();
+        public abstract bool m_isGrounded();
 
         #region Statuses
         public bool IsStunned()
