@@ -3,37 +3,14 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    using Tools;
+    
     [CustomPropertyDrawer(typeof(Behaviour), true)]
-    public class BehaviourDrawer : PropertyDrawer
+    public class BehaviourDrawer : EasyPropertyDrawer
     {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        protected override void DrawGUI(GUIContent label)
         {
-            int totalLines = 0;
-
-            void DrawPropertyField(string propertyName)
-            {
-                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
-                Rect propRect = GetNewRect();
-                EditorGUI.PropertyField(propRect, propToDraw);
-
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
-                {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
-                }
-                if (propToDraw.isArray && propToDraw.isExpanded)
-                {
-                    totalLines += (int)(EditorGUI.GetPropertyHeight(propToDraw) / EditorGUIUtility.singleLineHeight);
-                }
-            }
-
-            Rect GetNewRect()
-            {
-                totalLines++;
-                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-            }
-
-            string typeName = property.type;
+            string typeName = m_property.type;
             // format if managed reference aka not FSM
             if (typeName == nameof(FiniteStateMachine))
             {
@@ -50,11 +27,11 @@ namespace Stirge.AI
                     label.text = typeName;
             }
 
-            EditorGUI.BeginProperty(position, label, property);
+            EditorGUI.BeginProperty(m_position, label, m_property);
 
             Rect foldoutRect = GetNewRect();
-            property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);
-            if (property.isExpanded)
+            m_property.isExpanded = EditorGUI.Foldout(foldoutRect, m_property.isExpanded, label);
+            if (m_property.isExpanded)
             {
                 switch (label.text)
                 {
@@ -82,13 +59,13 @@ namespace Stirge.AI
             EditorGUI.EndProperty();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override float GetHeight(GUIContent label)
         {
             int totalLines = 1; // for foldout
 
-            if (property.isExpanded)
+            if (m_property.isExpanded)
             {
-                string typeName = property.type;
+                string typeName = m_property.type;
                 // format if managed reference aka not FSM
                 if (typeName != nameof(FiniteStateMachine))
                 {
@@ -107,8 +84,7 @@ namespace Stirge.AI
                         totalLines += 3;
                         break;
                     case nameof(AttackingBehaviour):
-                        SerializedProperty attackDataProp = property.FindPropertyRelative("m_attackData");
-                        totalLines += (int)(EditorGUI.GetPropertyHeight(attackDataProp) / EditorGUIUtility.singleLineHeight);
+                        totalLines += GetPropertyLineHeight("m_attackData");
                         break;
                 }
             }

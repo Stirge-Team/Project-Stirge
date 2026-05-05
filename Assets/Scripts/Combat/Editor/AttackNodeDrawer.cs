@@ -1,48 +1,110 @@
 using UnityEditor;
 using UnityEngine;
 
+using EGL = UnityEditor.EditorGUILayout;
+using GL = UnityEngine.GUILayout;
+
 namespace Stirge.Combat.Attacks
 {
+    using Tools;
+    
     [CustomPropertyDrawer(typeof(AttackNode), true)]
-    public class AttackNodeDrawer : PropertyDrawer
+    public class AttackNodeDrawer : EasyPropertyDrawer
     {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        private int m_selectedAttackNode;
+
+        protected override void DrawGUI(GUIContent label)
         {
-            int totalLines = 0;
-
-            void DrawPropertyField(string propertyName)
-            {
-                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
-                Rect propRect = GetNewRect();
-                EditorGUI.PropertyField(propRect, propToDraw);
-
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
-                {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
-                }
-                if (propToDraw.isArray && propToDraw.isExpanded)
-                {
-                    totalLines += (int)(EditorGUI.GetPropertyHeight(propToDraw) / EditorGUIUtility.singleLineHeight);
-                }
-            }
-
-            Rect GetNewRect()
-            {
-                totalLines++;
-                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-            }
-
-            string typeName = property.type;
+            string typeName = m_property.type;
             typeName = typeName.Substring(17, typeName.Length - 18);
-
-            Debug.Log(typeName);
 
             // if AttackNode, then prompt deletion
             if (typeName == string.Empty)
                 label.text = "Empty, pls delete";
             else
                 label.text = typeName;
+
+            EditorGUI.BeginProperty(m_position, label, m_property);
+            m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
+            if (m_property.isExpanded)
+            {
+                switch (typeName)
+                {
+                    case nameof(AnimationNode):
+                        DrawPropertyField("m_animation");
+                        DrawPropertyField("m_speed");
+                        DrawPropertyField("m_hasRootMotion");
+                        break;
+                    case nameof(ApproachTargetNode):
+                        DrawPropertyField("m_stoppingDistance");
+                        DrawPropertyField("m_useInitialPosition");
+                        DrawPropertyField("m_time");
+                        break;
+                    case nameof(TranslateNode):
+                        DrawPropertyField("m_translation");
+                        DrawPropertyField("m_isLocalTranslation");
+                        DrawPropertyField("m_time");
+                        break;
+                    case nameof(SelectAttackNode):
+                    case nameof(SequenceAttackNode):
+                        DrawPropertyField("m_nodes");
+
+                        // add Attack Node to array button
+                        // select AttackNode popup
+                        m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
+
+                        // create new AttackNode button
+                        if (GUI.Button(GetNewRect(), "Add new " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
+                        {
+                            AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
+                            SerializedProperty nodesProp = FindPropertyRelative("m_nodes");
+                            nodesProp.arraySize++;
+                            SerializedProperty newAttackNodeProp = nodesProp.GetArrayElementAtIndex(nodesProp.arraySize - 1);
+                            newAttackNodeProp.managedReferenceValue = newAttackNode;
+                            nodesProp.isExpanded = true;
+                            newAttackNodeProp.isExpanded = true;
+                        }
+
+                        break;
+                }
+            }
+
+            EditorGUI.EndProperty();
+        }
+
+        protected override float GetHeight(GUIContent label)
+        {
+            int totalLines = 1; // for foldout
+
+            if (m_property.isExpanded)
+            {
+                string typeName = m_property.type;
+                typeName = typeName.Substring(17, typeName.Length - 18);
+
+                switch (typeName)
+                {
+                    case nameof(AnimationNode):
+                        totalLines += GetPropertyLineHeight("m_speed");
+                        totalLines += 2;
+                        break;
+                    case nameof(ApproachTargetNode):
+                        totalLines += GetPropertyLineHeight("m_stoppingDistance");
+                        totalLines += GetPropertyLineHeight("m_time");
+                        totalLines++;
+                        break;
+                    case nameof(TranslateNode):
+                        totalLines += GetPropertyLineHeight("m_time");
+                        totalLines += 2;
+                        break;
+                    case nameof(SelectAttackNode):
+                    case nameof(SequenceAttackNode):
+                        totalLines += GetPropertyLineHeight("m_nodes");
+                        totalLines += 2; // for popup and add button
+                        break;
+                }
+            }
+            
+            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
         }
     }
 }

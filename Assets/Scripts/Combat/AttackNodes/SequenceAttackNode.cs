@@ -6,7 +6,12 @@ namespace Stirge.Combat.Attacks
     [System.Serializable]
     public class SequenceAttackNode : AttackNode
     {
-        [SerializeField] private AttackNode[] m_nodes;
+        public SequenceAttackNode()
+        {
+            m_nodes = new AttackNode[0];
+        }
+        
+        [SerializeReference] private AttackNode[] m_nodes;
 
         public override void Evaluate(List<AttackNode> activeNodes)
         {

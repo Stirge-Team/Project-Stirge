@@ -6,12 +6,13 @@ using System.Text.RegularExpressions;
 using EG = UnityEditor.EditorGUI;
 using EGL = UnityEditor.EditorGUILayout;
 using GL = UnityEngine.GUILayout;
-using EGU = UnityEditor.EditorGUIUtility;
 
 namespace Stirge.Combat.Attacks
 {
+    using Tools;
+
     [CustomEditor(typeof(AttackData))]
-    public class AttackDataEditor : Editor
+    public class AttackDataEditor : EasyCustomEditor
     {
         #region Names
         public static string[] AttackNodeNames
@@ -29,39 +30,14 @@ namespace Stirge.Combat.Attacks
         private static string[] attackNodeNames;
         #endregion
 
-        private bool m_hasChanged;
-
         private int m_selectedAttackNode;
 
-        private void OnEnable()
+        protected override void OnEnableThis()
         {
             PopulateAttackNodeNames();
         }
 
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-
-            EG.BeginChangeCheck();
-
-            // show Script fields for quick editing
-            using (new EG.DisabledScope(true))
-            {
-                EGL.ObjectField("Script", MonoScript.FromScriptableObject((AttackData)target), typeof(AttackData), false);
-                EGL.ObjectField("Editor", MonoScript.FromScriptableObject(this), typeof(AttackDataEditor), false);
-            }
-
-            OnGUI();
-
-            if (EG.EndChangeCheck() || m_hasChanged)
-            {
-                m_hasChanged = false;
-                EditorUtility.SetDirty(target);
-                serializedObject.ApplyModifiedProperties();
-            }
-        }
-
-        private void OnGUI()
+        protected override void OnGUI()
         {
             SerializedProperty rootProp = serializedObject.FindProperty("m_root");
             if (rootProp.managedReferenceValue == null)
@@ -86,7 +62,7 @@ namespace Stirge.Combat.Attacks
                 {
                     AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
                     rootProp.managedReferenceValue = newAttackNode;
-                    m_hasChanged = true;
+                    HasChanged();
                 }
             }
             // remove existing root section
