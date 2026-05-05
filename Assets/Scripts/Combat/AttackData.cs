@@ -17,7 +17,7 @@ namespace Stirge.Combat.Attacks
         }
     }
 
-    public struct SequenceData
+    public readonly struct SequenceData
     {
         public SequenceData(IEnumerable<AttackNode> attackNodes, float time)
         {
