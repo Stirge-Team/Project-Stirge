@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc25a87e365d9bb429123a3fb7b1f3d2, type: 3}
-  m_Name: TestString3
+  m_Name: TestIdle
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 2, z: 0}
+  - m_position: {x: 0, y: 0, z: 0}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 1, y: 4, z: 1}
-    m_startFrame: 12
-    m_endFrame: 20
+    m_scale: {x: 0, y: 0, z: 0}
+    m_startFrame: 0
+    m_endFrame: 0
     m_groupID: 0
     m_hitboxShape: 0
-    m_hitboxType: 2
-    m_hitboxParent: 0000020000
+    m_hitboxType: 0
+    m_hitboxParent: 
     m_onHitEvent:
       m_eventType: 0
       m_eventID: 
@@ -29,19 +29,9 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 1
+      m_damage: 0
       m_statuses: []
-  m_eventData:
-  - m_eventType: 0
-    m_eventID: TestString3Event0
-    m_shouldEndOnCancel: 0
-    m_startFrame: 0
-    m_endFrame: 0
-  - m_eventType: 0
-    m_eventID: TestString3Event1
-    m_shouldEndOnCancel: 0
-    m_startFrame: 40
-    m_endFrame: 41
+  m_eventData: []
   m_nextComboInput:
     m_nextComboAttack: 
     m_comboAttackInput: 0

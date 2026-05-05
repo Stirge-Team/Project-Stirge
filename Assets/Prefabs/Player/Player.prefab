@@ -17,7 +17,8 @@ GameObject:
   - component: {fileID: 3353919659384064465}
   - component: {fileID: 5079235152578265304}
   - component: {fileID: 4312719870174949881}
-  - component: {fileID: 5249485535610746317}
+  - component: {fileID: 1013638193549423171}
+  - component: {fileID: 7180865184346510159}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -104,6 +105,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  m_anim: {fileID: 0}
+  isAttacking: 0
+  m_health: {fileID: 0}
+  m_groundedCheckDistance: 0
+  m_groundedCheckMask:
+    serializedVersion: 2
+    m_Bits: 0
   m_groundSettings:
     _horizontalAcceleration: 3000
     _maximumHorizontalSpeed: 18
@@ -222,7 +230,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 7462790499090208258}
+      - m_Target: {fileID: 4312719870174949881}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: StartInvincibility
         m_Mode: 4
@@ -357,19 +365,7 @@ MonoBehaviour:
     m_ActionId: 1636b98b-4793-427c-b0d1-fa9d7eef7ff1
     m_ActionName: 'Player/HelmSplitter[/Mouse/leftButton,/Gamepad/buttonNorth]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5249485535610746317}
-        m_TargetAssemblyTypeName: Stirge.Management.BaseEntityHealthInterp, Assembly-CSharp
-        m_MethodName: ButtonUpdateHealth
-        m_Mode: 4
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: -1
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_ActionId: cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c
     m_ActionName: 'Player/Hurtself[/Gamepad/buttonWest]'
   m_NeverAutoSwitchControlSchemes: 0
@@ -434,7 +430,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
   m_baseHealth: 10
---- !u!114 &5249485535610746317
+--- !u!95 &1013638193549423171
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7180865184346510159
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -443,37 +461,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1253332100919465643}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e2d6f9eea4e31dcc91a563fb53fc9e7, type: 3}
+  m_Script: {fileID: 11500000, guid: 5d370302d70d62d52928c0588fb6f2db, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.BaseEntityHealthInterp
-  _healEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _modifyEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _damageEvents:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6992374104284298522}
-        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
-        m_MethodName: Play
-        m_Mode: 5
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: TestHit
-          m_BoolArgument: 0
-        m_CallState: 2
-  _deathEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  _extraEvents:
-    m_PersistentCalls:
-      m_Calls: []
-  m_overrideBaseFunction: 0
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorLockControls
 --- !u!1 &5722074012237408405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1321,13 +1311,14 @@ MonoBehaviour:
             m_BoolArgument: 1
           m_CallState: 2
   m_characterAnimData:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 2ed9683b86f86fe6c91b820b68598355, type: 2}
   - {fileID: 0}
   - {fileID: 11400000, guid: 1a7309668d24b70a4949c5834790b588, type: 2}
   - {fileID: 11400000, guid: 21acf07377a3abe0d8ba98d8b976a247, type: 2}
   - {fileID: 11400000, guid: 9130691532d77d61fb0ef3ce7f238004, type: 2}
   - {fileID: 11400000, guid: aeb7afd0269c608be881ba1a41f90784, type: 2}
   - {fileID: 11400000, guid: 6eaa0761d4271d7fcaa60b75717f429e, type: 2}
+  - {fileID: 0}
 --- !u!95 &6992374104284298522 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: -7840867231617242486, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
