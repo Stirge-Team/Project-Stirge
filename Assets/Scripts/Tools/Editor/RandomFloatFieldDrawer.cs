@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Stirge.Tools
 {
-    [CustomPropertyDrawer(typeof(RandomFloatField), true)]
+    [CustomPropertyDrawer(typeof(RandomFloatField))]
     public class RandomFloatFieldDrawer : EasyPropertyDrawer
     {
         protected override void DrawGUI(GUIContent label)

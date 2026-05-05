@@ -10,7 +10,7 @@ namespace Stirge.Combat.Attacks
     {
         [SerializeField] private Vector3 m_translation;
         [SerializeField] private bool m_isLocalTranslation = true;
-        [SerializeField, Min(0)] private RandomFloatField m_time;
+        [SerializeField] private RandomFloatField m_time;
 
         public Vector3 Translation => m_translation;
         public bool IsLocalTranslation => m_isLocalTranslation;

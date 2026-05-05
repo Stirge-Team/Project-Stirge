@@ -13,41 +13,9 @@ MonoBehaviour:
   m_Name: New Attack data
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
   m_root:
-    rid: 5206302023350485054
+    rid: -2
   references:
     version: 2
     RefIds:
-    - rid: 5206302023350485054
-      type: {class: SequenceAttackNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
-      data:
-        m_nodes:
-        - rid: 5206302023350485056
-        - rid: 5206302023350485057
-        - rid: 5206302023350485058
-    - rid: 5206302023350485056
-      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
-      data:
-        m_animation: {fileID: 0}
-        m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
-          m_value: 1
-        m_hasRootMotion: 0
-    - rid: 5206302023350485057
-      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
-      data:
-        m_animation: {fileID: 0}
-        m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
-          m_value: 1
-        m_hasRootMotion: 0
-    - rid: 5206302023350485058
-      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
-      data:
-        m_animation: {fileID: 0}
-        m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
-          m_value: 1
-        m_hasRootMotion: 0
+    - rid: -2
+      type: {class: , ns: , asm: }
