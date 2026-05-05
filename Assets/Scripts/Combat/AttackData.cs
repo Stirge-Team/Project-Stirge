@@ -25,7 +25,7 @@ namespace Stirge.Combat.Attacks
             totalTime = time;
         }
 
-        public AttackNode[] sequence { get; private set; }
-        public float totalTime { get; private set; }
+        public readonly AttackNode[] sequence;
+        public readonly float totalTime;
     }
 }
