@@ -23,7 +23,7 @@ namespace Stirge.Combat.Attacks
 
         public override float EvaluateTime()
         {
-            return m_nodes[m_chosenIndex].EvaluateTime();
+            return 0;
         }
     }
 }

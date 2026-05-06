@@ -1,9 +1,6 @@
 using UnityEditor;
 using UnityEngine;
 
-using EGL = UnityEditor.EditorGUILayout;
-using GL = UnityEngine.GUILayout;
-
 namespace Stirge.Combat.Attacks
 {
     using Tools;
@@ -45,6 +42,26 @@ namespace Stirge.Combat.Attacks
                         DrawPropertyField("m_isLocalTranslation");
                         DrawPropertyField("m_time");
                         break;
+                    case nameof(DelayNode):
+                        DrawPropertyField("m_delay");
+                        break;
+                    case nameof(ChanceNode):
+                        DrawPropertyField("m_chance");
+                        DrawPropertyField("m_node");
+
+                        // add Attack Node to array button
+                        // select AttackNode popup
+                        m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
+
+                        // create new AttackNode button
+                        if (GUI.Button(GetNewRect(), "Add new " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
+                        {
+                            AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
+                            SerializedProperty nodeProp = FindPropertyRelative("m_node");
+                            nodeProp.managedReferenceValue = newAttackNode;
+                        }
+
+                        break;
                     case nameof(SelectAttackNode):
                     case nameof(SequenceAttackNode):
                         DrawPropertyField("m_nodes");
@@ -54,7 +71,7 @@ namespace Stirge.Combat.Attacks
                         m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
 
                         // create new AttackNode button
-                        if (GUI.Button(GetNewRect(), "Add new " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
+                        if (GUI.Button(GetNewRect(), "Set new " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
                         {
                             AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
                             SerializedProperty nodesProp = FindPropertyRelative("m_nodes");
@@ -95,6 +112,13 @@ namespace Stirge.Combat.Attacks
                     case nameof(TranslateNode):
                         totalLines += GetPropertyLineHeight("m_time");
                         totalLines += 2;
+                        break;
+                    case nameof(DelayNode):
+                        totalLines++;
+                        break;
+                    case nameof(ChanceNode):
+                        totalLines += GetPropertyLineHeight("m_node");
+                        totalLines += 3; // for chance, popup, and add Node button
                         break;
                     case nameof(SelectAttackNode):
                     case nameof(SequenceAttackNode):

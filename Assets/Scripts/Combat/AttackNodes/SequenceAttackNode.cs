@@ -23,13 +23,7 @@ namespace Stirge.Combat.Attacks
 
         public override float EvaluateTime()
         {
-            float totalTime = 0;
-            foreach (AttackNode node in m_nodes)
-            {
-                totalTime += node.EvaluateTime();
-            }
-
-            return totalTime;
+            return 0f;
         }
     }
 }
