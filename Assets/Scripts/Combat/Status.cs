@@ -22,6 +22,10 @@ namespace Stirge.Combat
     [System.Serializable]
     public class Stun : Status
     {
+        public Stun()
+        {
+            m_stunLength = 1f;
+        }
         public Stun(float length)
         {
             m_stunLength = length;
@@ -37,8 +41,12 @@ namespace Stirge.Combat
 
     [System.Serializable]
     public class Knockback : Status
-
     {
+        public Knockback()
+        {
+            m_strength = 1f;
+            m_height = 1f;
+        }
         public Knockback(float strength, float height)
         {
             m_strength = strength;
@@ -51,13 +59,18 @@ namespace Stirge.Combat
         public override void Inflict(CombatEntity entity)
         {
             Vector3 dir = -entity.transform.GetChild(0).forward;
-            entity.EnterKnockback(m_strength, dir, 1f, 0);
+            entity.EnterKnockback(m_strength, dir, m_height, 0);
         }
     }
 
     [System.Serializable]
     public class AirJuggle : Status
     {
+        public AirJuggle()
+        {
+            m_strength = 1f;
+            m_stallLength = 1f;
+        }
         public AirJuggle(float strength, float stallLength)
         {
             m_strength = strength;
