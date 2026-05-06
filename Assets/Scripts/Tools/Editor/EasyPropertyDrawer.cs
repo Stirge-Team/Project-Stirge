@@ -46,21 +46,28 @@ namespace Stirge.Tools
         protected void DrawPropertyField(string propertyName)
         {
             SerializedProperty propToDraw = FindPropertyRelative(propertyName);
-            Rect propRect = GetNewRect();
-            EditorGUI.PropertyField(propRect, propToDraw);
-
-            if (propToDraw.propertyType == SerializedPropertyType.Float)
+            if (propToDraw != null)
             {
-                if (propToDraw.floatValue < 0)
-                    propToDraw.floatValue = 0;
+                EditorGUI.PropertyField(GetNewRect(), propToDraw);
+                if (propToDraw.propertyType == SerializedPropertyType.Float)
+                {
+                    if (propToDraw.floatValue < 0)
+                        propToDraw.floatValue = 0;
+                }
+                else if (propToDraw.isArray && propToDraw.isExpanded)
+                {
+                    m_totalLines += GetPropertyLineHeight(propToDraw);
+                }
+                else if (propToDraw.type == nameof(RandomFloatField))
+                {
+                    m_totalLines += GetPropertyLineHeight(propToDraw) - 1;
+                }
             }
-            else if (propToDraw.isArray && propToDraw.isExpanded)
+            else
             {
-                m_totalLines += GetPropertyLineHeight(propToDraw);
-            }
-            else if (propToDraw.type == nameof(RandomFloatField))
-            {
-                m_totalLines += GetPropertyLineHeight(propToDraw) - 1;
+                EditorGUI.BeginDisabledGroup(true);
+                EditorGUI.TextArea(GetNewRect(), $"Problem drawing '{propertyName}' property, path '{m_property.propertyPath}'.");
+                EditorGUI.EndDisabledGroup();
             }
         }
 
@@ -73,10 +80,17 @@ namespace Stirge.Tools
         protected SerializedProperty FindPropertyRelative(string propertyName)
         {
             if (!m_cachedProperties.ContainsKey(propertyName))
-            { 
-                m_cachedProperties.Add(propertyName, m_property.FindPropertyRelative(propertyName));
+            {
+                SerializedProperty property = m_property.FindPropertyRelative(propertyName);
+                if (property == null)
+                {
+                    Debug.LogWarning("Could not find property relative with name '" + propertyName + "', path '" + m_property.propertyPath + '.');
+                    return null;
+                }
+
+                m_cachedProperties.Add(propertyName, property);
             }
-            
+
             return m_cachedProperties[propertyName];
         }
 
@@ -88,10 +102,16 @@ namespace Stirge.Tools
 
         protected int GetPropertyLineHeight(SerializedProperty property)
         {
-            int lines = (int)(EditorGUI.GetPropertyHeight(property) / EditorGUIUtility.singleLineHeight);
-            if (property.isArray && property.isExpanded)
-                lines++; // for +/- button
-            return lines;
+            if (property != null)
+            {
+                int lines = (int)(EditorGUI.GetPropertyHeight(property) / EditorGUIUtility.singleLineHeight);
+                if (property.isArray && property.isExpanded)
+                    lines++; // for +/- button
+                return lines;
+            }
+            else
+                return 1;
         }
     }
+
 }
