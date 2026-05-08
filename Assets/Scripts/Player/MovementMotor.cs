@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 namespace Stirge.Player
 {
@@ -15,6 +16,7 @@ namespace Stirge.Player
         public float _horizontalSpeed => _horizontalVelocity.sqrMagnitude;
         public Vector3 _horizontalDirection => _horizontalVelocity.normalized;
         public float _verticalVelocity => m_rb.linearVelocity.y; // {get; private set;}
+        private IEnumerator m_flipEnabled;
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Awake()
@@ -36,19 +38,33 @@ namespace Stirge.Player
         ///<summary>
         ///Returns true if the active state was changed to the value
         ///</summary>
-        public bool SetActive(bool value, bool updateKinematic = false)
+        public bool SetActive(bool value, bool updateKinematic = false, float time = 0)
         {
             bool didChange = false;
             if (enabled != value)
             {
                 enabled = value;
                 didChange = true;
+                if(time > 0)
+                {
+                    m_flipEnabled = FlipEnabled(time);
+                    StartCoroutine(m_flipEnabled);
+                }
+                else if (time < 0)
+                {
+                    StopCoroutine(m_flipEnabled);
+                }
             }
 
             if (updateKinematic)
                 m_rb.isKinematic = !enabled;
             return didChange;
         }
+        private IEnumerator FlipEnabled(float time)
+        {
+            yield return new WaitForSeconds(time);
+            enabled = !enabled;
+        } 
 
         public void ApplyForce(
             Vector3 force,

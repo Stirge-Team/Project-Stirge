@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc25a87e365d9bb429123a3fb7b1f3d2, type: 3}
-  m_Name: TestIdle
+  m_Name: RedMen_DefaultAttack
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
   - m_position: {x: 0, y: 0, z: 0}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 0, y: 0, z: 0}
-    m_startFrame: 0
-    m_endFrame: 0
-    m_groupID: 0
-    m_hitboxShape: 0
-    m_hitboxType: 0
-    m_hitboxParent: 
+    m_scale: {x: 1.5, y: 1, z: 1}
+    m_startFrame: 32
+    m_endFrame: 38
+    m_groupID: 1
+    m_hitboxShape: 2
+    m_hitboxType: 2
+    m_hitboxParent: 00000
     m_onHitEvent:
       m_eventType: 0
       m_eventID: 
@@ -29,8 +29,9 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 0
-      m_statuses: []
+      m_damage: -1
+      m_statuses:
+      - rid: 2001016793216581703
   m_eventData: []
   m_nextComboInput:
     m_nextComboAttack: 
@@ -39,4 +40,8 @@ MonoBehaviour:
     m_comboInputTimeEnd: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2001016793216581703
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_stunLength: 1

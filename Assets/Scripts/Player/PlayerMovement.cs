@@ -341,11 +341,14 @@ namespace Stirge.Player
         }
         public override bool EnterStun(float stunLength)
         {
-            throw new NotImplementedException();
+            m_motor.SetActive(false, false, stunLength);
+            m_anim.Play("hitstun");
+            return true;
         }
         public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
-            throw new NotImplementedException();
+            //lazy implementation - do more later
+            return EnterStun(stunLength);
         }
         public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {

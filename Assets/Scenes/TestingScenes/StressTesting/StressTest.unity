@@ -2624,57 +2624,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1197311735}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1234646947
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1234646949}
-  - component: {fileID: 1234646948}
-  m_Layer: 0
-  m_Name: Deadball
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1234646948
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234646947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f0ed661c6c82a74c8176570bfa91ca8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.DefaultAttackBindingDefinition
-  m_inputManager: {fileID: 2045072628}
-  m_bindingType: 0
-  m_defaultBindings:
-  - attackInput: 2
-    attackName: TestAttack
-  - attackInput: 4
-    attackName: TestLauncher
---- !u!4 &1234646949
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1234646947}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 49.49998, y: 2.60894, z: -41.89087}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1259417544
 GameObject:
   m_ObjectHideFlags: 0
@@ -3308,7 +3257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
   m_enemyPrefab: {fileID: 1055941552344043229, guid: 342f97e0187e9d440b5933a061fac243, type: 3}
-  m_targetEnemyCount: 5
+  m_targetSpawnCount: 1
   m_spawnLocation: {fileID: 1509259609}
 --- !u!4 &1509259609
 Transform:
@@ -4963,17 +4912,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
   m_PrefabInstance: {fileID: 4297693130986289088}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2045072628 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5079235152578265304, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
-  m_PrefabInstance: {fileID: 4297693130986289088}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
 --- !u!1001 &4297693130986289088
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5044,5 +4982,4 @@ SceneRoots:
   - {fileID: 925962920}
   - {fileID: 4297693130986289088}
   - {fileID: 1509259609}
-  - {fileID: 1234646949}
   - {fileID: 360177126}

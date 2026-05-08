@@ -19,6 +19,7 @@ GameObject:
   - component: {fileID: 4312719870174949881}
   - component: {fileID: 1013638193549423171}
   - component: {fileID: 7180865184346510159}
+  - component: {fileID: 2000434906032577990}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -105,9 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  m_anim: {fileID: 0}
+  m_anim: {fileID: 6992374104284298522}
   isAttacking: 0
-  m_health: {fileID: 0}
+  m_health: {fileID: 4312719870174949881}
   m_groundedCheckDistance: 0
   m_groundedCheckMask:
     serializedVersion: 2
@@ -464,6 +465,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d370302d70d62d52928c0588fb6f2db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimatorLockControls
+--- !u!114 &2000434906032577990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 580071fdd96fbe048b8e25b177a64a5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Hitbox.HitboxCollider
+  m_onCollision:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5722074012237408405
 GameObject:
   m_ObjectHideFlags: 0

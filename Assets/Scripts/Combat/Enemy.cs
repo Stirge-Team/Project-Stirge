@@ -74,6 +74,7 @@ namespace Stirge.Enemy
             else
                 m_agent.EnterState(m_airStunState);
 
+            m_anim.Play("hitstun");
             return true;
         }
         public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
@@ -81,6 +82,7 @@ namespace Stirge.Enemy
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
+            m_anim.Play("hitstun");
 
             return true;
         }

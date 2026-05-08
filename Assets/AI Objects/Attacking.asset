@@ -23,4 +23,4 @@ MonoBehaviour:
     - rid: 5206302000990388283
       type: {class: AttackingBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_attackData: {fileID: 0}
+        m_attackData: {fileID: 11400000, guid: 4dcfdfc129a13b441b052ab31c0abfd9, type: 2}
