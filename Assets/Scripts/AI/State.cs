@@ -46,5 +46,11 @@ namespace Stirge.AI
 
             Debug.Log($"Exited {name} State.");
         }
+
+        public void SetTimedTransitionDelay(float time)
+        {
+            m_timedTransitionDelay = time;
+            m_transitionTimer = time;
+        }
     }
 }

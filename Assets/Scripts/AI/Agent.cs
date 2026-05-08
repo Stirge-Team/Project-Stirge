@@ -210,6 +210,11 @@ namespace Stirge.AI
             m_nav.speed = speed;
         }
 
+        public void SetCurrentTimedTransitionDelay(float time)
+        {
+            m_fsm.CurrentState.SetTimedTransitionDelay(time);
+        }
+
         /*
         private IEnumerator Knockback(float distance, Vector2 direction, float time, float height)
         {

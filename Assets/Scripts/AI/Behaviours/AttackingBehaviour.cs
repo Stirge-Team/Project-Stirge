@@ -2,18 +2,20 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
-    using Combat;
+    using Combat.Attacks;
 
     [System.Serializable]
     public class AttackingBehaviour : Behaviour
     {
-        //[SerializeField] private EnemyAttackData m_attackData;
-        [SerializeField] private string m_attackName;
-        [SerializeField] private bool m_hasRootMotion = false;
+        [SerializeField] private AttackData m_attackData;
+
+        private SequenceData m_sequenceData;
 
         public override void _Enter(Agent agent)
         {
-            agent.UseAttack(m_attackName);
+            m_sequenceData = m_attackData.EvaluateSequence();
+            agent.SetCurrentTimedTransitionDelay(m_sequenceData.totalTime);
+            agent.Enemy.isAttacking = true;
             base._Enter(agent);
         }
 
@@ -24,9 +26,8 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
-            if (m_hasRootMotion)
-                agent.ApplyRootMotion();
-
+            // apply any outstanding root motion, in case the Behaviour was exited before completion
+            agent.ApplyRootMotion();
             agent.Enemy.isAttacking = false;
             base._Exit(agent);
         }
