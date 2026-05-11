@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6634666910204183250}
+  - component: {fileID: 369394295828842384}
   - component: {fileID: 1532762708043262146}
   - component: {fileID: 2713100686291229703}
   - component: {fileID: 2920065731834999269}
@@ -44,6 +45,25 @@ Transform:
   - {fileID: 2521300203340706763}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &369394295828842384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
+  m_anim: {fileID: 6992374104284298522}
+  isAttacking: 0
+  m_health: {fileID: 4312719870174949881}
+  m_groundedCheckDistance: 0
+  m_groundedCheckMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!136 &1532762708043262146
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -106,13 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  m_anim: {fileID: 6992374104284298522}
-  isAttacking: 0
-  m_health: {fileID: 4312719870174949881}
-  m_groundedCheckDistance: 0
-  m_groundedCheckMask:
-    serializedVersion: 2
-    m_Bits: 0
   m_groundSettings:
     _horizontalAcceleration: 3000
     _maximumHorizontalSpeed: 18
@@ -219,22 +232,10 @@ MonoBehaviour:
     m_ActionName: 'Player/Move[/Gamepad/leftStick,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2920065731834999269}
-        m_TargetAssemblyTypeName: Stirge.Player.PlayerMovement, Assembly-CSharp
-        m_MethodName: OnJump
+      - m_Target: {fileID: 369394295828842384}
+        m_TargetAssemblyTypeName: Stirge.Player.Player, Assembly-CSharp
+        m_MethodName: AttemptJump
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 4312719870174949881}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
-        m_MethodName: StartInvincibility
-        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

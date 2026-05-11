@@ -30,7 +30,8 @@ MonoBehaviour:
       m_endFrame: 0
     m_onHitEffect:
       m_damage: -1
-      m_statuses: []
+      m_statuses:
+      - rid: 2001016855599513792
   m_eventData:
   - m_eventType: 0
     m_eventID: TestString2Event0
@@ -49,4 +50,8 @@ MonoBehaviour:
     m_comboInputTimeEnd: 45
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2001016855599513792
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_stunLength: 0.5

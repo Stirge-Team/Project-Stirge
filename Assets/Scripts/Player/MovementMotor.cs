@@ -17,6 +17,12 @@ namespace Stirge.Player
         public Vector3 _horizontalDirection => _horizontalVelocity.normalized;
         public float _verticalVelocity => m_rb.linearVelocity.y; // {get; private set;}
         private IEnumerator m_flipEnabled;
+        public enum SetMotorAction
+        {
+            NoChange,
+            Off,
+            On,
+        }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Awake()
@@ -45,7 +51,7 @@ namespace Stirge.Player
             {
                 enabled = value;
                 didChange = true;
-                if(time > 0)
+                if (time > 0)
                 {
                     m_flipEnabled = FlipEnabled(time);
                     StartCoroutine(m_flipEnabled);
@@ -64,7 +70,7 @@ namespace Stirge.Player
         {
             yield return new WaitForSeconds(time);
             enabled = !enabled;
-        } 
+        }
 
         public void ApplyForce(
             Vector3 force,
@@ -148,11 +154,23 @@ namespace Stirge.Player
                 SetVelocity(resetVelo);
             }
         }
-
-        public void HaltHorizontalVelocity(bool setMotor = false)
+        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange)
         {
             ResetVelocity(true, false, true);
-            SetActive(setMotor);
+            switch (setMotor)
+            {
+                case SetMotorAction.Off:
+                    SetActive(false);
+                    break;
+                case SetMotorAction.On:
+                    SetActive(true);
+                    break;
+            }
+        }
+        public void HaltHorizontalVelocity(bool setTo = false)
+        {
+            ResetVelocity(true, false, true);
+            SetActive(setTo);
         }
 
         public void RotateTo(Quaternion newRotation)

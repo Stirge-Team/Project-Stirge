@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -17,8 +18,11 @@ public class AnimatorLockControls : MonoBehaviour
     {
         m_animator = GetComponent<Animator>();
     }
-    public void ToggleListening(ListeningState state)
+    public void ToggleListening(ListeningState state, float time = 0)
     {
+        if(time > 0)
+            StartCoroutine(ReturnToState(time, m_listeningFor));
+
         m_listeningFor = state;
 
         switch(m_listeningFor)
@@ -36,8 +40,13 @@ public class AnimatorLockControls : MonoBehaviour
 
         }
     }
+    private IEnumerator ReturnToState(float time, ListeningState returnState)
+    {
+        yield return new WaitForSeconds(time);
+        m_listeningFor = returnState;
+    }
 
-    public void PlayAnimation(string name)
+    public void PlayAnimation(string name, GameObject sender)
     {
         if(m_listeningFor != ListeningState.None)
         {
@@ -45,7 +54,7 @@ public class AnimatorLockControls : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Lalalala {name} isn't listening to your animation calls");
+            Debug.Log($"Lalalala, {name} isn't listening to your animation calls");
         }
     }
 }

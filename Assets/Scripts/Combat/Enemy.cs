@@ -92,6 +92,7 @@ namespace Stirge.Enemy
             InflictStatus(new AirJuggle(strength, airStallLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
+            m_anim.Play("hitstun");
 
             return true;
         }

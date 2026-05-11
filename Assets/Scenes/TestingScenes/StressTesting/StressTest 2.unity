@@ -2153,6 +2153,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PackedCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 1336962676972417408, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_rangeOrigin
+      value: 
+      objectReference: {fileID: 2045072624}
     - target: {fileID: 3234605026587715191, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.3869
@@ -3437,7 +3441,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
   m_enemyPrefab: {fileID: 1055941552344043229, guid: 342f97e0187e9d440b5933a061fac243, type: 3}
-  m_targetSpawnCount: 0
+  m_targetSpawnCount: 1
   m_spawnLocation: {fileID: 1509259609}
 --- !u!4 &1509259609
 Transform:

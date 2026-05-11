@@ -1,13 +1,14 @@
 using System;
 using Stirge.Camera;
 using Stirge.Combat;
+using Stirge.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Stirge.Player
 {
     [RequireComponent(typeof(MovementMotor))]
-    public class PlayerMovement : CombatEntity
+    public class PlayerMovement : MonoBehaviour
     {
         [System.Serializable]
         private struct stateVariables
@@ -106,6 +107,7 @@ namespace Stirge.Player
         private Transform m_lockOnTarget;
 
         private MovementMotor m_motor;
+        public MovementMotor Motor => m_motor;
 
         void Start()
         {
@@ -254,19 +256,13 @@ namespace Stirge.Player
             }
         }
 
-        //Grounded bool
-        public override bool m_isGrounded()
-        {
-            return IsGrounded;
-        }
-
         //Called from the player input component - updates the input direction value
         public void OnMove(InputAction.CallbackContext context)
         {
             m_inputDirection = context.ReadValue<Vector2>();
         }
 
-        public void OnJump()
+        public bool OnJump()
         {
             //If the player is considered grounded
             if (IsGrounded)
@@ -280,7 +276,9 @@ namespace Stirge.Player
                 //Remove all coyote time
                 m_coyoteCountdown = 0;
                 //Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
+                return true;
             }
+            return false;
         }
 
         public void AssignLockOnTarget(Transform target)
@@ -338,21 +336,6 @@ namespace Stirge.Player
             Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteTime);
             Gizmos.color = Color.orange;
             Gizmos.DrawWireSphere(transform.position + transform.up * 2, m_coyoteCountdown);
-        }
-        public override bool EnterStun(float stunLength)
-        {
-            m_motor.SetActive(false, false, stunLength);
-            m_anim.Play("hitstun");
-            return true;
-        }
-        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
-        {
-            //lazy implementation - do more later
-            return EnterStun(stunLength);
-        }
-        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
-        {
-            throw new NotImplementedException();
         }
     }
 }

@@ -30,7 +30,9 @@ MonoBehaviour:
       m_endFrame: 0
     m_onHitEffect:
       m_damage: -2
-      m_statuses: []
+      m_statuses:
+      - rid: 2001016855599513794
+      - rid: 2001016855599513806
   m_eventData:
   - m_eventType: 0
     m_eventID: TestString3Event0
@@ -49,4 +51,13 @@ MonoBehaviour:
     m_comboInputTimeEnd: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2001016855599513794
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_stunLength: 3
+    - rid: 2001016855599513806
+      type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_strength: 15
+        m_height: 0

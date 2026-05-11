@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Stirge.Input
 {
@@ -184,5 +185,18 @@ namespace Stirge.Input
             }
         }
         #endregion
+
+        //Disabling should 
+        public void SetInputReading(bool setTo, float time = 1)
+        {
+            enabled = setTo;
+            if(time > 0) StartCoroutine(ReEnableInputs(time));
+            else if(!enabled) Debug.LogWarning($"You have provided no time for when {name} should start reading inputs again. Please make sure that you reenable this functionality elsewhere!");
+        }
+        private IEnumerator ReEnableInputs(float time)
+        {
+            yield return new WaitForSeconds(time);
+            enabled = true;
+        }
     }
 }
