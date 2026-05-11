@@ -24,7 +24,7 @@ namespace Stirge.Combat.Attacks
 
         public override float EvaluateTime()
         {
-            return m_animation.length * Speed;
+            return m_animation.length / Speed;
         }
     }
 }

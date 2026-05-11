@@ -35,7 +35,7 @@ namespace Stirge.Combat.Attacks
                     case nameof(ApproachTargetNode):
                         DrawPropertyField("m_stoppingDistance");
                         DrawPropertyField("m_useInitialPosition");
-                        DrawPropertyField("m_time");
+                        DrawPropertyField("m_speed");
                         break;
                     case nameof(TranslateNode):
                         DrawPropertyField("m_translation");
@@ -48,6 +48,7 @@ namespace Stirge.Combat.Attacks
                     case nameof(ChanceNode):
                         DrawPropertyField("m_chance");
                         DrawPropertyField("m_node");
+                        m_totalLines += GetPropertyLineHeight("m_node") - 1;
 
                         // add Attack Node to array button
                         // select AttackNode popup
@@ -106,7 +107,7 @@ namespace Stirge.Combat.Attacks
                         break;
                     case nameof(ApproachTargetNode):
                         totalLines += GetPropertyLineHeight("m_stoppingDistance");
-                        totalLines += GetPropertyLineHeight("m_time");
+                        totalLines += GetPropertyLineHeight("m_speed");
                         totalLines++;
                         break;
                     case nameof(TranslateNode):
@@ -114,7 +115,7 @@ namespace Stirge.Combat.Attacks
                         totalLines += 2;
                         break;
                     case nameof(DelayNode):
-                        totalLines++;
+                        totalLines += GetPropertyLineHeight("m_delay");
                         break;
                     case nameof(ChanceNode):
                         totalLines += GetPropertyLineHeight("m_node");

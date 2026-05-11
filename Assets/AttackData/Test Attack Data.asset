@@ -10,62 +10,60 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 787d2018d4466f4438a282a750b8d06f, type: 3}
-  m_Name: New Attack data
+  m_Name: Test Attack Data
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
   m_root:
-    rid: 5206302049378500612
+    rid: 5206302161436672061
   references:
     version: 2
     RefIds:
-    - rid: 5206302049378500612
+    - rid: 5206302161436672061
       type: {class: SequenceAttackNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
         m_nodes:
-        - rid: 5206302049378500613
-        - rid: 5206302049378500614
-        - rid: 5206302049378500615
-        - rid: 5206302049378500675
-    - rid: 5206302049378500613
-      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
-      data:
-        m_animation: {fileID: 0}
-        m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
-          m_value: 1
-        m_hasRootMotion: 0
-    - rid: 5206302049378500614
+        - rid: 5206302161436672062
+        - rid: 5206302161436672063
+        - rid: 5206302161436672064
+        - rid: 5206302161436672065
+    - rid: 5206302161436672062
       type: {class: ApproachTargetNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
         m_stoppingDistance:
           m_isRandom: 0
-          m_range: {x: 0, y: 0}
-          m_value: 1
+          m_range: {x: 2.8, y: 2.94}
+          m_value: 0.1
         m_useInitialPosition: 1
-        m_time:
-          m_isRandom: 1
-          m_range: {x: 0, y: 0}
-          m_value: 1
-    - rid: 5206302049378500615
-      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
-      data:
-        m_animation: {fileID: 0}
         m_speed:
           m_isRandom: 0
           m_range: {x: 0, y: 0}
           m_value: 1
-        m_hasRootMotion: 0
-    - rid: 5206302049378500675
-      type: {class: ChanceNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+    - rid: 5206302161436672063
+      type: {class: DelayNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
-        m_chance: 0
-        m_node:
-          rid: 5206302049378500679
-    - rid: 5206302049378500679
+        m_delay:
+          m_isRandom: 1
+          m_range: {x: 1, y: 2}
+          m_value: 1.7633804
+    - rid: 5206302161436672064
       type: {class: TranslateNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
-        m_translation: {x: 0, y: 0, z: 0}
+        m_translation: {x: 0, y: 0, z: -10}
         m_isLocalTranslation: 1
+        m_time:
+          m_isRandom: 1
+          m_range: {x: 0.5, y: 3}
+          m_value: 1
+    - rid: 5206302161436672065
+      type: {class: ChanceNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_chance: 0.5
+        m_node:
+          rid: 5206302161436672070
+    - rid: 5206302161436672070
+      type: {class: TranslateNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_translation: {x: 0, y: 6.6, z: 0}
+        m_isLocalTranslation: 0
         m_time:
           m_isRandom: 0
           m_range: {x: 0, y: 0}
