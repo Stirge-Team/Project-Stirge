@@ -253,7 +253,17 @@ namespace Stirge.Combat
                     GoToPosition(targetPosition, node.Speed);
                 }
 
-                if (Vector3.Distance(GetPosition(), targetPosition) <= node.StoppingDistance)
+                // provide some leeway for vertical difference
+                Vector3 currentPos = GetPosition();
+                Vector3 endPos = targetPosition;
+                if (Mathf.Abs(GetPosition().y - targetPosition.y) < 2f) // arbitrary value
+                {
+                    // if the y-axis distance between the current and target position is not too far
+                    // treat the actual distance caculation as if they are on the same y-level
+                    currentPos.y = 0;
+                    endPos.y = 0;
+                }
+                if (Vector3.Distance(currentPos, endPos) <= node.StoppingDistance)
                 {
                     withinRange = true;
                     break;
