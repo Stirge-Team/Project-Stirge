@@ -51,6 +51,7 @@ namespace Stirge.AI
                         DrawPropertyField("m_speed");
                         break;
                     case nameof(AttackingBehaviour):
+                        DrawPropertyField("m_exitState");
                         DrawPropertyField("m_attackData");
                         break;
                 }
@@ -84,6 +85,7 @@ namespace Stirge.AI
                         totalLines += 3;
                         break;
                     case nameof(AttackingBehaviour):
+                        totalLines++;
                         totalLines += GetPropertyLineHeight("m_attackData");
                         break;
                 }
