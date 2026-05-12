@@ -33,7 +33,7 @@ MonoBehaviour:
     - rid: 858786852842504257
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_invertValue: 0
+        m_invertValue: 1
     - rid: 858787297446330433
       type: {class: AirJuggleBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
@@ -57,4 +57,4 @@ MonoBehaviour:
     - rid: 4991319162164084796
       type: {class: OffGroundCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_invertValue: 0
+        m_invertValue: 1

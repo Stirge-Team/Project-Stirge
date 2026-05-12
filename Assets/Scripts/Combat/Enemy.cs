@@ -28,7 +28,7 @@ namespace Stirge.Enemy
         protected override void UpdateThis(float deltaTime)
         {
             // check if enemy is dead this frame
-            if (IsDead())
+            if (health._isDead)
             {
                 if (spawner != null)
                     spawner.ReportDeath(this);
@@ -132,6 +132,7 @@ namespace Stirge.Enemy
             else
                 m_agent.EnterState(m_airStunState);
 
+            m_anim.Play("hitstun");
             return true;
         }
         public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
@@ -139,6 +140,7 @@ namespace Stirge.Enemy
             ApplyStun(stunLength);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
+            m_anim.Play("hitstun");
 
             return true;
         }
@@ -148,6 +150,7 @@ namespace Stirge.Enemy
             InflictStatus(new AirJuggle(strength, airStallLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
+            m_anim.Play("hitstun");
 
             return true;
         }

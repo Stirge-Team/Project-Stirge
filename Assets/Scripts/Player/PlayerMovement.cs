@@ -1,5 +1,7 @@
 using System;
 using Stirge.Camera;
+using Stirge.Combat;
+using Stirge.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,12 +66,7 @@ namespace Stirge.Player
         //Grounded bool
         public bool IsGrounded { get; private set; }
 
-        [
-            SerializeField,
-            Tooltip(
-                "The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f."
-            )
-        ]
+        [SerializeField, Tooltip("The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f.")]
         private float m_groundCheckDistance;
 
         //The layers that the player considers "ground"
@@ -110,6 +107,7 @@ namespace Stirge.Player
         private Transform m_lockOnTarget;
 
         private MovementMotor m_motor;
+        public MovementMotor Motor => m_motor;
 
         void Start()
         {
@@ -264,7 +262,7 @@ namespace Stirge.Player
             m_inputDirection = context.ReadValue<Vector2>();
         }
 
-        public void OnJump()
+        public bool OnJump()
         {
             //If the player is considered grounded
             if (IsGrounded)
@@ -278,7 +276,9 @@ namespace Stirge.Player
                 //Remove all coyote time
                 m_coyoteCountdown = 0;
                 //Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
+                return true;
             }
+            return false;
         }
 
         public void AssignLockOnTarget(Transform target)

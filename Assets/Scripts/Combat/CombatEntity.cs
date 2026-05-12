@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using Stirge.Management;
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Stirge.Combat
 {
@@ -13,8 +14,10 @@ namespace Stirge.Combat
 
         [Header("Combat Properties")]
         [SerializeField, Min(1)] protected int m_maxHealth;
+        public bool isAttacking;
 
-        protected int m_currentHealth;
+        //[SerializeField, Min(1)] protected int m_maxHealth;
+        //protected int m_currentHealth;
         protected bool m_isAttacking;
 
         public bool IsAttacking => m_isAttacking;
@@ -31,7 +34,6 @@ namespace Stirge.Combat
         #region UnityEvents
         private void Awake()
         {
-            m_currentHealth = m_maxHealth;
             AwakeThis();
         }
         private void Update()
@@ -74,7 +76,7 @@ namespace Stirge.Combat
         #region Death State
         public void TakeDamage(int damage)
         {
-            m_currentHealth -= damage;
+            m_health.ModifyHealth(damage);
             OnDamageTaken(damage);
         }
         protected virtual void OnDamageTaken(int damage) { }

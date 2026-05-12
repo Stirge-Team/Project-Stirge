@@ -1,0 +1,84 @@
+using System;
+using Stirge.Combat;
+using Stirge.Input;
+using Stirge.Management;
+using UnityEngine;
+
+namespace Stirge.Player
+{
+    [RequireComponent(typeof(PlayerMovement))]
+    [RequireComponent(typeof(PlayerInputProcessing))]
+    public class Player : CombatEntity
+    {
+        private PlayerMovement m_movement;
+        private PlayerInputProcessing m_input;
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
+        {
+            m_movement = GetComponent<PlayerMovement>();
+            m_input = GetComponent<PlayerInputProcessing>();
+
+            if(!m_movement || !m_input)
+            {
+                Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
+            }
+        }
+
+        public void AttemptJump()
+        {
+            if(m_movement.OnJump())
+            {
+                m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+            }
+        }
+
+        public override bool EnterStun(float stunLength)
+        {
+            //m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
+            m_movement.Motor.SetActive(false, false, stunLength);
+            m_anim.Play("hitstun");
+            m_input.SetInputReading(false, stunLength);
+            return true;
+        }
+        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        {
+            //lazy implementation - do more later
+            return EnterStun(stunLength);
+        }
+        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        {
+            m_movement.Motor.ApplyForce(-transform.forward * strength + -transform.up * height, ForceMode.Impulse, true);
+            return true;
+        }
+
+        public override bool IsGrounded()
+        {
+            return m_movement.IsGrounded;
+        }
+        public override void ApplyRootMotion()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Vector3 GetPosition()
+        {
+            return transform.position;
+        }
+        protected override Quaternion GetRotation()
+        {
+            return transform.rotation;
+        }
+        protected override void SetPosition(Vector3 position)
+        {
+            transform.position = position;
+        }
+        protected override void SetRotation(Quaternion rotation)
+        {
+            transform.rotation = rotation;
+        }
+        protected override void SetRotation(Vector3 eulerRotation)
+        {
+            transform.rotation = Quaternion.Euler(eulerRotation);
+        }
+    }
+}
