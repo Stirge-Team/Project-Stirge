@@ -80,5 +80,30 @@ namespace Stirge.Player
         {
             transform.rotation = Quaternion.Euler(eulerRotation);
         }
+
+        protected override void GoToPosition(Vector3 newPosition, float speed = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void StopGoToPosition()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override float GetMovementSpeed()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void SetMovementSpeed(float speed)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void ResetMovementSpeed()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

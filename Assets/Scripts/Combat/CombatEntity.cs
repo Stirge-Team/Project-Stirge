@@ -13,8 +13,8 @@ namespace Stirge.Combat
         [SerializeField] protected Animator m_anim;
 
         [Header("Combat Properties")]
-        [SerializeField, Min(1)] protected int m_maxHealth;
-        public bool isAttacking;
+        [SerializeField] protected EntityHealth m_health;
+        public EntityHealth Health => m_health;
 
         //[SerializeField, Min(1)] protected int m_maxHealth;
         //protected int m_currentHealth;
@@ -83,7 +83,7 @@ namespace Stirge.Combat
 
         public bool IsDead()
         {
-            return m_currentHealth <= 0;
+            return m_health._isDead;
         }
         #endregion
 

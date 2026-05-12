@@ -28,7 +28,7 @@ namespace Stirge.Enemy
         protected override void UpdateThis(float deltaTime)
         {
             // check if enemy is dead this frame
-            if (health._isDead)
+            if (m_health._isDead)
             {
                 if (spawner != null)
                     spawner.ReportDeath(this);
