@@ -5,7 +5,6 @@ using System.Collections.Generic;
 namespace Stirge.Combat
 {
     using Attacks;
-    using Tools;
 
     public abstract class CombatEntity : MonoBehaviour
     {
@@ -14,9 +13,11 @@ namespace Stirge.Combat
 
         [Header("Combat Properties")]
         [SerializeField, Min(1)] protected int m_maxHealth;
-        public bool isAttacking;
 
         protected int m_currentHealth;
+        protected bool m_isAttacking;
+
+        public bool IsAttacking => m_isAttacking;
 
         [Header("Status")]
         [SerializeField] protected List<Status> m_statuses = new();
@@ -35,9 +36,13 @@ namespace Stirge.Combat
         }
         private void Update()
         {
-            UpdateStatuses(Time.deltaTime);
+            float deltaTime = Time.deltaTime;
+            UpdateThis(deltaTime);
 
-            UpdateThis(Time.deltaTime);
+            UpdateStatuses(deltaTime);
+
+            if (m_isAttacking)
+                UpdateAttacking(deltaTime);
         }
 
         protected virtual void AwakeThis() { }
@@ -57,6 +62,13 @@ namespace Stirge.Combat
         protected abstract Quaternion GetRotation();
         protected abstract void SetRotation(Quaternion rotation);
         protected abstract void SetRotation(Vector3 eulerRotation);
+
+        protected abstract void GoToPosition(Vector3 newPosition, float speed = 0);
+        protected abstract void StopGoToPosition();
+
+        protected abstract float GetMovementSpeed();
+        protected abstract void SetMovementSpeed(float speed);
+        protected abstract void ResetMovementSpeed();
         #endregion
 
         #region Death State
@@ -113,84 +125,133 @@ namespace Stirge.Combat
         #endregion
 
         #region Attacks
+        private AttackNode[] m_attackSequence;
+        private AttackNode m_currentAttackNode;
+        private int m_currentAttackIndex;
         private Coroutine m_currentAttackCoroutine;
 
-        public void StartAttackCoroutine(Ref<AttackNode> nodeRef)
+        public void UseAttack(AttackData attackData)
         {
-            Debug.Log($"Beginning processing {nodeRef.Value.GetType().Name}.");
-            switch (nodeRef.Value.GetType().Name)
+            m_attackSequence = attackData.EvaluateSequence();
+            m_currentAttackNode = null;
+            m_currentAttackIndex = -1;
+            m_isAttacking = true;
+        }
+
+        private void UpdateAttacking(float deltaTime)
+        {
+            // if no node is currently being processed
+            if (m_currentAttackNode == null)
+            {
+                m_currentAttackIndex++;
+
+                // if reached the end of the sequence, exit this state
+                if (m_currentAttackIndex >= m_attackSequence.Length)
+                {
+                    m_currentAttackCoroutine = null;
+                    m_isAttacking = false;
+                    return;
+                }
+
+                // start processing the new AttackNode
+                m_currentAttackNode = m_attackSequence[m_currentAttackIndex];
+                StartAttackCoroutine();
+            }
+        }
+
+        public void StopAttacking()
+        {
+            if (m_isAttacking)
+            {
+                StopAttackCoroutine();
+            }
+        }
+
+        private void StartAttackCoroutine()
+        {
+            Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
+            switch (m_currentAttackNode.GetType().Name)
             {
                 case nameof(AnimationNode):
-                    m_currentAttackCoroutine = StartCoroutine(PlayAnimation(nodeRef));
+                    m_currentAttackCoroutine = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
                     break;
                 case nameof(ApproachTargetNode):
-                    m_currentAttackCoroutine = StartCoroutine(ApproachTarget(nodeRef));
+                    m_currentAttackCoroutine = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
                     break;
                 case nameof(TranslateNode):
-                    m_currentAttackCoroutine = StartCoroutine(Translate(nodeRef));
+                    m_currentAttackCoroutine = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
                     break;
                 case nameof(DelayNode):
-                    m_currentAttackCoroutine = StartCoroutine(Delay(nodeRef));
+                    m_currentAttackCoroutine = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
                     break;
             }
         }
-        public void StopAttackCoroutine(AttackNode node)
+        private void StopAttackCoroutine()
         {
+            // Still need to check for null values as no idea when Coroutine will necessarily update,
+            // so isAttacking may still be true when one of these values is null
             if (m_currentAttackCoroutine != null)
-            StopCoroutine(m_currentAttackCoroutine);
+                StopCoroutine(m_currentAttackCoroutine);
 
-            switch (node.GetType().ToString())
+            if (m_currentAttackNode != null)
             {
-                case nameof(AnimationNode):
-                    // reset animator component
-                    m_anim.speed = 1;
-                    m_anim.StopPlayback();
+                switch (m_currentAttackNode.GetType().ToString())
+                {
+                    case nameof(AnimationNode):
+                        // reset animator component
+                        m_anim.speed = 1;
+                        m_anim.StopPlayback();
 
-                    // apply motion from animation
-                    AnimationNode animationNode = (AnimationNode)node;
-                    if (animationNode.HasRootMotion)
-                        ApplyRootMotion();
+                        // apply motion from animation
+                        AnimationNode animationNode = m_currentAttackNode as AnimationNode;
+                        if (animationNode.HasRootMotion)
+                            ApplyRootMotion();
 
-                    break;
+                        break;
+                    case nameof(ApproachTargetNode):
+                        ResetMovementSpeed();
+                        StopGoToPosition();
+                        break;
+                }
             }
         }
 
-        private IEnumerator PlayAnimation(Ref<AttackNode> nodeRef)
+        private IEnumerator PlayAnimation(AnimationNode node)
         {
             // If there are issues with animator speed, check this first
             // init
-            AnimationNode castNode = (AnimationNode)nodeRef.Value;
-            m_anim.speed = castNode.Speed;
-            m_anim.Play(castNode.Animation.name);
+            m_anim.speed = node.Speed;
+            m_anim.Play(node.AnimationStateName);
 
             // running
-            yield return new WaitForSeconds(castNode.EvaluateTime());
+            yield return new WaitForSeconds(node.Time);
 
             // exit
             m_anim.speed = 1;
-            if (castNode.HasRootMotion)
+            if (node.HasRootMotion)
                 ApplyRootMotion();
 
-            nodeRef.SetNull();
+            m_currentAttackNode = null;
             Debug.Log($"Finished processing Animation Node.");
         }
-        private IEnumerator ApproachTarget(Ref<AttackNode> nodeRef)
+        private IEnumerator ApproachTarget(ApproachTargetNode node)
         {
             // init
-            ApproachTargetNode castNode = (ApproachTargetNode)nodeRef.Value;
             Vector3 targetPosition = m_targetTransform.position;
 
             // running
+            GoToPosition(targetPosition, node.Speed);
             bool withinRange = false;
             while (!withinRange)
             {
                 // If not using initial position, update position
-                if (!castNode.UseInitialPosition)
+                if (!node.UseInitialPosition)
+                {
                     targetPosition = m_targetTransform.position;
+                    GoToPosition(targetPosition, node.Speed);
+                }
 
-                SetPosition(Vector3.MoveTowards(GetPosition(), targetPosition, castNode.Speed * Time.deltaTime));
-
-                if (Vector3.Distance(GetPosition(), targetPosition) <= castNode.StoppingDistance)
+                if (Vector3.Distance(GetPosition(), targetPosition) <= node.StoppingDistance)
                 {
                     withinRange = true;
                     break;
@@ -200,23 +261,23 @@ namespace Stirge.Combat
             }
 
             // exit
-            nodeRef.SetNull();
-            Debug.Log($"Finished processing Approach Target castNode.");
+            
+            m_currentAttackNode = null;
+            Debug.Log($"Finished processing Approach Target node.");
         }
-        private IEnumerator Translate(Ref<AttackNode> nodeRef)
+        private IEnumerator Translate(TranslateNode node)
         {
             // init
-            TranslateNode castNode = (TranslateNode)nodeRef.Value;
             Vector3 startPosition = GetPosition();
             Vector3 endPosition;
 
-            if (castNode.IsLocalTranslation)
+            if (node.IsLocalTranslation)
             {
-                endPosition = GetPosition() + GetRotation() * castNode.Translation;
+                endPosition = GetPosition() + GetRotation() * node.Translation;
             }
             else
             {
-                endPosition = GetPosition() + castNode.Translation;
+                endPosition = GetPosition() + node.Translation;
             }
 
             // running
@@ -224,7 +285,7 @@ namespace Stirge.Combat
             bool arrived = false;
             while (!arrived)
             {
-                float t = Mathf.Clamp01(elapsedTime / castNode.Time);
+                float t = Mathf.Clamp01(elapsedTime / node.Time);
                 SetPosition(Vector3.Lerp(startPosition, endPosition, t));
 
                 // if arrived at end position
@@ -237,21 +298,20 @@ namespace Stirge.Combat
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-            
-            // exit
-            nodeRef.SetNull();
-            Debug.Log($"Finished processing Translate Node.");
-        }
-        private IEnumerator Delay(Ref<AttackNode> nodeRef)
-        {
-            // init
-            DelayNode castNode = (DelayNode)nodeRef.Value;
-            
-            // running
-            yield return new WaitForSeconds(castNode.Delay);
 
             // exit
-            nodeRef.SetNull();
+            m_currentAttackNode = null;
+            Debug.Log($"Finished processing Translate Node.");
+        }
+        private IEnumerator Delay(DelayNode node)
+        {
+            // init
+
+            // running
+            yield return new WaitForSeconds(node.Delay);
+
+            // exit
+            m_currentAttackNode = null;
             Debug.Log($"Finished processing Delay Node.");
         }
         #endregion

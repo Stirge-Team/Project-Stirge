@@ -8,8 +8,6 @@ namespace Stirge.Combat.Attacks
     {
         public abstract void Evaluate(List<AttackNode> activeNodes);
 
-        public abstract float EvaluateTime();
-
         public static readonly System.Type[] AttackNodeTypes =
         {
             typeof(AnimationNode),

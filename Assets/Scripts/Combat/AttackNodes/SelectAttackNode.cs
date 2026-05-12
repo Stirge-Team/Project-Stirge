@@ -20,10 +20,5 @@ namespace Stirge.Combat.Attacks
             m_chosenIndex = Random.Range(0, m_nodes.Length - 1);
             m_nodes[m_chosenIndex].Evaluate(activeNodes);
         }
-
-        public override float EvaluateTime()
-        {
-            return 0f;
-        }
     }
 }

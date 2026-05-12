@@ -28,7 +28,8 @@ namespace Stirge.Combat.Attacks
                 switch (typeName)
                 {
                     case nameof(AnimationNode):
-                        DrawPropertyField("m_animation");
+                        DrawPropertyField("m_animationStateName");
+                        DrawPropertyField("m_animationClip");
                         DrawPropertyField("m_speed");
                         DrawPropertyField("m_hasRootMotion");
                         break;
@@ -103,7 +104,7 @@ namespace Stirge.Combat.Attacks
                 {
                     case nameof(AnimationNode):
                         totalLines += GetPropertyLineHeight("m_speed");
-                        totalLines += 2;
+                        totalLines += 3;
                         break;
                     case nameof(ApproachTargetNode):
                         totalLines += GetPropertyLineHeight("m_stoppingDistance");
