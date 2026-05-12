@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Stirge.Management;
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Stirge.Combat
 {
@@ -84,8 +83,6 @@ namespace Stirge.Combat
             }
         }
         #endregion
-
-        public abstract bool m_isGrounded();
 
         #region Statuses
         public bool IsStunned()

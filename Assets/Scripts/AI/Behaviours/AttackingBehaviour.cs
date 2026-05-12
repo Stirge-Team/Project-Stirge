@@ -24,7 +24,7 @@ namespace Stirge.AI
             agent.Enemy.isAttacking = true;
 
             //looking for the anim to player -- halen idk if you're working on this but i'm adding to cuz its for the week plan :P feel free to overwrite this (all **5** painstaking minutes~)
-            AttackNode[] nodes = m_attackData.EvaluateSequence().sequence;
+            AttackNode[] nodes = m_attackData.EvaluateSequence();
             foreach(var node in nodes)
             {
                 if (node.GetType() == typeof(AnimationNode))

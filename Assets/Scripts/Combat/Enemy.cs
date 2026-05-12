@@ -98,7 +98,7 @@ namespace Stirge.Enemy
         {
             ApplyStun(length);
             // different State for when Grounded
-            if (m_isGrounded())
+            if (IsGrounded())
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);

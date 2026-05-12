@@ -51,9 +51,34 @@ namespace Stirge.Player
             return true;
         }
 
-        public override bool m_isGrounded()
+        public override bool IsGrounded()
         {
             return m_movement.IsGrounded;
+        }
+        public override void ApplyRootMotion()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Vector3 GetPosition()
+        {
+            return transform.position;
+        }
+        protected override Quaternion GetRotation()
+        {
+            return transform.rotation;
+        }
+        protected override void SetPosition(Vector3 position)
+        {
+            transform.position = position;
+        }
+        protected override void SetRotation(Quaternion rotation)
+        {
+            transform.rotation = rotation;
+        }
+        protected override void SetRotation(Vector3 eulerRotation)
+        {
+            transform.rotation = Quaternion.Euler(eulerRotation);
         }
     }
 }
