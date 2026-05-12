@@ -138,14 +138,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
-      propertyPath: m_agent.m_anim
+    - target: {fileID: 3650999910069174583, guid: b8073e1796063d54b962337c094a523a, type: 3}
+      propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 1583925866581794966}
-    - target: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
-      propertyPath: m_agent.m_modelTransform
-      value: 
-      objectReference: {fileID: 7906550009322288669}
+      objectReference: {fileID: 9100000, guid: 26c121ace6da5cf449e0cee53c9d2568, type: 2}
     - target: {fileID: 8564547062903745466, guid: b8073e1796063d54b962337c094a523a, type: 3}
       propertyPath: m_Name
       value: Slicer Enemy
@@ -156,38 +152,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8556642680453478608, guid: b8073e1796063d54b962337c094a523a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7223057279883517209}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4920417054218610179, guid: b8073e1796063d54b962337c094a523a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1583925866581794966}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8073e1796063d54b962337c094a523a, type: 3}
---- !u!1 &6867476255250147534 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4920417054218610179, guid: b8073e1796063d54b962337c094a523a, type: 3}
-  m_PrefabInstance: {fileID: 1947517087708876493}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &1583925866581794966
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6867476255250147534}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 26c121ace6da5cf449e0cee53c9d2568, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &7906550009322288669 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8556642680453478608, guid: b8073e1796063d54b962337c094a523a, type: 3}
