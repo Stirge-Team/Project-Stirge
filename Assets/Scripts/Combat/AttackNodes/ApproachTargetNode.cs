@@ -10,22 +10,22 @@ namespace Stirge.Combat.Attacks
     {
         [SerializeField] private RandomFloatField m_stoppingDistance;
         [SerializeField] private bool m_useInitialPosition = true;
-        [SerializeField] protected RandomFloatField m_time;
+        [SerializeField] protected RandomFloatField m_speed;
 
         public float StoppingDistance => m_stoppingDistance.Value;
         public bool UseInitialPosition => m_useInitialPosition;
-        public float Time => m_time.Value;
+        public float Speed => m_speed.Value;
         
         public override void Evaluate(List<AttackNode> activeNodes)
         {
             m_stoppingDistance.DetermineValue();
-            m_time.DetermineValue();
+            m_speed.DetermineValue();
             activeNodes.Add(this);
         }
 
         public override float EvaluateTime()
         {
-            return Time;
+            return 0f;
         }
     }
 }

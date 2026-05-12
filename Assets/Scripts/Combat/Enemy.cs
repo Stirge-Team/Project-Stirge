@@ -23,6 +23,7 @@ namespace Stirge.Enemy
         protected override void AwakeThis()
         {
             m_agent.Awake();
+            m_targetTransform = GameObject.FindWithTag("Player").transform;
         }
         protected override void UpdateThis(float deltaTime)
         {
@@ -40,7 +41,7 @@ namespace Stirge.Enemy
 
         private void FixedUpdate()
         {
-            m_agent.FixedUpdate(Time.deltaTime);
+            m_agent.FixedUpdate();
         }
         private void OnEnable()
         {
@@ -52,11 +53,39 @@ namespace Stirge.Enemy
         }
         #endregion
 
-        #region CombatEntity
-        public override bool m_isGrounded()
+        #region Controls
+        public override bool IsGrounded()
         {
             return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
         }
+        public override void ApplyRootMotion()
+        {
+            m_agent.ApplyRootMotion();
+        }
+
+        protected override Vector3 GetPosition()
+        {
+            return m_agent.Transform.position;
+        }
+        protected override void SetPosition(Vector3 newPosition)
+        {
+            m_agent.SetPosition(newPosition);
+        }
+        protected override Quaternion GetRotation()
+        {
+            return m_agent.Transform.rotation;
+        }
+        protected override void SetRotation(Quaternion newRotation)
+        {
+            m_agent.SetRotation(newRotation);
+        }
+        protected override void SetRotation(Vector3 eulerRotation)
+        {
+            m_agent.SetRotation(Quaternion.Euler(eulerRotation));
+        }
+        #endregion
+
+        #region Status
         private void ApplyStun(float length)
         {
             if (length > 0)

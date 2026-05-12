@@ -30,10 +30,10 @@ namespace Stirge.AI
 
         [Header("Properties")]
         [SerializeField] private State m_defaultState;
-        [SerializeField, Min(0)] private float m_detectionRadius;
+        [SerializeField, Min(0)] private float m_targetDetectionRadius;
+        [SerializeField, Min(0)] private float m_attackRadius;
         [SerializeField, Min(0)] private float m_defualtGravityAcceleration;
 
-        private Transform m_targetObject;
         private Vector3? m_targetPosition;
         private PhysicsMode m_physicsMode;
         private float m_gravity;
@@ -46,25 +46,25 @@ namespace Stirge.AI
         [HideInInspector] public bool isOffGround;
         [HideInInspector] public float airStallLength;
 
-        public Transform TargetObject => m_targetObject;
+        public Transform TargetTransform => m_enemy.TargetTransform;
         public Vector3? TargetPosition
         {
             get { return m_targetPosition; }
             set { m_targetPosition = value; }
         }
-        public float DetectionRadius => m_detectionRadius;
+        public float TargetDetectionRadius => m_targetDetectionRadius;
+        public float AttackRadius => m_attackRadius;
         public float StoppingDistance => m_nav.stoppingDistance;
         public PhysicsMode PhysicsMode => m_physicsMode;
 
         private Dictionary<string, object> m_memory = new Dictionary<string, object>();
 
-        #region Core
+        #region UnityEvents
         public void Awake()
         {
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
             m_fsm = new FiniteStateMachine(m_defaultState);
-            m_targetObject = GameObject.FindWithTag("Player").transform;
         }
 
         public void OnEnable()
@@ -83,12 +83,12 @@ namespace Stirge.AI
             m_fsm._Update(this, deltaTime);
         }
 
-        public void FixedUpdate(float deltaTime)
+        public void FixedUpdate()
         {
             // apply gravity
             if (m_physicsMode == PhysicsMode.Physics && !m_enemy.m_isGrounded())
             {
-                m_rb.AddForce(0, -m_gravity * deltaTime, 0, ForceMode.VelocityChange);
+                m_rb.AddForce(0, -m_gravity * Time.fixedDeltaTime, 0, ForceMode.VelocityChange);
             }
         }
 
@@ -98,15 +98,10 @@ namespace Stirge.AI
         }
         #endregion
 
-        #region Controls
+        #region AI
         public void EnterState(State newState)
         {
             m_fsm.EnterState(this, newState);
-        }
-
-        public void SetNewTarget(Transform target)
-        {
-            m_targetObject = target;
         }
 
         public void SetPhysicsMode(PhysicsMode value)
@@ -129,7 +124,6 @@ namespace Stirge.AI
                         {
                             m_nav.transform.position = m_transform.position;
                         }
-
                         m_rb.isKinematic = true;
                         break;
                     case PhysicsMode.Physics:
@@ -144,6 +138,30 @@ namespace Stirge.AI
             }
         }
 
+        public void CalculatePath()
+        {
+            if (m_targetPosition != null)
+            {
+                m_nav.SetDestination((Vector3)m_targetPosition);
+            }
+        }
+        public void ClearPath()
+        {
+            m_targetPosition = null;
+            m_nav.ResetPath();
+        }
+
+        public float GetNavSpeed()
+        {
+            return m_nav.speed;
+        }
+        public void SetNavSpeed(float speed)
+        {
+            m_nav.speed = speed;
+        }
+        #endregion
+
+        #region Combat
         public void ApplyKnockback(float strength, Vector3 direction)
         {
             m_rb.linearVelocity = Vector3.zero;
@@ -154,6 +172,28 @@ namespace Stirge.AI
         {
             direction = new(direction.x, height, direction.z);
             ApplyKnockback(strength, direction);
+        }
+        #endregion
+
+        #region Transformation
+        public void ApplyRootMotion()
+        {
+            if (m_modelTransform != null)
+            {
+                SetPosition(m_modelTransform.position);
+                m_modelTransform.localPosition = Vector3.zero;
+            }
+        }
+
+        public void SetPosition(Vector3 newPosition)
+        {
+            m_transform.position = newPosition;
+            m_nav.transform.position = newPosition;
+        }
+        public void SetRotation(Quaternion newRotation)
+        {
+            m_transform.rotation = newRotation;
+            m_nav.transform.rotation = newRotation;
         }
 
         public Vector3 GetVelocity()
@@ -173,71 +213,6 @@ namespace Stirge.AI
             m_nav.transform.rotation = m_transform.rotation;
         }
 
-        public void CalculatePath()
-        {
-            if (m_targetPosition != null)
-            {
-                m_nav.SetDestination((Vector3)m_targetPosition);
-            }
-        }
-        public void ClearPath()
-        {
-            m_targetPosition = null;
-            m_nav.ResetPath();
-        }
-
-        public void UseAttack(string attackName)
-        {
-            m_enemy.UseAttack(attackName);
-        }
-
-        public void ApplyRootMotion()
-        {
-            if (m_modelTransform != null)
-            {
-                m_nav.transform.position = m_modelTransform.position;
-                m_transform.position = m_modelTransform.position;
-                m_modelTransform.localPosition = Vector3.zero;
-            }
-        }
-
-        public float GetNavSpeed()
-        {
-            return m_nav.speed;
-        }
-        public void SetNavSpeed(float speed)
-        {
-            m_nav.speed = speed;
-        }
-
-        public void SetCurrentTimedTransitionDelay(float time)
-        {
-            m_fsm.CurrentState.SetTimedTransitionDelay(time);
-        }
-
-        /*
-        private IEnumerator Knockback(float distance, Vector2 direction, float time, float height)
-        {
-            direction = direction.normalized;
-            Vector3 start = m_transform.position;
-            Vector3 end = new Vector3(start.x + direction.x * distance, start.y, start.z + direction.y * distance);
-
-            // credit DitzelGames on YouTube for this function https://www.youtube.com/watch?v=ddakS7BgHRI
-            System.Func<float, float> f = x => -4 * height * x * x + 4 * height * x;
-            float timer = 0;
-            while (timer < time)
-            {
-                timer += Time.deltaTime;
-                float t = timer / time;
-                Vector3 mid = Vector3.Lerp(start, end, t);
-                m_transform.position = new Vector3(mid.x, f(t) + Mathf.Lerp(start.y, end.y, t), mid.z);
-                Debug.Log($"Start: {start}. End: {end}");
-                yield return null;
-            }
-
-            m_transform.position = end;
-        }
-        */
         #endregion
 
         #region Memory
@@ -295,7 +270,10 @@ namespace Stirge.AI
                 return;
             
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(m_transform.position, m_detectionRadius);
+            Gizmos.DrawWireSphere(m_transform.position, m_targetDetectionRadius);
+
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(m_transform.position, m_attackRadius);
 
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(m_transform.position, m_nav.stoppingDistance);

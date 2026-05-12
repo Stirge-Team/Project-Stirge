@@ -25,7 +25,7 @@ namespace Stirge.AI
             typeof(HasTargetCondition),
             typeof(OffGroundCondition),
             typeof(StunnedCondition),
-            typeof(TargetInRangeCondition),
+            typeof(TargetInAttackRadiusCondition),
         };
     }
 }

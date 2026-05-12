@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 787d2018d4466f4438a282a750b8d06f, type: 3}
-  m_Name: New Attack data
+  m_Name: Default Attack
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
   m_root:
-    rid: 2001016795403124809
+    rid: 5206302161436672072
   references:
     version: 2
     RefIds:
-    - rid: 2001016795403124809
+    - rid: 5206302161436672072
       type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
-        m_animation: {fileID: 7400000, guid: e2f0ac5405322524ab87e6244dbe0804, type: 2}
+        m_animation: {fileID: 7400000, guid: 8aeef8337165ee14cb121fecd5af4e18, type: 2}
         m_speed:
           m_isRandom: 1
-          m_range: {x: 0.5, y: 2}
-          m_value: 1.36304
+          m_range: {x: 1, y: 2}
+          m_value: 1
         m_hasRootMotion: 0

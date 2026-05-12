@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
@@ -9,23 +8,11 @@ namespace Stirge.Combat.Attacks
     {
         [SerializeReference] private AttackNode m_root;
 
-        public SequenceData EvaluateSequence()
+        public AttackNode[] EvaluateSequence()
         {
             List<AttackNode> sequence = new();
             m_root.Evaluate(sequence);
-            return new SequenceData(sequence, m_root.EvaluateTime());
+            return sequence.ToArray();
         }
-    }
-
-    public readonly struct SequenceData
-    {
-        public SequenceData(IEnumerable<AttackNode> attackNodes, float time)
-        {
-            sequence = attackNodes.ToArray();
-            totalTime = time;
-        }
-
-        public readonly AttackNode[] sequence;
-        public readonly float totalTime;
     }
 }
