@@ -32,7 +32,7 @@ Assets/Scripts/Management/ @halenf @Skeleking04
 Assets/Scripts/BehaviourTree/ @halenf
 
 # Art Assets
-Assets/Art/ @Stirge-Team/Artists
+# Assets/Art/ @Stirge-Team/Artists
 
 # Halen testing scenes
 Assets/Scenes/\[Halen testing\]/ @halenf
