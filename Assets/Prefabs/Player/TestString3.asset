@@ -18,7 +18,7 @@ MonoBehaviour:
     m_scale: {x: 1, y: 4, z: 1}
     m_startFrame: 12
     m_endFrame: 20
-    m_groupID: 0
+    m_groupID: 1
     m_hitboxShape: 0
     m_hitboxType: 2
     m_hitboxParent: 0000020000
@@ -29,10 +29,21 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 1
+      m_damage: -2
       m_statuses:
-      - rid: 6684768394305077318
-  m_eventData: []
+      - rid: 2001016855599513794
+      - rid: 2001016855599513806
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: TestString3Event0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 0
+    m_endFrame: 0
+  - m_eventType: 0
+    m_eventID: TestString3Event1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 40
+    m_endFrame: 41
   m_nextComboInput:
     m_nextComboAttack: 
     m_comboAttackInput: 0
@@ -41,9 +52,12 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 6684768394305077318
-      type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
+    - rid: 2001016855599513794
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 1000
-        m_airStallLength: 0
-        m_stunLength: 100
+        m_stunLength: 3
+    - rid: 2001016855599513806
+      type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_strength: 15
+        m_height: 0

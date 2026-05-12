@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6634666910204183250}
+  - component: {fileID: 369394295828842384}
   - component: {fileID: 1532762708043262146}
   - component: {fileID: 2713100686291229703}
   - component: {fileID: 2920065731834999269}
@@ -16,7 +17,10 @@ GameObject:
   - component: {fileID: 5256876837077168771}
   - component: {fileID: 3353919659384064465}
   - component: {fileID: 5079235152578265304}
-  - component: {fileID: 7462790499090208258}
+  - component: {fileID: 4312719870174949881}
+  - component: {fileID: 1013638193549423171}
+  - component: {fileID: 7180865184346510159}
+  - component: {fileID: 2000434906032577990}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -41,6 +45,25 @@ Transform:
   - {fileID: 2521300203340706763}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &369394295828842384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
+  m_anim: {fileID: 6992374104284298522}
+  isAttacking: 0
+  m_health: {fileID: 4312719870174949881}
+  m_groundedCheckDistance: 0
+  m_groundedCheckMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!136 &1532762708043262146
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -209,22 +232,10 @@ MonoBehaviour:
     m_ActionName: 'Player/Move[/Gamepad/leftStick,/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2920065731834999269}
-        m_TargetAssemblyTypeName: Stirge.Player.PlayerMovement, Assembly-CSharp
-        m_MethodName: OnJump
+      - m_Target: {fileID: 369394295828842384}
+        m_TargetAssemblyTypeName: Stirge.Player.Player, Assembly-CSharp
+        m_MethodName: AttemptJump
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 7462790499090208258}
-        m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
-        m_MethodName: StartInvincibility
-        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -355,6 +366,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 1636b98b-4793-427c-b0d1-fa9d7eef7ff1
     m_ActionName: 'Player/HelmSplitter[/Mouse/leftButton,/Gamepad/buttonNorth]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c
+    m_ActionName: 'Player/Hurtself[/Gamepad/buttonWest]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -404,7 +419,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
   m_playerAnimator: {fileID: 6992374104284298522}
   m_inputBufferTime: 0.2
---- !u!114 &7462790499090208258
+--- !u!114 &4312719870174949881
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -417,6 +432,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
   m_baseHealth: 10
+--- !u!95 &1013638193549423171
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7180865184346510159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d370302d70d62d52928c0588fb6f2db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorLockControls
+--- !u!114 &2000434906032577990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253332100919465643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 580071fdd96fbe048b8e25b177a64a5d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Hitbox.HitboxCollider
+  m_onCollision:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5722074012237408405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,7 +1171,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
           m_MethodName: HaltHorizontalVelocity
           m_Mode: 6
@@ -1120,6 +1184,134 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - m_eventID: TestAttackEvent1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 0}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestLauncherEvent0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestLauncherEvent1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestString1Event0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestString1Event1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestString2Event0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestString2Event1
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: set_enabled
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 1
+          m_CallState: 2
+  - m_eventID: TestString3Event0
+    m_event:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 5256876837077168771}
+          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
+          m_MethodName: HaltHorizontalVelocity
+          m_Mode: 6
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - m_eventID: TestString3Event1
     m_event:
     - m_PersistentCalls:
         m_Calls:
@@ -1136,13 +1328,14 @@ MonoBehaviour:
             m_BoolArgument: 1
           m_CallState: 2
   m_characterAnimData:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 2ed9683b86f86fe6c91b820b68598355, type: 2}
   - {fileID: 0}
   - {fileID: 11400000, guid: 1a7309668d24b70a4949c5834790b588, type: 2}
   - {fileID: 11400000, guid: 21acf07377a3abe0d8ba98d8b976a247, type: 2}
   - {fileID: 11400000, guid: 9130691532d77d61fb0ef3ce7f238004, type: 2}
   - {fileID: 11400000, guid: aeb7afd0269c608be881ba1a41f90784, type: 2}
   - {fileID: 11400000, guid: 6eaa0761d4271d7fcaa60b75717f429e, type: 2}
+  - {fileID: 0}
 --- !u!95 &6992374104284298522 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: -7840867231617242486, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}

@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using Stirge.Management;
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Stirge.Combat
 {
@@ -13,10 +14,13 @@ namespace Stirge.Combat
         [SerializeField] protected Animator m_anim;
 
         [Header("Combat Properties")]
-        [SerializeField, Min(1)] protected int m_maxHealth;
         public bool isAttacking;
+        [SerializeField]
+        protected EntityHealth m_health;
+        public EntityHealth health => m_health;
 
-        protected int m_currentHealth;
+        //[SerializeField, Min(1)] protected int m_maxHealth;
+        //protected int m_currentHealth;
 
         [Header("Status")]
         [SerializeField] protected List<Status> m_statuses = new();
@@ -30,7 +34,6 @@ namespace Stirge.Combat
         #region UnityEvents
         private void Awake()
         {
-            m_currentHealth = m_maxHealth;
             AwakeThis();
         }
         private void Update()
@@ -62,14 +65,22 @@ namespace Stirge.Combat
         #region Death State
         public void TakeDamage(int damage)
         {
-            m_currentHealth -= damage;
+            m_health.ModifyHealth(damage);
             OnDamageTaken(damage);
         }
         protected virtual void OnDamageTaken(int damage) { }
+        #endregion
 
-        public bool IsDead()
+        #region Attacks
+        public void UseAttack(string attackName)
         {
-            return m_currentHealth <= 0;
+            if (m_anim.HasState(0, Animator.StringToHash(attackName)))
+            {
+                m_anim.Play(attackName);
+
+                // get the length of the attack to play
+                isAttacking = true;
+            }
         }
         #endregion
 

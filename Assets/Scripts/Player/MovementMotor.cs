@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 namespace Stirge.Player
 {
@@ -15,6 +16,13 @@ namespace Stirge.Player
         public float _horizontalSpeed => _horizontalVelocity.sqrMagnitude;
         public Vector3 _horizontalDirection => _horizontalVelocity.normalized;
         public float _verticalVelocity => m_rb.linearVelocity.y; // {get; private set;}
+        private IEnumerator m_flipEnabled;
+        public enum SetMotorAction
+        {
+            NoChange,
+            Off,
+            On,
+        }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Awake()
@@ -36,18 +44,32 @@ namespace Stirge.Player
         ///<summary>
         ///Returns true if the active state was changed to the value
         ///</summary>
-        public bool SetActive(bool value, bool updateKinematic = false)
+        public bool SetActive(bool value, bool updateKinematic = false, float time = 0)
         {
             bool didChange = false;
             if (enabled != value)
             {
                 enabled = value;
                 didChange = true;
+                if (time > 0)
+                {
+                    m_flipEnabled = FlipEnabled(time);
+                    StartCoroutine(m_flipEnabled);
+                }
+                else if (time < 0)
+                {
+                    StopCoroutine(m_flipEnabled);
+                }
             }
 
             if (updateKinematic)
                 m_rb.isKinematic = !enabled;
             return didChange;
+        }
+        private IEnumerator FlipEnabled(float time)
+        {
+            yield return new WaitForSeconds(time);
+            enabled = !enabled;
         }
 
         public void ApplyForce(
@@ -132,11 +154,23 @@ namespace Stirge.Player
                 SetVelocity(resetVelo);
             }
         }
-
-        public void HaltHorizontalVelocity(bool setMotor = false)
+        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange)
         {
             ResetVelocity(true, false, true);
-            SetActive(setMotor);
+            switch (setMotor)
+            {
+                case SetMotorAction.Off:
+                    SetActive(false);
+                    break;
+                case SetMotorAction.On:
+                    SetActive(true);
+                    break;
+            }
+        }
+        public void HaltHorizontalVelocity(bool setTo = false)
+        {
+            ResetVelocity(true, false, true);
+            SetActive(setTo);
         }
 
         public void RotateTo(Quaternion newRotation)

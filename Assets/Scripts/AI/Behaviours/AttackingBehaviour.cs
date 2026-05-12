@@ -22,6 +22,18 @@ namespace Stirge.AI
             m_currentNodeRef = new Ref<AttackNode>(null);
             m_currentNodeIndex = -1;
             agent.Enemy.isAttacking = true;
+
+            //looking for the anim to player -- halen idk if you're working on this but i'm adding to cuz its for the week plan :P feel free to overwrite this (all **5** painstaking minutes~)
+            AttackNode[] nodes = m_attackData.EvaluateSequence();
+            foreach(var node in nodes)
+            {
+                if (node.GetType() == typeof(AnimationNode))
+                {
+                    agent.Enemy.UseAttack((node as AnimationNode).Animation.name); // the code of all time...
+                }
+            }
+            
+            base._Enter(agent);
         }
 
         public override void _Update(Agent agent, float deltaTime)
