@@ -13,7 +13,7 @@ namespace Stirge.Combat
         public void OnHit(CombatEntity entity)
         {
             entity.TakeDamage(m_damage);
-            if (!entity.health._isDead)
+            if (!entity.Health._isDead)
             {
                 foreach (Status status in m_statuses)
                 {

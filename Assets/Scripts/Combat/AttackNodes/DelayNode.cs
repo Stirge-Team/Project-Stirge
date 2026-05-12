@@ -1,10 +1,11 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
-    using System.Collections.Generic;
     using Tools;
 
+    [System.Serializable]
     public class DelayNode : AttackNode
     {
         [SerializeField] private RandomFloatField m_delay;
@@ -15,11 +16,6 @@ namespace Stirge.Combat.Attacks
         {
             m_delay.DetermineValue();
             activeNodes.Add(this);
-        }
-
-        public override float EvaluateTime()
-        {
-            return m_delay.Value;
         }
     }
 }

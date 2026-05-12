@@ -30,9 +30,10 @@ namespace Stirge.AI
 
         [Header("Properties")]
         [SerializeField] private State m_defaultState;
-        [SerializeField, Min(0)] private float m_targetDetectionRadius;
-        [SerializeField, Min(0)] private float m_attackRadius;
-        [SerializeField, Min(0)] private float m_defualtGravityAcceleration;
+        [SerializeField, Min(0)] private float m_defaultNavSpeed = 3.5f;
+        [SerializeField, Min(0)] private float m_targetDetectionRadius = 10f;
+        [SerializeField, Min(0)] private float m_attackRadius = 4.5f;
+        [SerializeField, Min(0)] private float m_defualtGravityAcceleration = 9f;
 
         private Vector3? m_targetPosition;
         private PhysicsMode m_physicsMode;
@@ -64,6 +65,7 @@ namespace Stirge.AI
         {
             m_gravity = m_defualtGravityAcceleration;
             m_physicsMode = PhysicsMode.NavMesh;
+            SetDefaultNavSpeed();
             m_fsm = new FiniteStateMachine(m_defaultState);
         }
 
@@ -158,6 +160,10 @@ namespace Stirge.AI
         public void SetNavSpeed(float speed)
         {
             m_nav.speed = speed;
+        }
+        public void SetDefaultNavSpeed()
+        {
+            m_nav.speed = m_defaultNavSpeed;
         }
         #endregion
 

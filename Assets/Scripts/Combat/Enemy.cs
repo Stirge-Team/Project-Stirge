@@ -28,7 +28,7 @@ namespace Stirge.Enemy
         protected override void UpdateThis(float deltaTime)
         {
             // check if enemy is dead this frame
-            if (health._isDead)
+            if (m_health._isDead)
             {
                 if (spawner != null)
                     spawner.ReportDeath(this);
@@ -82,6 +82,35 @@ namespace Stirge.Enemy
         protected override void SetRotation(Vector3 eulerRotation)
         {
             m_agent.SetRotation(Quaternion.Euler(eulerRotation));
+        }
+
+        protected override void GoToPosition(Vector3 newPosition, float speed = 0)
+        {
+            m_agent.TargetPosition = newPosition;
+            m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
+            m_agent.CalculatePath();
+
+            // if speed is not greater than 0, assume default speed
+            if (speed > 0)
+                m_agent.SetNavSpeed(speed);
+        }
+        protected override void StopGoToPosition()
+        {
+            m_agent.TargetPosition = null;
+            m_agent.ClearPath();
+        }
+
+        protected override float GetMovementSpeed()
+        {
+            return m_agent.GetNavSpeed();
+        }
+        protected override void SetMovementSpeed(float speed)
+        {
+            m_agent.SetNavSpeed(speed);
+        }
+        protected override void ResetMovementSpeed()
+        {
+            m_agent.SetDefaultNavSpeed();
         }
         #endregion
 

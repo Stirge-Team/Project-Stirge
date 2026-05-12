@@ -20,10 +20,5 @@ namespace Stirge.Combat.Attacks
                 node.Evaluate(activeNodes);
             }
         }
-
-        public override float EvaluateTime()
-        {
-            return 0f;
-        }
     }
 }

@@ -20,7 +20,8 @@ MonoBehaviour:
     - rid: 5206302161436672072
       type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
-        m_animation: {fileID: 7400000, guid: 8aeef8337165ee14cb121fecd5af4e18, type: 2}
+        m_animationStateName: DefaultAttack
+        m_animationClip: {fileID: 7400000, guid: 8aeef8337165ee14cb121fecd5af4e18, type: 2}
         m_speed:
           m_isRandom: 1
           m_range: {x: 1, y: 2}

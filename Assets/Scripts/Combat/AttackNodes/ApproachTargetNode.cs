@@ -22,10 +22,5 @@ namespace Stirge.Combat.Attacks
             m_speed.DetermineValue();
             activeNodes.Add(this);
         }
-
-        public override float EvaluateTime()
-        {
-            return 0f;
-        }
     }
 }
