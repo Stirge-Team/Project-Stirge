@@ -16,8 +16,6 @@ namespace Stirge.Combat
         [SerializeField] protected EntityHealth m_health;
         public EntityHealth Health => m_health;
 
-        //[SerializeField, Min(1)] protected int m_maxHealth;
-        //protected int m_currentHealth;
         protected bool m_isAttacking;
 
         public bool IsAttacking => m_isAttacking;

@@ -1,22 +1,21 @@
-using System;
-using Stirge.Combat;
-using Stirge.Input;
-using Stirge.Management;
 using UnityEngine;
 
 namespace Stirge.Player
 {
+    using Combat;
+    using Input;
+    using Management;
+    
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
     public class Player : CombatEntity
     {
-        private PlayerMovement m_movement;
-        private PlayerInputProcessing m_input;
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        [SerializeField] private PlayerMovement m_movement;
+        [SerializeField] private PlayerInputProcessing m_input;
+        
+        protected override void AwakeThis()
         {
-            m_movement = GetComponent<PlayerMovement>();
-            m_input = GetComponent<PlayerInputProcessing>();
+            base.AwakeThis();
 
             if(!m_movement || !m_input)
             {
@@ -57,7 +56,7 @@ namespace Stirge.Player
         }
         public override void ApplyRootMotion()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override Vector3 GetPosition()
@@ -83,27 +82,27 @@ namespace Stirge.Player
 
         protected override void GoToPosition(Vector3 newPosition, float speed = 0)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override void StopGoToPosition()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override float GetMovementSpeed()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override void SetMovementSpeed(float speed)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override void ResetMovementSpeed()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
     }
 }
