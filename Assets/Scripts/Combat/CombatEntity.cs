@@ -21,9 +21,9 @@ namespace Stirge.Combat
         public bool IsAttacking => m_isAttacking;
 
         [Header("Status")]
-        [SerializeField] protected List<Status> m_statuses = new();
-
-        private float m_stunTime = 0;
+        [SerializeField] protected List<TimedStatus> m_inflictedStatuses = new();
+        
+        private bool m_isStunned;
 
         [Header("Ground Check Properties")]
         [SerializeField, Min(0)] protected float m_groundedCheckDistance;
@@ -63,7 +63,7 @@ namespace Stirge.Combat
         protected abstract void SetRotation(Quaternion rotation);
         protected abstract void SetRotation(Vector3 eulerRotation);
 
-        protected abstract void GoToPosition(Vector3 newPosition, float speed = 0);
+        protected abstract void BeginGoToPosition(Vector3 newPosition);
         protected abstract void StopGoToPosition();
 
         protected abstract float GetMovementSpeed();
@@ -86,42 +86,58 @@ namespace Stirge.Combat
         #endregion
 
         #region Statuses
-        public bool IsStunned()
-        {
-            return m_stunTime > 0;
-        }
-
         public void InflictStatus(Status status)
         {
-            m_statuses.Add(status);
+            // inflict the Status
+            status.OnInflict(this);   
+        }
+        public void InflictStatus(TimedStatus status)
+        {
+            // add to list to be updated
+            switch (status.GetType().Name)
+            {
+                case nameof(Stun):
+                    // only allow one Stun at a time
+                    m_inflictedStatuses.RemoveAll(status => status.GetType() == typeof(Stun));
+
+                    // add and inflict
+                    Stun newStun = new(status as Stun);
+                    newStun.OnInflict(this);
+                    m_inflictedStatuses.Add(newStun);
+                    break;
+            }
         }
 
         private void UpdateStatuses(float deltaTime)
         {
-            // update Stun
-            if (m_stunTime > 0)
-            {
-                m_stunTime -= deltaTime;
-                if (m_stunTime <= 0)
-                {
-                    m_stunTime = 0;
-                    // no longer stunned
-                }
-            }
-            
-            foreach (Status status in m_statuses)
+            List<TimedStatus> toRemove = new();
+            foreach (TimedStatus status in m_inflictedStatuses)
             {
                 if (status.IsCleared)
                 {
-                    m_statuses.Remove(status);
+                    status.OnClear(this);
+                    toRemove.Add(status);
                     continue;
                 }
-                status.Update(this);
+                status.Update(this, deltaTime);
             }
+
+            if (toRemove.Count > 0)
+                m_inflictedStatuses.RemoveAll(status => toRemove.Contains(status));
         }
-        public abstract bool EnterStun(float stunLength);
-        public abstract bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength);
-        public abstract bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength);
+
+        public bool GetIsStunned()
+        {
+            return m_isStunned;
+        }
+        public void SetIsStunned(bool value)
+        {
+            m_isStunned = value;
+        }
+
+        public abstract void EnterStun(float stunLength);
+        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength);
+        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength);
         #endregion
 
         #region Attacks
@@ -240,7 +256,8 @@ namespace Stirge.Combat
             Vector3 targetPosition = m_targetTransform.position;
 
             // running
-            GoToPosition(targetPosition, node.Speed);
+            BeginGoToPosition(targetPosition);
+            SetMovementSpeed(node.Speed);
             bool withinRange = false;
             while (!withinRange)
             {
@@ -248,7 +265,7 @@ namespace Stirge.Combat
                 if (!node.UseInitialPosition)
                 {
                     targetPosition = m_targetTransform.position;
-                    GoToPosition(targetPosition, node.Speed);
+                    BeginGoToPosition(targetPosition);
                 }
 
                 // provide some leeway for vertical difference

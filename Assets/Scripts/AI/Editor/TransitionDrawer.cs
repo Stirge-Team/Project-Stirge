@@ -16,15 +16,15 @@ namespace Stirge.AI
 
             if (targetStateProp.objectReferenceValue != null)
             {
-                label = new GUIContent("Transition to " + targetStateProp.objectReferenceValue.name);
+                label.text = "Transition to " + targetStateProp.objectReferenceValue.name;
             }
             else
             {
-                label = new GUIContent("Empty Transition");
+                label.text = "Empty Transition";
             }
 
             EditorGUI.BeginProperty(m_position, label, m_property);
-            m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
+            DrawLabelHeader(label);
             if (m_property.isExpanded)
             {
                 // draw the target state for the Transition

@@ -12,20 +12,13 @@ namespace Stirge.Combat.Attacks
 
         protected override void DrawGUI(GUIContent label)
         {
-            string typeName = m_property.type;
-            typeName = typeName.Substring(17, typeName.Length - 18);
-
-            // if AttackNode, then prompt deletion
-            if (typeName == string.Empty)
-                label.text = "Empty, pls delete";
-            else
-                label.text = typeName;
+            SetLabelTextToTypeName(label);
 
             EditorGUI.BeginProperty(m_position, label, m_property);
-            m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
+            DrawLabelHeader(label);
             if (m_property.isExpanded)
             {
-                switch (typeName)
+                switch (label.text)
                 {
                     case nameof(AnimationNode):
                         DrawPropertyField("m_animationStateName");
@@ -93,14 +86,13 @@ namespace Stirge.Combat.Attacks
 
         protected override float GetHeight(GUIContent label)
         {
-            int totalLines = 1; // for foldout
+            int totalLines = 1; // for foldout/label
 
             if (m_property.isExpanded)
             {
-                string typeName = m_property.type;
-                typeName = typeName.Substring(17, typeName.Length - 18);
+                SetLabelTextToTypeName(label);
 
-                switch (typeName)
+                switch (label.text)
                 {
                     case nameof(AnimationNode):
                         totalLines += GetPropertyLineHeight("m_speed");

@@ -32,9 +32,15 @@ namespace Stirge.Combat
             EditorGUI.EndFoldoutHeaderGroup();
 
             EditorGUI.BeginProperty(m_position, label, m_property);
-            m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
+
+            // Create Label
+            DrawLabelHeader(label);
+
             if (m_property.isExpanded)
             {
+                if (!PropertyIsArrayElement())
+                    EditorGUI.indentLevel++;
+
                 // draw damage property
                 DrawPropertyField("m_damage");
 
@@ -54,6 +60,9 @@ namespace Stirge.Combat
                     newStatusProp.managedReferenceValue = newStatus;
                     newStatusProp.isExpanded = true;
                 }
+
+                if (!PropertyIsArrayElement())
+                    EditorGUI.indentLevel--;
             }
 
             EditorGUI.EndProperty();
@@ -61,7 +70,7 @@ namespace Stirge.Combat
 
         protected override float GetHeight(GUIContent label)
         {
-            int totalLines = 1; // for foldout
+            int totalLines = 1; // for foldout/label
 
             if (m_property.isExpanded)
             {

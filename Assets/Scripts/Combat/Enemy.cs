@@ -84,15 +84,11 @@ namespace Stirge.Enemy
             m_agent.SetRotation(Quaternion.Euler(eulerRotation));
         }
 
-        protected override void GoToPosition(Vector3 newPosition, float speed = 0)
+        protected override void BeginGoToPosition(Vector3 newPosition)
         {
             m_agent.TargetPosition = newPosition;
             m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
             m_agent.CalculatePath();
-
-            // if speed is not greater than 0, assume default speed
-            if (speed > 0)
-                m_agent.SetNavSpeed(speed);
         }
         protected override void StopGoToPosition()
         {
@@ -115,17 +111,8 @@ namespace Stirge.Enemy
         #endregion
 
         #region Status
-        private void ApplyStun(float length)
+        public override void EnterStun(float length)
         {
-            if (length > 0)
-            {
-                m_agent.Enemy.InflictStatus(new Stun(length));
-            }
-        }
-
-        public override bool EnterStun(float length)
-        {
-            ApplyStun(length);
             // different State for when Grounded
             if (IsGrounded())
                 m_agent.EnterState(m_stunState);
@@ -133,26 +120,21 @@ namespace Stirge.Enemy
                 m_agent.EnterState(m_airStunState);
 
             m_anim.Play("hitstun");
-            return true;
         }
-        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
-            ApplyStun(stunLength);
+            InflictStatus(new Stun(stunLength));
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
             m_anim.Play("hitstun");
-
-            return true;
         }
-        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
-            ApplyStun(stunLength);
+            InflictStatus(new Stun(stunLength));
             InflictStatus(new AirJuggle(strength, airStallLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
             m_anim.Play("hitstun");
-
-            return true;
         }
         #endregion
 

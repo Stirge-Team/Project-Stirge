@@ -17,7 +17,7 @@ namespace Stirge.Combat
             {
                 foreach (Status status in m_statuses)
                 {
-                    status.Inflict(entity);
+                    status.OnInflict(entity);
                 }
             }
         }

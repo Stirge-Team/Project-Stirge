@@ -10,30 +10,27 @@ namespace Stirge.Combat
     {
         protected override void DrawGUI(GUIContent label)
         {
-            string typeName = m_property.managedReferenceFullTypename;
-            if (typeName.Length < 30)
-                label.text = "Empty, pls delete";
+            if (m_property != null)
+                label.text = m_property.managedReferenceValue.GetType().Name;
             else
-                label.text = typeName[30..];
+                label.text = "Empty, pls remove";
 
             EditorGUI.BeginProperty(m_position, label, m_property);
-            m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
-            m_property.isExpanded = true;
+            DrawLabelHeader(label);
+            m_property.isExpanded = true; // Fixes display bug in Frame Data Viewer
             if (m_property.isExpanded)
             {
+                if (m_property.managedReferenceValue is TimedStatus)
+                    DrawPropertyField("m_length");
                 switch (label.text)
                 {
                     case nameof(AirJuggle):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_stallLength");
-                        DrawPropertyField("m_stunLength");
                         break;
                     case nameof(Knockback):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_height");
-                        break;
-                    case nameof(Stun):
-                        DrawPropertyField("m_stunLength");
                         break;
                 }
             }
@@ -42,17 +39,16 @@ namespace Stirge.Combat
 
         protected override float GetHeight(GUIContent label)
         {
-            int totalLines = 1; // for foldout
+            int totalLines = 1; // for foldout/label
 
             if (m_property.isExpanded)
             {
-                string typeName = m_property.managedReferenceFullTypename;
-                if (typeName.Length < 30)
-                    typeName = string.Empty;
-                else
-                    typeName = typeName[30..];
+                SetLabelTextToTypeName(label);
 
-                switch (typeName)
+                if (m_property.managedReferenceValue is TimedStatus)
+                    totalLines++;
+
+                switch (label.text)
                 {
                     case nameof(AirJuggle):
                     case nameof(Knockback):

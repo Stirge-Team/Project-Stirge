@@ -31,23 +31,21 @@ namespace Stirge.Player
             }
         }
 
-        public override bool EnterStun(float stunLength)
+        public override void EnterStun(float stunLength)
         {
             //m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
             m_movement.Motor.SetActive(false, false, stunLength);
             m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
-            return true;
         }
-        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             //lazy implementation - do more later
-            return EnterStun(stunLength);
+            EnterStun(stunLength);
         }
-        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             m_movement.Motor.ApplyForce(-transform.forward * strength + -transform.up * height, ForceMode.Impulse, true);
-            return true;
         }
 
         public override bool IsGrounded()
@@ -80,7 +78,7 @@ namespace Stirge.Player
             transform.rotation = Quaternion.Euler(eulerRotation);
         }
 
-        protected override void GoToPosition(Vector3 newPosition, float speed = 0)
+        protected override void BeginGoToPosition(Vector3 newPosition)
         {
             throw new System.NotImplementedException();
         }
