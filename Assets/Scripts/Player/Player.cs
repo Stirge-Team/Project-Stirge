@@ -10,9 +10,11 @@ namespace Stirge.Player
     [RequireComponent(typeof(PlayerInputProcessing))]
     public class Player : CombatEntity
     {
+        [Header("Player Properties")]
         [SerializeField] private PlayerMovement m_movement;
         [SerializeField] private PlayerInputProcessing m_input;
-        
+
+        #region UnityEvents
         protected override void AwakeThis()
         {
             base.AwakeThis();
@@ -22,7 +24,9 @@ namespace Stirge.Player
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
         }
+        #endregion
 
+        #region Inputs
         public void AttemptJump()
         {
             if(m_movement.OnJump())
@@ -30,7 +34,16 @@ namespace Stirge.Player
                 m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
             }
         }
+        #endregion
 
+        #region DeathState
+        protected override void OnDamageTaken(int damage)
+        {
+            
+        }
+        #endregion
+
+        #region Status
         public override void EnterStun(float stunLength)
         {
             //m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
@@ -56,7 +69,9 @@ namespace Stirge.Player
         {
             throw new System.NotImplementedException();
         }
+        #endregion
 
+        #region Transformation
         protected override Vector3 GetPosition()
         {
             return transform.position;
@@ -102,5 +117,6 @@ namespace Stirge.Player
         {
             throw new System.NotImplementedException();
         }
+        #endregion
     }
 }

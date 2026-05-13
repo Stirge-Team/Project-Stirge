@@ -29,7 +29,7 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: -3
+      m_damage: 1
       m_statuses:
       - rid: 2001016855599513790
   m_eventData:
@@ -44,7 +44,7 @@ MonoBehaviour:
     m_startFrame: 27
     m_endFrame: 30
   m_nextComboInput:
-    m_nextComboAttack: 
+    m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 0
     m_comboInputTimeStart: 0
     m_comboInputTimeEnd: 0

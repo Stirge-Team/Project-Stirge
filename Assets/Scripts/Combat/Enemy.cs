@@ -7,6 +7,7 @@ namespace Stirge.Enemy
 
     public class Enemy : CombatEntity
     {
+        [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
         
         [Header("Combat States")]
@@ -53,7 +54,7 @@ namespace Stirge.Enemy
         }
         #endregion
 
-        #region Controls
+        #region Transformation
         public override bool IsGrounded()
         {
             return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
@@ -110,6 +111,21 @@ namespace Stirge.Enemy
         }
         #endregion
 
+        #region DeathState
+        protected override void OnDamageTaken(int damage)
+        {
+            //         m
+            // func  ----- + m
+            //        x^d
+            // where x is the scaling, must be greater than 1
+            //       m is the max value, must be greater than 0
+            //       d is damage, must be greater than 0
+            float scaling = 1.1f;
+            float max = 1f;
+            HitStopManager.Instance.Stop(-(max / Mathf.Pow(scaling, damage)) + max);
+        }
+        #endregion
+
         #region Status
         public override void EnterStun(float length)
         {
@@ -123,15 +139,16 @@ namespace Stirge.Enemy
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
-            InflictStatus(new Stun(stunLength));
+            if (stunLength > 0f)
+                InflictStatus(new Stun(stunLength));
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
             m_anim.Play("hitstun");
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
-            InflictStatus(new Stun(stunLength));
-            InflictStatus(new AirJuggle(strength, airStallLength));
+            if (stunLength > 0f)
+                InflictStatus(new Stun(stunLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
             m_anim.Play("hitstun");

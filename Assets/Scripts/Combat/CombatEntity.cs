@@ -49,7 +49,7 @@ namespace Stirge.Combat
         protected virtual void UpdateThis(float deltaTime) { }
         #endregion
 
-        #region Controls
+        #region Transformation
         protected Transform m_targetTransform;
 
         public void SetTargetTransform(Transform target) => m_targetTransform = target;
@@ -77,7 +77,7 @@ namespace Stirge.Combat
             m_health.ModifyHealth(damage);
             OnDamageTaken(damage);
         }
-        protected virtual void OnDamageTaken(int damage) { }
+        protected abstract void OnDamageTaken(int damage);
 
         public bool IsDead()
         {

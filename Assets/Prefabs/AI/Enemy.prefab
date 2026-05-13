@@ -377,7 +377,7 @@ MonoBehaviour:
     m_defaultState: {fileID: 11400000, guid: dd9b18eb3c955534ab217e482a13a18a, type: 2}
     m_defaultNavSpeed: 3.5
     m_targetDetectionRadius: 10
-    m_attackRadius: 4.5
+    m_attackRadius: 3
     m_defualtGravityAcceleration: 9
     isOffGround: 0
     airStallLength: 0

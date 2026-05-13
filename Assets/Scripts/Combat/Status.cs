@@ -66,7 +66,6 @@ namespace Stirge.Combat
 
         public override void OnClear(CombatEntity entity)
         {
-            base.OnInflict(entity);
             entity.SetIsStunned(false);
         }
     }
