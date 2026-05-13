@@ -26,4 +26,4 @@ MonoBehaviour:
           m_isRandom: 1
           m_range: {x: 1, y: 2}
           m_value: 1
-        m_hasRootMotion: 0
+        m_hasRootMotion: 1
