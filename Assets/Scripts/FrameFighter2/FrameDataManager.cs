@@ -1,6 +1,7 @@
 using FrameFighter2.Data;
 using FrameFighter2.Hitbox;
 using Stirge.Input;
+using Stirge.Combat.Attacks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -242,22 +243,22 @@ namespace FrameFighter2.Manager
             }
 
             //check combo input event (halen)
-            if (m_currentData.NextComboInput.NextComboAttack != "" && m_currentData.NextComboInput.ComboInputTimeStart == frame)
+            if (m_currentData.NextComboInput.NextComboAttack != null && m_currentData.NextComboInput.ComboInputTimeStart == frame)
             {
-                //clear the last lot of combos - this is a safety check and should'nt be clearing anything.
+                //clear the last lot of combos - this is a safety check and shouldn't be clearing anything.
                 PlayerInputProcessing.Instance.ClearComboBinding();
                 m_activeComboListers.Clear();
 
                 Debug.Log($"Start combo input checking for animation {m_currentData.name} from frame {m_currentData.NextComboInput.ComboInputTimeStart} to frame {m_currentData.NextComboInput.ComboInputTimeEnd}.");
 
                 //create and add the combo binding
-                Dictionary<AttackInput, string> comboBind = new();
+                Dictionary<AttackInput, AttackData> comboBind = new();
                 comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
                 PlayerInputProcessing.Instance.SetComboBinding(comboBind);
 
                 m_activeComboListers.Add(m_currentData.NextComboInput);
             }
-            else if(m_currentData.NextComboInput.NextComboAttack == "")
+            else if(m_currentData.NextComboInput.NextComboAttack == null)
             {
                 //Remove any lingering combo data if this attack has none
                 PlayerInputProcessing.Instance.ClearComboBinding();

@@ -5,37 +5,68 @@ namespace Stirge.Combat
     [System.Serializable]
     public abstract class Status
     {
+        protected bool m_isCleared = false;
+        public bool IsCleared => m_isCleared;
+
+        public virtual void OnInflict(CombatEntity entity) { }
+     
         public static readonly System.Type[] StatusTypes =
         {
             typeof(AirJuggle),
             typeof(Knockback),
             typeof(Stun)
         };
+    }
 
-        private bool m_isCleared = false;
-        public bool IsCleared => m_isCleared;
+    public abstract class TimedStatus : Status
+    {
+        public TimedStatus(float length)
+        {
+            m_length = length;
+        }
+        public TimedStatus(TimedStatus original)
+        {
+            m_length = original.m_length;
+        }
+        
+        [SerializeField] private float m_length;
 
-        public abstract void Inflict(CombatEntity entity);
-        public virtual void Update(CombatEntity entity) { }
+        private float m_timer;
+
+        public override void OnInflict(CombatEntity entity)
+        {
+            m_timer = m_length;
+        }
+
+        public virtual void Update(CombatEntity entity, float deltaTime)
+        {
+            m_timer -= deltaTime;
+
+            if (m_timer <= 0)
+            {
+                m_isCleared = true;
+            }
+        }
+
+        public virtual void OnClear(CombatEntity entity) { }
     }
 
     [System.Serializable]
-    public class Stun : Status
+    public class Stun : TimedStatus
     {
-        public Stun()
-        {
-            m_stunLength = 1f;
-        }
-        public Stun(float length)
-        {
-            m_stunLength = length;
-        }
-        
-        [SerializeField, Min(0)] private float m_stunLength;
+        public Stun() : base(1f) { }
+        public Stun(float length) : base(length) { }
+        public Stun(Stun original) : base(original) { }
 
-        public override void Inflict(CombatEntity entity)
+        public override void OnInflict(CombatEntity entity)
         {
-            entity.EnterStun(m_stunLength);
+            base.OnInflict(entity);
+            entity.SetIsStunned(true);
+        }
+
+        public override void OnClear(CombatEntity entity)
+        {
+            entity.SetIsStunned(false);
         }
     }
 
@@ -56,7 +87,7 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_height;
 
-        public override void Inflict(CombatEntity entity)
+        public override void OnInflict(CombatEntity entity)
         {
             Vector3 dir = -entity.transform.GetChild(0).forward;
             entity.EnterKnockback(m_strength, dir, m_height, 0);
@@ -80,7 +111,7 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_stallLength;
 
-        public override void Inflict(CombatEntity entity)
+        public override void OnInflict(CombatEntity entity)
         {
             entity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0);
         }

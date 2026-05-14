@@ -7,6 +7,7 @@ namespace Stirge.Enemy
 
     public class Enemy : CombatEntity
     {
+        [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
         
         [Header("Combat States")]
@@ -53,7 +54,7 @@ namespace Stirge.Enemy
         }
         #endregion
 
-        #region Controls
+        #region Transformation
         public override bool IsGrounded()
         {
             return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
@@ -84,15 +85,11 @@ namespace Stirge.Enemy
             m_agent.SetRotation(Quaternion.Euler(eulerRotation));
         }
 
-        protected override void GoToPosition(Vector3 newPosition, float speed = 0)
+        protected override void BeginGoToPosition(Vector3 newPosition)
         {
             m_agent.TargetPosition = newPosition;
             m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
             m_agent.CalculatePath();
-
-            // if speed is not greater than 0, assume default speed
-            if (speed > 0)
-                m_agent.SetNavSpeed(speed);
         }
         protected override void StopGoToPosition()
         {
@@ -114,18 +111,24 @@ namespace Stirge.Enemy
         }
         #endregion
 
-        #region Status
-        private void ApplyStun(float length)
+        #region DeathState
+        protected override void OnDamageTaken(int damage)
         {
-            if (length > 0)
-            {
-                m_agent.Enemy.InflictStatus(new Stun(length));
-            }
+            //         m
+            // func  ----- + m
+            //        x^d
+            // where x is the scaling, must be greater than 1
+            //       m is the max value, must be greater than 0
+            //       d is damage, must be greater than 0
+            float scaling = 1.1f;
+            float max = 1f;
+            HitStopManager.Instance.Stop(-(max / Mathf.Pow(scaling, damage)) + max);
         }
+        #endregion
 
-        public override bool EnterStun(float length)
+        #region Status
+        public override void EnterStun(float length)
         {
-            ApplyStun(length);
             // different State for when Grounded
             if (IsGrounded())
                 m_agent.EnterState(m_stunState);
@@ -133,26 +136,22 @@ namespace Stirge.Enemy
                 m_agent.EnterState(m_airStunState);
 
             m_anim.Play("hitstun");
-            return true;
         }
-        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
-            ApplyStun(stunLength);
+            if (stunLength > 0f)
+                InflictStatus(new Stun(stunLength));
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
             m_anim.Play("hitstun");
-
-            return true;
         }
-        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
-            ApplyStun(stunLength);
-            InflictStatus(new AirJuggle(strength, airStallLength));
+            if (stunLength > 0f)
+                InflictStatus(new Stun(stunLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
             m_anim.Play("hitstun");
-
-            return true;
         }
         #endregion
 

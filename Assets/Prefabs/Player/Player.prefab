@@ -18,8 +18,6 @@ GameObject:
   - component: {fileID: 3353919659384064465}
   - component: {fileID: 5079235152578265304}
   - component: {fileID: 4312719870174949881}
-  - component: {fileID: 1013638193549423171}
-  - component: {fileID: 7180865184346510159}
   - component: {fileID: 2000434906032577990}
   m_Layer: 7
   m_Name: Player
@@ -58,12 +56,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
   m_anim: {fileID: 6992374104284298522}
-  isAttacking: 0
   m_health: {fileID: 4312719870174949881}
-  m_groundedCheckDistance: 0
+  m_groundedCheckDistance: 1.3
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_movement: {fileID: 2920065731834999269}
+  m_input: {fileID: 5079235152578265304}
 --- !u!136 &1532762708043262146
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -417,7 +416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
-  m_playerAnimator: {fileID: 6992374104284298522}
+  m_player: {fileID: 369394295828842384}
   m_inputBufferTime: 0.2
 --- !u!114 &4312719870174949881
 MonoBehaviour:
@@ -432,40 +431,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
   m_baseHealth: 10
---- !u!95 &1013638193549423171
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253332100919465643}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7180865184346510159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1253332100919465643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d370302d70d62d52928c0588fb6f2db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::AnimatorLockControls
 --- !u!114 &2000434906032577990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -620,9 +585,9 @@ MonoBehaviour:
   m_bindingType: 0
   m_defaultBindings:
   - attackInput: 8
-    attackName: TestString1
+    attackData: {fileID: 11400000, guid: d3ff9c08de3263c4f961c11184983aa4, type: 2}
   - attackInput: 2
-    attackName: TestLauncher
+    attackData: {fileID: 11400000, guid: f03827a5aa4434c41b8edec41853f3d9, type: 2}
 --- !u!1001 &6610752918078484151
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1143,6 +1108,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2124328068652129529}
+    - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5938381950428784864}
   m_SourcePrefab: {fileID: 8686905464242370237, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
 --- !u!4 &4417360331099796648 stripped
 Transform:
@@ -1336,6 +1304,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: aeb7afd0269c608be881ba1a41f90784, type: 2}
   - {fileID: 11400000, guid: 6eaa0761d4271d7fcaa60b75717f429e, type: 2}
   - {fileID: 0}
+--- !u!114 &5938381950428784864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5643533546166619971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d370302d70d62d52928c0588fb6f2db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AnimatorLockControls
 --- !u!95 &6992374104284298522 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: -7840867231617242486, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}

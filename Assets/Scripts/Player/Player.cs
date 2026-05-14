@@ -1,29 +1,32 @@
-using System;
-using Stirge.Combat;
-using Stirge.Input;
-using Stirge.Management;
 using UnityEngine;
 
 namespace Stirge.Player
 {
+    using Combat;
+    using Input;
+    using Management;
+    
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
     public class Player : CombatEntity
     {
-        private PlayerMovement m_movement;
-        private PlayerInputProcessing m_input;
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        [Header("Player Properties")]
+        [SerializeField] private PlayerMovement m_movement;
+        [SerializeField] private PlayerInputProcessing m_input;
+
+        #region UnityEvents
+        protected override void AwakeThis()
         {
-            m_movement = GetComponent<PlayerMovement>();
-            m_input = GetComponent<PlayerInputProcessing>();
+            base.AwakeThis();
 
             if(!m_movement || !m_input)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
         }
+        #endregion
 
+        #region Inputs
         public void AttemptJump()
         {
             if(m_movement.OnJump())
@@ -31,24 +34,31 @@ namespace Stirge.Player
                 m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
             }
         }
+        #endregion
 
-        public override bool EnterStun(float stunLength)
+        #region DeathState
+        protected override void OnDamageTaken(int damage)
+        {
+            
+        }
+        #endregion
+
+        #region Status
+        public override void EnterStun(float stunLength)
         {
             //m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
             m_movement.Motor.SetActive(false, false, stunLength);
             m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
-            return true;
         }
-        public override bool EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             //lazy implementation - do more later
-            return EnterStun(stunLength);
+            EnterStun(stunLength);
         }
-        public override bool EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             m_movement.Motor.ApplyForce(-transform.forward * strength + -transform.up * height, ForceMode.Impulse, true);
-            return true;
         }
 
         public override bool IsGrounded()
@@ -57,9 +67,11 @@ namespace Stirge.Player
         }
         public override void ApplyRootMotion()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
+        #endregion
 
+        #region Transformation
         protected override Vector3 GetPosition()
         {
             return transform.position;
@@ -81,29 +93,30 @@ namespace Stirge.Player
             transform.rotation = Quaternion.Euler(eulerRotation);
         }
 
-        protected override void GoToPosition(Vector3 newPosition, float speed = 0)
+        protected override void BeginGoToPosition(Vector3 newPosition)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override void StopGoToPosition()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override float GetMovementSpeed()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override void SetMovementSpeed(float speed)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
 
         protected override void ResetMovementSpeed()
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
+        #endregion
     }
 }

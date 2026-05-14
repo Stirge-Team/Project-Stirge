@@ -105,12 +105,46 @@ namespace Stirge.Tools
             if (property != null)
             {
                 int lines = (int)(EditorGUI.GetPropertyHeight(property) / EditorGUIUtility.singleLineHeight);
-                if (property.isArray && property.isExpanded)
-                    lines++; // for +/- button
+                if (property.isExpanded)
+                {
+                    if (property.isArray)
+                    {
+                        lines++; // for +/- button
+                        if (property.arraySize < 2)
+                            lines--;
+                    }
+                }
                 return lines;
             }
             else
                 return 1;
+        }
+
+        protected void SetLabelTextToTypeName(GUIContent label)
+        {
+            if (m_property != null)
+                label.text = m_property.managedReferenceValue.GetType().Name;
+            else
+                label.text = "Empty, pls delete";
+        }
+
+        protected void DrawLabelHeader(GUIContent label)
+        {
+            // If property is part of an array
+            if (PropertyIsArrayElement())
+            {
+                m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
+            }
+            else
+            {
+                EditorGUI.LabelField(GetNewRect(), label, EditorStyles.boldLabel);
+                m_property.isExpanded = true;
+            }
+        }
+        
+        protected bool PropertyIsArrayElement()
+        {
+            return m_property.propertyPath.EndsWith(']');
         }
     }
 

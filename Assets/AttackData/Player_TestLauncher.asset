@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 787d2018d4466f4438a282a750b8d06f, type: 3}
-  m_Name: Default Attack
+  m_Name: Player_TestLauncher
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
   m_root:
-    rid: 5206302161436672072
+    rid: 5206302206032347205
   references:
     version: 2
     RefIds:
-    - rid: 5206302161436672072
+    - rid: 5206302206032347205
       type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
-        m_animationStateName: DefaultAttack
-        m_animationClip: {fileID: 7400000, guid: 8aeef8337165ee14cb121fecd5af4e18, type: 2}
+        m_animationStateName: TestLauncher
+        m_animationClip: {fileID: 7400000, guid: 8e76393e05515a774bc1f0d23871066d, type: 2}
         m_speed:
           m_isRandom: 0
-          m_range: {x: 1, y: 2}
+          m_range: {x: 0, y: 0}
           m_value: 1
-        m_hasRootMotion: 1
+        m_hasRootMotion: 0

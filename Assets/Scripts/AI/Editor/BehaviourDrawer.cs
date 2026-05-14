@@ -10,22 +10,7 @@ namespace Stirge.AI
     {
         protected override void DrawGUI(GUIContent label)
         {
-            string typeName = m_property.type;
-            // format if managed reference aka not FSM
-            if (typeName == nameof(FiniteStateMachine))
-            {
-                label.text = typeName;
-            }
-            else
-            {
-                typeName = typeName.Substring(17, typeName.Length - 18);
-                
-                // if Behaviour, then prompt deletion
-                if (typeName == string.Empty)
-                    label.text = "Empty, pls delete";
-                else
-                    label.text = typeName;
-            }
+            SetLabelTextToTypeName(label);
 
             EditorGUI.BeginProperty(m_position, label, m_property);
 
@@ -66,14 +51,9 @@ namespace Stirge.AI
 
             if (m_property.isExpanded)
             {
-                string typeName = m_property.type;
-                // format if managed reference aka not FSM
-                if (typeName != nameof(FiniteStateMachine))
-                {
-                    typeName = typeName.Substring(17, typeName.Length - 18);
-                }
+                SetLabelTextToTypeName(label);
 
-                switch (typeName)
+                switch (label.text)
                 {
                     case nameof(AirJuggleBehaviour):
                     case nameof(KnockbackBehaviour):

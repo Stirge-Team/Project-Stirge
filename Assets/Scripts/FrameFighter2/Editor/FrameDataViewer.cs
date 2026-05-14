@@ -15,8 +15,9 @@ namespace FrameFighter2.Viewer
     using static Data.HitboxData;
     using static Data.EventData;
     using static Manager.FrameDataManager;
-    using static Data.CharacterAnimationData; 
-    
+    using static Data.CharacterAnimationData;
+    using Stirge.Combat.Attacks;
+
     public class FrameDataViewer : EditorWindow
     {
         private GameObject m_gameObject;
@@ -554,18 +555,20 @@ namespace FrameFighter2.Viewer
 
                                 ComboInput comboInput = data.NextComboInput;
 
-                                string nextComboAttack = comboInput.NextComboAttack;
+                                AttackData nextComboAttack = comboInput.NextComboAttack;
                                 AttackInput comboAttackInput = comboInput.ComboAttackInput;
                                 float comboInputTimeStart = comboInput.ComboInputTimeStart;
                                 float comboInputTimeEnd = comboInput.ComboInputTimeEnd;
 
                                 EditorGUI.BeginChangeCheck();
 
-                                nextComboAttack = EditorGUILayout.TextField("Next Attack In Combo", nextComboAttack);
+                                // Create an object field to allow users to attach their own AttackData
+                                nextComboAttack = EditorGUILayout.ObjectField("Next Attack in combo", nextComboAttack, typeof(AttackData), false) as AttackData;
 
-                                if (nextComboAttack != "")
+                                if (nextComboAttack != null)
                                 {
-                                    comboAttackInput = (AttackInput)EditorGUILayout.EnumPopup("Next Input" ,comboAttackInput);
+                                    // Just so you can have multi-input combos :)
+                                    comboAttackInput = (AttackInput)EditorGUILayout.EnumFlagsField("Next Input" ,comboAttackInput);
 
                                     EditorGUILayout.BeginHorizontal();
                                     comboInputTimeStart = EditorGUILayout.FloatField("Input Start", Mathf.Round(comboInputTimeStart));

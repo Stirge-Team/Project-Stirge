@@ -101,6 +101,8 @@ GameObject:
   - component: {fileID: 8556642680453478608}
   - component: {fileID: 5786370700648536541}
   - component: {fileID: 926329998260564820}
+  - component: {fileID: 3650999910069174583}
+  - component: {fileID: 2376417830707951214}
   m_Layer: 3
   m_Name: Model
   m_TagString: Untagged
@@ -163,6 +165,42 @@ MonoBehaviour:
   m_onCollision:
     m_PersistentCalls:
       m_Calls: []
+--- !u!95 &3650999910069174583
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4920417054218610179}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2376417830707951214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4920417054218610179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6396eda12d42e6846bfc47b83a7d13fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Manager.FrameDataManager
+  m_animationEvents: []
+  m_characterAnimData: []
 --- !u!1 &6145819353419449397
 GameObject:
   m_ObjectHideFlags: 0
@@ -287,6 +325,7 @@ GameObject:
   m_Component:
   - component: {fileID: 665102905503917911}
   - component: {fileID: 6890042860578074719}
+  - component: {fileID: 2288186502371622423}
   m_Layer: 3
   m_Name: Enemy
   m_TagString: Untagged
@@ -323,24 +362,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135975f7ca699134eab7d64d980cf3ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.Enemy
-  m_maxHealth: 10
-  spawner: {fileID: 0}
+  m_anim: {fileID: 3650999910069174583}
+  m_health: {fileID: 2288186502371622423}
+  m_groundedCheckDistance: 1.3
+  m_groundedCheckMask:
+    serializedVersion: 2
+    m_Bits: 65
   m_agent:
+    m_enemy: {fileID: 6890042860578074719}
     m_transform: {fileID: 262305264173794060}
+    m_modelTransform: {fileID: 8556642680453478608}
     m_nav: {fileID: 865616511426848684}
     m_rb: {fileID: 8994596366229947912}
-    m_anim: {fileID: 0}
     m_defaultState: {fileID: 11400000, guid: dd9b18eb3c955534ab217e482a13a18a, type: 2}
-    m_detectionRadius: 8
-    m_groundedCheckDistance: 1.11
-    m_groundedCheckMask:
-      serializedVersion: 2
-      m_Bits: 119
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 3
     m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
   m_stunState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
   m_airStunState: {fileID: 11400000, guid: 9cb1eb542f50d2c4992b39eaefe1ec30, type: 2}
   m_knockbackState: {fileID: 11400000, guid: ad02730f5802b034bbc259f707fad916, type: 2}
   m_airJuggle: {fileID: 11400000, guid: c0ee1255359da2d4caa5165757df1c05, type: 2}
+  spawner: {fileID: 0}
+--- !u!114 &2288186502371622423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8564547062903745466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
+  m_baseHealth: 10
 --- !u!1 &9065879874332372439
 GameObject:
   m_ObjectHideFlags: 0
