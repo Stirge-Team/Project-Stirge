@@ -44,7 +44,7 @@ MonoBehaviour:
     m_startFrame: 50
     m_endFrame: 50
   m_nextComboInput:
-    m_nextComboAttack: TestString3
+    m_nextComboAttack: {fileID: 11400000, guid: 78296964f76c8e224a3741e459cd2cef, type: 2}
     m_comboAttackInput: 8
     m_comboInputTimeStart: 25
     m_comboInputTimeEnd: 45
@@ -54,4 +54,4 @@ MonoBehaviour:
     - rid: 2001016855599513792
       type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_stunLength: 0.5
+        m_length: 1
