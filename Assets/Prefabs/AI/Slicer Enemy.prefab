@@ -152,8 +152,28 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8556642680453478608, guid: b8073e1796063d54b962337c094a523a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7223057279883517209}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4920417054218610179, guid: b8073e1796063d54b962337c094a523a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8157054926318021878}
   m_SourcePrefab: {fileID: 100100000, guid: b8073e1796063d54b962337c094a523a, type: 3}
+--- !u!1 &6867476255250147534 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4920417054218610179, guid: b8073e1796063d54b962337c094a523a, type: 3}
+  m_PrefabInstance: {fileID: 1947517087708876493}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8157054926318021878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6867476255250147534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a140e58d65983b8e8c7093f6d8b4d45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Sound.SoundManagerPassToAnimator
 --- !u!4 &7906550009322288669 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8556642680453478608, guid: b8073e1796063d54b962337c094a523a, type: 3}
