@@ -29,7 +29,7 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: -1
+      m_damage: 1
       m_statuses:
       - rid: 2001016855599513792
   m_eventData:
@@ -45,9 +45,9 @@ MonoBehaviour:
     m_endFrame: 50
   m_nextComboInput:
     m_nextComboAttack: {fileID: 11400000, guid: 78296964f76c8e224a3741e459cd2cef, type: 2}
-    m_comboAttackInput: 8
-    m_comboInputTimeStart: 25
-    m_comboInputTimeEnd: 45
+    m_comboAttackInput: 1
+    m_comboInputTimeStart: 29
+    m_comboInputTimeEnd: 60
   references:
     version: 2
     RefIds:

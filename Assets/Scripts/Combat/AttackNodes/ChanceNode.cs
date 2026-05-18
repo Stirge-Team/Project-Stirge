@@ -1,8 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
+    [System.Serializable]
     public class ChanceNode : AttackNode
     {
         [SerializeField, Range(0, 1)] private float m_chance;

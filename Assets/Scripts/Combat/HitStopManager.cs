@@ -1,45 +1,50 @@
-using System.Collections;
 using UnityEngine;
 
 public class HitStopManager : MonoBehaviour
 {
     #region Singleton
-    public static HitStopManager Instance { get; private set; }
-    private void AllocateInstance()
+    private static HitStopManager s_instance;
+    public static HitStopManager Instance
     {
-        // prioritise existing Instance
-        if (Instance != null)
-            Destroy(gameObject);
-        else
-            Instance = this;
+        get
+        {
+            if (s_instance == null)
+                FindFirstObjectByType<HitStopManager>().Init();
+            return s_instance;
+        }
+    }
+
+    private void Init()
+    {
+        s_instance = this;
+        DontDestroyOnLoad(gameObject);
     }
     #endregion
 
-    private Coroutine m_currentHitstop;
+    [Header("HitStop Scaling Properties")]
+    [Tooltip("Affects how the time length scales based on the input.\nMust be greater than 1 ")]
+    [SerializeField, Min(1.001f)] private float m_scaling = 1.1f;
+    [Tooltip("The maximum length of any HitStop.\nMust be greater than 0.")]
+    [SerializeField, Min(0.001f)] private float m_maxValue = 1f;
 
     #region UnityEvents
     private void Awake()
     {
-        AllocateInstance();
+        Init();
     }
     #endregion
 
-    public void Stop(float seconds)
+    public void HitStopTime(float damage)
     {
-        if (m_currentHitstop != null)
-            StopCoroutine(m_currentHitstop);
+        //             m
+        // func l =  ----- + m
+        //            s^d
+        // where l is the total timelength of the HitStop in seconds
+        //       s is the scaling, must be greater than 1
+        //       m is the max value, must be greater than 0
+        //       d is the input damage, must be greater than 0
+        float length = -(m_maxValue / Mathf.Pow(m_scaling, damage)) + m_maxValue;
 
-        m_currentHitstop = StartCoroutine(HitStop(seconds));
-    }
-
-    private IEnumerator HitStop(float seconds)
-    {
-        Time.timeScale = 0f;
-
-        yield return new WaitForSecondsRealtime(seconds);
-
-        Time.timeScale = 1f;
-
-        m_currentHitstop = null;
+        TimeManager.Instance.SetTimeScaleForTime(0f, length);
     }
 }

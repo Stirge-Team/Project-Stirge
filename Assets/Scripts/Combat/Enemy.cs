@@ -114,15 +114,7 @@ namespace Stirge.Enemy
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            //         m
-            // func  ----- + m
-            //        x^d
-            // where x is the scaling, must be greater than 1
-            //       m is the max value, must be greater than 0
-            //       d is damage, must be greater than 0
-            float scaling = 1.1f;
-            float max = 1f;
-            HitStopManager.Instance.Stop(-(max / Mathf.Pow(scaling, damage)) + max);
+            HitStopManager.Instance.HitStopTime(damage);
         }
         #endregion
 
