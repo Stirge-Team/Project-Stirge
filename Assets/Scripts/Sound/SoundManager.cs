@@ -58,15 +58,14 @@ namespace Stirge.Sound
         #endregion
 
         #region Playback
-        private void PlaySoundClip(SoundClip soundClip, SoundSource soundSource)
+        private void PlaySoundClip(SoundClip soundClip, SoundSource soundSource, Transform target = null)
         {
-            soundSource.PlaySound(soundClip);
+            soundSource.PlaySound(soundClip, target);
         }
 
         private void StopSoundSource(SoundSource soundSource)
         {
             soundSource.Stop();
-            soundSource.transform.SetParent(transform);
             soundSource.transform.localPosition = Vector3.zero;
             m_usedSources.Remove(soundSource);
             m_freeSources.Add(soundSource);
@@ -101,9 +100,7 @@ namespace Stirge.Sound
             SoundSource source = GetFreeAudioSource(soundClip);
             if (source != null)
             {
-                source.transform.SetParent(target);
-                source.transform.localPosition = Vector3.zero;
-                PlaySoundClip(soundClip, source);
+                PlaySoundClip(soundClip, source, target);
             }
         }
 
