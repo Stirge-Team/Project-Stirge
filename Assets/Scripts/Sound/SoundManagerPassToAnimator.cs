@@ -5,6 +5,8 @@ namespace Stirge.Sound
 {
     public class SoundManagerPassToAnimator : MonoBehaviour
     {
+        [SerializeField]
+        private Transform m_defaultSoundLocation;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Awake()
         {
@@ -16,7 +18,7 @@ namespace Stirge.Sound
         }
         public void PlayClip(SoundClip clip)
         {
-            SoundManager.Instance.PlaySoundClipOnObject(clip, transform);
+            SoundManager.Instance.PlaySoundClipOnObject(clip, m_defaultSoundLocation ? m_defaultSoundLocation : transform);
         }
     }
 }

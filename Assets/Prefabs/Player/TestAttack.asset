@@ -29,8 +29,10 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 3
-      m_statuses: []
+      m_damage: -2
+      m_statuses:
+      - rid: 2001017013982199878
+      - rid: 2001017013982199913
   m_eventData:
   - m_eventType: 0
     m_eventID: TestAttackEvent0
@@ -43,10 +45,19 @@ MonoBehaviour:
     m_startFrame: 14
     m_endFrame: 15
   m_nextComboInput:
-    m_nextComboAttack: 
+    m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 0
     m_comboInputTimeStart: 0
     m_comboInputTimeEnd: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2001017013982199878
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_length: 1
+    - rid: 2001017013982199913
+      type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_strength: 3
+        m_height: 1
