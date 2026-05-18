@@ -186,6 +186,7 @@ MonoBehaviour:
   m_jumpHeight: 1
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
+  m_landingSound: {fileID: 11400000, guid: 06fd6c5347399e37eb457a4188b52e3a, type: 2}
   m_fallSpeedCap: 1000
   m_fallTimeSpeedMultiplier: 1
 --- !u!114 &5301017458216903579
@@ -1111,6 +1112,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5938381950428784864}
+    - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7308883379116305836}
   m_SourcePrefab: {fileID: 8686905464242370237, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
 --- !u!4 &4417360331099796648 stripped
 Transform:
@@ -1316,6 +1320,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d370302d70d62d52928c0588fb6f2db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AnimatorLockControls
+--- !u!114 &7308883379116305836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5643533546166619971}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a140e58d65983b8e8c7093f6d8b4d45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Sound.SoundManagerPassToAnimator
 --- !u!95 &6992374104284298522 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: -7840867231617242486, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}

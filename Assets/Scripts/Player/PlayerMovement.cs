@@ -2,6 +2,7 @@ using System;
 using Stirge.Camera;
 using Stirge.Combat;
 using Stirge.Input;
+using Stirge.Sound;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -77,6 +78,8 @@ namespace Stirge.Player
             Tooltip("The window after falling off an object that the player can still jump.")
         ]
         private float m_coyoteTime = 0.2f;
+        [SerializeField, Tooltip("The sound that plays when the player lands.")]
+        private SoundClip m_landingSound;
 
         //The remaining time for coyote time
         private float m_coyoteCountdown;
@@ -215,6 +218,7 @@ namespace Stirge.Player
                     m_coyoteCountdown = m_coyoteTime;
                     //Reset the fall time
                     m_currentFallTime = 0;
+                    SoundManager.Instance.PlaySoundClipOnObject(m_landingSound, transform);
                 }
             }
             else
