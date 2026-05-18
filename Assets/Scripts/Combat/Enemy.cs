@@ -114,21 +114,15 @@ namespace Stirge.Enemy
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            //         m
-            // func  ----- + m
-            //        x^d
-            // where x is the scaling, must be greater than 1
-            //       m is the max value, must be greater than 0
-            //       d is damage, must be greater than 0
-            float scaling = 1.1f;
-            float max = 1f;
-            HitStopManager.Instance.Stop(-(max / Mathf.Pow(scaling, damage)) + max);
+            HitStopManager.Instance.HitStopTime(damage);
         }
         #endregion
 
         #region Status
-        public override void EnterStun(float length)
+        public override void EnterStun(float stunLength)
         {
+            m_isStunned = true;
+            
             // different State for when Grounded
             if (IsGrounded())
                 m_agent.EnterState(m_stunState);
@@ -140,7 +134,7 @@ namespace Stirge.Enemy
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             if (stunLength > 0f)
-                InflictStatus(new Stun(stunLength));
+                InflictTimedStatus(new Stun(stunLength));
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
             m_anim.Play("hitstun");
@@ -148,7 +142,7 @@ namespace Stirge.Enemy
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             if (stunLength > 0f)
-                InflictStatus(new Stun(stunLength));
+                InflictTimedStatus(new Stun(stunLength));
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
             m_anim.Play("hitstun");

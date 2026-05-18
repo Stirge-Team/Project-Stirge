@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Stirge.Sound
 {
@@ -141,6 +142,31 @@ namespace Stirge.Sound
             foreach (SoundSource source in toStop)
             {
                 StopSoundSource(source);
+            }
+        }
+        #endregion
+
+        #region Setup
+        [ContextMenu("Populate Sound Sources from Children")]
+        public void GetSoundSources()
+        {
+            if (m_freeSources.Count == 0)
+            {
+                m_freeSources = transform.GetComponentsInChildren<SoundSource>(true).ToList();
+            }
+            else
+            {
+                List<SoundSource> temp = new(m_freeSources);
+                List<SoundSource> children = transform.GetComponentsInChildren<SoundSource>(true).ToList();
+
+                children.RemoveAll(source => temp.Contains(source));
+
+                List<SoundSource> newList = new();
+                newList.AddRange(temp);
+                newList.AddRange(children);
+
+                m_freeSources = new();
+                m_freeSources = newList.Distinct().ToList(); // Removes duplicates
             }
         }
         #endregion

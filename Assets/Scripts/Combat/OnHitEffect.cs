@@ -17,7 +17,10 @@ namespace Stirge.Combat
             {
                 foreach (Status status in m_statuses)
                 {
-                    status.OnInflict(entity);
+                    if (status is TimedStatus)
+                        entity.InflictTimedStatus(status as TimedStatus);
+                    else
+                        entity.InflictStatus(status);
                 }
             }
         }
