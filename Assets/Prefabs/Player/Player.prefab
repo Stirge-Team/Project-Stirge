@@ -1143,7 +1143,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 5256876837077168771}
           m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
           m_MethodName: HaltHorizontalVelocity
           m_Mode: 6
@@ -1159,7 +1159,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 0}
+        - m_Target: {fileID: 5256876837077168771}
           m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
           m_MethodName: set_enabled
           m_Mode: 6

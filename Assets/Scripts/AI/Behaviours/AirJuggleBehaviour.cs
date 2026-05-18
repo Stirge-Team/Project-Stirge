@@ -13,16 +13,16 @@ namespace Stirge.AI
         }
 
         private AirStallState m_state;
-        private float m_airStallTime = 0f;
+        //private float m_airStallTime = 0f;
         
         public override void _Enter(Agent agent)
         {
             base._Enter(agent);
             agent.SetPhysicsMode(PhysicsMode.Physics);
-            m_airStallTime = agent.airStallLength;
+            agent.airStallLength = m_offGroundTimer;
 
             // if no air stall, then skip
-            if (m_airStallTime <= 0)
+            if (agent.airStallLength <= 0)
                 m_state = AirStallState.Stopped;
             else
                 m_state = AirStallState.Waiting;
@@ -43,8 +43,8 @@ namespace Stirge.AI
                     break;
                 // keep agent suspended in air until time is up
                 case AirStallState.Active:
-                    m_airStallTime -= deltaTime;
-                    if (m_airStallTime <= 0)
+                    agent.airStallLength -= deltaTime;
+                    if (agent.airStallLength <= 0)
                     {
                         m_state = AirStallState.Stopped;
                         agent.airStallLength = 0f;
@@ -58,7 +58,6 @@ namespace Stirge.AI
             base._Exit(agent);
             agent.SetPhysicsMode(PhysicsMode.NavMesh);
             agent.airStallLength = 0f;
-            m_airStallTime = 0f;
         }
 
         private bool DetermineIfShouldAirStall(Agent agent)
