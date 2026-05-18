@@ -29,9 +29,9 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 1
+      m_damage: -1
       m_statuses:
-      - rid: 2001016855599513790
+      - rid: 2001017013982199898
   m_eventData:
   - m_eventType: 0
     m_eventID: TestLauncherEvent0
@@ -51,8 +51,8 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 2001016855599513790
+    - rid: 2001017013982199898
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 6
-        m_stallLength: 1
+        m_strength: 5
+        m_stallLength: 3
