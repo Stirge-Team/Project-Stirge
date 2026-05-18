@@ -23,7 +23,7 @@ public class TimeManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField, Min(0)] private float m_defaultTimeScale;
+    [SerializeField, Min(0)] private float m_defaultTimeScale = 1;
 
     private Coroutine m_currentTimeScaleCoroutine;
 

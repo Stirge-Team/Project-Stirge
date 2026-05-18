@@ -18,6 +18,7 @@ namespace Stirge.Combat
         };
     }
 
+    [System.Serializable]
     public abstract class TimedStatus : Status
     {
         public TimedStatus(float length)
@@ -32,6 +33,8 @@ namespace Stirge.Combat
         [SerializeField] private float m_length;
 
         private float m_timer;
+
+        protected float Length => m_length;
 
         public override void OnInflict(CombatEntity entity)
         {
@@ -61,7 +64,7 @@ namespace Stirge.Combat
         public override void OnInflict(CombatEntity entity)
         {
             base.OnInflict(entity);
-            entity.SetIsStunned(true);
+            entity.SetIsStunned(true, Length);
         }
 
         public override void OnClear(CombatEntity entity)

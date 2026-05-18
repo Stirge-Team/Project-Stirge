@@ -21,9 +21,9 @@ namespace Stirge.Combat
         public bool IsAttacking => m_isAttacking;
 
         [Header("Status")]
-        [SerializeField] protected List<TimedStatus> m_inflictedStatuses = new();
+        [SerializeReference] protected List<TimedStatus> m_inflictedStatuses = new();
         
-        private bool m_isStunned;
+        protected bool m_isStunned;
 
         [Header("Ground Check Properties")]
         [SerializeField, Min(0)] protected float m_groundedCheckDistance;
@@ -91,7 +91,7 @@ namespace Stirge.Combat
             // inflict the Status
             status.OnInflict(this);   
         }
-        public void InflictStatus(TimedStatus status)
+        public void InflictTimedStatus(TimedStatus status)
         {
             // add to list to be updated
             switch (status.GetType().Name)
@@ -113,13 +113,13 @@ namespace Stirge.Combat
             List<TimedStatus> toRemove = new();
             foreach (TimedStatus status in m_inflictedStatuses)
             {
+                status.Update(this, deltaTime);
                 if (status.IsCleared)
                 {
                     status.OnClear(this);
                     toRemove.Add(status);
                     continue;
                 }
-                status.Update(this, deltaTime);
             }
 
             if (toRemove.Count > 0)
@@ -130,9 +130,12 @@ namespace Stirge.Combat
         {
             return m_isStunned;
         }
-        public void SetIsStunned(bool value)
+        public void SetIsStunned(bool value, float stunLength = 0)
         {
             m_isStunned = value;
+
+            if (value)
+                EnterStun(stunLength);
         }
 
         public abstract void EnterStun(float stunLength);
@@ -148,6 +151,7 @@ namespace Stirge.Combat
 
         public void UseAttack(AttackData attackData)
         {
+            StopAttacking();
             m_attackSequence = attackData.EvaluateSequence();
             m_currentAttackNode = null;
             m_currentAttackIndex = -1;

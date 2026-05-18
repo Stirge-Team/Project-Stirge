@@ -25,8 +25,8 @@ namespace Stirge.Input
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
 
-        private Dictionary<AttackInput, AttackData> m_groundedBindings;
-        private Dictionary<AttackInput, AttackData> m_airBindings;
+        private Dictionary<AttackInput, AttackData> m_groundedBindings = new();
+        private Dictionary<AttackInput, AttackData> m_airBindings = new();
 
         // if combos are never going to have branching paths, this can just become an AttackBinding
         private Dictionary<AttackInput, AttackData> m_comboBindings;
