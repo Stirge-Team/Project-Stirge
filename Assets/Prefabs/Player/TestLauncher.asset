@@ -29,7 +29,7 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: -1
+      m_damage: 1
       m_statuses:
       - rid: 2001017013982199898
   m_eventData:

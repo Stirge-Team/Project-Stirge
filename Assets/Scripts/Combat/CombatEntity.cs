@@ -74,7 +74,7 @@ namespace Stirge.Combat
         #region Death State
         public void TakeDamage(int damage)
         {
-            m_health.ModifyHealth(damage);
+            m_health.ModifyHealth(-Mathf.Abs(damage));
             OnDamageTaken(damage);
         }
         protected abstract void OnDamageTaken(int damage);
