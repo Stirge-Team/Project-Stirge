@@ -154,18 +154,22 @@ namespace Stirge.Player
                 SetVelocity(resetVelo);
             }
         }
-        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange)
+        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange, float flipTime = 0)
         {
             ResetVelocity(true, false, true);
             switch (setMotor)
             {
                 case SetMotorAction.Off:
-                    SetActive(false);
+                    SetActive(false, false, flipTime);
                     break;
                 case SetMotorAction.On:
                     SetActive(true);
                     break;
             }
+        }
+        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange)
+        {
+            HaltHorizontalVelocity(setMotor, 0);
         }
         public void HaltHorizontalVelocity(bool setTo = false)
         {

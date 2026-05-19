@@ -46,8 +46,7 @@ namespace Stirge.Player
         #region Status
         public override void EnterStun(float stunLength)
         {
-            //m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
-            m_movement.Motor.SetActive(false, false, stunLength);
+            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.Off, stunLength);
             m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
@@ -58,7 +57,7 @@ namespace Stirge.Player
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
-            m_movement.Motor.ApplyForce(-transform.forward * strength + -transform.up * height, ForceMode.Impulse, true);
+            m_movement.Motor.ApplyForce(-transform.forward * strength + transform.up * height, ForceMode.Impulse, true);
         }
 
         public override bool IsGrounded()
