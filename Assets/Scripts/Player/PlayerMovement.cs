@@ -190,7 +190,7 @@ namespace Stirge.Player
             }
 
             //do some decceleration - the clamped value helps when getting the movement down to zero
-            m_motor.ApplyForce(m_motor._horizontalDirection * -m_currentStateSettings._friction * Mathf.Clamp(m_motor._horizontalSpeed, 0, 1) * Time.deltaTime, ForceMode.Force, true);
+            m_motor.ApplyForce(m_motor._horizontalDirection * -m_currentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
 
             //Clamping the players fall speed
             m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
