@@ -2526,6 +2526,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &793071422 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8141254394682916539, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+  m_PrefabInstance: {fileID: 921871855}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6c0afad80a47b5dac54b9c70cf7937, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Camera.LockOnCamera
 --- !u!1001 &825597805
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2705,15 +2716,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5387391105207413060, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.000000006749159
+      value: -0.000000032873636
       objectReference: {fileID: 0}
     - target: {fileID: 5387391105207413060, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0000000011159872
+      value: -0.000000005435721
       objectReference: {fileID: 0}
     - target: {fileID: 5387391105207413060, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9866035
+      value: 0.98660344
       objectReference: {fileID: 0}
     - target: {fileID: 5387391105207413060, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2769,11 +2780,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -5.6879373e-10
+      value: -0.000000031610146
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -1.8959745e-10
+      value: -0.000000010536714
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.y
@@ -2781,7 +2792,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.31622776
+      value: -0.31622773
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6220,6 +6231,26 @@ PrefabInstance:
     - target: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionId
+      value: 70c6e45d-6e67-44ab-acbc-7bc58bd9583c
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[17].m_ActionName
+      value: 'Player/A[/Mouse/middleButton]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 793071422}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggerLockOn
       objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.x

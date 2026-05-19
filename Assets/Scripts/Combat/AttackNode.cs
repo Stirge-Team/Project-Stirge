@@ -17,6 +17,7 @@ namespace Stirge.Combat.Attacks
             typeof(TranslateNode),
             typeof(ChanceNode),
             typeof(DelayNode),
+            typeof(RangeNode),
         };
     }
 }

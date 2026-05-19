@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Stirge.Combat.Attacks
 {
     using Tools;
-    
+
     [CustomPropertyDrawer(typeof(AttackNode), true)]
     public class AttackNodeDrawer : EasyPropertyDrawer
     {
@@ -78,6 +78,25 @@ namespace Stirge.Combat.Attacks
                         }
 
                         break;
+                    case nameof(RangeNode):
+                        DrawPropertyField("m_rangedNodes");
+
+                        // add Attack Node to array button
+                        // select AttackNode popup
+                        m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
+
+                        // create new AttackNode button
+                        if (GUI.Button(GetNewRect(), "Add new" + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
+                        {
+                            AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
+                            SerializedProperty nodesProp = FindPropertyRelative("m_rangedNodes");
+                            nodesProp.arraySize++;
+                            SerializedProperty newAttackNodeProp = nodesProp.GetArrayElementAtIndex(nodesProp.arraySize - 1);
+                            newAttackNodeProp.managedReferenceValue = new RangeNode.RangedNode(newAttackNode);
+                            nodesProp.isExpanded = true;
+                            newAttackNodeProp.isExpanded = true;
+                        }
+                    break;
                 }
             }
 
@@ -119,9 +138,12 @@ namespace Stirge.Combat.Attacks
                         totalLines += GetPropertyLineHeight("m_nodes");
                         totalLines += 2; // for popup and add button
                         break;
+                    case nameof(RangeNode):
+                        totalLines += 50;
+                        break;
                 }
             }
-            
+
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
         }
     }
