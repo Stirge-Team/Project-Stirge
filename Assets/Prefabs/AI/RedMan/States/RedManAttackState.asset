@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
-  m_Name: RedManLungeState
+  m_Name: RedManAttackState
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
   - rid: 2001017037104349258
@@ -26,7 +26,7 @@ MonoBehaviour:
     - rid: 2001017037104349258
       type: {class: AttackingBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_attackData: {fileID: 11400000, guid: 6c0d4dac20c368bcba0abcb733129a68, type: 2}
+        m_attackData: {fileID: 11400000, guid: 529dba386096bbdf5936e71f705c4213, type: 2}
         m_exitState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
     - rid: 2001017037104349259
       type: {class: AttackingCondition, ns: Stirge.AI, asm: Assembly-CSharp}

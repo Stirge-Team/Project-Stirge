@@ -139,7 +139,8 @@ namespace Stirge.Combat.Attacks
                         totalLines += 2; // for popup and add button
                         break;
                     case nameof(RangeNode):
-                        totalLines += 50;
+                        totalLines += GetPropertyLineHeight("m_rangedNodes");
+                        totalLines += 2;
                         break;
                 }
             }
