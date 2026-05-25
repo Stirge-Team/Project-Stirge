@@ -133,7 +133,7 @@ namespace Stirge.Tools
             // If property is part of an array
             if (PropertyIsArrayElement())
             {
-                m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
+                m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label, EditorStyles.foldout);
             }
             else
             {
