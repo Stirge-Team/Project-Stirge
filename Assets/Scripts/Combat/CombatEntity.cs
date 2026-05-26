@@ -148,9 +148,12 @@ namespace Stirge.Combat
         private AttackNode m_currentAttackNode;
         private int m_currentAttackIndex;
         private Coroutine m_currentAttackCoroutine;
+        protected bool m_hasAttackToken = false;
 
         public void UseAttack(AttackData attackData)
         {
+            if (!m_hasAttackToken) return; //fail if no attack token
+
             StopAttacking();
             m_attackSequence = attackData.EvaluateSequence();
             m_currentAttackNode = null;
@@ -345,6 +348,29 @@ namespace Stirge.Combat
             m_currentAttackNode = null;
             Debug.Log($"Finished processing Delay Node.");
         }
+
+        public virtual bool GiveToken(float timeout = 0)
+        {
+            m_hasAttackToken = true;
+            //remove token after given time, if any
+            if (timeout > 0) StartCoroutine(TokenTimeout(timeout));
+            return m_hasAttackToken;
+        }
+        private IEnumerator TokenTimeout(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            RemoveToken();
+        }
+        public virtual bool RemoveToken()
+        {
+            return m_hasAttackToken = false;
+        }
+
+        internal virtual void LostRaffle()
+        {
+            Debug.Log($"[{name}]: dude i can't believe i lost the attack token raffle this is so sad :(", this);
+        }
+
         #endregion
     }
 }
