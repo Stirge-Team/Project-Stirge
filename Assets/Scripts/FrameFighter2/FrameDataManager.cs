@@ -146,6 +146,8 @@ namespace FrameFighter2.Manager
                 ComboListenerCancel();
                 //reset hitboxes
                 DestroyAllHitboxes();
+                //reset player combo listeners
+                PlayerInputProcessing.Instance.ClearComboBinding();
                 //reset other variables
                 m_lastLoopCount = 0;
                 m_lastFrame = -1;
@@ -252,17 +254,19 @@ namespace FrameFighter2.Manager
                 Debug.Log($"Start combo input checking for animation {m_currentData.name} from frame {m_currentData.NextComboInput.ComboInputTimeStart} to frame {m_currentData.NextComboInput.ComboInputTimeEnd}.");
 
                 //create and add the combo binding
-                Dictionary<AttackInput, AttackData> comboBind = new();
-                comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
-                PlayerInputProcessing.Instance.SetComboBinding(comboBind);
+                //Dictionary<AttackInput, AttackData> comboBind = new();
+                //comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
+                PlayerInputProcessing.Instance.AddComboBinding(new AttackBinding(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack));
 
                 m_activeComboListers.Add(m_currentData.NextComboInput);
             }
+            /*
             else if(m_currentData.NextComboInput.NextComboAttack == null)
             {
                 //Remove any lingering combo data if this attack has none
                 PlayerInputProcessing.Instance.ClearComboBinding();
             }
+            */
 
             for (int i = 0; i < m_activeComboListers.Count; i++)
             {
