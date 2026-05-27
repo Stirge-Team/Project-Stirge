@@ -292,7 +292,7 @@ GameObject:
   - component: {fileID: 1690361819}
   - component: {fileID: 1690361818}
   m_Layer: 0
-  m_Name: BeingOfGreed
+  m_Name: BeingOfGreed (0)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -364,13 +364,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361484462ac61fd679fb2bf9729b55f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.AttackTokenDispenser
-  m_maxTokens: 2
-  m_tokenLifetime: 1
+  m_maxTokens: 1
+  m_tokenLifetime: 0
   m_raffleTime: 3
-  m_entryLimit: 5
+  m_entryLimit: 3
   m_drawOnLimitReached: 1
   m_allowRepeatEntries: 0
-  m_targetReference: {fileID: 2118632100}
+  m_defaultComparisionMethod: 1
 --- !u!4 &2118632100
 Transform:
   m_ObjectHideFlags: 0

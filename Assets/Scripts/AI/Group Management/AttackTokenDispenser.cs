@@ -1,6 +1,6 @@
-using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
+using Stirge.ScoringMethods;
 
 namespace Stirge.Combat
 {
@@ -27,34 +27,50 @@ namespace Stirge.Combat
             public CombatEntity Contentant => m_contestant;
             private float m_score = 0;
             public float Score => m_score;
+            private ScoringMethod m_scoreMethod;
+            //HERE IS MY REASONING FOR THIS
+            //
+            // You could make a class of functions, that can all be different scoring methods
+            //
+
             private bool m_winner = false;
             public bool Winner => m_winner;
 
-            public EntryData(CombatEntity enemy)
+            public EntryData(CombatEntity enemy, ScoringMethod scoringMethod)
             {
                 m_contestant = enemy;
+                m_scoreMethod = scoringMethod;
                 m_score = 0;
             }
-            public void SetScore(float value)
+            public void SetScore()//float value)
             {
-                m_score = value;
+                m_score = m_scoreMethod.ScoreFunction();
+                //m_score = value;
             }
             public void SetWinner(bool value)
             {
                 m_winner = value;
             }
         }
-        private EntryData[] m_entrantList;
-        private int m_submittedEntries = 0;
-        [SerializeField, Tooltip("The target to base the scoring around (this is to be replaced)")]
-        private Transform m_targetReference;
+        private List<EntryData> m_entrantList;
+        public enum ScoreComparisionMethod
+        {
+            [InspectorName(null)]
+            Flip = -2,
+            [InspectorName(null)]
+            Reset = -1,
+            Standard = 0,
+            Golf = 1,
+        };
+        [SerializeField, Tooltip("The default way to compare entry scores")]
+        private ScoreComparisionMethod m_defaultComparisionMethod;
+        private ScoreComparisionMethod m_comparisionMethod;
+
         public void Awake()
         {
             //singleton setup
             if (instance == null)
-            {
                 instance = this;
-            }
             else if (instance != this)
             {
                 Debug.LogError("There are multiple Attack Token Dispensers in this scene, please remove them");
@@ -66,162 +82,125 @@ namespace Stirge.Combat
                 Debug.LogWarning("There are more tokens to give then possible entries. The maximum number of entries should ALWAYS be greater then or equal to the maximum number of tokens! (An automatic adjustment has been applied)", this);
                 m_entryLimit = m_maxTokens;
             }
-            ResetList();
             m_countdown = m_raffleTime;
+            ChangeComparisionMethod(ScoreComparisionMethod.Reset);
+            ResetList();
         }
         private void ResetList()
         {
-            m_entrantList = new EntryData[m_entryLimit];
-            m_submittedEntries = 0;
+            m_entrantList = new();
+            enabled = false;
         }
-        public bool EnterAttackRaffle(CombatEntity enterant)
+        public bool EnterAttackRaffle(CombatEntity enterant, ScoringMethod scoreMethod)
         {
-            //checks for any free slots in the list and returns true is there is and the enemy is added.
-            for (int i = 0; i < m_entrantList.Length; i++)
-            {
-                if (m_entrantList[i] == null)
-                {
-                    m_entrantList[i] = new(enterant);
-                    m_submittedEntries++;
+            //bounce if the list is full
+            if (m_entrantList.Count >= m_entryLimit) return false;
 
-                    if (m_drawOnLimitReached && m_submittedEntries == m_entryLimit)
-                    {
-                        DrawRaffle();
-                    }
-                    return true; //entrant is added to the list
-                }
-                else if (!m_allowRepeatEntries && m_entrantList[i].Contentant == enterant)
-                {
-                    return false;
-                }
-            }
-            return false; //entrant not added to the list
+            //check if the incoming request has already entered the raffle
+            if (!m_allowRepeatEntries)
+                foreach (var entry in m_entrantList)
+                    if (entry.Contentant == enterant) return false;
+
+            //if this entry is to be our first, enable the update function
+            if (m_entrantList.Count == 0) enabled = true;
+            m_entrantList.Add(new(enterant, scoreMethod));
+
+            //check if we've reached the limit on entries to draw immediatly.
+            if (m_drawOnLimitReached && m_entrantList.Count == m_entryLimit) DrawRaffle();
+
+            return true; //entrant is added to the list
         }
-
         private void ScoreEntries()
         {
-            for (int i = 0; i < m_entrantList.Length; i++)
-            {
+            for (int i = 0; i < m_entrantList.Count; i++)
                 if (m_entrantList[i] != null)
-                    //distance check is a placeholder, a more complex check is to be added when the Utility AI system is implemented.
-                    m_entrantList[i].SetScore(Vector3.Distance(m_entrantList[i].Contentant.transform.position, m_targetReference.position));
-            }
+                    m_entrantList[i].SetScore();
         }
-        private EntryData[] SortEntrantsByScore(bool golfScoring = false, bool setAsMainArray = true)
+        private List<EntryData> SortEntrantsByScore()
         {
-            EntryData[] sortedArray = new EntryData[m_entrantList.Length];
-
-            //go through each slot in the new array
-            for (int x = 0; x < sortedArray.Length; x++)
+            bool sorted = false;
+            while (!sorted)
             {
-                //compare the score to each of the entrants.
-                for (int y = 0; y < m_entrantList.Length; y++)
-                {
-                    //if either are null skip
-                    if (m_entrantList[y] == null)
+                sorted = true;
+                for (int i = 1; i < m_entrantList.Count; i++)
+                    //if golf scoring
+                    // current less then previous
+                    //else
+                    // current greater then previous
+                    //suprised inline if statements work here.
+                    if ((m_entrantList[i].Score < m_entrantList[i - 1].Score && m_comparisionMethod == ScoreComparisionMethod.Golf) || (m_entrantList[i].Score > m_entrantList[i - 1].Score && m_comparisionMethod == ScoreComparisionMethod.Standard))
                     {
-                        continue;
+                        EntryData tmp = m_entrantList[i - 1];
+                        m_entrantList[i - 1] = m_entrantList[i];
+                        m_entrantList[i] = tmp;
+                        sorted = false;
                     }
-                    else if (sortedArray[x] == null || (m_entrantList[y].Score > sortedArray[x].Score && !golfScoring) || (m_entrantList[y].Score < sortedArray[x].Score && golfScoring))
-                    {
-                        sortedArray[x] = m_entrantList[y];
-                    }
-                }
             }
-            if(setAsMainArray) m_entrantList = sortedArray;
-            return sortedArray;
+
+            return m_entrantList;
         }
-        public void CheckWinners(bool golfScoring = false)
+        public void CheckWinners()
         {
-            EntryData[] winners = new EntryData[m_maxTokens];
-            //fill the list of winners (if only 2 entities submitted entries and we're drawing 2 winners, they automatically win)
-            for (int i = 0; i < winners.Length; i++)
-            {
-                winners[i] = m_entrantList[i];
-            }
-            //goes through the list of winners and compares their scores to the current indexed entry.
-            for (int y = m_maxTokens; y < m_entrantList.Length; y++)
-            {
-                //skip if no entry at index
-                if (m_entrantList[y] == null) continue;
-
-                if (m_entrantList[y].Score > m_entrantList[SortEntrantsByScore(golfScoring)].Score)
-                {
-
-                }
-                //check all the winners against the current indexed entry.
-                for (int x = 0; x < winners.Length; x++)
-                {
-                    //so currently its only comparing the first score, when it should be comparing the highest score.
-                    winners[x] = CompScores(winners[x], m_entrantList[y], golfScoring);
-                    //if the current winner is the same as the current indexed entry, they have won, so we can stop comparing.
-                    if (winners[x] == m_entrantList[y]) break;
-                }
-
-            }
-            //mark the entries as winners
-            foreach (var winner in winners)
-            {
-                winner.SetWinner(true);
-            }
+            for (int i = 0; i < m_entrantList.Count; i++)
+                if (i < m_maxTokens)
+                    m_entrantList[i].Contentant.GiveToken(m_tokenLifetime);
+                else
+                    m_entrantList[i].Contentant.LostRaffle();
         }
-        private EntryData CompScores(EntryData entryA, EntryData entryB, bool golfScoring = false)
-        {
-            //if there is no value in the first entry.
-            if (entryA == null)
-            {
-                return entryB;
-            }
-            //incoming greater score
-            if (entryA.Score < entryB.Score && !golfScoring)
-            {
-                return entryB;
-            }
-            //incoming lesser score
-            else if (entryA.Score > entryB.Score && golfScoring)
-            {
-                return entryB;
-            }
-            return entryA;
-        }
+
         private void DrawRaffle()
         {
             ScoreEntries();
-            CheckWinners(true);
-            foreach (var entry in m_entrantList)
-            {
-                if (entry == null) continue;
-
-                if (entry.Winner)
-                    entry.Contentant.GiveToken(m_tokenLifetime);
-                else
-                    entry.Contentant.LostRaffle();
-            }
+            SortEntrantsByScore();
+            CheckWinners();
             ResetList();
-        }
-        private bool ContainsEntry(EntryData[] array, EntryData data)
-        {
-            foreach (var item in array)
-            {
-                if (item == data) return true;
-            }
-            return false;
         }
         public void Update()
         {
-            if (m_submittedEntries == 0)
-                return; //no reason to update if there are no entries!
-
             //simple timer loop
             if (m_countdown > 0)
-            {
                 m_countdown -= Time.deltaTime;
-            }
             else
             {
                 DrawRaffle();
                 m_countdown = m_raffleTime;
             }
+        }
+        public ScoreComparisionMethod ChangeComparisionMethod(ScoreComparisionMethod newMethod = ScoreComparisionMethod.Flip)
+        {
+            //Alert devs to special enum case being sent!
+            if (newMethod < 0)
+            {
+                Debug.Log("Applying dynamic change to comparision method");
+            }
+
+            switch (newMethod)
+            {
+                case ScoreComparisionMethod.Flip: //-2, Swaps between standard and golf scoring methods
+                    if (m_comparisionMethod == ScoreComparisionMethod.Standard)
+                        m_comparisionMethod = ScoreComparisionMethod.Golf;
+                    else if (m_defaultComparisionMethod == ScoreComparisionMethod.Golf)
+                        m_comparisionMethod = ScoreComparisionMethod.Standard;
+                    break;
+                case ScoreComparisionMethod.Reset: //-1, Resets the current method back to the default
+                    m_comparisionMethod = m_defaultComparisionMethod;
+                    break;
+                case ScoreComparisionMethod.Standard: //0, Larger scores will win
+                case ScoreComparisionMethod.Golf: //1, Smaller scores will win
+                    m_comparisionMethod = newMethod;
+                    break;
+                default: //Error in call
+                    Debug.Log($"{newMethod} is not a vaild method value! Please try something else");
+                    break;
+            }
+
+            if(m_comparisionMethod < 0) //THE BIG BAD ERROR. IF YOU GET TO THIS YOU DONE FUCKED UP!
+            {
+                Debug.LogError("Invalid comparision method set! Reseting to default", this);
+                m_comparisionMethod = m_defaultComparisionMethod;
+            }
+
+            return m_comparisionMethod;
         }
     }
 }
