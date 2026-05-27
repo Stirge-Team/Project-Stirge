@@ -5,6 +5,7 @@ namespace Stirge.AI
     [System.Serializable]
     public class PhysicsBehaviour : Behaviour
     {
+        [Tooltip("Don't set the Physics mode to the Enter Mode when this Behaviour starts.")]
         [SerializeField] private bool m_maintainPriorMode = false;
         [SerializeField] private PhysicsMode m_enterMode;
         [SerializeField] private PhysicsMode m_exitMode;

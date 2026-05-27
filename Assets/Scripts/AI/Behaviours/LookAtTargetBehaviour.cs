@@ -18,6 +18,10 @@ namespace Stirge.AI
             {
                 agent.RotateTowards((Vector3)agent.TargetPosition, m_maxDegreesDelta * deltaTime);
             }
+            else if (agent.TargetTransform != null)
+            {
+                agent.RotateTowards(agent.TargetTransform.position, m_maxDegreesDelta * deltaTime);
+            }
         }
 
         public override void _Exit(Agent agent)

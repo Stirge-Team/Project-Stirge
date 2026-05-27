@@ -18,7 +18,7 @@ MonoBehaviour:
     m_scale: {x: 1, y: 4, z: 1}
     m_startFrame: 12
     m_endFrame: 20
-    m_groupID: 0
+    m_groupID: 1
     m_hitboxShape: 0
     m_hitboxType: 2
     m_hitboxParent: 0000020000
@@ -30,13 +30,28 @@ MonoBehaviour:
       m_endFrame: 0
     m_onHitEffect:
       m_damage: 1
-      m_statuses: []
-  m_eventData: []
+      m_statuses:
+      - rid: 2001016855599513791
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: TestString1Event0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 5
+    m_endFrame: 7
+  - m_eventType: 0
+    m_eventID: TestString1Event1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 45
+    m_endFrame: 46
   m_nextComboInput:
-    m_nextComboAttack: TestString2
-    m_comboAttackInput: 8
-    m_comboInputTimeStart: 20
-    m_comboInputTimeEnd: 45
+    m_nextComboAttack: {fileID: 11400000, guid: 28bb705b0d4cdbc729a2e40f764eebd2, type: 2}
+    m_comboAttackInput: 1
+    m_comboInputTimeStart: 27
+    m_comboInputTimeEnd: 60
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2001016855599513791
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_length: 0.5

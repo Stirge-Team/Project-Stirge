@@ -5,9 +5,12 @@ using System.Text.RegularExpressions;
 
 namespace Stirge.Combat
 {
+    using Tools;
+    
     [CustomPropertyDrawer(typeof(OnHitEffect))]
-    public class OnHitEffectDrawer : PropertyDrawer
+    public class OnHitEffectDrawer : EasyPropertyDrawer
     {
+        #region Names
         public string[] StringTypes
         {
             get
@@ -20,48 +23,29 @@ namespace Stirge.Combat
             }
         }
         private string[] m_stringTypes;
+        #endregion
 
         private int m_selectedStatus;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        protected override void DrawGUI(GUIContent label)
         {
-            int totalLines = 0;
-
-            void DrawPropertyField(string propertyName)
-            {
-                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
-                Rect propRect = GetNewRect();
-                EditorGUI.PropertyField(propRect, propToDraw);
-
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
-                {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
-                }
-            }
-
-            Rect GetNewRect()
-            {
-                totalLines++;
-                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-            }
-
             EditorGUI.EndFoldoutHeaderGroup();
 
-            EditorGUI.BeginProperty(position, label, property);
-            property.isExpanded = EditorGUI.Foldout(GetNewRect(), property.isExpanded, label);
-            if (property.isExpanded)
+            EditorGUI.BeginProperty(m_position, label, m_property);
+
+            // Create Label
+            DrawLabelHeader(label);
+
+            if (m_property.isExpanded)
             {
+                if (!PropertyIsArrayElement())
+                    EditorGUI.indentLevel++;
+
                 // draw damage property
                 DrawPropertyField("m_damage");
 
                 // draw Statuses array
                 DrawPropertyField("m_statuses");
-
-                // add extra lines for height of array
-                SerializedProperty statusesProp = property.FindPropertyRelative("m_statuses");
-                if (statusesProp.isExpanded)
-                    totalLines += (int)(EditorGUI.GetPropertyHeight(statusesProp) / EditorGUIUtility.singleLineHeight);
 
                 // draw popup for picking new Statuses
                 m_selectedStatus = EditorGUI.Popup(GetNewRect(), m_selectedStatus, StringTypes);
@@ -69,27 +53,29 @@ namespace Stirge.Combat
                 // create new Status button
                 if (GUI.Button(GetNewRect(), "Add new " + StringTypes[m_selectedStatus] + " Status"))
                 {
+                    SerializedProperty statusesProp = FindPropertyRelative("m_statuses");
                     Status newStatus = System.Activator.CreateInstance(Status.StatusTypes[m_selectedStatus]) as Status;
                     statusesProp.arraySize++;
                     SerializedProperty newStatusProp = statusesProp.GetArrayElementAtIndex(statusesProp.arraySize - 1);
                     newStatusProp.managedReferenceValue = newStatus;
                     newStatusProp.isExpanded = true;
                 }
+
+                if (!PropertyIsArrayElement())
+                    EditorGUI.indentLevel--;
             }
 
             EditorGUI.EndProperty();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override float GetHeight(GUIContent label)
         {
-            int totalLines = 1; // for foldout
+            int totalLines = 1; // for foldout/label
 
-            if (property.isExpanded)
+            if (m_property.isExpanded)
             {
-                totalLines += 4; // for damage, Status label, popup, and button
-
-                SerializedProperty statusesProp = property.FindPropertyRelative("m_statuses");
-                totalLines += (int)(EditorGUI.GetPropertyHeight(statusesProp) / EditorGUIUtility.singleLineHeight);
+                totalLines += 4; // for damage, popup, and button
+                totalLines += GetPropertyLineHeight("m_statuses"); // for Statuses array
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);

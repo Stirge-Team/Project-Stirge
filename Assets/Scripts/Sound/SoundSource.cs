@@ -11,9 +11,12 @@ namespace Stirge.Sound
 
         public bool IsPlaying => m_audioSource.isPlaying;
         public bool IsLooping => m_audioSource.loop;
+        private Transform m_target;
 
-        public void PlaySound(SoundClip soundClip)
+        public void PlaySound(SoundClip soundClip, Transform target = null)
         {
+            if(target != null) m_target = target;
+
             m_soundClip = soundClip;
             
             m_audioSource.resource = soundClip.AudioResource;
@@ -32,10 +35,18 @@ namespace Stirge.Sound
 
             m_audioSource.Play();
         }
+        private void Update()
+        {
+            if(m_target != null)
+            {
+                transform.position = m_target.position;
+            }
+        }
 
         public void Stop()
         {
             m_audioSource.Stop();
+            m_target = null;
         }
     }
 }

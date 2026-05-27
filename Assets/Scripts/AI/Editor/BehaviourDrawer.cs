@@ -3,63 +3,26 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    using Tools;
+    
     [CustomPropertyDrawer(typeof(Behaviour), true)]
-    public class BehaviourDrawer : PropertyDrawer
+    public class BehaviourDrawer : EasyPropertyDrawer
     {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        protected override void DrawGUI(GUIContent label)
         {
-            int totalLines = 0;
+            SetLabelTextToTypeName(label);
 
-            void DrawPropertyField(string propertyName)
-            {
-                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
-                Rect propRect = GetNewRect();
-                EditorGUI.PropertyField(propRect, propToDraw);
-
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
-                {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
-                }
-            }
-
-            Rect GetNewRect()
-            {
-                totalLines++;
-                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-            }
-
-            string typeName = property.type;
-            // format if managed reference aka not FSM
-            if (typeName == nameof(FiniteStateMachine))
-            {
-                label.text = typeName;
-            }
-            else
-            {
-                typeName = typeName.Substring(17, typeName.Length - 18);
-                
-                // if Behaviour, then prompt deletion
-                if (typeName == string.Empty)
-                    label.text = "Empty, pls delete";
-                else
-                    label.text = typeName;
-            }
-
-            EditorGUI.BeginProperty(position, label, property);
+            EditorGUI.BeginProperty(m_position, label, m_property);
 
             Rect foldoutRect = GetNewRect();
-            property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);
-            if (property.isExpanded)
+            m_property.isExpanded = EditorGUI.Foldout(foldoutRect, m_property.isExpanded, label);
+            if (m_property.isExpanded)
             {
                 switch (label.text)
                 {
                     case nameof(AirJuggleBehaviour):
                     case nameof(KnockbackBehaviour):
                         DrawPropertyField("m_offGroundTime");
-                        break;
-                    case nameof(AttackBehaviour):
-                        DrawPropertyField("m_attackName");
                         break;
                     case nameof(PhysicsBehaviour):
                         DrawPropertyField("m_maintainPriorMode");
@@ -69,35 +32,41 @@ namespace Stirge.AI
                     case nameof(LookAtTargetBehaviour):
                         DrawPropertyField("m_maxDegreesDelta");
                         break;
+                    case nameof(MoveToTargetBehaviour):
+                        DrawPropertyField("m_speed");
+                        break;
+                    case nameof(AttackingBehaviour):
+                        DrawPropertyField("m_exitState");
+                        DrawPropertyField("m_attackData");
+                        break;
                 }
             }
 
             EditorGUI.EndProperty();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override float GetHeight(GUIContent label)
         {
             int totalLines = 1; // for foldout
 
-            if (property.isExpanded)
+            if (m_property.isExpanded)
             {
-                string typeName = property.type;
-                // format if managed reference aka not FSM
-                if (typeName != nameof(FiniteStateMachine))
-                {
-                    typeName = typeName.Substring(17, typeName.Length - 18);
-                }
+                SetLabelTextToTypeName(label);
 
-                switch (typeName)
+                switch (label.text)
                 {
                     case nameof(AirJuggleBehaviour):
-                    case nameof(AttackBehaviour):
                     case nameof(KnockbackBehaviour):
                     case nameof(LookAtTargetBehaviour):
+                    case nameof(MoveToTargetBehaviour):
                         totalLines++;
                         break;
                     case nameof(PhysicsBehaviour):
                         totalLines += 3;
+                        break;
+                    case nameof(AttackingBehaviour):
+                        totalLines++;
+                        totalLines += GetPropertyLineHeight("m_attackData");
                         break;
                 }
             }

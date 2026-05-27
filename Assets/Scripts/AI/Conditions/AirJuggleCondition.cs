@@ -7,7 +7,7 @@ namespace Stirge.AI
     {        
         protected override bool _IsTrue(Agent agent)
         {
-            return agent.ContainsMemory("AirStallLength");
+            return agent.airStallLength > 0;
         }
     }
 }

@@ -1,5 +1,8 @@
 using System;
 using Stirge.Camera;
+using Stirge.Combat;
+using Stirge.Input;
+using Stirge.Sound;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,12 +67,7 @@ namespace Stirge.Player
         //Grounded bool
         public bool IsGrounded { get; private set; }
 
-        [
-            SerializeField,
-            Tooltip(
-                "The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f."
-            )
-        ]
+        [SerializeField, Tooltip("The distance from the center of the player that considers them grounded. This uses a sphere with a radius of 0.5f.")]
         private float m_groundCheckDistance;
 
         //The layers that the player considers "ground"
@@ -80,6 +78,8 @@ namespace Stirge.Player
             Tooltip("The window after falling off an object that the player can still jump.")
         ]
         private float m_coyoteTime = 0.2f;
+        [SerializeField, Tooltip("The sound that plays when the player lands.")]
+        private SoundClip m_landingSound;
 
         //The remaining time for coyote time
         private float m_coyoteCountdown;
@@ -110,6 +110,7 @@ namespace Stirge.Player
         private Transform m_lockOnTarget;
 
         private MovementMotor m_motor;
+        public MovementMotor Motor => m_motor;
 
         void Start()
         {
@@ -189,12 +190,7 @@ namespace Stirge.Player
             }
 
             //do some decceleration - the clamped value helps when getting the movement down to zero
-            m_motor.ApplyForce(
-                m_motor._horizontalDirection
-                    * -m_currentStateSettings._friction
-                    * Mathf.Clamp(m_motor._horizontalSpeed, 0, 1)
-                    * Time.deltaTime
-            );
+            m_motor.ApplyForce(m_motor._horizontalDirection * -m_currentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
 
             //Clamping the players fall speed
             m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
@@ -217,6 +213,7 @@ namespace Stirge.Player
                     m_coyoteCountdown = m_coyoteTime;
                     //Reset the fall time
                     m_currentFallTime = 0;
+                    SoundManager.Instance.PlaySoundClipOnObject(m_landingSound, transform);
                 }
             }
             else
@@ -264,7 +261,7 @@ namespace Stirge.Player
             m_inputDirection = context.ReadValue<Vector2>();
         }
 
-        public void OnJump()
+        public bool OnJump()
         {
             //If the player is considered grounded
             if (IsGrounded)
@@ -278,7 +275,9 @@ namespace Stirge.Player
                 //Remove all coyote time
                 m_coyoteCountdown = 0;
                 //Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
+                return true;
             }
+            return false;
         }
 
         public void AssignLockOnTarget(Transform target)

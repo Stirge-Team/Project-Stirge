@@ -111,6 +111,22 @@ namespace FrameFighter2.Hitbox
 
                 if (m_manager.CheckHit(m_groupID, hitCollider))
                 {
+                    //Checking if the call is coming from inside the house - Jackson
+                    Transform parent = hitColliderScript.transform;
+                    for(int x = 0; x < 10; x ++)
+                    {
+                        if(parent.parent == null)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            parent = parent.parent;
+                        }
+                    }
+                    if(parent.GetComponentInChildren<HitboxObject>() == this) continue;
+                    //end - please remove if self hit detection is being added formally
+
                     //invoke hitbox onhit event
                     m_manager.InvokeEvent(m_onHit);
 
@@ -118,10 +134,10 @@ namespace FrameFighter2.Hitbox
                     hitColliderScript.Invoke();
 
                     //get the enemy and inflict the attached effect
-                    Enemy enemy = hitCollider.GetComponentInParent<Enemy>();
-                    if (enemy != null)
+                    CombatEntity combatEntity = hitCollider.GetComponentInParent<CombatEntity>();
+                    if (combatEntity != null)
                     {
-                        m_onHitEffect.OnHit(enemy);
+                        m_onHitEffect.OnHit(combatEntity);
                     }
                 }
             }

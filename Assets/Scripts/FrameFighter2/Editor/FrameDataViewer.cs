@@ -7,41 +7,52 @@ using System.Collections.Generic;
 
 using Stirge.Input;
 using Stirge.Combat;
+using Stirge.Combat.Attacks;
 
 namespace FrameFighter2.Viewer
 {
-    using Manager;
     using Data;
-    using static Data.HitboxData;
+    using Manager;
+    using static Data.CharacterAnimationData;
     using static Data.EventData;
+    using static Data.HitboxData;
     using static Manager.FrameDataManager;
-    using static Data.CharacterAnimationData; 
-    
+
     public class FrameDataViewer : EditorWindow
     {
-        private GameObject m_gameObject;
-        private Animator m_animator;
+        #region Readonly Values
+        private readonly string[] toolbarOptions = { "Hitbox Editor", "Data Viewer", "Options" };
+        private readonly string[] showPreviewOptions = { "Show All", "Show Only Active", "Hide" };
+        #endregion
+
+        #region Components
         private FrameDataManager m_manager;
+        private GameObject m_target;
+        private Animator m_animator;
         private AnimationClip[] m_clips;
+        #endregion
 
-        public bool HasClips()
-        {
-            return !(m_clips == null || m_clips.Length == 0);
-        }
-
+        #region Options/Settings
         private int m_selectedToolbarIndex;
-        private string[] m_toolbarOptions = { "Hitbox Editor", "Data Viewer", "Options" };
         private int m_selectedAnimIndex;
         private float m_animPlayback;
 
-        //options
         private int m_showPreviews = 0; //0 = show all, 1 = show timeline only, show none
-        private string[] m_showPreviewOptions = { "Show All", "Show Only Active", "Hide" };
+        private bool m_lockSelection = false;
+        #endregion
 
+        #region GUI
         //Used for foldouts in the hitbox creation window
         private Dictionary<string, bool> m_foldouts = new();
         private Vector2 m_globalScroll; //used for scrolling entire window
+        #endregion
 
+        #region Unity Events
+        [MenuItem("Tools/Frame Data Viewer")]
+        public static void ShowWindow()
+        {
+            GetWindow<FrameDataViewer>("Frame Data Viewer");
+        }
         bool DrawFoldout(string key, string label)
         {
             if (!m_foldouts.ContainsKey(key))
@@ -50,14 +61,68 @@ namespace FrameFighter2.Viewer
             m_foldouts[key] = EditorGUILayout.BeginFoldoutHeaderGroup(m_foldouts[key], label);
             return m_foldouts[key];
         }
-
-        private bool m_lockSelection = false;
-
-
-        [MenuItem("Tools/Frame Data Viewer")]
-        public static void ShowWindow()
+        public void OnSelectionChange()
         {
-            GetWindow<FrameDataViewer>("Frame Data Viewer");
+            if (m_lockSelection || Application.isPlaying) return;
+
+            //if a game object has been selected
+            GameObject newTarget = Selection.activeGameObject;
+            if (newTarget != null)
+            {
+                // Check if valid target
+                Animator newAnim = newTarget.GetComponent<Animator>();
+                FrameDataManager newFDM = newTarget.GetComponent<FrameDataManager>();
+                if (newAnim != null && newFDM != null)
+                {
+                    // sets old target back to default
+                    if (m_target != null && HasClips())
+                        ResetAnimaton(m_clips[0]);
+
+                    //clears values
+                    Clear();
+
+                    //sets selected game object
+                    m_target = newTarget;
+
+                    //sets animator
+                    m_animator = newAnim;
+
+                    //sets frame data manager
+                    m_manager = newFDM;
+
+                    if (m_manager != null)
+                    {
+                        CharacterAnimationData data = (m_manager.AnimData.Count > 0) ? m_manager.AnimData[0] : null;
+                        if (data) CreatePreviews();
+                    }
+
+                    return;
+                }
+            }
+            // falls through to here if selection was changed but did not find valid target
+            if (m_animator)
+            {
+                // sets character back to default
+                if (HasClips())
+                    ResetAnimaton(m_clips[0]);
+            }
+
+            //clears values
+            Clear();
+
+            Repaint();
+        }
+        private void Clear()
+        {
+            // resets the preview animation on the target
+            if (AnimationMode.InAnimationMode())
+                AnimationMode.StopAnimationMode();
+
+            m_target = null;
+            m_clips = null;
+            m_animator = null;
+            m_manager = null;
+            m_selectedAnimIndex = 0;
         }
 
         public void OnDestroy()
@@ -66,6 +131,8 @@ namespace FrameFighter2.Viewer
             {
                 ResetAnimaton(m_clips[0]);
             }
+
+            Clear();
         }
 
         public void OnGUI()
@@ -79,7 +146,7 @@ namespace FrameFighter2.Viewer
             }
 
             EditorGUILayout.BeginHorizontal();
-            m_selectedToolbarIndex = GUILayout.Toolbar(m_selectedToolbarIndex, m_toolbarOptions, GUILayout.ExpandWidth(false));
+            m_selectedToolbarIndex = GUILayout.Toolbar(m_selectedToolbarIndex, toolbarOptions, GUILayout.ExpandWidth(false));
             m_lockSelection = EditorGUILayout.Toggle(m_lockSelection, GUILayout.ExpandWidth(false));
             EditorGUILayout.EndHorizontal();
 
@@ -88,480 +155,431 @@ namespace FrameFighter2.Viewer
             //what toolbar item was selected
             switch (m_selectedToolbarIndex)
             {
-                case 0: //Hitbox editor
+                //Hitbox editor
+                case 0:
+                    DrawHitboxEditorWindow();
+                    break;
+                //Data viewer
+                case 1:
+                    DrawDataViewerWindow();
+                    break;
+                case 2: //Options
+                    DrawOptionsWindow();
+                    break;
+            }
 
-                    //check if the animator is initialized
-                    if (m_animator)
+            EditorGUILayout.EndScrollView();
+
+        }
+        #endregion
+
+        #region DrawWindow
+        private void DrawHitboxEditorWindow()
+        {
+            //check if the animator is initialized
+            if (m_animator)
+            {
+                // Load Animation Clips
+                if (!HasClips())
+                {
+                    m_clips = GetAnimatorClips(m_animator);
+                    if (m_clips.Length == 0)
                     {
-                        // Load Animation Clips
-                        if (!HasClips())
+                        EditorGUILayout.HelpBox("No animation clips found in the Animator.", MessageType.Warning);
+                        return;
+                    }
+                }
+
+                EditorGUILayout.Space(10);
+
+                EditorGUILayout.LabelField("Animation Viewer", EditorStyles.boldLabel);
+
+                //check if the dropdown has been changed
+                EditorGUI.BeginChangeCheck();
+
+                // Animation Clip Dropdown
+                string[] clipNames = GetClipNames(m_clips);
+                m_selectedAnimIndex = EditorGUILayout.Popup("Animation Clip", m_selectedAnimIndex, clipNames, new GUILayoutOption[] { GUILayout.ExpandWidth(false), GUILayout.MinWidth(250f) });
+                AnimationClip currentClip = m_clips[m_selectedAnimIndex];
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    //if the selected clip index is currently larger than the animation data count, create a new blank slot (stops errors if the animator is updated while the window is open)
+                    while (m_manager && m_selectedAnimIndex > m_manager.AnimData.Count - 1)
+                    {
+                        m_manager.AnimData.Add(null);
+                    }
+
+                    //sets timeline to 0 and updates preview
+                    ResetAnimaton(currentClip);
+                    CreatePreviews();
+                }
+
+                //check if the slider has been changed
+                EditorGUI.BeginChangeCheck();
+
+                m_animPlayback = EditorGUILayout.Slider("Animation Frame", m_animPlayback, 0, FrameCount(currentClip));
+                // Check if we are in animation mode and put a warning if so
+                if (AnimationMode.InAnimationMode())
+                    EditorGUILayout.HelpBox("Using the Unity Animation preview with this tool WILL cause problems.", MessageType.Warning);
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    m_animPlayback = Mathf.Round(m_animPlayback);
+                    StepAnimation(currentClip);
+                    CreatePreviews();
+                }
+                //Hitbox Creation UI
+                if (m_manager)
+                {
+                    CharacterAnimationData data = (m_manager.AnimData.Count > 0) ? m_manager.AnimData[m_selectedAnimIndex] : null;
+
+                    if (data)
+                    {
+                        EditorGUILayout.Space(20);
+
+                        EditorGUILayout.LabelField("Hitboxes:", EditorStyles.boldLabel);
+
+                        //for each hitbox attached to the data
+                        for (int i = 0; i < data.HitboxData.Count; i++)
                         {
-                            m_clips = GetAnimatorClips(m_animator);
-                            if (m_clips.Length == 0)
+                            EditorGUI.indentLevel = 0;
+
+                            EditorGUILayout.BeginHorizontal();
+
+                            //create foldout for easier navigation
+                            if (DrawFoldout(data.name + " Hitbox " + i, "Hitbox " + i + ":"))
                             {
-                                EditorGUILayout.HelpBox("No animation clips found in the Animator.", MessageType.Warning);
-                                return;
-                            }
-                        }
-
-                        EditorGUILayout.Space(10);
-
-                        EditorGUILayout.LabelField("Animation Viewer", EditorStyles.boldLabel);
-
-                        //check if the dropdown has been changed
-                        EditorGUI.BeginChangeCheck();
-
-                        // Animation Clip Dropdown
-                        string[] clipNames = GetClipNames(m_clips);
-                        m_selectedAnimIndex = EditorGUILayout.Popup("Animation Clip", m_selectedAnimIndex, clipNames, new GUILayoutOption[] { GUILayout.ExpandWidth(false), GUILayout.MinWidth(250f) });
-                        AnimationClip currentClip = m_clips[m_selectedAnimIndex];
-
-                        if (EditorGUI.EndChangeCheck())
-                        {
-                            //sets timeline to 0 and updates preview
-                            ResetAnimaton(currentClip);
-                            CreatePreviews();
-                        }
-
-                        //check if the slider has been changed
-                        EditorGUI.BeginChangeCheck();
-
-                        m_animPlayback = EditorGUILayout.Slider("Animation Frame", m_animPlayback, 0, FrameCount(currentClip));
-
-                        if (EditorGUI.EndChangeCheck())
-                        {
-                            m_animPlayback = Mathf.Round(m_animPlayback);
-                            StepAnimation(currentClip);
-                            CreatePreviews();
-                        }
-                        //Hitbox Creation UI
-                        if (m_manager)
-                        {
-                            CharacterAnimationData data = (m_manager.AnimData.Count > 0) ? m_manager.AnimData[m_selectedAnimIndex] : null;
-
-                            if (data)
-                            {
-                                EditorGUILayout.Space(20);
-
-                                EditorGUILayout.LabelField("Hitboxes:", EditorStyles.boldLabel);
-
-                                //for each hitbox attached to the data
-                                for (int i = 0; i < data.HitboxData.Count; i++)
+                                //remove hitbox button
+                                if (GUILayout.Button("X", GUILayout.MaxWidth(20)))
                                 {
+                                    Undo.RecordObject(data, "Removed hitbox data in " + data.name);
+
+                                    //data.HitboxData[i] = null;
+                                    //data.HitboxData.Remove(data.HitboxData[i]);
+
+                                    RemoveHitbox(i);
+
+                                    AnimationEventCleanup();
+
+                                    CreatePreviews();
+
+                                    EditorGUILayout.EndHorizontal();
+
+                                    break;
+                                }
+
+                                EditorGUILayout.EndHorizontal();
+                                //create temp data
+                                HitboxData dataTemp = data.HitboxData[i];
+                                Vector3 position = dataTemp.Position;
+                                Vector3 rotation = dataTemp.Rotation;
+                                Vector3 scale = dataTemp.Scale;
+                                float frameStart = dataTemp.StartFrame;
+                                float frameEnd = dataTemp.EndFrame;
+                                int groupID = dataTemp.GroupID;
+                                var hitboxShape = dataTemp.HitboxShape;
+                                var hitboxType = dataTemp.HitboxType;
+                                string hitboxParent = dataTemp.HitboxParent;
+                                EventData onTrigger = dataTemp.OnHitEvent;
+                                SerializedObject serializedObject = new(m_manager);
+                                OnHitEffect onHitEffect = dataTemp.OnHitEffect;
+
+                                //Hitbox editing
+                                EditorGUI.BeginChangeCheck();
+                                //position, rotation, and scale
+                                position = EditorGUILayout.Vector3Field("Position: ", position);
+                                rotation = (EditorGUILayout.Vector3Field("Rotation: ", rotation));
+
+                                switch (hitboxShape)
+                                {
+                                    case HitboxShapes.Rectangle:
+                                        scale = EditorGUILayout.Vector3Field("Scale: ", scale);
+                                        break;
+                                    case HitboxShapes.Capsule:
+                                        EditorGUILayout.BeginHorizontal();
+                                        scale.x = EditorGUILayout.FloatField("Length: ", scale.x);
+                                        scale.y = EditorGUILayout.FloatField("Radius: ", scale.y);
+                                        EditorGUILayout.EndHorizontal();
+                                        break;
+                                    case HitboxShapes.Sphere:
+                                        scale.x = EditorGUILayout.FloatField("Radius: ", scale.x);
+                                        break;
+                                }
+
+                                EditorGUILayout.Space(10);
+
+                                //hitbox shape
+                                hitboxShape = (HitboxShapes)EditorGUILayout.EnumPopup("Hitbox Shape:", hitboxShape);
+                                //hitbox type
+                                hitboxType = (HitboxTypes)EditorGUILayout.EnumPopup("Hitbox Type:", hitboxType);
+
+                                if (hitboxType == HitboxTypes.AttachedToBone)
+                                {
+                                    EditorGUILayout.Space(10);
+
+                                    string parent = FindObjectNameFromPath(hitboxParent);
+
+                                    EditorGUILayout.LabelField("Currently Selected Bone: " + parent);
+
+                                    DrawTransformRecursive(m_target.transform, 0, ref hitboxParent, i.ToString());
+
                                     EditorGUI.indentLevel = 0;
 
-                                    EditorGUILayout.BeginHorizontal();
+                                    EditorGUILayout.Space(10);
+                                }
 
-                                    //create foldout for easier navigation
-                                    if (DrawFoldout(data.name + " Hitbox " + i, "Hitbox " + i + ":"))
+                                EditorGUILayout.Space(10);
+                                groupID = EditorGUILayout.IntField(new GUIContent("Group ID", "If a hitbox has been triggered on a specific object, " +
+                                    "subsequent hitboxes with the same Group ID will not trigger when colliding on the same object. " +
+                                    "Group ID of 0 will be considered ungrouped."), groupID);
+
+                                string groupedWith = "Group ID 0 assigns no group";
+
+                                if (groupID != 0)
+                                {
+                                    string groupedHitboxes = "(";
+
+                                    for (int j = 0; j < data.HitboxData.Count; j++)
                                     {
-                                        //remove hitbox button
-                                        if (GUILayout.Button("X", GUILayout.MaxWidth(20)))
+                                        if (i == j) continue;
+
+                                        if (data.HitboxData[j].GroupID == groupID)
                                         {
-                                            Undo.RecordObject(data, "Removed hitbox data in " + data.name);
-
-                                            //data.HitboxData[i] = null;
-                                            //data.HitboxData.Remove(data.HitboxData[i]);
-
-                                            RemoveHitbox(i);
-
-                                            AnimationEventCleanup();
-
-                                            CreatePreviews();
-
-                                            EditorGUILayout.EndHorizontal();
-
-                                            break;
+                                            groupedHitboxes += "Hitbox " + j + ", ";
                                         }
+                                    }
 
-                                        EditorGUILayout.EndHorizontal();
-                                        //create temp data
-                                        HitboxData dataTemp = data.HitboxData[i];
-                                        Vector3 position = dataTemp.Position;
-                                        Vector3 rotation = dataTemp.Rotation;
-                                        Vector3 scale = dataTemp.Scale;
-                                        float frameStart = dataTemp.StartFrame;
-                                        float frameEnd = dataTemp.EndFrame;
-                                        int groupID = dataTemp.GroupID;
-                                        var hitboxShape = dataTemp.HitboxShape;
-                                        var hitboxType = dataTemp.HitboxType;
-                                        string hitboxParent = dataTemp.HitboxParent;
-                                        EventData onTrigger = dataTemp.OnHitEvent;
-                                        SerializedObject serializedObject = new(m_manager);
-                                        OnHitEffect onHitEffect = dataTemp.OnHitEffect;
+                                    groupedHitboxes += ")";
+                                    groupedWith = "Grouped With: " + groupedHitboxes;
+                                }
 
-                                        //Hitbox editing
-                                        EditorGUI.BeginChangeCheck();
-                                        //position, rotation, and scale
-                                        position = EditorGUILayout.Vector3Field("Position: ", position);
-                                        rotation = (EditorGUILayout.Vector3Field("Rotation: ", rotation));
+                                EditorGUILayout.LabelField(groupedWith);
 
-                                        switch (hitboxShape)
-                                        {
-                                            case HitboxShapes.Rectangle:
-                                                scale = EditorGUILayout.Vector3Field("Scale: ", scale);
-                                                break;
-                                            case HitboxShapes.Capsule:
-                                                EditorGUILayout.BeginHorizontal();
-                                                scale.x = EditorGUILayout.FloatField("Length: ", scale.x);
-                                                scale.y = EditorGUILayout.FloatField("Radius: ", scale.y);
-                                                EditorGUILayout.EndHorizontal();
-                                                break;
-                                            case HitboxShapes.Sphere:
-                                                scale.x = EditorGUILayout.FloatField("Radius: ", scale.x);
-                                                break;
-                                        }
+                                EditorGUILayout.Space(10);
 
-                                        EditorGUILayout.Space(10);
+                                //start frame and end frame
+                                EditorGUILayout.BeginHorizontal();
+                                frameStart = EditorGUILayout.IntField("Start Frame:", (int)frameStart);
+                                frameEnd = EditorGUILayout.IntField("End Frame:", (int)frameEnd);
+                                EditorGUILayout.EndHorizontal();
 
-                                        //hitbox shape
-                                        hitboxShape = (HitboxShapes)EditorGUILayout.EnumPopup("Hitbox Shape:", hitboxShape);
-                                        //hitbox type
-                                        hitboxType = (HitboxTypes)EditorGUILayout.EnumPopup("Hitbox Type:", hitboxType);
+                                //OnHit Events
+                                EditorGUILayout.Space(10);
 
-                                        if(hitboxType == HitboxTypes.AttachedToBone)
-                                        {
-                                            EditorGUILayout.Space(10);
+                                EditorGUILayout.MinMaxSlider(ref frameStart, ref frameEnd, 0, FrameCount(currentClip));
 
-                                            string parent = FindObjectNameFromPath(hitboxParent);
-
-                                            EditorGUILayout.LabelField("Currently Selected Bone: " + parent);
-
-                                            DrawTransformRecursive(m_gameObject.transform, 0, ref hitboxParent, i.ToString());
-
-                                            EditorGUI.indentLevel = 0;
-
-                                            EditorGUILayout.Space(10);
-                                        }
-
-                                        EditorGUILayout.Space(10);
-                                        groupID = EditorGUILayout.IntField(new GUIContent("Group ID", "If a hitbox has been triggered on a specific object, " +
-                                            "subsequent hitboxes with the same Group ID will not trigger when colliding on the same object. " +
-                                            "Group ID of 0 will be considered ungrouped."), groupID);
-
-                                        string groupedWith = "Group ID 0 assigns no group";
-
-                                        if (groupID != 0)
-                                        {
-                                            string groupedHitboxes = "(";
-
-                                            for (int j = 0; j < data.HitboxData.Count; j++)
-                                            {
-                                                if (i == j) continue;
-
-                                                if (data.HitboxData[j].GroupID == groupID)
-                                                {
-                                                    groupedHitboxes += "Hitbox " + j + ", ";
-                                                }
-                                            }
-
-                                            groupedHitboxes += ")";
-                                            groupedWith = "Grouped With: " + groupedHitboxes;
-                                        }
-
-                                        EditorGUILayout.LabelField(groupedWith);
-
-                                        EditorGUILayout.Space(10);
-
-                                        //start frame and end frame
+                                if (onTrigger != null)
+                                {
+                                    if (onTrigger.DoesExist())
+                                    {
                                         EditorGUILayout.BeginHorizontal();
-                                        frameStart = EditorGUILayout.IntField("Start Frame:", (int)frameStart);
-                                        frameEnd = EditorGUILayout.IntField("End Frame:", (int)frameEnd);
-                                        EditorGUILayout.EndHorizontal();
-                                        
-                                        //OnHit Events
-                                        EditorGUILayout.Space(10);
 
-                                        EditorGUILayout.MinMaxSlider(ref frameStart, ref frameEnd, 0, FrameCount(currentClip));
+                                        EditorGUILayout.LabelField("On Hit Event:");
 
-                                        if (onTrigger != null)
-                                        {
-                                            if (onTrigger.DoesExist())
-                                            {
-                                                EditorGUILayout.BeginHorizontal();
-
-                                                EditorGUILayout.LabelField("On Hit Event:");
-
-                                                if (GUILayout.Button("X", GUILayout.MaxWidth(20)))
-                                                {
-                                                    onTrigger = new(EventTypes.Trigger, "");
-                                                }
-                                                
-                                                EditorGUILayout.EndHorizontal();
-                                                
-                                                UnityEvent currentEvent = m_manager.FindOrCreateEvent(data.name + "OnHit" + i).Event[0]; //as on hit events will always only need one event the index will always be 0
-
-                                                if (currentEvent != null)
-                                                {
-                                                    SerializedProperty eventSerialized = (FindAnimationEventIndex(data.name + "OnHit" + i) + 1 > serializedObject.FindProperty("m_animationEvents").arraySize) ? null : 
-                                                        serializedObject.FindProperty("m_animationEvents").GetArrayElementAtIndex(FindAnimationEventIndex(data.name + "OnHit" + i)).FindPropertyRelative("m_event").GetArrayElementAtIndex(0);
-
-                                                    if (eventSerialized != null)
-                                                    {
-                                                        EditorGUILayout.PropertyField(eventSerialized);
-                                                    }
-                                                }
-                                            }
-                                            else 
-                                            { 
-                                                if (GUILayout.Button("Add On Hit Event"))
-                                                {
-                                                    onTrigger = new(EventTypes.Trigger, data.name + "OnHit" + i);
-                                                }
-
-                                            }
-                                        }
-
-                                        EditorGUILayout.Space(10);
-
-                                        //OnHitEffect
-
-
-                                        //SerializedProperty onHitEffectSerialized = serializedObject.FindProperty("m_characterAnimData").GetArrayElementAtIndex(m_selectedAnimIndex);
-
-                                        SerializedObject scriptableOjbect = new(m_manager.AnimData[m_selectedAnimIndex]);
-                                        SerializedProperty onHitEffectSerialized = scriptableOjbect.FindProperty("m_hitboxData").GetArrayElementAtIndex(i).FindPropertyRelative("m_onHitEffect");
-
-                                        EditorGUILayout.PropertyField(onHitEffectSerialized);
-
-                                        //FindPropertyRelative("m_hitboxData").GetArrayElementAtIndex(i);
-
-                                        //apply changes
-                                        if (EditorGUI.EndChangeCheck())
-                                        {
-                                            Undo.RecordObject(data, "Changed data in " + data.name);
-
-                                            //clamp and round results
-                                            frameStart = Mathf.Clamp(frameStart, 0, FrameCount(currentClip));
-                                            frameEnd = Mathf.Clamp(frameEnd, frameStart, FrameCount(currentClip));
-                                            frameStart = Mathf.Round(frameStart);
-                                            frameEnd = Mathf.Round(frameEnd);
-
-                                            scale = new(Mathf.Clamp(scale.x, 0, Mathf.Infinity), Mathf.Clamp(scale.y, 0, Mathf.Infinity), Mathf.Clamp(scale.z, 0, Mathf.Infinity));
-
-                                            data.EditHitBox(i, new(position, rotation, scale, frameStart, frameEnd, groupID, hitboxShape, hitboxType, hitboxParent, onTrigger, onHitEffect));
-
-                                            serializedObject.ApplyModifiedProperties();
-                                            scriptableOjbect.ApplyModifiedProperties();
-
-                                            AnimationEventCleanup();
-
-                                            EditorUtility.SetDirty(data);
-                                            
-                                            CreatePreviews();
-
-                                        }
-                                        EditorGUILayout.Space(20);
-                                    }
-                                    else EditorGUILayout.EndHorizontal();
-                                    EditorGUILayout.EndFoldoutHeaderGroup();
-
-                                }
-                                EditorGUI.indentLevel = 0;
-
-                                //create hitbox button
-                                if (GUILayout.Button("Create Hitbox"))
-                                {
-                                    //HitboxPreview.CreatePreview(m_gameObject.transform.position, Quaternion.identity, Vector3.one);
-                                    Undo.RecordObject(data, "Created new hitbox data in " + data.name);
-                                    data.CreateHitbox();
-
-                                    CreatePreviews();
-                                }
-
-                                EditorGUILayout.HelpBox("Total hitboxes in animation: " + data.HitboxData.Count, MessageType.None);
-
-                                EditorGUILayout.Space(20);
-
-                                EditorGUILayout.LabelField("Events:", EditorStyles.boldLabel);
-
-                                //for each event attatched to the data
-                                for (int i = 0; i < data.EventData.Count; i++)
-                                {
-                                    EditorGUILayout.BeginHorizontal();
-
-                                    //create foldout for easier navigation
-                                    if (DrawFoldout(data.name + " Event " + i, "Event " + i + ":"))
-                                    {
-                                        
-                                        //remove hitbox button
                                         if (GUILayout.Button("X", GUILayout.MaxWidth(20)))
                                         {
-                                            Undo.RecordObject(data, "Removed event data in " + data.name);
-
-                                            EditorGUILayout.EndHorizontal();
-
-                                            AnimationEventCleanup();
-
-                                            RemoveEvent(i);
-
-                                            break;
+                                            onTrigger = new(EventTypes.Trigger, "");
                                         }
 
                                         EditorGUILayout.EndHorizontal();
 
-                                        //create temp data
-                                        EventData eventData = data.EventData[i];
+                                        UnityEvent currentEvent = m_manager.FindOrCreateEvent(data.name + "OnHit" + i).Event[0]; //as on hit events will always only need one event the index will always be 0
 
-                                        string eventID = eventData.EventID;
-                                        float frameStart = eventData.StartFrame;
-                                        float frameEnd = eventData.EndFrame;
-                                        EventTypes eventType = eventData.EventType;
-                                        bool shouldEndOnCancel = eventData.ShouldEndOnCancel;
-
-                                        SerializedObject serializedObject = new(m_manager);
-
-                                        EditorGUI.BeginChangeCheck();
-
-                                        eventType = (EventTypes)EditorGUILayout.EnumPopup("Event Type", eventType);
-                                        int eventCount = 1;
-                                        string[] titleText = new string[] {""}; //text that will appear over the unity event
-                                        
-                                        switch (eventType)
+                                        if (currentEvent != null)
                                         {
-                                            case EventTypes.Trigger:
-                                                //frameStart = (float)EditorGUILayout.IntField("Trigger Frame", (int)frameStart);
-                                                frameStart = EditorGUILayout.IntSlider("Trigger Frame", (int)frameStart, 0, FrameCount(currentClip));
+                                            SerializedProperty eventSerialized = (FindAnimationEventIndex(data.name + "OnHit" + i) + 1 > serializedObject.FindProperty("m_animationEvents").arraySize) ? null :
+                                                serializedObject.FindProperty("m_animationEvents").GetArrayElementAtIndex(FindAnimationEventIndex(data.name + "OnHit" + i)).FindPropertyRelative("m_event").GetArrayElementAtIndex(0);
 
-                                                titleText[0] = "";
-
-                                                titleText = new string[] { "Trigger Event" };
-
-                                                break;
-                                            case EventTypes.Active:
-
-                                                EditorGUILayout.BeginHorizontal();
-                                                frameStart = EditorGUILayout.IntField("Start Frame", (int)frameStart);
-                                                frameEnd = EditorGUILayout.IntField("End Frame", (int)frameEnd);
-                                                EditorGUILayout.EndHorizontal();
-
-                                                EditorGUILayout.MinMaxSlider(ref frameStart, ref frameEnd, 0, FrameCount(currentClip));
-
-                                                shouldEndOnCancel = EditorGUILayout.Toggle(new GUIContent("End when Canceled", "If an animation is canceled, should the end event be called."), shouldEndOnCancel);
-
-                                                eventCount = 2; // one event for when the event starts and one event for when it finishes
-                                                titleText = new string[] { "On Event Start", "On Event Finish" };
-
-                                                break;
-                                        }
-
-                                        UnityEvent[] currentEvents = m_manager.FindOrCreateEvent(data.name + "Event" + i, eventCount).Event;
-
-                                        if (currentEvents != null)
-                                        {
-                                            bool eventOutsideRange = FindAnimationEventIndex(data.name + "Event" + i) + 1 > serializedObject.FindProperty("m_animationEvents").arraySize;
-
-                                            for (int j = 0; j < currentEvents.Length; j++)
+                                            if (eventSerialized != null)
                                             {
-                                                EditorGUILayout.LabelField(titleText[j]);
-
-                                                bool unityEventOutsideRange = (eventOutsideRange) ? true : j + 1 > serializedObject.FindProperty("m_animationEvents").GetArrayElementAtIndex(FindAnimationEventIndex(data.name + "Event" + i))
-                                                    .FindPropertyRelative("m_event").arraySize;
-
-                                                SerializedProperty eventSerialized = (eventOutsideRange || unityEventOutsideRange) ? null : 
-                                                    serializedObject.FindProperty("m_animationEvents").GetArrayElementAtIndex(FindAnimationEventIndex(data.name + "Event" + i))
-                                                    .FindPropertyRelative("m_event").GetArrayElementAtIndex(j);
-
-                                                if (eventSerialized != null)
-                                                {
-                                                    EditorGUILayout.PropertyField(eventSerialized);
-                                                }
+                                                EditorGUILayout.PropertyField(eventSerialized);
                                             }
                                         }
-
-                                        //UnityEvent currentEvent = m_manager.FindOrCreateEvent(data.name + "Event" + i).Event;
-
-
-                                        if (EditorGUI.EndChangeCheck())
+                                    }
+                                    else
+                                    {
+                                        if (GUILayout.Button("Add On Hit Event"))
                                         {
-                                            //clamp results
-                                            frameStart = Mathf.Clamp(Mathf.Round(frameStart), 0, FrameCount(currentClip));
-                                            frameEnd = Mathf.Clamp(Mathf.Round(frameEnd), frameStart, FrameCount(currentClip));
-
-                                            Undo.RecordObject(data, "Changed data in " + data.name);
-
-                                            data.EditEvent(i, new(eventType, eventID, shouldEndOnCancel, frameStart, frameEnd));
-
-                                            serializedObject.ApplyModifiedProperties();
-
-                                            AnimationEventCleanup();
-
-                                            EditorUtility.SetDirty(data);
+                                            onTrigger = new(EventTypes.Trigger, data.name + "OnHit" + i);
                                         }
 
-                                        EditorGUILayout.Space(20);
-
                                     }
-                                    else EditorGUILayout.EndHorizontal();
-
-                                    EditorGUILayout.EndFoldoutHeaderGroup();
-
-
                                 }
-                                
-                                //create event button
-                                if (GUILayout.Button("Create Event"))
-                                {
-                                    Undo.RecordObject(data, "Created new event data in " + data.name);
-                                    data.CreateEvent(data.name + "Event" + data.EventData.Count);
 
-                                    Repaint();
+                                EditorGUILayout.Space(10);
+
+                                //OnHitEffect
+
+
+                                //SerializedProperty onHitEffectSerialized = serializedObject.FindProperty("m_characterAnimData").GetArrayElementAtIndex(m_selectedAnimIndex);
+
+                                SerializedObject scriptableOjbect = new(m_manager.AnimData[m_selectedAnimIndex]);
+                                SerializedProperty onHitEffectSerialized = scriptableOjbect.FindProperty("m_hitboxData").GetArrayElementAtIndex(i).FindPropertyRelative("m_onHitEffect");
+
+                                EditorGUILayout.PropertyField(onHitEffectSerialized);
+
+                                //FindPropertyRelative("m_hitboxData").GetArrayElementAtIndex(i);
+
+                                //apply changes
+                                if (EditorGUI.EndChangeCheck())
+                                {
+                                    Undo.RecordObject(data, "Changed data in " + data.name);
+
+                                    //clamp and round results
+                                    frameStart = Mathf.Clamp(frameStart, 0, FrameCount(currentClip));
+                                    frameEnd = Mathf.Clamp(frameEnd, frameStart, FrameCount(currentClip));
+                                    frameStart = Mathf.Round(frameStart);
+                                    frameEnd = Mathf.Round(frameEnd);
+
+                                    scale = new(Mathf.Clamp(scale.x, 0, Mathf.Infinity), Mathf.Clamp(scale.y, 0, Mathf.Infinity), Mathf.Clamp(scale.z, 0, Mathf.Infinity));
+
+                                    data.EditHitBox(i, new(position, rotation, scale, frameStart, frameEnd, groupID, hitboxShape, hitboxType, hitboxParent, onTrigger, onHitEffect));
+
+                                    serializedObject.ApplyModifiedProperties();
+                                    scriptableOjbect.ApplyModifiedProperties();
+
+                                    AnimationEventCleanup();
+
+                                    EditorUtility.SetDirty(data);
 
                                     CreatePreviews();
 
                                 }
-                                EditorGUILayout.HelpBox("Total Events in animation: " + data.EventData.Count, MessageType.None);
+                                EditorGUILayout.Space(20);
+                            }
+                            else EditorGUILayout.EndHorizontal();
+                            EditorGUILayout.EndFoldoutHeaderGroup();
 
-                                //This stops a purely visual error from appearing (when you create a new event). I know this is jank as hell but it doesn't affect the main system's functionality.
-                                //My theory is that it's because the property field function doesn't like showing unity events the update they are created?
-                                //But I have also set up systems where it delays rendering them and it also did nothing. Also Why does the error occur at the create event button? I hate unity. 
-                                try
+                        }
+                        EditorGUI.indentLevel = 0;
+
+                        //create hitbox button
+                        if (GUILayout.Button("Create Hitbox"))
+                        {
+                            //HitboxPreview.CreatePreview(m_gameObject.transform.position, Quaternion.identity, Vector3.one);
+                            Undo.RecordObject(data, "Created new hitbox data in " + data.name);
+                            data.CreateHitbox();
+
+                            CreatePreviews();
+                        }
+
+                        EditorGUILayout.HelpBox("Total hitboxes in animation: " + data.HitboxData.Count, MessageType.None);
+
+                        EditorGUILayout.Space(20);
+
+                        EditorGUILayout.LabelField("Events:", EditorStyles.boldLabel);
+
+                        //for each event attatched to the data
+                        for (int i = 0; i < data.EventData.Count; i++)
+                        {
+                            EditorGUILayout.BeginHorizontal();
+
+                            //create foldout for easier navigation
+                            if (DrawFoldout(data.name + " Event " + i, "Event " + i + ":"))
+                            {
+
+                                //remove hitbox button
+                                if (GUILayout.Button("X", GUILayout.MaxWidth(20)))
                                 {
-                                    EditorGUILayout.Space(20);
+                                    Undo.RecordObject(data, "Removed event data in " + data.name);
+
+                                    EditorGUILayout.EndHorizontal();
+
+                                    AnimationEventCleanup();
+
+                                    RemoveEvent(i);
+
+                                    break;
                                 }
-                                catch{
-                                    //Debug.Log("borked it");
-                                }
 
-                                //Halen's Combo Input System
-                                EditorGUILayout.LabelField("Combo Input:", EditorStyles.boldLabel);
+                                EditorGUILayout.EndHorizontal();
 
-                                ComboInput comboInput = data.NextComboInput;
+                                //create temp data
+                                EventData eventData = data.EventData[i];
 
-                                string nextComboAttack = comboInput.NextComboAttack;
-                                AttackInput comboAttackInput = comboInput.ComboAttackInput;
-                                float comboInputTimeStart = comboInput.ComboInputTimeStart;
-                                float comboInputTimeEnd = comboInput.ComboInputTimeEnd;
+                                string eventID = eventData.EventID;
+                                float frameStart = eventData.StartFrame;
+                                float frameEnd = eventData.EndFrame;
+                                EventTypes eventType = eventData.EventType;
+                                bool shouldEndOnCancel = eventData.ShouldEndOnCancel;
+
+                                SerializedObject serializedObject = new(m_manager);
 
                                 EditorGUI.BeginChangeCheck();
 
-                                nextComboAttack = EditorGUILayout.TextField("Next Attack In Combo", nextComboAttack);
+                                eventType = (EventTypes)EditorGUILayout.EnumPopup("Event Type", eventType);
+                                int eventCount = 1;
+                                string[] titleText = new string[] { "" }; //text that will appear over the unity event
 
-                                if (nextComboAttack != "")
+                                switch (eventType)
                                 {
-                                    comboAttackInput = (AttackInput)EditorGUILayout.EnumPopup("Next Input" ,comboAttackInput);
+                                    case EventTypes.Trigger:
+                                        //frameStart = (float)EditorGUILayout.IntField("Trigger Frame", (int)frameStart);
+                                        frameStart = EditorGUILayout.IntSlider("Trigger Frame", (int)frameStart, 0, FrameCount(currentClip));
 
-                                    EditorGUILayout.BeginHorizontal();
-                                    comboInputTimeStart = EditorGUILayout.FloatField("Input Start", Mathf.Round(comboInputTimeStart));
-                                    comboInputTimeEnd = EditorGUILayout.FloatField("Input End", Mathf.Round(comboInputTimeEnd));
-                                    EditorGUILayout.EndHorizontal();
+                                        titleText[0] = "";
 
-                                    EditorGUILayout.MinMaxSlider(ref comboInputTimeStart, ref comboInputTimeEnd, 0, FrameCount(currentClip));
+                                        titleText = new string[] { "Trigger Event" };
 
+                                        break;
+                                    case EventTypes.Active:
+
+                                        EditorGUILayout.BeginHorizontal();
+                                        frameStart = EditorGUILayout.IntField("Start Frame", (int)frameStart);
+                                        frameEnd = EditorGUILayout.IntField("End Frame", (int)frameEnd);
+                                        EditorGUILayout.EndHorizontal();
+
+                                        EditorGUILayout.MinMaxSlider(ref frameStart, ref frameEnd, 0, FrameCount(currentClip));
+
+                                        shouldEndOnCancel = EditorGUILayout.Toggle(new GUIContent("End when Canceled", "If an animation is canceled, should the end event be called."), shouldEndOnCancel);
+
+                                        eventCount = 2; // one event for when the event starts and one event for when it finishes
+                                        titleText = new string[] { "On Event Start", "On Event Finish" };
+
+                                        break;
                                 }
-                                else
+
+                                UnityEvent[] currentEvents = m_manager.FindOrCreateEvent(data.name + "Event" + i, eventCount).Event;
+
+                                if (currentEvents != null)
                                 {
-                                    EditorGUILayout.HelpBox("Blank Field means the Animation does not have a combo", MessageType.None);
+                                    bool eventOutsideRange = FindAnimationEventIndex(data.name + "Event" + i) + 1 > serializedObject.FindProperty("m_animationEvents").arraySize;
+
+                                    for (int j = 0; j < currentEvents.Length; j++)
+                                    {
+                                        EditorGUILayout.LabelField(titleText[j]);
+
+                                        bool unityEventOutsideRange = (eventOutsideRange) ? true : j + 1 > serializedObject.FindProperty("m_animationEvents").GetArrayElementAtIndex(FindAnimationEventIndex(data.name + "Event" + i))
+                                            .FindPropertyRelative("m_event").arraySize;
+
+                                        SerializedProperty eventSerialized = (eventOutsideRange || unityEventOutsideRange) ? null :
+                                            serializedObject.FindProperty("m_animationEvents").GetArrayElementAtIndex(FindAnimationEventIndex(data.name + "Event" + i))
+                                            .FindPropertyRelative("m_event").GetArrayElementAtIndex(j);
+
+                                        if (eventSerialized != null)
+                                        {
+                                            EditorGUILayout.PropertyField(eventSerialized);
+                                        }
+                                    }
                                 }
+
+                                //UnityEvent currentEvent = m_manager.FindOrCreateEvent(data.name + "Event" + i).Event;
+
 
                                 if (EditorGUI.EndChangeCheck())
                                 {
-                                    comboInputTimeStart = Mathf.Clamp(MathF.Round(comboInputTimeStart), 0, FrameCount(currentClip));
-                                    comboInputTimeEnd = Mathf.Clamp(MathF.Round(comboInputTimeEnd), comboInputTimeStart, FrameCount(currentClip));
+                                    //clamp results
+                                    frameStart = Mathf.Clamp(Mathf.Round(frameStart), 0, FrameCount(currentClip));
+                                    frameEnd = Mathf.Clamp(Mathf.Round(frameEnd), frameStart, FrameCount(currentClip));
 
-                                    Undo.RecordObject(data, "Created new event data in " + data.name);
+                                    Undo.RecordObject(data, "Changed data in " + data.name);
 
-                                    data.EditComboData(new(nextComboAttack, comboAttackInput, comboInputTimeStart, comboInputTimeEnd));
+                                    data.EditEvent(i, new(eventType, eventID, shouldEndOnCancel, frameStart, frameEnd));
+
+                                    serializedObject.ApplyModifiedProperties();
+
+                                    AnimationEventCleanup();
 
                                     EditorUtility.SetDirty(data);
                                 }
@@ -569,199 +587,237 @@ namespace FrameFighter2.Viewer
                                 EditorGUILayout.Space(20);
 
                             }
-                            else
-                            {
-                                EditorGUILayout.HelpBox("No animation Character Animation Data attatched to animation.", MessageType.None);
-                            }
+                            else EditorGUILayout.EndHorizontal();
+
+                            EditorGUILayout.EndFoldoutHeaderGroup();
+
+
                         }
-                        else
+
+                        //create event button
+                        if (GUILayout.Button("Create Event"))
                         {
-                            EditorGUILayout.HelpBox("No Frame Data Manager attatched to Object.", MessageType.Warning);
+                            Undo.RecordObject(data, "Created new event data in " + data.name);
+                            data.CreateEvent(data.name + "Event" + data.EventData.Count);
+
+                            Repaint();
+
+                            CreatePreviews();
+
                         }
+                        EditorGUILayout.HelpBox("Total Events in animation: " + data.EventData.Count, MessageType.None);
 
-
-                        //duplicate animation name check
-                        if (CheckForDuplicates(clipNames, out List<string> duplicates))
+                        //This stops a purely visual error from appearing (when you create a new event). I know this is jank as hell but it doesn't affect the main system's functionality.
+                        //My theory is that it's because the property field function doesn't like showing unity events the update they are created?
+                        //But I have also set up systems where it delays rendering them and it also did nothing. Also Why does the error occur at the create event button? I hate unity. 
+                        try
                         {
-                            string formatted = "";
-                            for (int i = 0; i < duplicates.Count; i++)
-                            {
-                                formatted += "\n" + duplicates[i];
-                            }
-
-                            EditorGUILayout.HelpBox("Animation clips with duplicate names detected! This may cause unintended issues. It is recommended to rename the duplicate animation clip even if they are the same. Found clips:" + formatted, MessageType.Warning);
+                            EditorGUILayout.Space(20);
                         }
-
-                    }
-                    else
-                    {
-                        if (Selection.activeGameObject)
+                        catch
                         {
-                            EditorGUILayout.HelpBox("This GameObject does not have an Animator attatched.", MessageType.Warning);
-                        }
-                        else
-                        {
-                            EditorGUILayout.HelpBox("Please select a GameObject.", MessageType.Info);
+                            //Debug.Log("borked it");
                         }
 
-                    }
+                        //Halen's Combo Input System
+                        EditorGUILayout.LabelField("Combo Input:", EditorStyles.boldLabel);
 
-                    break;
-                case 1: //Data viewer
-                    
-                    //if object has a manager attatched
-                    if (m_manager)
-                    {
-                        // Load Animation Clips
-                        if (!HasClips())
-                        {
-                            m_clips = GetAnimatorClips(m_animator);
-                            if (m_clips.Length == 0)
-                            {
-                                EditorGUILayout.HelpBox("No animation clips found in the Animator.", MessageType.Warning);
-                                return;
-                            }
-                        }
+                        ComboInput comboInput = data.NextComboInput;
 
-                        string[] clipNames = GetClipNames(m_clips);
+                        AttackData nextComboAttack = comboInput.NextComboAttack;
+                        AttackInput comboAttackInput = comboInput.ComboAttackInput;
+                        float comboInputTimeStart = comboInput.ComboInputTimeStart;
+                        float comboInputTimeEnd = comboInput.ComboInputTimeEnd;
 
                         EditorGUI.BeginChangeCheck();
 
-                        List<CharacterAnimationData> dataTemp = new();
-                        //fills out the temp list with dummy values for each list option (stops an error)
-                        for (int i = 0; i < m_clips.Length; i++)
-                        {
-                            dataTemp.Add(null);
-                        }
+                        // Create an object field to allow users to attach their own AttackData
+                        nextComboAttack = EditorGUILayout.ObjectField("Next Attack in combo", nextComboAttack, typeof(AttackData), false) as AttackData;
 
-                        for (int i = 0; i < m_clips.Length; i++) 
+                        if (nextComboAttack != null)
                         {
+                            // Just so you can have multi-input combos :)
+                            comboAttackInput = (AttackInput)EditorGUILayout.EnumFlagsField("Next Input", comboAttackInput);
+
                             EditorGUILayout.BeginHorizontal();
-
-                            //gets current list item data for temp list, returns null if it exceeds the current list size
-                            CharacterAnimationData data = (m_manager.AnimData.Count > i) ? m_manager.AnimData[i] : null;
-
-                            dataTemp[i] = (CharacterAnimationData)EditorGUILayout.ObjectField(clipNames[i], data, typeof(CharacterAnimationData), false);
-
-                            //Button for creating a new characteranimationdata object if slot is empty
-                            if (!dataTemp[i])
-                            {
-                                if (GUILayout.Button("+", GUILayout.MaxWidth(20)))
-                                {
-                                    CharacterAnimationData newScriptableObject = CreateInstance<CharacterAnimationData>();
-                                    newScriptableObject.name = clipNames[i];
-
-                                    AssetDatabase.CreateAsset(newScriptableObject, "Assets/" + newScriptableObject.name + ".asset");
-
-                                    dataTemp[i] = newScriptableObject;
-
-                                    newScriptableObject.ClearHitboxes();
-
-                                    Debug.Log("Create new asset \"" + newScriptableObject.name + "\" in Assets folder.");
-                                }
-                            }
-                            
-
+                            comboInputTimeStart = EditorGUILayout.FloatField("Input Start", Mathf.Round(comboInputTimeStart));
+                            comboInputTimeEnd = EditorGUILayout.FloatField("Input End", Mathf.Round(comboInputTimeEnd));
                             EditorGUILayout.EndHorizontal();
-                            
+
+                            EditorGUILayout.MinMaxSlider(ref comboInputTimeStart, ref comboInputTimeEnd, 0, FrameCount(currentClip));
+
+                        }
+                        else
+                        {
+                            EditorGUILayout.HelpBox("Blank Field means the Animation does not have a combo", MessageType.None);
                         }
 
                         if (EditorGUI.EndChangeCheck())
                         {
-                            Undo.RecordObject(m_manager, "Changed data in " + m_manager.name);
-                            m_manager.SetAnimData(dataTemp);
+                            comboInputTimeStart = Mathf.Clamp(MathF.Round(comboInputTimeStart), 0, FrameCount(currentClip));
+                            comboInputTimeEnd = Mathf.Clamp(MathF.Round(comboInputTimeEnd), comboInputTimeStart, FrameCount(currentClip));
+
+                            Undo.RecordObject(data, "Created new event data in " + data.name);
+
+                            data.EditComboData(new(nextComboAttack, comboAttackInput, comboInputTimeStart, comboInputTimeEnd));
+
+                            EditorUtility.SetDirty(data);
                         }
+
+                        EditorGUILayout.Space(20);
+
                     }
                     else
                     {
-                        string msg = (Selection.activeGameObject) ? "No Frame Data Manager attatched to Object." : "Please select a GameObject.";
-
-                        EditorGUILayout.HelpBox(msg, MessageType.Warning);
+                        EditorGUILayout.HelpBox("No animation Character Animation Data attatched to animation.", MessageType.None);
                     }
-                    
-                    break;
-                case 2: //Options
-
-                    //check if the dropdown has been changed
-                    EditorGUI.BeginChangeCheck();
-
-                    // Hitbox Previews Dropdown
-                    m_showPreviews = EditorGUILayout.Popup("Show Previews", m_showPreviews, m_showPreviewOptions, new GUILayoutOption[] { GUILayout.ExpandWidth(false), GUILayout.MinWidth(250f) });
-
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        //updates preview
-                        CreatePreviews();
-                    }
-
-                    break;
-            }
-
-            EditorGUILayout.EndScrollView();
-
-        }
-
-        public void OnSelectionChange()
-        {
-            if (m_lockSelection || Application.isPlaying) return;
-
-            //if a game object has been selected
-            if (Selection.activeGameObject)
-            {
-                //sets character back to default
-                if (HasClips()) ResetAnimaton(m_clips[0]);
-
-                //clears values
-                Clear();
-
-                //sets selected game object
-                m_gameObject = Selection.activeGameObject;
-
-                //sets animator
-                m_animator = m_gameObject.GetComponent<Animator>();
-
-                //sets frame data manager
-                m_manager = m_gameObject.GetComponent<FrameDataManager>();
-
-                if (m_manager)
+                }
+                else
                 {
-                    CharacterAnimationData data = (m_manager.AnimData.Count > 0) ? m_manager.AnimData[0] : null;
-                    if (data) CreatePreviews();
+                    EditorGUILayout.HelpBox("No Frame Data Manager attatched to Object.", MessageType.Warning);
+                }
+
+
+                //duplicate animation name check
+                if (CheckForDuplicates(clipNames, out List<string> duplicates))
+                {
+                    string formatted = "";
+                    for (int i = 0; i < duplicates.Count; i++)
+                    {
+                        formatted += "\n" + duplicates[i];
+                    }
+
+                    EditorGUILayout.HelpBox("Animation clips with duplicate names detected! This may cause unintended issues. It is recommended to rename the duplicate animation clip even if they are the same. Found clips:" + formatted, MessageType.Warning);
                 }
 
             }
-            else if (m_animator) // if no game object has been selected (but animator is still referenced)
+            else
             {
-                //sets character back to default
-                if (HasClips()) ResetAnimaton(m_clips[0]);
-                //clears values
-                Clear();
+                if (Selection.activeGameObject)
+                {
+                    EditorGUILayout.HelpBox("This GameObject does not have an Animator attatched.", MessageType.Warning);
+                }
+                else
+                {
+                    EditorGUILayout.HelpBox("Please select a GameObject.", MessageType.Info);
+                }
+
             }
-
-            Repaint();
         }
+        private void DrawDataViewerWindow()
+        {
+            //if object has a manager attatched
+            if (m_manager)
+            {
+                // Load Animation Clips
+                if (!HasClips())
+                {
+                    m_clips = GetAnimatorClips(m_animator);
+                    if (m_clips.Length == 0)
+                    {
+                        EditorGUILayout.HelpBox("No animation clips found in the Animator.", MessageType.Warning);
+                        return;
+                    }
+                }
 
+                string[] clipNames = GetClipNames(m_clips);
+
+                EditorGUI.BeginChangeCheck();
+
+                List<CharacterAnimationData> dataTemp = new();
+                //fills out the temp list with dummy values for each list option (stops an error)
+                for (int i = 0; i < m_clips.Length; i++)
+                {
+                    dataTemp.Add(null);
+                }
+
+                for (int i = 0; i < m_clips.Length; i++)
+                {
+                    EditorGUILayout.BeginHorizontal();
+
+                    //gets current list item data for temp list, returns null if it exceeds the current list size
+                    CharacterAnimationData data = (m_manager.AnimData.Count > i) ? m_manager.AnimData[i] : null;
+
+                    dataTemp[i] = (CharacterAnimationData)EditorGUILayout.ObjectField(clipNames[i], data, typeof(CharacterAnimationData), false);
+
+                    //Button for creating a new characteranimationdata object if slot is empty
+                    if (!dataTemp[i])
+                    {
+                        if (GUILayout.Button("+", GUILayout.MaxWidth(20)))
+                        {
+                            CharacterAnimationData newScriptableObject = CreateInstance<CharacterAnimationData>();
+                            newScriptableObject.name = clipNames[i];
+
+                            AssetDatabase.CreateAsset(newScriptableObject, "Assets/" + newScriptableObject.name + ".asset");
+
+                            dataTemp[i] = newScriptableObject;
+
+                            newScriptableObject.ClearHitboxes();
+
+                            Debug.Log("Create new asset \"" + newScriptableObject.name + "\" in Assets folder.");
+                        }
+                    }
+
+
+                    EditorGUILayout.EndHorizontal();
+
+                }
+
+                if (EditorGUI.EndChangeCheck())
+                {
+                    Undo.RecordObject(m_manager, "Changed data in " + m_manager.name);
+                    m_manager.SetAnimData(dataTemp);
+                }
+            }
+            else
+            {
+                string msg = (Selection.activeGameObject) ? "No Frame Data Manager attatched to Object." : "Please select a GameObject.";
+
+                EditorGUILayout.HelpBox(msg, MessageType.Warning);
+            }
+        }
+        private void DrawOptionsWindow()
+        {
+            //check if the dropdown has been changed
+            EditorGUI.BeginChangeCheck();
+
+            // Hitbox Previews Dropdown
+            m_showPreviews = EditorGUILayout.Popup("Show Previews", m_showPreviews, showPreviewOptions, new GUILayoutOption[] { GUILayout.ExpandWidth(false), GUILayout.MinWidth(250f) });
+
+            if (GUILayout.Button("Clear and Reset"))
+                Clear();
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                //updates preview
+                CreatePreviews();
+            }
+        }
+        #endregion
+
+        #region Animation
+        public bool HasClips()
+        {
+            return !(m_clips == null || m_clips.Length == 0);
+        }
         private int FrameCount(AnimationClip clip)
         {
             return Mathf.RoundToInt(clip.length * clip.frameRate);
         }
-
         private float FramerateDelta(AnimationClip clip)
         {
             return 1f / clip.frameRate;
         }
-
         private void StepAnimation(AnimationClip clip)
         {
             if (clip == null || m_animator == null) return;
 
             // Apply to animator
-            clip.SampleAnimation(m_gameObject, m_animPlayback * FramerateDelta(clip));
+            clip.SampleAnimation(m_target, m_animPlayback * FramerateDelta(clip));
 
             // Refresh Scene View
             SceneView.RepaintAll();
         }
-
         private AnimationClip[] GetAnimatorClips(Animator animator)
         {
             if (animator.runtimeAnimatorController is AnimatorController animatorController)
@@ -770,8 +826,6 @@ namespace FrameFighter2.Viewer
             }
             return new AnimationClip[0];
         }
-
-
         private string[] GetClipNames(AnimationClip[] clips)
         {
             string[] names = new string[clips.Length];
@@ -781,6 +835,19 @@ namespace FrameFighter2.Viewer
             }
             return names;
         }
+        private void ResetAnimaton(AnimationClip clip)
+        {
+            HitboxPreview.DestroyAllPreviews();
+
+            //sets timeline back to start
+            m_animPlayback = 0f;
+
+            // Apply to animator
+            StepAnimation(clip);
+        }
+        #endregion
+
+        #region TransformPaths
         /// <summary>
         /// checks if any of the strings in the inputted array are duplicates
         /// </summary>
@@ -807,10 +874,9 @@ namespace FrameFighter2.Viewer
 
             return found;
         }
-
         private string CreateObjectPath(Transform startObject)
         {
-            bool found = (startObject == m_gameObject.transform);
+            bool found = (startObject == m_target.transform);
 
             if (found) return "Error";
 
@@ -821,23 +887,21 @@ namespace FrameFighter2.Viewer
             while (!found)
             {
                 current = current.parent;
-                found = (current == m_gameObject.transform);
+                found = (current == m_target.transform);
 
-                if (!found) path = path.Insert(0, current.GetSiblingIndex().ToString());
-
-                
+                if (!found)
+                    path = path.Insert(0, current.GetSiblingIndex().ToString());
             }
 
             return path;
         }
-
         private string FindObjectNameFromPath(string pathString)
         {
             if (string.IsNullOrEmpty(pathString)) return null;
 
             int[] path = Array.ConvertAll(pathString.ToCharArray(), c => (int)Char.GetNumericValue(c));
             string result = "null";
-            Transform current = m_gameObject.transform;
+            Transform current = m_target.transform;
 
             try
             {
@@ -855,13 +919,12 @@ namespace FrameFighter2.Viewer
 
             return result;
         }
-
         private Transform FindObjectTransformFromPath(string pathString)
         {
             if (string.IsNullOrEmpty(pathString)) return null;
 
             int[] path = Array.ConvertAll(pathString.ToCharArray(), c => (int)Char.GetNumericValue(c));
-            Transform current = m_gameObject.transform;
+            Transform current = m_target.transform;
 
             try
             {
@@ -877,7 +940,9 @@ namespace FrameFighter2.Viewer
 
             return current;
         }
+        #endregion
 
+        #region Events
         /// <summary>
         /// searches all animation events attatched to the manager until it finds the result matching the ID
         /// </summary>
@@ -974,32 +1039,10 @@ namespace FrameFighter2.Viewer
             data.EventData.Remove(data.EventData[eventToRemove]);
 
             EditorUtility.SetDirty(data);
-
         }
+        #endregion
 
-        /// <summary>
-        /// clears all attatched object data
-        /// </summary>
-        private void Clear()
-        {
-            m_gameObject = null;
-            m_clips = null;
-            m_animator = null;
-            m_manager = null;
-            m_selectedAnimIndex = 0;
-            
-        }
-
-        private void ResetAnimaton(AnimationClip clip)
-        {
-            HitboxPreview.DestroyAllPreviews();
-
-            //sets timeline back to start
-            m_animPlayback = 0f;
-
-            // Apply to animator
-            StepAnimation(clip);
-        }
+        #region Previews
         /// <summary>
         /// 
         /// </summary>
@@ -1009,7 +1052,6 @@ namespace FrameFighter2.Viewer
         /// <param name="key"></param>
         private void DrawTransformRecursive(Transform t, int indent, ref string pathToGet, string key = "0")
         {
-
             EditorGUI.indentLevel = indent;
 
             string id = t.gameObject.name + key;
@@ -1060,8 +1102,6 @@ namespace FrameFighter2.Viewer
             }
         }
 
-        
-
         /// <summary>
         /// creates all applicable previews
         /// </summary>
@@ -1090,10 +1130,10 @@ namespace FrameFighter2.Viewer
                 HitboxTypes types = data.HitboxData[i].HitboxType;
                 string path = data.HitboxData[i].HitboxParent;
 
-                Transform parent = m_gameObject.transform;
-                
+                Transform parent = m_target.transform;
+
                 //finds bone to attatch to if applicable
-                if(types == HitboxTypes.AttachedToBone)
+                if (types == HitboxTypes.AttachedToBone)
                 {
                     parent = FindObjectTransformFromPath(path);
                 }
@@ -1109,7 +1149,7 @@ namespace FrameFighter2.Viewer
                 HitboxPreview.CreatePreview(parent, position, rotation, finalScale, shape, isActive);
             }
         }
-
+        #endregion
     }
 
 }

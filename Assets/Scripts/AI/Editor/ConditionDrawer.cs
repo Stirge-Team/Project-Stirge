@@ -3,80 +3,54 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    using Tools;
+    
     [CustomPropertyDrawer(typeof(Condition))]
-    public class ConditionDrawer : PropertyDrawer
+    public class ConditionDrawer : EasyPropertyDrawer
     {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        protected override void DrawGUI(GUIContent label)
         {
-            int totalLines = 0;
-
-            void DrawPropertyField(string propertyName)
-            {
-                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
-                Rect propRect = GetNewRect();
-                EditorGUI.PropertyField(propRect, propToDraw);
-
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
-                {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
-                }
-            }
-
-            Rect GetNewRect()
-            {
-                totalLines++;
-                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-            }
-
-            // get the string TypeName of the Condition
-            string typeName = property.managedReferenceFullTypename;
-
-            if (typeName.Length < 26)
-            {
-                label.text = "Empty, pls delete";
-            }
+            if (m_property != null)
+                label.text = m_property.managedReferenceValue.GetType().Name;
             else
-            {
-                typeName = typeName[26..];
-                label.text = typeName[..^9];
+                label.text = "Empty, pls delete";
 
-                // add "Not" to the start of a label if the value is inverted
-                if (property.FindPropertyRelative("m_invertValue").boolValue)
-                {
-                    label.text = "Not " + label.text;
-                }
+            // add "Not" to the start of a label if the value is inverted
+            if (FindPropertyRelative("m_invertValue").boolValue)
+            {
+                label.text = "Not " + label.text;
             }
             
-            EditorGUI.BeginProperty(position, label, property);
-            property.isExpanded = EditorGUI.Foldout(GetNewRect(), property.isExpanded, label);
-            if (property.isExpanded && label.text != "Empty, pls delete")
+            EditorGUI.BeginProperty(m_position, label, m_property);
+            DrawLabelHeader(label);
+            if (m_property.isExpanded && label.text != "Empty, pls delete")
             {
                 // draw the Invert Value prop
                 DrawPropertyField("m_invertValue");
 
-                if (typeName == nameof(DistanceCondition))
+                if (label.text == nameof(DistanceCondition))
                     DrawPropertyField("m_distance");
             }
 
             EditorGUI.EndProperty();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override float GetHeight(GUIContent label)
         {
-            int totalLines = 1; // for foldout
+            int totalLines = 1; // for foldout/label
 
-            string typeName = property.managedReferenceFullTypename;
-            if (typeName.Length < 26)
-                typeName = "";
-            else
-                typeName = typeName[26..];
-            
-            if (property.isExpanded && typeName != "")
+            SetLabelTextToTypeName(label);
+
+            if (m_property.isExpanded && !label.text.Contains(','))
             {
                 totalLines++; // for invert value prop
-                if (typeName == nameof(DistanceCondition))
-                    totalLines++; // for distance prop
+
+                switch (label.text)
+                {
+                    case nameof(DistanceCondition):
+                        totalLines++;
+                        break;
+                }
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
