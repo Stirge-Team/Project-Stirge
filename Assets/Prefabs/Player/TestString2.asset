@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TestString2
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 2, z: 0}
+  - m_position: {x: 0, y: 3, z: 0.15}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 1, y: 4, z: 1}
+    m_scale: {x: 1, y: 6, z: 1}
     m_startFrame: 18
     m_endFrame: 25
     m_groupID: 1
@@ -47,7 +47,7 @@ MonoBehaviour:
     m_nextComboAttack: {fileID: 11400000, guid: 78296964f76c8e224a3741e459cd2cef, type: 2}
     m_comboAttackInput: 1
     m_comboInputTimeStart: 29
-    m_comboInputTimeEnd: 60
+    m_comboInputTimeEnd: 41
   references:
     version: 2
     RefIds:
