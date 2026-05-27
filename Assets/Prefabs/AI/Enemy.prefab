@@ -364,6 +364,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.Enemy
   m_anim: {fileID: 3650999910069174583}
   m_health: {fileID: 2288186502371622423}
+  m_inflictedStatuses: []
   m_groundedCheckDistance: 1.3
   m_groundedCheckMask:
     serializedVersion: 2
@@ -386,6 +387,9 @@ MonoBehaviour:
   m_knockbackState: {fileID: 11400000, guid: ad02730f5802b034bbc259f707fad916, type: 2}
   m_airJuggle: {fileID: 11400000, guid: c0ee1255359da2d4caa5165757df1c05, type: 2}
   spawner: {fileID: 0}
+  references:
+    version: 2
+    RefIds: []
 --- !u!114 &2288186502371622423
 MonoBehaviour:
   m_ObjectHideFlags: 0

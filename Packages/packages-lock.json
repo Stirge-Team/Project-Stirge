@@ -200,6 +200,22 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.zor.simple-blackboard": {
+      "version": "https://github.com/ZorPastaman/Simple-Blackboard.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0a2b844f9cf92340382a381e8645b328a468df74"
+    },
+    "com.zor.utility-ai": {
+      "version": "https://github.com/ZorPastaman/UtilityAI.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.zor.simple-blackboard": "https://github.com/ZorPastaman/Simple-Blackboard.git"
+      },
+      "hash": "5471701695f333f01a6d0dc441fbebb574fafa51"
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,
