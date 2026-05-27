@@ -371,10 +371,6 @@ MonoBehaviour:
     m_ActionId: 1636b98b-4793-427c-b0d1-fa9d7eef7ff1
     m_ActionName: 'Player/HelmSplitter[/Mouse/leftButton,/Gamepad/buttonNorth]'
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c
-    m_ActionName: 'Player/Hurtself[/Gamepad/buttonWest]'
-  - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5079235152578265304}
         m_TargetAssemblyTypeName: Stirge.Input.PlayerInputProcessing, Assembly-CSharp
