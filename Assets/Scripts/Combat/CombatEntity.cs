@@ -6,6 +6,8 @@ using System.Collections;
 namespace Stirge.Combat
 {
     using Attacks;
+    using GLTFast.Schema;
+    using System.Linq;
 
     public abstract class CombatEntity : MonoBehaviour
     {
@@ -148,6 +150,7 @@ namespace Stirge.Combat
         private AttackNode m_currentAttackNode;
         private int m_currentAttackIndex;
         private Coroutine m_currentAttackCoroutine;
+        private Coroutine[] m_simultaneousAttackCoroutines;
 
         public void UseAttack(AttackData attackData)
         {
@@ -169,6 +172,7 @@ namespace Stirge.Combat
                 if (m_currentAttackIndex >= m_attackSequence.Length)
                 {
                     m_currentAttackCoroutine = null;
+                    m_simultaneousAttackCoroutines = null;
                     m_isAttacking = false;
                     return;
                 }
@@ -181,56 +185,121 @@ namespace Stirge.Combat
 
         public void StopAttacking()
         {
+            m_isAttacking = false;
             if (m_isAttacking)
             {
-                StopAttackCoroutine();
+                // Clear Coroutine of single AttackNode
+                StopCoroutine(m_currentAttackCoroutine);
+                m_currentAttackCoroutine = null;
+
+                // Clear Coroutines of SimultaneousAttackNode
+                if (m_simultaneousAttackCoroutines != null)
+                {
+                    foreach (Coroutine coroutine in m_simultaneousAttackCoroutines)
+                    {
+                        StopCoroutine(coroutine);
+                    }
+                    m_simultaneousAttackCoroutines = null;
+                }
+
+                // use list so if there is a Simultaneous node active, all of its nodes are stopped too
+                AttackNode[] currentActiveNodes = new AttackNode[1] { m_currentAttackNode };
+                if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
+                {
+                    currentActiveNodes = simultaneousAttackNode.Nodes;
+                }
+
+                foreach (AttackNode node in currentActiveNodes)
+                {
+                    switch (node.GetType().ToString())
+                    {
+                        case nameof(AnimationNode):
+                            // reset animator component
+                            m_anim.speed = 1;
+                            m_anim.StopPlayback();
+
+                            // apply motion from animation
+                            AnimationNode animationNode = node as AnimationNode;
+                            if (animationNode.HasRootMotion)
+                                ApplyRootMotion();
+                            break;
+                        case nameof(ApproachTargetNode):
+                            ResetMovementSpeed();
+                            StopGoToPosition();
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void OnAttackCoroutineFinished(AttackNode node)
+        {
+            // If processing a Simultaneous Attack Node
+            if (m_simultaneousAttackCoroutines != null)
+            {
+                // set the coroutine of the Node that just finished to null
+                int nodeIndex = System.Array.IndexOf(((SimultaneousAttackNode)m_currentAttackNode).Nodes, node);
+                m_simultaneousAttackCoroutines[nodeIndex] = null;
+
+                // If all the Coroutines are marked finished/All AttackNodes are finished processing,
+                // Then mark this SAN as finished
+                if (m_simultaneousAttackCoroutines.All(coroutine => coroutine == null))
+                {
+                    m_currentAttackNode = null;
+                    m_simultaneousAttackCoroutines = null;
+                    Debug.Log($"Finished processing Simultaneous Attack Node.");
+                }
+            }
+            // If processing just one node
+            else
+            {
+                m_currentAttackNode = null;
             }
         }
 
         private void StartAttackCoroutine()
         {
             Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
-            switch (m_currentAttackNode.GetType().Name)
-            {
-                case nameof(AnimationNode):
-                    m_currentAttackCoroutine = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
-                    break;
-                case nameof(ApproachTargetNode):
-                    m_currentAttackCoroutine = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
-                    break;
-                case nameof(TranslateNode):
-                    m_currentAttackCoroutine = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
-                    break;
-                case nameof(DelayNode):
-                    m_currentAttackCoroutine = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
-                    break;
-            }
-        }
-        private void StopAttackCoroutine()
-        {
-            // Still need to check for null values as no idea when Coroutine will necessarily update,
-            // so isAttacking may still be true when one of these values is null
-            if (m_currentAttackCoroutine != null)
-                StopCoroutine(m_currentAttackCoroutine);
 
-            if (m_currentAttackNode != null)
+            if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
             {
-                switch (m_currentAttackNode.GetType().ToString())
+                m_simultaneousAttackCoroutines = new Coroutine[simultaneousAttackNode.Nodes.Length];
+                int num = 0;
+                foreach (AttackNode node in simultaneousAttackNode.Nodes)
+                {
+                    switch (node.GetType().Name)
+                    {
+                        case nameof(AnimationNode):
+                            m_simultaneousAttackCoroutines[num] = StartCoroutine(PlayAnimation(node as AnimationNode));
+                            break;
+                        case nameof(ApproachTargetNode):
+                            m_simultaneousAttackCoroutines[num] = StartCoroutine(ApproachTarget(node as ApproachTargetNode));
+                            break;
+                        case nameof(TranslateNode):
+                            m_simultaneousAttackCoroutines[num] = StartCoroutine(Translate(node as TranslateNode));
+                            break;
+                        case nameof(DelayNode):
+                            m_simultaneousAttackCoroutines[num] = StartCoroutine(Delay(node as DelayNode));
+                            break;
+                    }
+                    num++;
+                }
+            }
+            else
+            {
+                switch (m_currentAttackNode.GetType().Name)
                 {
                     case nameof(AnimationNode):
-                        // reset animator component
-                        m_anim.speed = 1;
-                        m_anim.StopPlayback();
-
-                        // apply motion from animation
-                        AnimationNode animationNode = m_currentAttackNode as AnimationNode;
-                        if (animationNode.HasRootMotion)
-                            ApplyRootMotion();
-
+                        m_currentAttackCoroutine = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
                         break;
                     case nameof(ApproachTargetNode):
-                        ResetMovementSpeed();
-                        StopGoToPosition();
+                        m_currentAttackCoroutine = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
+                        break;
+                    case nameof(TranslateNode):
+                        m_currentAttackCoroutine = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
+                        break;
+                    case nameof(DelayNode):
+                        m_currentAttackCoroutine = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
                         break;
                 }
             }
@@ -251,7 +320,7 @@ namespace Stirge.Combat
             if (node.HasRootMotion)
                 ApplyRootMotion();
 
-            m_currentAttackNode = null;
+            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Animation Node.");
         }
         private IEnumerator ApproachTarget(ApproachTargetNode node)
@@ -292,8 +361,8 @@ namespace Stirge.Combat
             }
 
             // exit
-            
-            m_currentAttackNode = null;
+
+            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Approach Target node.");
         }
         private IEnumerator Translate(TranslateNode node)
@@ -331,7 +400,7 @@ namespace Stirge.Combat
             }
 
             // exit
-            m_currentAttackNode = null;
+            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Translate Node.");
         }
         private IEnumerator Delay(DelayNode node)
@@ -342,7 +411,7 @@ namespace Stirge.Combat
             yield return new WaitForSeconds(node.Delay);
 
             // exit
-            m_currentAttackNode = null;
+            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Delay Node.");
         }
         #endregion

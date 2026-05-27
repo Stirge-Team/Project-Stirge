@@ -13,11 +13,18 @@ MonoBehaviour:
   m_Name: Player_TestAttack
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
   m_root:
-    rid: 5206302206032347204
+    rid: 5206302521619120320
   references:
     version: 2
     RefIds:
-    - rid: 5206302206032347204
+    - rid: 5206302521619120320
+      type: {class: SimultaneousAttackNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_nodes:
+        - rid: 5206302521619120321
+        - rid: 5206302521619120322
+        - rid: 5206302521619120323
+    - rid: 5206302521619120321
       type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
         m_animationStateName: TestAttack
@@ -27,3 +34,19 @@ MonoBehaviour:
           m_range: {x: 0, y: 0}
           m_value: 1
         m_hasRootMotion: 0
+    - rid: 5206302521619120322
+      type: {class: TranslateNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_translation: {x: 0, y: 0, z: 3}
+        m_isLocalTranslation: 1
+        m_time:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 1
+    - rid: 5206302521619120323
+      type: {class: DelayNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_delay:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 3

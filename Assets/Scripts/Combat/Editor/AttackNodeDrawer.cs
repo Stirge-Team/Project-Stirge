@@ -59,6 +59,7 @@ namespace Stirge.Combat.Attacks
                         break;
                     case nameof(SelectAttackNode):
                     case nameof(SequenceAttackNode):
+                    case nameof(SimultaneousAttackNode):
                         DrawPropertyField("m_nodes");
 
                         // add Attack Node to array button
@@ -116,9 +117,9 @@ namespace Stirge.Combat.Attacks
                         break;
                     case nameof(SelectAttackNode):
                     case nameof(SequenceAttackNode):
+                    case nameof(SimultaneousAttackNode):
                         totalLines += GetPropertyLineHeight("m_nodes");
                         totalLines += 3; // for popup and add button
-                        
                         break;
                 }
             }
