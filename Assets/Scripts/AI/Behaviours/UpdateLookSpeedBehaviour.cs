@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class UpdateLookSpeedBehaviour : Behaviour
     {
         [SerializeField] private float m_newDegreesDelta;
