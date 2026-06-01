@@ -16,12 +16,13 @@ namespace FrameFighter2.Hitbox
         private Vector3 m_scale;
         private Vector3 m_rotation;
         private OnHitEffect m_onHitEffect;
+        private CombatEntity m_thisCombatEntity;
         public int EndFrame => m_endFrame;
 
         FrameDataManager m_manager;
         private Collider[] m_colliders; //colliders of object and all children
 
-        public void Initialize(FrameDataManager manager, int groupID, string onHit, int endFrame, HitboxShapes shape, Vector3 scale, Vector3 rotation, OnHitEffect onHitEffect)
+        public void Initialize(FrameDataManager manager, int groupID, string onHit, int endFrame, HitboxShapes shape, Vector3 scale, Vector3 rotation, OnHitEffect onHitEffect, CombatEntity thisCombatEntity)
         {
             m_groupID = groupID;
             m_manager = manager;
@@ -31,6 +32,7 @@ namespace FrameFighter2.Hitbox
             m_scale = scale;
             m_rotation = rotation;
             m_onHitEffect = onHitEffect;
+            m_thisCombatEntity = thisCombatEntity;
         }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -134,10 +136,10 @@ namespace FrameFighter2.Hitbox
                     hitColliderScript.Invoke();
 
                     //get the enemy and inflict the attached effect
-                    CombatEntity combatEntity = hitCollider.GetComponentInParent<CombatEntity>();
-                    if (combatEntity != null)
+                    CombatEntity targetEntity = hitCollider.GetComponentInParent<CombatEntity>();
+                    if (targetEntity != null)
                     {
-                        m_onHitEffect.OnHit(combatEntity);
+                        m_onHitEffect.OnHit(targetEntity, m_thisCombatEntity);
                     }
                 }
             }

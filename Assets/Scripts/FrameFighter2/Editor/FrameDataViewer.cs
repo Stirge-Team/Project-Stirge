@@ -177,7 +177,11 @@ namespace FrameFighter2.Viewer
         private void DrawHitboxEditorWindow()
         {
             //check if the animator is initialized
-            if (m_animator)
+            if (m_animator == null)
+            {
+                OnSelectionChange();
+            }
+            if (m_animator != null)
             {
                 // Load Animation Clips
                 if (!HasClips())

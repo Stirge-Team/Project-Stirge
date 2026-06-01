@@ -1,7 +1,7 @@
 using FrameFighter2.Data;
 using FrameFighter2.Hitbox;
 using Stirge.Input;
-using Stirge.Combat.Attacks;
+using Stirge.Combat;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -134,8 +134,15 @@ namespace FrameFighter2.Manager
                 {
                     if (m_currentClip == m_clipList[i])
                     {
-                        m_currentData = m_characterAnimData[i];
-                        break;
+                        try
+                        {
+                            m_currentData = m_characterAnimData[i];
+                            break;
+                        }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                            Debug.LogWarning($"{e.Message}\n{m_anim.name} does not have CharacterAnimationData at index '{i}'.", this);
+                        }
                     }
                 }
 
@@ -146,6 +153,8 @@ namespace FrameFighter2.Manager
                 ComboListenerCancel();
                 //reset hitboxes
                 DestroyAllHitboxes();
+                //reset player combo listeners
+                PlayerInputProcessing.Instance.ClearComboBinding();
                 //reset other variables
                 m_lastLoopCount = 0;
                 m_lastFrame = -1;
@@ -252,17 +261,19 @@ namespace FrameFighter2.Manager
                 Debug.Log($"Start combo input checking for animation {m_currentData.name} from frame {m_currentData.NextComboInput.ComboInputTimeStart} to frame {m_currentData.NextComboInput.ComboInputTimeEnd}.");
 
                 //create and add the combo binding
-                Dictionary<AttackInput, AttackData> comboBind = new();
-                comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
-                PlayerInputProcessing.Instance.SetComboBinding(comboBind);
+                //Dictionary<AttackInput, AttackData> comboBind = new();
+                //comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
+                PlayerInputProcessing.Instance.AddComboBinding(new AttackBinding(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack));
 
                 m_activeComboListers.Add(m_currentData.NextComboInput);
             }
+            /*
             else if(m_currentData.NextComboInput.NextComboAttack == null)
             {
                 //Remove any lingering combo data if this attack has none
                 PlayerInputProcessing.Instance.ClearComboBinding();
             }
+            */
 
             for (int i = 0; i < m_activeComboListers.Count; i++)
             {
@@ -305,7 +316,7 @@ namespace FrameFighter2.Manager
                     break;
             }
 
-            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect);
+            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect, m_anim.GetComponentInParent<CombatEntity>());
             m_activeHitboxes.Add(hitboxObject);
         }
         /// <summary>
