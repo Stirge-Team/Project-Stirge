@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Stirge.Management
 {
@@ -39,6 +40,15 @@ namespace Stirge.Management
             Immortality = 16
         };
         private InvincibilityType m_invincibility;
+        [Header("Events")]
+        [SerializeField, Tooltip("Events to call only when this entity's health increases.")]
+        private UnityEvent<float> m_healEvents;
+        [SerializeField, Tooltip("Events to call when this entity's health is changed")]
+        private UnityEvent<float> m_modifyEvents;
+        [SerializeField, Tooltip("Events to call only when this entity takes damage")]
+        private UnityEvent<float> m_damageEvents;
+        [SerializeField, Tooltip("Events to call when this entity's health reaches 0")]
+        private UnityEvent m_deathEvents;
 
         public void Start()
         {
@@ -53,6 +63,15 @@ namespace Stirge.Management
             _currentHealth = Mathf.Clamp(_currentHealth + amount, 0, clamp ? _maxHealth : Mathf.Infinity);
 
             Debug.Log($"{name}'s health changed by {amount}{(sender ? $" by {sender}." : ".")} Now {_currentHealth}/{_maxHealth}.");
+
+            if (amount != 0)
+            {
+                m_modifyEvents.Invoke(amount);
+                if (amount < 0)
+                    m_healEvents.Invoke(amount);
+                else if (amount > 0)
+                    m_damageEvents.Invoke(amount);
+            }
             CheckHealth();
         }
         public void ModifyHealth(bool attemptRevive, float amount, bool clamp = true, Object sender = null)
@@ -66,13 +85,14 @@ namespace Stirge.Management
             if (_healthPercent <= 0)
                 if (m_invincibility.HasFlag(InvincibilityType.Immortality))
                 {
-                    if(_currentHealth <= 0) _currentHealth = 1;
-                    if(_maxHealth <= 0) _maxHealth = 1;
+                    if (_currentHealth <= 0) _currentHealth = 1;
+                    if (_maxHealth <= 0) _maxHealth = 1;
                     Debug.Log($"But {name} is immortal!");
                 }
                 else
                 {
                     Debug.Log($"{name} has died!");
+                    m_deathEvents.Invoke();
                     _isDead = true;
                     StopAllCoroutines();
                     m_invincibility = 0;
