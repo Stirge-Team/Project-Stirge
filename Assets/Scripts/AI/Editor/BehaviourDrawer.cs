@@ -39,6 +39,9 @@ namespace Stirge.AI
                         DrawPropertyField("m_exitState");
                         DrawPropertyField("m_attackData");
                         break;
+                    case nameof(UpdateLookSpeedBehaviour):
+                        DrawPropertyField("m_newDegreesDelta");
+                        break;
                 }
             }
 
@@ -59,6 +62,7 @@ namespace Stirge.AI
                     case nameof(KnockbackBehaviour):
                     case nameof(LookAtTargetBehaviour):
                     case nameof(MoveToTargetBehaviour):
+                    case nameof(UpdateLookSpeedBehaviour):
                         totalLines++;
                         break;
                     case nameof(PhysicsBehaviour):

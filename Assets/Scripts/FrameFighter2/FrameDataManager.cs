@@ -134,8 +134,15 @@ namespace FrameFighter2.Manager
                 {
                     if (m_currentClip == m_clipList[i])
                     {
-                        m_currentData = m_characterAnimData[i];
-                        break;
+                        try
+                        {
+                            m_currentData = m_characterAnimData[i];
+                            break;
+                        }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                            Debug.LogWarning($"{m_anim.name} does not have CharacterAnimationData at index '{i}'.");
+                        }
                     }
                 }
 

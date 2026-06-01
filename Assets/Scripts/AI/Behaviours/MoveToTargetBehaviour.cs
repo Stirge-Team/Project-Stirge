@@ -5,14 +5,14 @@ namespace Stirge.AI
     [System.Serializable]
     public class MoveToTargetBehaviour : Behaviour
     {
-        [Tooltip("If set to 0, will use the default speed set on the Nav Mesh Agent on the prefab.")]
-        [SerializeField, Min(0)] private float m_speed;
+        [Tooltip("If less than or equal to 0, will use the default speed set on the Nav Mesh Agent on the prefab.")]
+        [SerializeField] private float m_speed;
         
         public override void _Enter(Agent agent)
         {
             if (m_speed > 0)
             {
-                agent.SetNavSpeed(m_speed);
+                agent.NavMeshAgent.speed = m_speed;
             }
             base._Enter(agent);
         }

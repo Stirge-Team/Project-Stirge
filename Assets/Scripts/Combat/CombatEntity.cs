@@ -188,48 +188,57 @@ namespace Stirge.Combat
                 {
                     foreach (Coroutine coroutine in m_attackCoroutines)
                     {
-                        StopCoroutine(coroutine);
+                        if (coroutine != null)
+                            StopCoroutine(coroutine);
                     }
                     m_attackCoroutines = null;
                 }
 
                 // Get array of all Attack Nodes to process this step
-                AttackNode[] currentActiveNodes;
+                AttackNode[] currentlyActiveNodes;
                 if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
                 {
                     int length = simultaneousAttackNode.Nodes.Length;
-                    currentActiveNodes = new AttackNode[length];
-                    System.Array.Copy(simultaneousAttackNode.Nodes, currentActiveNodes, length);
+                    currentlyActiveNodes = new AttackNode[length];
+                    System.Array.Copy(simultaneousAttackNode.Nodes, currentlyActiveNodes, length);
                 }
                 else
                 {
-                    currentActiveNodes = new AttackNode[1] { m_currentAttackNode };
+                    currentlyActiveNodes = new AttackNode[1] { m_currentAttackNode };
                 }
 
-                foreach (AttackNode node in currentActiveNodes)
-                {
-                    switch (node.GetType().Name)
-                    {
-                        case nameof(AnimationNode):
-                            // reset animator component
-                            m_anim.speed = 1;
-                            m_anim.StopPlayback();
-
-                            // apply motion from animation
-                            AnimationNode animationNode = node as AnimationNode;
-                            if (animationNode.HasRootMotion)
-                                ApplyRootMotion();
-                            break;
-                        case nameof(ApproachTargetNode):
-                            ResetMovementSpeed();
-                            StopGoToPosition();
-                            break;
-                    }
-                }
+                StopAttackNodes(currentlyActiveNodes);
             }
 
             // Set attacking to false
             m_isAttacking = false;
+        }
+
+        private void StopAttackNodes(AttackNode[] attackNodes)
+        {
+            foreach (AttackNode node in attackNodes)
+            {
+                if (node == null)
+                    continue;
+
+                switch (node.GetType().Name)
+                {
+                    case nameof(AnimationNode):
+                        // reset animator component
+                        m_anim.speed = 1;
+                        m_anim.StopPlayback();
+
+                        // apply motion from animation
+                        AnimationNode animationNode = node as AnimationNode;
+                        if (animationNode.HasRootMotion)
+                            ApplyRootMotion();
+                        break;
+                    case nameof(ApproachTargetNode):
+                        ResetMovementSpeed();
+                        StopGoToPosition();
+                        break;
+                }
+            }
         }
 
         private void OnAttackCoroutineFinished(AttackNode node)
@@ -241,7 +250,37 @@ namespace Stirge.Combat
                 // for non-Simultaneous Attack Nodes, the index will always be 0
                 if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
                 {
-                    nodeIndex = System.Array.IndexOf(((SimultaneousAttackNode)m_currentAttackNode).Nodes, node);
+                    nodeIndex = System.Array.IndexOf(simultaneousAttackNode.Nodes, node);
+
+                    // if the index of this node is equal to the SignificantAttackNodeIndex of this SimultaneousAttackNode,
+                    // then this attack should be marked completed
+                    if (nodeIndex == simultaneousAttackNode.SignificantAttackNodeIndex)
+                    {
+                        // Get all the currently active nodes
+                        int length = simultaneousAttackNode.Nodes.Length;
+                        AttackNode[] currentlyActiveNodes = new AttackNode[length];
+                        System.Array.Copy(simultaneousAttackNode.Nodes, currentlyActiveNodes, length);
+                        for (int i = 0; i < length; i++)
+                        {
+                            // If it is the significant AttackNode, clear
+                            if (currentlyActiveNodes[i] == node)
+                            {
+                                currentlyActiveNodes[i] = null;
+                            }
+                            // If the AttackNode has already finished processing, clear
+                            else if (m_attackCoroutines[i] == null)
+                            {
+                                currentlyActiveNodes[i] = null;
+                            }
+                        }
+
+                        StopAttackNodes(currentlyActiveNodes);
+
+                        m_currentAttackNode = null;
+                        m_attackCoroutines = null;
+                        Debug.Log($"Finished processing Simultaneous Attack Node.");
+                        return;
+                    }
                 }
                 else
                 {

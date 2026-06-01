@@ -99,11 +99,11 @@ namespace Stirge.Enemy
 
         protected override float GetMovementSpeed()
         {
-            return m_agent.GetNavSpeed();
+            return m_agent.NavMeshAgent.speed;
         }
         protected override void SetMovementSpeed(float speed)
         {
-            m_agent.SetNavSpeed(speed);
+            m_agent.NavMeshAgent.speed = speed;
         }
         protected override void ResetMovementSpeed()
         {
