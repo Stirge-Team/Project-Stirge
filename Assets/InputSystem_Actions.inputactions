@@ -61,16 +61,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Hurtself",
-                    "type": "Button",
-                    "id": "cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "A",
+                    "name": "ComboString",
                     "type": "Button",
                     "id": "70c6e45d-6e67-44ab-acbc-7bc58bd9583c",
                     "expectedControlType": "",
@@ -324,34 +315,23 @@
                 },
                 {
                     "name": "",
-                    "id": "bba7f7ee-7524-4077-b550-04c8be6cd9fd",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Hurtself",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "0e92d065-a115-4ebd-b7cd-c965c40c5778",
                     "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "A",
+                    "action": "ComboString",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "e8157af2-7996-482c-ba47-75c9717d49dd",
-                    "path": "<Gamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "A",
+                    "action": "ComboString",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

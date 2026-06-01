@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 787d2018d4466f4438a282a750b8d06f, type: 3}
+  m_Name: RedManAttacking
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
+  m_root:
+    rid: 2001017062244483149
+  references:
+    version: 2
+    RefIds:
+    - rid: 2001017062244483149
+      type: {class: RangeNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_rangedNodes:
+        - rid: 2001017062244483150
+        - rid: 2001017062244483152
+    - rid: 2001017062244483150
+      type: {class: RangeNode/RangedNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_node:
+          rid: 2001017062244483151
+        m_range: 3
+    - rid: 2001017062244483151
+      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_animationStateName: DefaultAttack
+        m_animationClip: {fileID: 7400000, guid: e2f0ac5405322524ab87e6244dbe0804, type: 2}
+        m_speed:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 1
+        m_hasRootMotion: 0
+    - rid: 2001017062244483152
+      type: {class: RangeNode/RangedNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_node:
+          rid: 2001017062244483153
+        m_range: 10
+    - rid: 2001017062244483153
+      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_animationStateName: LungeAttack
+        m_animationClip: {fileID: 7400000, guid: 161d3c3eb2c99b3eabfcc4350a4e536d, type: 2}
+        m_speed:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 1
+        m_hasRootMotion: 1
