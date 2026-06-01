@@ -84,6 +84,10 @@ namespace Stirge.Enemy
         {
             m_agent.SetRotation(Quaternion.Euler(eulerRotation));
         }
+        public override Vector3 GetForward()
+        {
+            return m_agent.Transform.forward;
+        }
 
         protected override void BeginGoToPosition(Vector3 newPosition)
         {
@@ -134,7 +138,7 @@ namespace Stirge.Enemy
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             if (stunLength > 0f)
-                InflictTimedStatus(new Stun(stunLength));
+                InflictTimedStatus(new Stun(stunLength), null);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
             m_anim.Play("hitstun");
@@ -142,7 +146,7 @@ namespace Stirge.Enemy
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             if (stunLength > 0f)
-                InflictTimedStatus(new Stun(stunLength));
+                InflictTimedStatus(new Stun(stunLength), null);
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
             m_anim.Play("hitstun");

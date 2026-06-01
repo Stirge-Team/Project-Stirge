@@ -68,7 +68,7 @@ namespace Stirge.Player
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
-            m_movement.Motor.ApplyForce(-transform.forward * strength + transform.up * height, ForceMode.Impulse, true);
+            m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
         }
 
         public override bool IsGrounded()
@@ -97,6 +97,10 @@ namespace Stirge.Player
         protected override void SetRotation(Vector3 eulerRotation)
         {
             transform.rotation = Quaternion.Euler(eulerRotation);
+        }
+        public override Vector3 GetForward()
+        {
+            throw new System.NotImplementedException();
         }
 
         protected override void BeginGoToPosition(Vector3 newPosition)

@@ -1,7 +1,7 @@
 using FrameFighter2.Data;
 using FrameFighter2.Hitbox;
 using Stirge.Input;
-using Stirge.Combat.Attacks;
+using Stirge.Combat;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -141,7 +141,7 @@ namespace FrameFighter2.Manager
                         }
                         catch (ArgumentOutOfRangeException e)
                         {
-                            Debug.LogWarning($"{m_anim.name} does not have CharacterAnimationData at index '{i}'.");
+                            Debug.LogWarning($"{e.Message}\n{m_anim.name} does not have CharacterAnimationData at index '{i}'.", this);
                         }
                     }
                 }
@@ -316,7 +316,7 @@ namespace FrameFighter2.Manager
                     break;
             }
 
-            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect);
+            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect, m_anim.GetComponentInParent<CombatEntity>());
             m_activeHitboxes.Add(hitboxObject);
         }
         /// <summary>

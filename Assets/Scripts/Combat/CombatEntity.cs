@@ -62,6 +62,7 @@ namespace Stirge.Combat
         protected abstract Quaternion GetRotation();
         protected abstract void SetRotation(Quaternion rotation);
         protected abstract void SetRotation(Vector3 eulerRotation);
+        public abstract Vector3 GetForward();
 
         protected abstract void BeginGoToPosition(Vector3 newPosition);
         protected abstract void StopGoToPosition();
@@ -86,12 +87,15 @@ namespace Stirge.Combat
         #endregion
 
         #region Statuses
-        public void InflictStatus(Status status)
+        public void InflictStatus(Status status, CombatEntity attackingEntity)
         {
             // inflict the Status
-            status.OnInflict(this);   
+            if (attackingEntity == null)
+                status.OnInflict(this);
+            else
+                status.OnInflict(this, attackingEntity);   
         }
-        public void InflictTimedStatus(TimedStatus status)
+        public void InflictTimedStatus(TimedStatus status, CombatEntity attackingEntity)
         {
             // add to list to be updated
             switch (status.GetType().Name)
@@ -102,7 +106,11 @@ namespace Stirge.Combat
 
                     // add and inflict
                     Stun newStun = new(status as Stun);
-                    newStun.OnInflict(this);
+                    if (attackingEntity == null)
+                        newStun.OnInflict(this);
+                    else
+                        newStun.OnInflict(this, attackingEntity);
+
                     m_inflictedStatuses.Add(newStun);
                     break;
             }
