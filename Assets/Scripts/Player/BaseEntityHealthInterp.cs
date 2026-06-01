@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Stirge.Management
+namespace Stirge.Combat
 {
     [RequireComponent(typeof(EntityHealth))]
     public class BaseEntityHealthInterp : MonoBehaviour

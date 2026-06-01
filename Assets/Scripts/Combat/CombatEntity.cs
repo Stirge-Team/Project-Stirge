@@ -1,13 +1,11 @@
-using System.Collections.Generic;
-using Stirge.Management;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stirge.Combat
 {
     using Attacks;
-    using GLTFast.Schema;
-    using System.Linq;
 
     public abstract class CombatEntity : MonoBehaviour
     {
@@ -149,8 +147,7 @@ namespace Stirge.Combat
         private AttackNode[] m_attackSequence;
         private AttackNode m_currentAttackNode;
         private int m_currentAttackIndex;
-        private Coroutine m_currentAttackCoroutine;
-        private Coroutine[] m_simultaneousAttackCoroutines;
+        private Coroutine[] m_attackCoroutines;
 
         public void UseAttack(AttackData attackData)
         {
@@ -171,8 +168,7 @@ namespace Stirge.Combat
                 // if reached the end of the sequence, exit this state
                 if (m_currentAttackIndex >= m_attackSequence.Length)
                 {
-                    m_currentAttackCoroutine = null;
-                    m_simultaneousAttackCoroutines = null;
+                    m_attackCoroutines = null;
                     m_isAttacking = false;
                     return;
                 }
@@ -185,33 +181,34 @@ namespace Stirge.Combat
 
         public void StopAttacking()
         {
-            m_isAttacking = false;
             if (m_isAttacking)
             {
-                // Clear Coroutine of single AttackNode
-                StopCoroutine(m_currentAttackCoroutine);
-                m_currentAttackCoroutine = null;
-
-                // Clear Coroutines of SimultaneousAttackNode
-                if (m_simultaneousAttackCoroutines != null)
+                // Clear Coroutines
+                if (m_attackCoroutines != null)
                 {
-                    foreach (Coroutine coroutine in m_simultaneousAttackCoroutines)
+                    foreach (Coroutine coroutine in m_attackCoroutines)
                     {
                         StopCoroutine(coroutine);
                     }
-                    m_simultaneousAttackCoroutines = null;
+                    m_attackCoroutines = null;
                 }
 
-                // use list so if there is a Simultaneous node active, all of its nodes are stopped too
-                AttackNode[] currentActiveNodes = new AttackNode[1] { m_currentAttackNode };
+                // Get array of all Attack Nodes to process this step
+                AttackNode[] currentActiveNodes;
                 if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
                 {
-                    currentActiveNodes = simultaneousAttackNode.Nodes;
+                    int length = simultaneousAttackNode.Nodes.Length;
+                    currentActiveNodes = new AttackNode[length];
+                    System.Array.Copy(simultaneousAttackNode.Nodes, currentActiveNodes, length);
+                }
+                else
+                {
+                    currentActiveNodes = new AttackNode[1] { m_currentAttackNode };
                 }
 
                 foreach (AttackNode node in currentActiveNodes)
                 {
-                    switch (node.GetType().ToString())
+                    switch (node.GetType().Name)
                     {
                         case nameof(AnimationNode):
                             // reset animator component
@@ -230,30 +227,37 @@ namespace Stirge.Combat
                     }
                 }
             }
+
+            // Set attacking to false
+            m_isAttacking = false;
         }
 
         private void OnAttackCoroutineFinished(AttackNode node)
         {
-            // If processing a Simultaneous Attack Node
-            if (m_simultaneousAttackCoroutines != null)
+            if (m_attackCoroutines != null)
             {
+                int nodeIndex;
                 // set the coroutine of the Node that just finished to null
-                int nodeIndex = System.Array.IndexOf(((SimultaneousAttackNode)m_currentAttackNode).Nodes, node);
-                m_simultaneousAttackCoroutines[nodeIndex] = null;
+                // for non-Simultaneous Attack Nodes, the index will always be 0
+                if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
+                {
+                    nodeIndex = System.Array.IndexOf(((SimultaneousAttackNode)m_currentAttackNode).Nodes, node);
+                }
+                else
+                {
+                    nodeIndex = 0;
+                }
+
+                m_attackCoroutines[nodeIndex] = null;
 
                 // If all the Coroutines are marked finished/All AttackNodes are finished processing,
-                // Then mark this SAN as finished
-                if (m_simultaneousAttackCoroutines.All(coroutine => coroutine == null))
+                // Then mark the Current Attack Node as finished
+                if (m_attackCoroutines.All(coroutine => coroutine == null))
                 {
                     m_currentAttackNode = null;
-                    m_simultaneousAttackCoroutines = null;
+                    m_attackCoroutines = null;
                     Debug.Log($"Finished processing Simultaneous Attack Node.");
                 }
-            }
-            // If processing just one node
-            else
-            {
-                m_currentAttackNode = null;
             }
         }
 
@@ -263,23 +267,23 @@ namespace Stirge.Combat
 
             if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
             {
-                m_simultaneousAttackCoroutines = new Coroutine[simultaneousAttackNode.Nodes.Length];
+                m_attackCoroutines = new Coroutine[simultaneousAttackNode.Nodes.Length];
                 int num = 0;
                 foreach (AttackNode node in simultaneousAttackNode.Nodes)
                 {
                     switch (node.GetType().Name)
                     {
                         case nameof(AnimationNode):
-                            m_simultaneousAttackCoroutines[num] = StartCoroutine(PlayAnimation(node as AnimationNode));
+                            m_attackCoroutines[num] = StartCoroutine(PlayAnimation(node as AnimationNode));
                             break;
                         case nameof(ApproachTargetNode):
-                            m_simultaneousAttackCoroutines[num] = StartCoroutine(ApproachTarget(node as ApproachTargetNode));
+                            m_attackCoroutines[num] = StartCoroutine(ApproachTarget(node as ApproachTargetNode));
                             break;
                         case nameof(TranslateNode):
-                            m_simultaneousAttackCoroutines[num] = StartCoroutine(Translate(node as TranslateNode));
+                            m_attackCoroutines[num] = StartCoroutine(Translate(node as TranslateNode));
                             break;
                         case nameof(DelayNode):
-                            m_simultaneousAttackCoroutines[num] = StartCoroutine(Delay(node as DelayNode));
+                            m_attackCoroutines[num] = StartCoroutine(Delay(node as DelayNode));
                             break;
                     }
                     num++;
@@ -287,19 +291,20 @@ namespace Stirge.Combat
             }
             else
             {
+                m_attackCoroutines = new Coroutine[1];
                 switch (m_currentAttackNode.GetType().Name)
                 {
                     case nameof(AnimationNode):
-                        m_currentAttackCoroutine = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
+                        m_attackCoroutines[0] = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
                         break;
                     case nameof(ApproachTargetNode):
-                        m_currentAttackCoroutine = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
+                        m_attackCoroutines[0] = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
                         break;
                     case nameof(TranslateNode):
-                        m_currentAttackCoroutine = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
+                        m_attackCoroutines[0] = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
                         break;
                     case nameof(DelayNode):
-                        m_currentAttackCoroutine = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
+                        m_attackCoroutines[0] = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
                         break;
                 }
             }
@@ -320,8 +325,8 @@ namespace Stirge.Combat
             if (node.HasRootMotion)
                 ApplyRootMotion();
 
-            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Animation Node.");
+            OnAttackCoroutineFinished(node);
         }
         private IEnumerator ApproachTarget(ApproachTargetNode node)
         {
@@ -361,9 +366,8 @@ namespace Stirge.Combat
             }
 
             // exit
-
-            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Approach Target node.");
+            OnAttackCoroutineFinished(node);
         }
         private IEnumerator Translate(TranslateNode node)
         {
@@ -400,8 +404,8 @@ namespace Stirge.Combat
             }
 
             // exit
-            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Translate Node.");
+            OnAttackCoroutineFinished(node);
         }
         private IEnumerator Delay(DelayNode node)
         {
@@ -411,8 +415,8 @@ namespace Stirge.Combat
             yield return new WaitForSeconds(node.Delay);
 
             // exit
-            OnAttackCoroutineFinished(node);
             Debug.Log($"Finished processing Delay Node.");
+            OnAttackCoroutineFinished(node);
         }
         #endregion
     }
