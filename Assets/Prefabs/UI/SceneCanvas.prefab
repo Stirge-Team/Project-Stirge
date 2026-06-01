@@ -49,6 +49,7 @@ GameObject:
   - component: {fileID: 8978300733839510761}
   - component: {fileID: 3518317019852681715}
   - component: {fileID: 8723263799422704825}
+  - component: {fileID: 7902485927528954870}
   m_Layer: 5
   m_Name: SceneCanvas
   m_TagString: Untagged
@@ -140,6 +141,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7902485927528954870
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413621964855226335}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e87ddaf8b0a0df91ba9cef1434258a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.KillCounter
+  m_textFormat: <size=25%>KILLS<size=100%>\n?
+  m_textElement: {fileID: 5716722804476011468}
 --- !u!1 &647579401240509463
 GameObject:
   m_ObjectHideFlags: 0
@@ -539,7 +554,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 2
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -571,7 +586,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 93.48761, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
