@@ -9,6 +9,8 @@ namespace Stirge.Combat
 
     public abstract class CombatEntity : MonoBehaviour
     {
+        private static bool s_debug = false;
+        
         [Header("Components")]
         [SerializeField] protected Animator m_anim;
 
@@ -234,7 +236,7 @@ namespace Stirge.Combat
                     case nameof(AnimationNode):
                         // reset animator component
                         m_anim.speed = 1;
-                        m_anim.StopPlayback();
+                        //m_anim.StopPlayback();
 
                         // apply motion from animation
                         AnimationNode animationNode = node as AnimationNode;
@@ -286,7 +288,7 @@ namespace Stirge.Combat
 
                         m_currentAttackNode = null;
                         m_attackCoroutines = null;
-                        Debug.Log($"Finished processing Simultaneous Attack Node.");
+                        if (s_debug) Debug.Log($"Finished processing Simultaneous Attack Node.");
                         return;
                     }
                 }
@@ -303,14 +305,14 @@ namespace Stirge.Combat
                 {
                     m_currentAttackNode = null;
                     m_attackCoroutines = null;
-                    Debug.Log($"Finished processing Simultaneous Attack Node.");
+                    if (s_debug) Debug.Log($"Finished processing Simultaneous Attack Node.");
                 }
             }
         }
 
         private void StartAttackCoroutine()
         {
-            Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
+            if (s_debug) Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
 
             if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
             {
@@ -372,7 +374,7 @@ namespace Stirge.Combat
             if (node.HasRootMotion)
                 ApplyRootMotion();
 
-            Debug.Log($"Finished processing Animation Node.");
+            if (s_debug) Debug.Log($"Finished processing Animation Node.");
             OnAttackCoroutineFinished(node);
         }
         private IEnumerator ApproachTarget(ApproachTargetNode node)
@@ -413,7 +415,7 @@ namespace Stirge.Combat
             }
 
             // exit
-            Debug.Log($"Finished processing Approach Target node.");
+            if (s_debug) Debug.Log($"Finished processing Approach Target node.");
             OnAttackCoroutineFinished(node);
         }
         private IEnumerator Translate(TranslateNode node)
@@ -451,7 +453,7 @@ namespace Stirge.Combat
             }
 
             // exit
-            Debug.Log($"Finished processing Translate Node.");
+            if (s_debug) Debug.Log($"Finished processing Translate Node.");
             OnAttackCoroutineFinished(node);
         }
         private IEnumerator Delay(DelayNode node)
@@ -462,7 +464,7 @@ namespace Stirge.Combat
             yield return new WaitForSeconds(node.Delay);
 
             // exit
-            Debug.Log($"Finished processing Delay Node.");
+            if (s_debug) Debug.Log($"Finished processing Delay Node.");
             OnAttackCoroutineFinished(node);
         }
         #endregion

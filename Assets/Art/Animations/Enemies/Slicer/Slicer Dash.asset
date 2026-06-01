@@ -21,7 +21,7 @@ MonoBehaviour:
     m_groupID: 1
     m_hitboxShape: 0
     m_hitboxType: 2
-    m_hitboxParent: 2
+    m_hitboxParent: 1
     m_onHitEvent:
       m_eventType: 0
       m_eventID: 

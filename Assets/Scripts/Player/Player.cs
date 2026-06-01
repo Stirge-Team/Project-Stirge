@@ -100,7 +100,7 @@ namespace Stirge.Player
         }
         public override Vector3 GetForward()
         {
-            throw new System.NotImplementedException();
+            return transform.forward;
         }
 
         protected override void BeginGoToPosition(Vector3 newPosition)

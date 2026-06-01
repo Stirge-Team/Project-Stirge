@@ -2554,7 +2554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa1eef5570f7b2040ac81820cbc29108, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeManager
-  m_defaultTimeScale: 0.75
+  m_defaultTimeScale: 1
 --- !u!4 &768738292
 Transform:
   m_ObjectHideFlags: 0
@@ -2813,11 +2813,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -5.6879373e-10
+      value: -0.000000031610146
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -1.8959745e-10
+      value: -0.000000010536714
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.y
@@ -2825,7 +2825,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.31622776
+      value: -0.31622773
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
