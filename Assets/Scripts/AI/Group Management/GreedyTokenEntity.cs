@@ -1,6 +1,7 @@
 using Stirge.Combat;
 using UnityEngine;
 using Stirge.ScoringMethods;
+using UnityEngine.UI;
 
 namespace Stirge
 {
@@ -11,24 +12,32 @@ namespace Stirge
         {
             if (!m_hasAttackToken)
             {
-                AttackTokenDispenser.instance.EnterAttackRaffle(this, new DistanceScore(transform, AttackTokenDispenser.instance.transform));
+                if(AttackTokenDispenser.instance.EnterAttackRaffle(this, new DistanceScore(transform, AttackTokenDispenser.instance.transform)))
+                    GetComponent<Image>().color = Color.yellow; //enters
             }
         }
         public override bool GiveToken(float time)
         {
             base.GiveToken(time);
             Debug.Log($"[{name}]: Yippie! I won the raffle!");
+            GetComponent<Image>().color = Color.green; //wins
             if (time == 0)
             {
                 Debug.Log($"[{name}]: Oh the token doesn't expire? nom!");
-                m_hasAttackToken = false;
+                RemoveToken();
             }
             return m_hasAttackToken;
         }
         public override bool RemoveToken()
         {
             Debug.Log($"[{name}]: And the token is gone...");
+            GetComponent<Image>().color = Color.orange; //uses
             return base.RemoveToken();
+        }
+        public override void LostRaffle()
+        {
+            GetComponent<Image>().color = Color.red; //loses
+            base.LostRaffle();
         }
 
         #region overrides
