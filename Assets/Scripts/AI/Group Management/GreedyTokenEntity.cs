@@ -2,12 +2,25 @@ using Stirge.Combat;
 using UnityEngine;
 using Stirge.ScoringMethods;
 using UnityEngine.UI;
+using System.Collections;
 
 namespace Stirge
 {
 
-    public class GreedyTokenEntity : CombatEntity
+    public class GreedyTokenEntity : Enemy.Enemy
     {
+        protected override void AwakeThis()
+        {
+            
+        }
+        protected override void OnEnable()
+        {
+            
+        }
+        protected override void OnDisable()
+        {
+            
+        }
         public void Update()
         {
             if (!m_hasAttackToken)
@@ -37,7 +50,14 @@ namespace Stirge
         public override void LostRaffle()
         {
             GetComponent<Image>().color = Color.red; //loses
+            StartCoroutine(GiveUpForABit());
             base.LostRaffle();
+        }
+        private IEnumerator GiveUpForABit()
+        {
+            enabled = false;
+            yield return new WaitForSeconds(1);
+            enabled = true;
         }
 
         #region overrides
@@ -118,6 +138,11 @@ namespace Stirge
         }
 
         protected override void StopGoToPosition()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override Vector3 GetForward()
         {
             throw new System.NotImplementedException();
         }

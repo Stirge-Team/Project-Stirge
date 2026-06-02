@@ -23,8 +23,8 @@ namespace Stirge.Combat
         private bool m_allowRepeatEntries = false;
         public class EntryData
         {
-            private CombatEntity m_contestant = null;
-            public CombatEntity Contentant => m_contestant;
+            private Enemy.Enemy m_contestant = null;
+            public Enemy.Enemy Contentant => m_contestant;
             private float m_score = 0;
             public float Score => m_score;
             private ScoringMethod m_scoreMethod;
@@ -36,7 +36,7 @@ namespace Stirge.Combat
             private bool m_winner = false;
             public bool Winner => m_winner;
 
-            public EntryData(CombatEntity enemy, ScoringMethod scoringMethod)
+            public EntryData(Enemy.Enemy enemy, ScoringMethod scoringMethod)
             {
                 m_contestant = enemy;
                 m_scoreMethod = scoringMethod;
@@ -91,7 +91,7 @@ namespace Stirge.Combat
             m_entrantList = new();
             enabled = false;
         }
-        public bool EnterAttackRaffle(CombatEntity enterant, ScoringMethod scoreMethod)
+        public bool EnterAttackRaffle(Enemy.Enemy enterant, ScoringMethod scoreMethod)
         {
             //bounce if the list is full
             if (m_entrantList.Count >= m_entryLimit) return false;
@@ -109,6 +109,40 @@ namespace Stirge.Combat
             if (m_drawOnLimitReached && m_entrantList.Count == m_entryLimit) DrawRaffle();
 
             return true; //entrant is added to the list
+        }
+        /// <summary>
+        /// Checks the current raffle to see if the given enterant has already entered.
+        /// </summary>
+        /// <param name="enterant">The enemy attempting to check</param>
+        /// <returns>TRUE if the given enemy is already in the raffle.</returns>
+        public bool HaveIEnteredAlready(Enemy.Enemy enterant)
+        {
+            foreach(var entry in m_entrantList) //check the list
+            {
+                if(entry.Contentant == enterant) //return true if they are already in
+                    return true;
+            }
+            return false; //otherwise return false.
+        }
+        /// <summary>
+        /// Checks the current raffle to see if the given enterant has already entered, and attempts to enter them if they aren't.
+        /// </summary>
+        /// <param name="enterant">The enemy attempting to check.</param>
+        /// <param name="scoreMethod">The scoring method to use if they are not in the raffle yet.</param>
+        /// <returns>TRUE if they are already in the raffle.<br></br>
+        /// TRUE if they have been entered into the raffle.<br></br>
+        /// FALSE if they weren't able to be added into the raffle.
+        /// </returns>
+        public bool HaveIEnteredAlready(Enemy.Enemy enterant, ScoringMethod scoreMethod)
+        {
+            if(HaveIEnteredAlready(enterant)) //return true if already entered
+            {
+                return true;
+            }
+            else
+            {
+                return EnterAttackRaffle(enterant, scoreMethod); //else enter the raffle 
+            }
         }
         private void ScoreEntries()
         {
