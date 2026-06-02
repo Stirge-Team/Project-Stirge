@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using Stirge.Management;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stirge.Combat
 {
@@ -9,6 +9,8 @@ namespace Stirge.Combat
 
     public abstract class CombatEntity : MonoBehaviour
     {
+        private static bool s_debug = false;
+        
         [Header("Components")]
         [SerializeField] protected Animator m_anim;
 
@@ -62,6 +64,7 @@ namespace Stirge.Combat
         protected abstract Quaternion GetRotation();
         protected abstract void SetRotation(Quaternion rotation);
         protected abstract void SetRotation(Vector3 eulerRotation);
+        public abstract Vector3 GetForward();
 
         protected abstract void BeginGoToPosition(Vector3 newPosition);
         protected abstract void StopGoToPosition();
@@ -86,12 +89,15 @@ namespace Stirge.Combat
         #endregion
 
         #region Statuses
-        public void InflictStatus(Status status)
+        public void InflictStatus(Status status, CombatEntity attackingEntity)
         {
             // inflict the Status
-            status.OnInflict(this);   
+            if (attackingEntity == null)
+                status.OnInflict(this);
+            else
+                status.OnInflict(this, attackingEntity);   
         }
-        public void InflictTimedStatus(TimedStatus status)
+        public void InflictTimedStatus(TimedStatus status, CombatEntity attackingEntity)
         {
             // add to list to be updated
             switch (status.GetType().Name)
@@ -102,7 +108,11 @@ namespace Stirge.Combat
 
                     // add and inflict
                     Stun newStun = new(status as Stun);
-                    newStun.OnInflict(this);
+                    if (attackingEntity == null)
+                        newStun.OnInflict(this);
+                    else
+                        newStun.OnInflict(this, attackingEntity);
+
                     m_inflictedStatuses.Add(newStun);
                     break;
             }
@@ -171,7 +181,7 @@ namespace Stirge.Combat
                 // if reached the end of the sequence, exit this state
                 if (m_currentAttackIndex >= m_attackSequence.Length)
                 {
-                    m_currentAttackCoroutine = null;
+                    m_attackCoroutines = null;
                     m_isAttacking = false;
                     return;
                 }
@@ -186,54 +196,167 @@ namespace Stirge.Combat
         {
             if (m_isAttacking)
             {
-                StopAttackCoroutine();
+                // Clear Coroutines
+                if (m_attackCoroutines != null)
+                {
+                    foreach (Coroutine coroutine in m_attackCoroutines)
+                    {
+                        if (coroutine != null)
+                            StopCoroutine(coroutine);
+                    }
+                    m_attackCoroutines = null;
+                }
+
+                // Get array of all Attack Nodes to process this step
+                AttackNode[] currentlyActiveNodes;
+                if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
+                {
+                    int length = simultaneousAttackNode.Nodes.Length;
+                    currentlyActiveNodes = new AttackNode[length];
+                    System.Array.Copy(simultaneousAttackNode.Nodes, currentlyActiveNodes, length);
+                }
+                else
+                {
+                    currentlyActiveNodes = new AttackNode[1] { m_currentAttackNode };
+                }
+
+                StopAttackNodes(currentlyActiveNodes);
+            }
+
+            // Set attacking to false
+            m_isAttacking = false;
+        }
+
+        private void StopAttackNodes(AttackNode[] attackNodes)
+        {
+            foreach (AttackNode node in attackNodes)
+            {
+                if (node == null)
+                    continue;
+
+                switch (node.GetType().Name)
+                {
+                    case nameof(AnimationNode):
+                        // reset animator component
+                        m_anim.speed = 1;
+                        //m_anim.StopPlayback();
+
+                        // apply motion from animation
+                        AnimationNode animationNode = node as AnimationNode;
+                        if (animationNode.HasRootMotion)
+                            ApplyRootMotion();
+                        break;
+                    case nameof(ApproachTargetNode):
+                        ResetMovementSpeed();
+                        StopGoToPosition();
+                        break;
+                }
+            }
+        }
+
+        private void OnAttackCoroutineFinished(AttackNode node)
+        {
+            if (m_attackCoroutines != null)
+            {
+                int nodeIndex;
+                // set the coroutine of the Node that just finished to null
+                // for non-Simultaneous Attack Nodes, the index will always be 0
+                if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
+                {
+                    nodeIndex = System.Array.IndexOf(simultaneousAttackNode.Nodes, node);
+
+                    // if the index of this node is equal to the SignificantAttackNodeIndex of this SimultaneousAttackNode,
+                    // then this attack should be marked completed
+                    if (nodeIndex == simultaneousAttackNode.SignificantAttackNodeIndex)
+                    {
+                        // Get all the currently active nodes
+                        int length = simultaneousAttackNode.Nodes.Length;
+                        AttackNode[] currentlyActiveNodes = new AttackNode[length];
+                        System.Array.Copy(simultaneousAttackNode.Nodes, currentlyActiveNodes, length);
+                        for (int i = 0; i < length; i++)
+                        {
+                            // If it is the significant AttackNode, clear
+                            if (currentlyActiveNodes[i] == node)
+                            {
+                                currentlyActiveNodes[i] = null;
+                            }
+                            // If the AttackNode has already finished processing, clear
+                            else if (m_attackCoroutines[i] == null)
+                            {
+                                currentlyActiveNodes[i] = null;
+                            }
+                        }
+
+                        StopAttackNodes(currentlyActiveNodes);
+
+                        m_currentAttackNode = null;
+                        m_attackCoroutines = null;
+                        if (s_debug) Debug.Log($"Finished processing Simultaneous Attack Node.");
+                        return;
+                    }
+                }
+                else
+                {
+                    nodeIndex = 0;
+                }
+
+                m_attackCoroutines[nodeIndex] = null;
+
+                // If all the Coroutines are marked finished/All AttackNodes are finished processing,
+                // Then mark the Current Attack Node as finished
+                if (m_attackCoroutines.All(coroutine => coroutine == null))
+                {
+                    m_currentAttackNode = null;
+                    m_attackCoroutines = null;
+                    if (s_debug) Debug.Log($"Finished processing Simultaneous Attack Node.");
+                }
             }
         }
 
         private void StartAttackCoroutine()
         {
-            Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
-            switch (m_currentAttackNode.GetType().Name)
-            {
-                case nameof(AnimationNode):
-                    m_currentAttackCoroutine = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
-                    break;
-                case nameof(ApproachTargetNode):
-                    m_currentAttackCoroutine = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
-                    break;
-                case nameof(TranslateNode):
-                    m_currentAttackCoroutine = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
-                    break;
-                case nameof(DelayNode):
-                    m_currentAttackCoroutine = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
-                    break;
-            }
-        }
-        private void StopAttackCoroutine()
-        {
-            // Still need to check for null values as no idea when Coroutine will necessarily update,
-            // so isAttacking may still be true when one of these values is null
-            if (m_currentAttackCoroutine != null)
-                StopCoroutine(m_currentAttackCoroutine);
+            if (s_debug) Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
 
-            if (m_currentAttackNode != null)
+            if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
             {
-                switch (m_currentAttackNode.GetType().ToString())
+                m_attackCoroutines = new Coroutine[simultaneousAttackNode.Nodes.Length];
+                int num = 0;
+                foreach (AttackNode node in simultaneousAttackNode.Nodes)
+                {
+                    switch (node.GetType().Name)
+                    {
+                        case nameof(AnimationNode):
+                            m_attackCoroutines[num] = StartCoroutine(PlayAnimation(node as AnimationNode));
+                            break;
+                        case nameof(ApproachTargetNode):
+                            m_attackCoroutines[num] = StartCoroutine(ApproachTarget(node as ApproachTargetNode));
+                            break;
+                        case nameof(TranslateNode):
+                            m_attackCoroutines[num] = StartCoroutine(Translate(node as TranslateNode));
+                            break;
+                        case nameof(DelayNode):
+                            m_attackCoroutines[num] = StartCoroutine(Delay(node as DelayNode));
+                            break;
+                    }
+                    num++;
+                }
+            }
+            else
+            {
+                m_attackCoroutines = new Coroutine[1];
+                switch (m_currentAttackNode.GetType().Name)
                 {
                     case nameof(AnimationNode):
-                        // reset animator component
-                        m_anim.speed = 1;
-                        m_anim.StopPlayback();
-
-                        // apply motion from animation
-                        AnimationNode animationNode = m_currentAttackNode as AnimationNode;
-                        if (animationNode.HasRootMotion)
-                            ApplyRootMotion();
-
+                        m_attackCoroutines[0] = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
                         break;
                     case nameof(ApproachTargetNode):
-                        ResetMovementSpeed();
-                        StopGoToPosition();
+                        m_attackCoroutines[0] = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
+                        break;
+                    case nameof(TranslateNode):
+                        m_attackCoroutines[0] = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
+                        break;
+                    case nameof(DelayNode):
+                        m_attackCoroutines[0] = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
                         break;
                 }
             }
@@ -254,8 +377,8 @@ namespace Stirge.Combat
             if (node.HasRootMotion)
                 ApplyRootMotion();
 
-            m_currentAttackNode = null;
-            Debug.Log($"Finished processing Animation Node.");
+            if (s_debug) Debug.Log($"Finished processing Animation Node.");
+            OnAttackCoroutineFinished(node);
         }
         private IEnumerator ApproachTarget(ApproachTargetNode node)
         {
@@ -295,9 +418,8 @@ namespace Stirge.Combat
             }
 
             // exit
-            
-            m_currentAttackNode = null;
-            Debug.Log($"Finished processing Approach Target node.");
+            if (s_debug) Debug.Log($"Finished processing Approach Target node.");
+            OnAttackCoroutineFinished(node);
         }
         private IEnumerator Translate(TranslateNode node)
         {
@@ -334,8 +456,8 @@ namespace Stirge.Combat
             }
 
             // exit
-            m_currentAttackNode = null;
-            Debug.Log($"Finished processing Translate Node.");
+            if (s_debug) Debug.Log($"Finished processing Translate Node.");
+            OnAttackCoroutineFinished(node);
         }
         private IEnumerator Delay(DelayNode node)
         {
@@ -345,8 +467,8 @@ namespace Stirge.Combat
             yield return new WaitForSeconds(node.Delay);
 
             // exit
-            m_currentAttackNode = null;
-            Debug.Log($"Finished processing Delay Node.");
+            if (s_debug) Debug.Log($"Finished processing Delay Node.");
+            OnAttackCoroutineFinished(node);
         }
 
         public virtual bool GiveToken(float timeout = 0)

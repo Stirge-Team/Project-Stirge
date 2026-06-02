@@ -10,17 +10,17 @@ namespace Stirge.Combat
         [SerializeField] private int m_damage;
         [SerializeReference] private Status[] m_statuses = new Status[0];
 
-        public void OnHit(CombatEntity entity)
+        public void OnHit(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
-            entity.TakeDamage(m_damage);
-            if (!entity.Health._isDead)
+            targetEntity.TakeDamage(m_damage);
+            if (!targetEntity.Health._isDead)
             {
                 foreach (Status status in m_statuses)
                 {
                     if (status is TimedStatus)
-                        entity.InflictTimedStatus(status as TimedStatus);
+                        targetEntity.InflictTimedStatus(status as TimedStatus, attackingEntity);
                     else
-                        entity.InflictStatus(status);
+                        targetEntity.InflictStatus(status, attackingEntity);
                 }
             }
         }

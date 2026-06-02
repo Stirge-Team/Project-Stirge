@@ -49,7 +49,7 @@ namespace Stirge.Combat.Attacks
                         m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
 
                         // create new AttackNode button
-                        if (GUI.Button(GetNewRect(), "Set node: " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
+                        if (GUI.Button(GetNewRect(), "Set Chance node to " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
                         {
                             AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
                             SerializedProperty nodeProp = FindPropertyRelative("m_node");
@@ -59,6 +59,8 @@ namespace Stirge.Combat.Attacks
                         break;
                     case nameof(SelectAttackNode):
                     case nameof(SequenceAttackNode):
+                    case nameof(SimultaneousAttackNode):
+                        DrawPropertyField("m_significantAttackNodeIndex");
                         DrawPropertyField("m_nodes");
 
                         // add Attack Node to array button
@@ -66,7 +68,7 @@ namespace Stirge.Combat.Attacks
                         m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
 
                         // create new AttackNode button
-                        if (GUI.Button(GetNewRect(), "Add new" + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
+                        if (GUI.Button(GetNewRect(), "Add to list " + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
                         {
                             AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
                             SerializedProperty nodesProp = FindPropertyRelative("m_nodes");
@@ -117,7 +119,11 @@ namespace Stirge.Combat.Attacks
                     case nameof(SelectAttackNode):
                     case nameof(SequenceAttackNode):
                         totalLines += GetPropertyLineHeight("m_nodes");
-                        totalLines += 2; // for popup and add button
+                        totalLines += 3; // for popup and add button
+                        break;
+                    case nameof(SimultaneousAttackNode):
+                        totalLines += GetPropertyLineHeight("m_nodes");
+                        totalLines += 3; // for popup and add button, and for Significant Index
                         break;
                 }
             }

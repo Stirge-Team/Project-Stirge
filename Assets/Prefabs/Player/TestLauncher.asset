@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: TestLauncher
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 2, z: -0.75}
+  - m_position: {x: 0, y: 2, z: -1.23}
     m_rotation: {x: 0, y: 0, z: 0}
     m_scale: {x: 2, y: 1, z: 1}
-    m_startFrame: 6
-    m_endFrame: 15
+    m_startFrame: 13
+    m_endFrame: 24
     m_groupID: 1
     m_hitboxShape: 2
     m_hitboxType: 0

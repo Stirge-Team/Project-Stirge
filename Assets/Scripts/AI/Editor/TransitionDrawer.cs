@@ -59,7 +59,11 @@ namespace Stirge.AI
             if (m_property.isExpanded)
             {
                 totalLines += 3; // for target state, new Condition popup, and new Condition button
-                totalLines += GetPropertyLineHeight("m_conditions"); // for Conditions array
+                SerializedProperty conditionsProp = FindPropertyRelative("m_conditions");
+                // for proper formatting
+                if (conditionsProp.isExpanded && (conditionsProp.arraySize == 0 || conditionsProp.arraySize == 1))
+                    totalLines++;
+                totalLines += GetPropertyLineHeight(conditionsProp); // for Conditions array
             }
 
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
