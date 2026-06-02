@@ -1,11 +1,14 @@
 using UnityEngine;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI
 {
-    public class UtilityActor
+    public sealed class Actor
     {
-        private Axis[] m_axes;
-        private Action[] m_actions;
+        private readonly Axis[] m_axes;
+        private readonly Action[] m_actions;
+
+        private readonly Blackboard m_blackboard;
 
         private float[] m_axisScores;
         private float[] m_actionScores;
@@ -17,16 +20,25 @@ namespace Stirge.UtilityAI
 
         private int m_currentActionIndex;
 
-        public UtilityActor() { }
-        public UtilityActor(Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        public Actor() { }
+        public Actor(Axis[] axes, Action[] actions, int[][] actionAxisBindings, Blackboard blackboard)
         {
             m_axes = axes;
             m_actions = actions;
+            m_blackboard = blackboard;
             m_actionAxisBindings = actionAxisBindings;
 
             m_axisScores = new float[m_axes.Length];
             m_actionScores = new float[m_actions.Length];
-            m_currentActionIndex = 0;
+
+            for (int i = 0; i < m_axes.Length; i++)
+            {
+                m_axes[i].SetBlackboard(m_blackboard);
+            }
+            for (int i = 0; i < m_actions.Length; i++)
+            {
+                m_actions[i].SetBlackboard(m_blackboard);
+            }
         }
 
         public void Initialise()
@@ -45,12 +57,6 @@ namespace Stirge.UtilityAI
             UpdateActionScores();
             SwitchAction(FindBestActionIndex());
             m_actions[m_currentActionIndex].Update();
-        }
-
-        public void Dispose()
-        {
-            DisposeAxes();
-            DisposeActions();
         }
 
         private void InitialiseAxes()
@@ -133,22 +139,6 @@ namespace Stirge.UtilityAI
             m_actions[m_currentActionIndex].End();
             m_currentActionIndex = newActionIndex;
             m_actions[m_currentActionIndex].Begin();
-        }
-
-        private void DisposeAxes()
-        {
-            for (int i = 0; i < m_axes.Length; i++)
-            {
-                m_axes[i].Dispose();
-            }
-        }
-
-        private void DisposeActions()
-        {
-            for (int i = 0; i < m_actions.Length; i++)
-            {
-                m_actions[i].Dispose();
-            }
         }
     }
 }
