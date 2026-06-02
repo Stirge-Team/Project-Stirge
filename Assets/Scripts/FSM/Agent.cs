@@ -27,6 +27,7 @@ namespace Stirge.AI
 
         public Enemy Enemy => m_enemy;
         public Transform Transform => m_transform;
+        public NavMeshAgent NavMeshAgent => m_nav;
 
         [Header("Properties")]
         [SerializeField] private State m_defaultState;
@@ -153,14 +154,6 @@ namespace Stirge.AI
             m_nav.ResetPath();
         }
 
-        public float GetNavSpeed()
-        {
-            return m_nav.speed;
-        }
-        public void SetNavSpeed(float speed)
-        {
-            m_nav.speed = speed;
-        }
         public void SetDefaultNavSpeed()
         {
             m_nav.speed = m_defaultNavSpeed;

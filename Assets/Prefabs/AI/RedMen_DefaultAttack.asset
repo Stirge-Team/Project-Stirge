@@ -45,7 +45,7 @@ MonoBehaviour:
     - rid: 2001016793216581703
       type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_length: 1
+        m_length: 0.3
     - rid: 2001016855599513801
       type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:

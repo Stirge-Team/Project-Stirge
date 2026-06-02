@@ -25,7 +25,7 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
-
+            agent.Enemy.StopAttacking();
         }
     }
 }
