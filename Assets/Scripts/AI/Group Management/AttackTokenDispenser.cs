@@ -23,8 +23,8 @@ namespace Stirge.Combat
         private bool m_allowRepeatEntries = false;
         public class EntryData
         {
-            private Enemy.Enemy m_contestant = null;
-            public Enemy.Enemy Contentant => m_contestant;
+            private Enemy.Enemy m_entrant = null;
+            public Enemy.Enemy Entrant => m_entrant;
             private float m_score = 0;
             public float Score => m_score;
             private ScoringMethod m_scoreMethod;
@@ -36,9 +36,9 @@ namespace Stirge.Combat
             private bool m_winner = false;
             public bool Winner => m_winner;
 
-            public EntryData(Enemy.Enemy enemy, ScoringMethod scoringMethod)
+            public EntryData(Enemy.Enemy entrant, ScoringMethod scoringMethod)
             {
-                m_contestant = enemy;
+                m_entrant = entrant;
                 m_scoreMethod = scoringMethod;
                 m_score = 0;
             }
@@ -91,7 +91,7 @@ namespace Stirge.Combat
             m_entrantList = new();
             enabled = false;
         }
-        public bool EnterAttackRaffle(Enemy.Enemy enterant, ScoringMethod scoreMethod)
+        public bool EnterAttackRaffle(Enemy.Enemy entrant, ScoringMethod scoreMethod)
         {
             //bounce if the list is full
             if (m_entrantList.Count >= m_entryLimit) return false;
@@ -99,11 +99,11 @@ namespace Stirge.Combat
             //check if the incoming request has already entered the raffle
             if (!m_allowRepeatEntries)
                 foreach (var entry in m_entrantList)
-                    if (entry.Contentant == enterant) return false;
+                    if (entry.Entrant == entrant) return false;
 
             //if this entry is to be our first, enable the update function
             if (m_entrantList.Count == 0) enabled = true;
-            m_entrantList.Add(new(enterant, scoreMethod));
+            m_entrantList.Add(new(entrant, scoreMethod));
 
             //check if we've reached the limit on entries to draw immediatly.
             if (m_drawOnLimitReached && m_entrantList.Count == m_entryLimit) DrawRaffle();
@@ -111,37 +111,37 @@ namespace Stirge.Combat
             return true; //entrant is added to the list
         }
         /// <summary>
-        /// Checks the current raffle to see if the given enterant has already entered.
+        /// Checks the current raffle to see if the given entrant has already entered.
         /// </summary>
-        /// <param name="enterant">The enemy attempting to check</param>
-        /// <returns>TRUE if the given enemy is already in the raffle.</returns>
-        public bool HaveIEnteredAlready(Enemy.Enemy enterant)
+        /// <param name="entrant">The entrant attempting to check</param>
+        /// <returns>TRUE if the given entrant is already in the raffle.</returns>
+        public bool HaveIEnteredAlready(Enemy.Enemy entrant)
         {
             foreach(var entry in m_entrantList) //check the list
             {
-                if(entry.Contentant == enterant) //return true if they are already in
+                if(entry.Entrant == entrant) //return true if they are already in
                     return true;
             }
             return false; //otherwise return false.
         }
         /// <summary>
-        /// Checks the current raffle to see if the given enterant has already entered, and attempts to enter them if they aren't.
+        /// Checks the current raffle to see if the given entrant has already entered, and attempts to enter them if they aren't.
         /// </summary>
-        /// <param name="enterant">The enemy attempting to check.</param>
+        /// <param name="entrant">The entrant attempting to check.</param>
         /// <param name="scoreMethod">The scoring method to use if they are not in the raffle yet.</param>
         /// <returns>TRUE if they are already in the raffle.<br></br>
         /// TRUE if they have been entered into the raffle.<br></br>
         /// FALSE if they weren't able to be added into the raffle.
         /// </returns>
-        public bool HaveIEnteredAlready(Enemy.Enemy enterant, ScoringMethod scoreMethod)
+        public bool HaveIEnteredAlready(Enemy.Enemy entrant, ScoringMethod scoreMethod)
         {
-            if(HaveIEnteredAlready(enterant)) //return true if already entered
+            if(HaveIEnteredAlready(entrant)) //return true if already entered
             {
                 return true;
             }
             else
             {
-                return EnterAttackRaffle(enterant, scoreMethod); //else enter the raffle 
+                return EnterAttackRaffle(entrant, scoreMethod); //else enter the raffle 
             }
         }
         private void ScoreEntries()
@@ -177,9 +177,9 @@ namespace Stirge.Combat
         {
             for (int i = 0; i < m_entrantList.Count; i++)
                 if (i < m_maxTokens)
-                    m_entrantList[i].Contentant.GiveToken(m_tokenLifetime);
+                    m_entrantList[i].Entrant.GiveToken(m_tokenLifetime);
                 else
-                    m_entrantList[i].Contentant.LostRaffle();
+                    m_entrantList[i].Entrant.LostRaffle();
         }
 
         private void DrawRaffle()
