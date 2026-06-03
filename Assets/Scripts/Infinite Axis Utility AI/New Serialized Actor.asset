@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3695851593148964478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dce6e3a27665cd047ad8e795c5589965, type: 3}
+  m_Name: AbsoluteAxis
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedAbsoluteAxis
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
+  m_Name: New Serialized Actor
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
+  m_serializedActions:
+  - {fileID: 8758275609303846550}
+  m_serializedAxes:
+  - {fileID: -3695851593148964478}
+  m_axisIndices:
+  - m_axes: 
+--- !u!114 &8758275609303846550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1d6242d37bd394b846746bdd969642, type: 3}
+  m_Name: DoNothingAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedDoNothingAction
