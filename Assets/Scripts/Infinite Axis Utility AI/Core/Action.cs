@@ -1,10 +1,11 @@
+using System;
 using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI
 {
     public abstract class Action
     {
-        internal string Name => GetType().Name;
+        public string name { get; set; }
 
         private Blackboard m_blackboard;
         
@@ -16,27 +17,27 @@ namespace Stirge.UtilityAI
 
         protected virtual void OnEnd() { }
         
-        internal void Initialise()
+        public void Initialise()
         {
             OnInitialise();
         }
 
-        internal void Begin()
+        public void Begin()
         {
             OnBegin();
         }
 
-        internal void Update()
+        public void Update()
         {
             OnUpdate();
         }
 
-        internal void End()
+        public void End()
         {
             OnEnd();
         }
 
-        internal void SetBlackboard(Blackboard blackboard)
+        public void SetBlackboard(Blackboard blackboard)
         {
             m_blackboard = blackboard;
         }
@@ -63,6 +64,18 @@ namespace Stirge.UtilityAI
         {
             var action = new TAction();
             action.Setup(arg0, arg1, arg2);
+            return action;
+        }
+
+        public static Action Create(Type actionType)
+        {
+            var action = (Action)Activator.CreateInstance(actionType);
+            return action;
+        }
+        public static Action Create(Type actionType, object[] parameters)
+        {
+            var action = (Action)Activator.CreateInstance(actionType);
+            SetuableHelper.CreateSetup(action, parameters);
             return action;
         }
         #endregion

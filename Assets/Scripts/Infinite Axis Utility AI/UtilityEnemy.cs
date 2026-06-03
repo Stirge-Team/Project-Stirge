@@ -4,12 +4,9 @@ namespace Stirge.UtilityAI
 {
     public class UtilityEnemy : MonoBehaviour
     {
-        [SerializeField] private Transform m_target;
-
+        private Transform m_target;
         private float m_speed;
-        public float Speed => m_speed;
-
-        public float maxHealth;
+        private float m_maxHealth;
 
         private void Awake()
         {

@@ -348,9 +348,6 @@ GameObject:
   m_Component:
   - component: {fileID: 986388239}
   - component: {fileID: 986388238}
-  - component: {fileID: 986388241}
-  - component: {fileID: 986388240}
-  - component: {fileID: 986388242}
   m_Layer: 0
   m_Name: UtilityEnemy
   m_TagString: Untagged
@@ -370,8 +367,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333585be454d5e540ab08e4c2c10680c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
-  m_target: {fileID: 0}
-  maxHealth: 10
 --- !u!4 &986388239
 Transform:
   m_ObjectHideFlags: 0
@@ -381,60 +376,12 @@ Transform:
   m_GameObject: {fileID: 986388237}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.38095, y: -0, z: 11.6702}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &986388240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986388237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6dded26710b345019aab86d8a949c232, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Components.UtilityAIAgentTickers.UpdateUtilityAITicker
-  m_UtilityAIAgent: {fileID: 986388241}
---- !u!114 &986388241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986388237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 222762550b224328ba08fc91733022d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Components.UtilityAIAgent
-  m_SerializedBrain: {fileID: 11400000, guid: 48b3462090a9cb34e9810885fada2dd2, type: 2}
-  m_BlackboardContainer: {fileID: 986388242}
---- !u!114 &986388242
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986388237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27052f068f6efaa4b9da00b91fa69be0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Zor.SimpleBlackboard::Zor.SimpleBlackboard.Components.SimpleBlackboardContainer
-  m_SerializedContainers:
-  - {fileID: 11400000, guid: e911911faed64684287e23b6ece78942, type: 2}
-  m_ComponentReferences:
-  - m_PropertyName: m_target
-    m_Component: {fileID: 986388238}
-  - m_PropertyName: maxHealth
-    m_Component: {fileID: 986388238}
-  - m_PropertyName: Speed
-    m_Component: {fileID: 986388238}
 --- !u!1 &1229491829
 GameObject:
   m_ObjectHideFlags: 0

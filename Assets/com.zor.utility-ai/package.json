@@ -1,0 +1,20 @@
+{
+  "name": "com.zor.utility-ai",
+  "version": "1.0.0",
+  "displayName": "Utility AI",
+  "description": "Utility AI for Unity is a good solution for choosing an action based on different utility considerations. Usually, it's used for AI.",
+  "unity": "2022.3",
+  "keywords": [
+    "ai",
+    "utility"
+  ],
+  "dependencies": {
+    "com.zor.simple-blackboard": "https://github.com/ZorPastaman/Simple-Blackboard.git"
+  },
+  "author": {
+    "name": "Vladimir Popov",
+    "email": "zor1994@gmail.com",
+    "url": "https://zorpastaman.github.io"
+  },
+  "_fingerprint": "5471701695f333f01a6d0dc441fbebb574fafa51"
+}
