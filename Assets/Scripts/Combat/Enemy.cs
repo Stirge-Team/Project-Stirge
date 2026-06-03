@@ -2,8 +2,10 @@ using UnityEngine;
 
 namespace Stirge.Enemy
 {
+    using System.Collections;
     using AI;
     using Combat;
+    using Stirge.Combat.Attacks;
 
     public class Enemy : CombatEntity
     {
@@ -17,6 +19,8 @@ namespace Stirge.Enemy
         [SerializeField] private State m_airJuggle;
 
         [HideInInspector] public EnemySpawner spawner = null;
+
+        protected bool m_hasAttackToken = false;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -37,6 +41,11 @@ namespace Stirge.Enemy
                 return;
             }
 
+            if(TargetTransform != null) //if there is a target
+            {
+                AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+            }
+
             m_agent.Update(deltaTime);
         }
 
@@ -44,13 +53,43 @@ namespace Stirge.Enemy
         {
             m_agent.FixedUpdate();
         }
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             m_agent.OnEnable();
         }
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             m_agent.OnDisable();
+        }
+
+        public override void UseAttack(AttackData attackData)
+        {
+            if (!m_hasAttackToken) return; //fail if no attack token
+            base.UseAttack(attackData);
+        }
+        #endregion
+
+        #region Attack Tokens
+        public virtual bool GiveToken(float timeout = 0)
+        {
+            m_hasAttackToken = true;
+            //remove token after given time, if any
+            if (timeout > 0) StartCoroutine(TokenTimeout(timeout));
+            return m_hasAttackToken;
+        }
+        private IEnumerator TokenTimeout(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            RemoveToken();
+        }
+        public virtual bool RemoveToken()
+        {
+            return m_hasAttackToken = false;
+        }
+
+        public virtual void LostRaffle()
+        {
+            Debug.Log($"[{name}]: dude i can't believe i lost the attack token raffle this is so sad :(", this);
         }
         #endregion
 
