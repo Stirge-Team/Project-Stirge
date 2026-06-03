@@ -158,8 +158,7 @@ namespace Stirge.Combat
         private AttackNode m_currentAttackNode;
         private int m_currentAttackIndex;
         private Coroutine[] m_attackCoroutines;
-
-        public void UseAttack(AttackData attackData)
+        public virtual void UseAttack(AttackData attackData)
         {
             StopAttacking();
             m_attackSequence = attackData.EvaluateSequence();
