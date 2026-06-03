@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Zor.SimpleBlackboard.Core;
 
@@ -7,7 +8,7 @@ namespace Stirge.UtilityAI
     {
         private Blackboard m_blackboard;
 
-        public string Name => GetType().Name;
+        public string name { get; set; }
 
         public abstract float ComputeScore();
 
@@ -45,6 +46,18 @@ namespace Stirge.UtilityAI
         {
             var axis = new TAxis();
             axis.Setup(arg0, arg1, arg2);
+            return axis;
+        }
+
+        public static Axis Create(Type axisType)
+        {
+            var axis = (Axis)Activator.CreateInstance(axisType);
+            return axis;
+        }
+        public static Axis Create(Type axisType, object[] parameters)
+        {
+            var axis = (Axis)Activator.CreateInstance(axisType);
+            SetuableHelper.CreateSetup(axis, parameters);
             return axis;
         }
         #endregion
