@@ -59,19 +59,20 @@ namespace Stirge.Combat
         public abstract bool IsGrounded();
         public abstract void ApplyRootMotion();
 
-        protected abstract Vector3 GetPosition();
-        protected abstract void SetPosition(Vector3 position);
-        protected abstract Quaternion GetRotation();
-        protected abstract void SetRotation(Quaternion rotation);
-        protected abstract void SetRotation(Vector3 eulerRotation);
+        public abstract Vector3 GetPosition();
+        public abstract void SetPosition(Vector3 position);
+        public abstract Quaternion GetRotation();
+        public abstract void SetRotation(Quaternion rotation);
+        public abstract Vector3 GetEulerRotation();
+        public abstract void SetEulerRotation(Vector3 euler);
         public abstract Vector3 GetForward();
 
-        protected abstract void BeginGoToPosition(Vector3 newPosition);
-        protected abstract void StopGoToPosition();
+        public abstract void BeginGoToPosition(Vector3 newPosition);
+        public abstract void StopGoToPosition();
 
-        protected abstract float GetMovementSpeed();
-        protected abstract void SetMovementSpeed(float speed);
-        protected abstract void ResetMovementSpeed();
+        public abstract float GetMovementSpeed();
+        public abstract void SetMovementSpeed(float speed);
+        public abstract void ResetMovementSpeed();
         #endregion
 
         #region Death State

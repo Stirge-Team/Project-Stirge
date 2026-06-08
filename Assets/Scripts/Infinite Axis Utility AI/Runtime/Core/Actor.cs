@@ -2,14 +2,14 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Core
 {
-    using Enemy;
+    using Blackboard;
 
     public sealed class Actor : MonoBehaviour
     {
         private Axis[] m_axes;
         private Action[] m_actions;
 
-        private Enemy m_enemy;
+        private EnemyBlackboard m_blackboard;
 
         private float[] m_axisScores;
         private float[] m_actionScores;
@@ -22,18 +22,33 @@ namespace Stirge.UtilityAI.Core
         private int m_currentActionIndex;
 
         public Actor() { }
-        public static Actor Create(Enemy enemy, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        public static Actor Create(UtilityEnemy enemy, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
             // Check if enemy alreay has Actor, and if so, remove it
-            if (enemy.gameObject.TryGetComponent<Actor>(out Actor existingActor))
+            if (enemy.gameObject.TryGetComponent(out Actor existingActor))
             {
+#if UNITY_EDITOR
+                DestroyImmediate(existingActor);
+#else
                 Destroy(existingActor);
+#endif
             }
-            
-            Actor actor = enemy.gameObject.AddComponent<Actor>();
+            // Check if enemy already has EnemyBlackboard, and if so, reset it
+            if (enemy.gameObject.TryGetComponent(out EnemyBlackboard existingBlackboard))
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(existingBlackboard);
+#else
+                Destroy(existingBlackboard);
+#endif
+            }
+
+            Actor actor = enemy.CreateActorComponent();
+            EnemyBlackboard blackboard = enemy.CreateBlackboardComponent();
+
             actor.m_axes = axes;
             actor.m_actions = actions;
-            actor.m_enemy = enemy;
+            actor.m_blackboard = blackboard;
             actor.m_actionAxisBindings = actionAxisBindings;
 
             actor.m_axisScores = new float[actor.m_axes.Length];
@@ -41,11 +56,11 @@ namespace Stirge.UtilityAI.Core
 
             for (int i = 0; i < actor.m_axes.Length; i++)
             {
-                actor.m_axes[i].SetEnemy(enemy);
+                actor.m_axes[i].SetBlackboard(blackboard);
             }
             for (int i = 0; i < actor.m_actions.Length; i++)
             {
-                actor.m_actions[i].SetEnemy(enemy);
+                actor.m_actions[i].SetBlackboard(blackboard);
             }
 
             return actor;

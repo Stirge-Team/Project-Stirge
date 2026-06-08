@@ -57,7 +57,7 @@ namespace Stirge.UtilityAI.CustomEditors
                     if (GUILayout.Button("Remove Axis"))
                     {
                         DestroyImmediate(objectValue, true);
-                        SerializedPropertyHelper.CompletelyRemove(axisProperty, i);
+                        SerializedPropertyHelper.CompletelyRemove(axesProperty, i);
                         RemoveAxisIndex(axisIndicesProperty, i);
 
                         --i;

@@ -64,52 +64,56 @@ namespace Stirge.Enemy
             m_agent.ApplyRootMotion();
         }
 
-        protected override Vector3 GetPosition()
+        public override Vector3 GetPosition()
         {
             return m_agent.Transform.position;
         }
-        protected override void SetPosition(Vector3 newPosition)
+        public override void SetPosition(Vector3 newPosition)
         {
             m_agent.SetPosition(newPosition);
         }
-        protected override Quaternion GetRotation()
+        public override Quaternion GetRotation()
         {
             return m_agent.Transform.rotation;
         }
-        protected override void SetRotation(Quaternion newRotation)
+        public override void SetRotation(Quaternion newRotation)
         {
             m_agent.SetRotation(newRotation);
         }
-        protected override void SetRotation(Vector3 eulerRotation)
+        public override Vector3 GetEulerRotation()
         {
-            m_agent.SetRotation(Quaternion.Euler(eulerRotation));
+            return m_agent.Transform.eulerAngles;
+        }
+        public override void SetEulerRotation(Vector3 newEulerRotation)
+        {
+            SetRotation(Quaternion.Euler(newEulerRotation));
         }
         public override Vector3 GetForward()
         {
             return m_agent.Transform.forward;
         }
 
-        protected override void BeginGoToPosition(Vector3 newPosition)
+        public override void BeginGoToPosition(Vector3 newPosition)
         {
             m_agent.TargetPosition = newPosition;
             m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
             m_agent.CalculatePath();
         }
-        protected override void StopGoToPosition()
+        public override void StopGoToPosition()
         {
             m_agent.TargetPosition = null;
             m_agent.ClearPath();
         }
 
-        protected override float GetMovementSpeed()
+        public override float GetMovementSpeed()
         {
             return m_agent.NavMeshAgent.speed;
         }
-        protected override void SetMovementSpeed(float speed)
+        public override void SetMovementSpeed(float speed)
         {
             m_agent.NavMeshAgent.speed = speed;
         }
-        protected override void ResetMovementSpeed()
+        public override void ResetMovementSpeed()
         {
             m_agent.SetDefaultNavSpeed();
         }
@@ -156,10 +160,13 @@ namespace Stirge.Enemy
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            m_agent.OnDrawGizmos();
+            if (m_agent != null && m_agent.Transform != null)
+            {
+                m_agent.OnDrawGizmos();
 
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
+                Gizmos.color = Color.magenta;
+                Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
+            }
         }
 #endif
     }

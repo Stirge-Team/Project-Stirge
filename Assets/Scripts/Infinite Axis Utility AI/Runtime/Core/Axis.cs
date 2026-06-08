@@ -2,14 +2,15 @@ using System;
 
 namespace Stirge.UtilityAI.Core
 {
+    using Blackboard;
     using Enemy;
     
     public abstract class Axis
     {
-        private Enemy m_enemy;
+        private EnemyBlackboard m_blackboard;
 
         public string name { get; set; }
-        public SerializableCallback<float> getValue { get; set; }
+        public EnemyBlackboard Blackboard => m_blackboard;
 
         public abstract float ComputeScore();
 
@@ -20,46 +21,42 @@ namespace Stirge.UtilityAI.Core
             OnInitialise();
         }
 
-        public void SetEnemy(Enemy enemy)
+        public void SetBlackboard(EnemyBlackboard blackboard)
         {
-            m_enemy = enemy;
+            m_blackboard = blackboard;
         }
 
         #region Initialisers
-        public static TAxis Create<TAxis>(SerializableCallback<float> getValue) where TAxis : Axis, INotSetupable, new()
+        public static TAxis Create<TAxis>() where TAxis : Axis, INotSetupable, new()
         {
             var axis = new TAxis();
-            axis.getValue = getValue;
             return axis;
         }
-        public static TAxis Create<TAxis, TArg>(SerializableCallback<float> getValue, TArg arg) where TAxis : Axis, ISetupable<TArg>, new()
+        public static TAxis Create<TAxis, TArg>(TArg arg) where TAxis : Axis, ISetupable<TArg>, new()
         {
             var axis = new TAxis();
             axis.Setup(arg);
             return axis;
         }
-        public static TAxis Create<TAxis, TArg0, Targ0>(SerializableCallback<float> getValue, TArg0 arg0, Targ0 arg1) where TAxis : Axis, ISetupable<TArg0, Targ0>, new()
+        public static TAxis Create<TAxis, TArg0, Targ0>(TArg0 arg0, Targ0 arg1) where TAxis : Axis, ISetupable<TArg0, Targ0>, new()
         {
             var axis = new TAxis();
             axis.Setup(arg0, arg1);
-            axis.getValue = getValue;
             return axis;
         }
-        public static TAxis Create<TAxis, TArg0, Targ1, Targ2>(SerializableCallback<float> getValue, TArg0 arg0, Targ1 arg1, Targ2 arg2) where TAxis : Axis, ISetupable<TArg0, Targ1, Targ2>, new()
+        public static TAxis Create<TAxis, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2) where TAxis : Axis, ISetupable<TArg0, Targ1, Targ2>, new()
         {
             var axis = new TAxis();
             axis.Setup(arg0, arg1, arg2);
-            axis.getValue = getValue;
             return axis;
         }
 
-        public static Axis Create(Type axisType, SerializableCallback<float> getValue)
+        public static Axis Create(Type axisType)
         {
             var axis = (Axis)Activator.CreateInstance(axisType);
-            axis.getValue = getValue;
             return axis;
         }
-        public static Axis Create(Type axisType, object[] parameters, SerializableCallback<float> getValue)
+        public static Axis Create(Type axisType, object[] parameters)
         {
             var axis = (Axis)Activator.CreateInstance(axisType);
             SetuableHelper.CreateSetup(axis, parameters);

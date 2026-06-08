@@ -4,11 +4,9 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Builders
 {
-    using Builders;
     using Core;
-    using Enemy;
 
-    public class ActorBuilder : MonoBehaviour
+    public class ActorBuilder
     {
         [SerializeField] private readonly List<IActionBuilder> m_actionBuilders = new();
         [SerializeField] private readonly List<IAxisBuilder> m_axisBuilders = new();
@@ -24,7 +22,7 @@ namespace Stirge.UtilityAI.Builders
             new object[1], new object[2], new object[3]
         };
 
-        public Actor Build(Enemy enemy)
+        public Actor Build(UtilityEnemy enemy)
         {
             Axis[] axes = MakeAxes();
             Action[] actions = MakeActions();
@@ -69,7 +67,7 @@ namespace Stirge.UtilityAI.Builders
         #endregion
 
         #region Axis Adders
-        public void AddAxis<TAxis>(SerializableCallback<float> getValue, string name = "") where TAxis : Axis, INotSetupable, new()
+        public void AddAxis<TAxis>(string name = "") where TAxis : Axis, INotSetupable, new()
         {
             if (m_actionAxisBindings.Count == 0)
 			{
@@ -108,10 +106,10 @@ namespace Stirge.UtilityAI.Builders
 				int count = m_axisBuilders.Count;
 				m_actionAxisBindings[^1].Add(count);
 				axesLookup.Add(count);
-				m_axisBuilders.Add(new AxisBuilder<TAxis>(getValue, name));
+				m_axisBuilders.Add(new AxisBuilder<TAxis>(name));
 			}
         }
-        public void AddAxis<TAxis, TArg>(SerializableCallback<float> getValue, TArg arg, string name = "") where TAxis : Axis, ISetupable<TArg>, new()
+        public void AddAxis<TAxis, TArg>(TArg arg, string name = "") where TAxis : Axis, ISetupable<TArg>, new()
         {
             if (m_actionAxisBindings.Count == 0)
             {
@@ -162,10 +160,10 @@ namespace Stirge.UtilityAI.Builders
                 int count = m_axisBuilders.Count;
                 m_actionAxisBindings[^1].Add(count);
                 axesLookup.Add(count);
-                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg>(getValue,arg, name));
+                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg>(arg, name));
             }
         }
-        public void AddAxis<TAxis, TArg0, TArg1>(SerializableCallback<float> getValue, TArg0 arg0, TArg1 arg1, string name = "") where TAxis : Axis, ISetupable<TArg0, TArg1>, new()
+        public void AddAxis<TAxis, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, string name = "") where TAxis : Axis, ISetupable<TArg0, TArg1>, new()
         {
             if (m_actionAxisBindings.Count == 0)
             {
@@ -217,10 +215,10 @@ namespace Stirge.UtilityAI.Builders
                 int count = m_axisBuilders.Count;
                 m_actionAxisBindings[^1].Add(count);
                 axesLookup.Add(count);
-                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1>(getValue, arg0, arg1, name));
+                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1>(arg0, arg1, name));
             }
         }
-        public void AddAxis<TAxis, TArg0, TArg1, TArg2>(SerializableCallback<float> getValue, TArg0 arg0, TArg1 arg1, TArg2 arg2, string name = "") where TAxis : Axis, ISetupable<TArg0, TArg1, TArg2>, new()
+        public void AddAxis<TAxis, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, string name = "") where TAxis : Axis, ISetupable<TArg0, TArg1, TArg2>, new()
         {
             if (m_actionAxisBindings.Count == 0)
             {
@@ -273,10 +271,10 @@ namespace Stirge.UtilityAI.Builders
                 int count = m_axisBuilders.Count;
                 m_actionAxisBindings[^1].Add(count);
                 axesLookup.Add(count);
-                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1, TArg2>(getValue, arg0, arg1, arg2, name));
+                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1, TArg2>(arg0, arg1, arg2, name));
             }
         }
-        public void AddAxis(Type axisType, SerializableCallback<float> getValue, string name = "", params object[] parameters)
+        public void AddAxis(Type axisType, string name = "", params object[] parameters)
         {
             if (parameters is { Length: > 3 })
             {
@@ -312,7 +310,7 @@ namespace Stirge.UtilityAI.Builders
                 int count = m_axisBuilders.Count;
                 m_actionAxisBindings[^1].Add(count);
                 axesLookup.Add(count);
-                m_axisBuilders.Add(new AxisBuilder(axisType, getValue, parameters, name));
+                m_axisBuilders.Add(new AxisBuilder(axisType, parameters, name));
             }
         }
         #endregion

@@ -7,6 +7,6 @@ namespace Stirge.UtilityAI.Serialization
 
     public abstract class SerializedActor_Base : ScriptableObject
     {
-        public abstract Actor CreateActor(Enemy enemy);
+        public abstract Actor CreateActor(UtilityEnemy enemy);
     }
 }

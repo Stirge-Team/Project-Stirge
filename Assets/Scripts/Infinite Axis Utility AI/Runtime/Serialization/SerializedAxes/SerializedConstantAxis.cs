@@ -6,8 +6,5 @@ namespace Stirge.UtilityAI.Serialization.SerializedAxes
     using Core.Axes;
 
     [NameOverride("Score", 0)]
-    public sealed class SerializedConstantAxis : SerializedAxis<ConstantAxis, float>
-    {
-
-    }
+    public sealed class SerializedConstantAxis : SerializedAxis<ConstantAxis, float> { }
 }

@@ -2,11 +2,11 @@ using System;
 
 namespace Stirge.UtilityAI.Core
 {
-    using Enemy;
+    using Blackboard;
 
     public abstract class Action
     {
-        private Enemy m_enemy;
+        private EnemyBlackboard m_blackboard;
 
         public string name { get; set; }
         
@@ -38,9 +38,9 @@ namespace Stirge.UtilityAI.Core
             OnEnd();
         }
 
-        public void SetEnemy(Enemy enemy)
+        public void SetBlackboard(EnemyBlackboard blackboard)
         {
-            m_enemy = enemy;
+            m_blackboard = blackboard;
         }
 
         #region Initialisers

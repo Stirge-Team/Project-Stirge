@@ -3,7 +3,6 @@ using UnityEngine;
 namespace Stirge.UtilityAI.Serialization
 {
     using Builders;
-    using Stirge.Enemy;
     using Stirge.UtilityAI.Core;
     using System;
 
@@ -16,7 +15,7 @@ namespace Stirge.UtilityAI.Serialization
 
         private ActorBuilder m_builder;
 
-        public override Actor CreateActor(Enemy enemy)
+        public override Actor CreateActor(UtilityEnemy enemy)
         {
             Deserialize();
             Actor actor = m_builder.Build(enemy);
@@ -30,6 +29,8 @@ namespace Stirge.UtilityAI.Serialization
             {
                 return;
             }
+
+            m_builder = new ActorBuilder();
 
             for (int actionIndex = 0, actionCount = m_serializedActions.Length; actionIndex < actionCount; ++actionIndex)
             {

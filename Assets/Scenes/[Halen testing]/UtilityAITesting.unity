@@ -348,6 +348,8 @@ GameObject:
   m_Component:
   - component: {fileID: 986388239}
   - component: {fileID: 986388238}
+  - component: {fileID: 986388241}
+  - component: {fileID: 986388240}
   m_Layer: 0
   m_Name: UtilityEnemy
   m_TagString: Untagged
@@ -367,6 +369,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333585be454d5e540ab08e4c2c10680c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
+  m_anim: {fileID: 0}
+  m_health: {fileID: 0}
+  m_inflictedStatuses: []
+  m_groundedCheckDistance: 0
+  m_groundedCheckMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
+  spawner: {fileID: 0}
+  m_blackboard: {fileID: 986388240}
+  m_actorData: {fileID: 11400000, guid: 1a2c9633e41c0c64eb203aff7053ce9c, type: 2}
+  references:
+    version: 2
+    RefIds: []
 --- !u!4 &986388239
 Transform:
   m_ObjectHideFlags: 0
@@ -382,6 +414,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &986388240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986388237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93614d7b247fa67438f8cb932a373ba4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Blackboard.EnemyBlackboard
+  m_enemy: {fileID: 986388238}
+  m_floatDict:
+    m_keys:
+    - IsGrounded
+    - GetSpeed
+  m_vector3Dict:
+    m_keys:
+    - GetPosition
+    - GetEulerRotation
+--- !u!114 &986388241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986388237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9af5b4c338885c04ba386a78d30a1215, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Core.Actor
 --- !u!1 &1229491829
 GameObject:
   m_ObjectHideFlags: 0
