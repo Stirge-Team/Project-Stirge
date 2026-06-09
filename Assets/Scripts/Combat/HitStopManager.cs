@@ -1,3 +1,4 @@
+using Stirge.Management;
 using UnityEngine;
 
 public class HitStopManager : MonoBehaviour
@@ -44,7 +45,7 @@ public class HitStopManager : MonoBehaviour
         //       m is the max value, must be greater than 0
         //       d is the input damage, must be greater than 0
         float length = -(m_maxValue / Mathf.Pow(m_scaling, damage)) + m_maxValue;
-
+        Rumbler.Instance.CallRumble(new(0.25f, 0.75f), length);
         TimeManager.Instance.SetTimeScaleForTime(0f, length);
     }
 }
