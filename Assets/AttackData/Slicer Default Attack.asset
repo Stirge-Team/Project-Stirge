@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 787d2018d4466f4438a282a750b8d06f, type: 3}
+  m_Name: Slicer Default Attack
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
+  m_root:
+    rid: 5281897754630029372
+  references:
+    version: 2
+    RefIds:
+    - rid: 5281897754630029372
+      type: {class: SimultaneousAttackNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_significantAttackNodeIndex: 0
+        m_nodes:
+        - rid: 5281897754630029373
+        - rid: 5281897754630029374
+    - rid: 5281897754630029373
+      type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_animationStateName: DefaultAttack
+        m_animationClip: {fileID: 7400000, guid: 5a5f27f26d2169340b96db56ba1290b3, type: 2}
+        m_speed:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 1
+        m_hasRootMotion: 0
+    - rid: 5281897754630029374
+      type: {class: ApproachTargetNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_stoppingDistance:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 1.3
+        m_useInitialPosition: 0
+        m_speed:
+          m_isRandom: 0
+          m_range: {x: 0, y: 0}
+          m_value: 10

@@ -17,12 +17,23 @@ namespace Stirge.Player
         #region UnityEvents
         protected override void AwakeThis()
         {
-            base.AwakeThis();
-
             if(!m_movement || !m_input)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
+        }
+
+        protected override void UpdateThis(float deltaTime)
+        {
+            if (m_isAttacking)
+            {
+                m_movement.enabled = false;
+            }
+            else
+            {
+                m_movement.enabled = true;
+            }
+
         }
         #endregion
 
@@ -46,8 +57,7 @@ namespace Stirge.Player
         #region Status
         public override void EnterStun(float stunLength)
         {
-            //m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
-            m_movement.Motor.SetActive(false, false, stunLength);
+            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.Off, stunLength);
             m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
@@ -58,16 +68,12 @@ namespace Stirge.Player
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
-            m_movement.Motor.ApplyForce(-transform.forward * strength + -transform.up * height, ForceMode.Impulse, true);
+            m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
         }
 
         public override bool IsGrounded()
         {
             return m_movement.IsGrounded;
-        }
-        public override void ApplyRootMotion()
-        {
-            throw new System.NotImplementedException();
         }
         #endregion
 
@@ -92,12 +98,15 @@ namespace Stirge.Player
         {
             transform.rotation = Quaternion.Euler(eulerRotation);
         }
+        public override Vector3 GetForward()
+        {
+            return transform.forward;
+        }
 
         protected override void BeginGoToPosition(Vector3 newPosition)
         {
             throw new System.NotImplementedException();
         }
-
         protected override void StopGoToPosition()
         {
             throw new System.NotImplementedException();
@@ -107,13 +116,16 @@ namespace Stirge.Player
         {
             throw new System.NotImplementedException();
         }
-
         protected override void SetMovementSpeed(float speed)
         {
             throw new System.NotImplementedException();
         }
-
         protected override void ResetMovementSpeed()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void ApplyRootMotion()
         {
             throw new System.NotImplementedException();
         }

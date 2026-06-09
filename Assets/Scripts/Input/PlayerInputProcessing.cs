@@ -7,6 +7,7 @@ namespace Stirge.Input
 {
     using Combat.Attacks;
     using Player;
+    using System.Linq;
 
     [System.Flags]
     public enum AttackInput
@@ -20,20 +21,7 @@ namespace Stirge.Input
 
     public class PlayerInputProcessing : MonoBehaviour
     {
-        [SerializeField] private Player m_player;
-
-        [SerializeField] private float m_inputBufferTime = 0.2f;
-        public const int MaxSequenceLength = 5;
-
-        private Dictionary<AttackInput, AttackData> m_groundedBindings;
-        private Dictionary<AttackInput, AttackData> m_airBindings;
-
-        // if combos are never going to have branching paths, this can just become an AttackBinding
-        private Dictionary<AttackInput, AttackData> m_comboBindings;
-
-        private List<AttackInput> m_sequence = new();
-
-        private float m_bufferTimer = 0;
+        #region Singleton
         public static PlayerInputProcessing Instance { get; private set; }
 
         private void Awake()
@@ -49,6 +37,30 @@ namespace Stirge.Input
         private void Init()
         {
             m_comboBindings = new();
+        }
+        #endregion
+
+        [SerializeField] private Player m_player;
+
+        [SerializeField] private float m_inputBufferTime = 0.2f;
+        public const int MaxSequenceLength = 5;
+
+        private Dictionary<AttackInput, AttackData> m_groundedBindings = new();
+        private Dictionary<AttackInput, AttackData> m_airBindings = new();
+
+        // if combos are never going to have branching paths, this can just become an AttackBinding
+        private Dictionary<AttackInput, AttackData> m_comboBindings;
+
+        private List<AttackInput> m_sequence = new();
+
+        private float m_bufferTimer = 0;
+
+        public List<KeyValuePair<AttackInput, AttackData>> ComboBindings
+        {
+            get
+            {
+                return m_comboBindings != null ? m_comboBindings.ToList() : null;
+            }
         }
 
         private void Update()
@@ -75,9 +87,9 @@ namespace Stirge.Input
             m_airBindings = new(bindings);
         }
 
-        public void SetComboBinding(AttackBinding binding)
+        public void AddComboBinding(AttackBinding binding)
         {
-            m_comboBindings = AttackBinding.ConvertToDictionary(binding);
+            m_comboBindings.Add(binding.attackInput, binding.attackData);
         }
         public void SetComboBinding(Dictionary<AttackInput, AttackData> bindings)
         {
@@ -85,7 +97,7 @@ namespace Stirge.Input
         }
         public void ClearComboBinding()
         {
-            m_comboBindings = new();
+            m_comboBindings.Clear();
         }
         #endregion
 

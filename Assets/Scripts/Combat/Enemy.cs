@@ -2,8 +2,10 @@ using UnityEngine;
 
 namespace Stirge.Enemy
 {
+    using System.Collections;
     using AI;
     using Combat;
+    using Stirge.Combat.Attacks;
 
     public class Enemy : CombatEntity
     {
@@ -17,6 +19,8 @@ namespace Stirge.Enemy
         [SerializeField] private State m_airJuggle;
 
         [HideInInspector] public EnemySpawner spawner = null;
+
+        protected bool m_hasAttackToken = false;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -37,6 +41,11 @@ namespace Stirge.Enemy
                 return;
             }
 
+            if(TargetTransform != null) //if there is a target
+            {
+                AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+            }
+
             m_agent.Update(deltaTime);
         }
 
@@ -44,13 +53,43 @@ namespace Stirge.Enemy
         {
             m_agent.FixedUpdate();
         }
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             m_agent.OnEnable();
         }
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             m_agent.OnDisable();
+        }
+
+        public override void UseAttack(AttackData attackData)
+        {
+            if (!m_hasAttackToken) return; //fail if no attack token
+            base.UseAttack(attackData);
+        }
+        #endregion
+
+        #region Attack Tokens
+        public virtual bool GiveToken(float timeout = 0)
+        {
+            m_hasAttackToken = true;
+            //remove token after given time, if any
+            if (timeout > 0) StartCoroutine(TokenTimeout(timeout));
+            return m_hasAttackToken;
+        }
+        private IEnumerator TokenTimeout(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            RemoveToken();
+        }
+        public virtual bool RemoveToken()
+        {
+            return m_hasAttackToken = false;
+        }
+
+        public virtual void LostRaffle()
+        {
+            Debug.Log($"[{name}]: dude i can't believe i lost the attack token raffle this is so sad :(", this);
         }
         #endregion
 
@@ -84,6 +123,10 @@ namespace Stirge.Enemy
         {
             m_agent.SetRotation(Quaternion.Euler(eulerRotation));
         }
+        public override Vector3 GetForward()
+        {
+            return m_agent.Transform.forward;
+        }
 
         protected override void BeginGoToPosition(Vector3 newPosition)
         {
@@ -99,11 +142,11 @@ namespace Stirge.Enemy
 
         protected override float GetMovementSpeed()
         {
-            return m_agent.GetNavSpeed();
+            return m_agent.NavMeshAgent.speed;
         }
         protected override void SetMovementSpeed(float speed)
         {
-            m_agent.SetNavSpeed(speed);
+            m_agent.NavMeshAgent.speed = speed;
         }
         protected override void ResetMovementSpeed()
         {
@@ -114,21 +157,15 @@ namespace Stirge.Enemy
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            //         m
-            // func  ----- + m
-            //        x^d
-            // where x is the scaling, must be greater than 1
-            //       m is the max value, must be greater than 0
-            //       d is damage, must be greater than 0
-            float scaling = 1.1f;
-            float max = 1f;
-            HitStopManager.Instance.Stop(-(max / Mathf.Pow(scaling, damage)) + max);
+            HitStopManager.Instance.HitStopTime(damage);
         }
         #endregion
 
         #region Status
-        public override void EnterStun(float length)
+        public override void EnterStun(float stunLength)
         {
+            m_isStunned = true;
+            
             // different State for when Grounded
             if (IsGrounded())
                 m_agent.EnterState(m_stunState);
@@ -140,7 +177,7 @@ namespace Stirge.Enemy
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
         {
             if (stunLength > 0f)
-                InflictStatus(new Stun(stunLength));
+                InflictTimedStatus(new Stun(stunLength), null);
             m_agent.EnterState(m_knockbackState);
             m_agent.ApplyKnockback(strength, direction, height);
             m_anim.Play("hitstun");
@@ -148,7 +185,7 @@ namespace Stirge.Enemy
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
         {
             if (stunLength > 0f)
-                InflictStatus(new Stun(stunLength));
+                InflictTimedStatus(new Stun(stunLength), null);
             m_agent.EnterState(m_airJuggle);
             m_agent.ApplyKnockback(strength, direction);
             m_anim.Play("hitstun");

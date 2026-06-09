@@ -9,6 +9,11 @@ namespace Stirge.Input
     [System.Serializable]
     public class AttackBinding
     {
+        public AttackBinding(AttackInput input, AttackData data)
+        {
+            attackInput = input;
+            attackData = data;
+        }
         public AttackBinding(AttackBinding binding)
         {
             attackInput = binding.attackInput;

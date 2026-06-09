@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: TestString1
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 2, z: 0}
+  - m_position: {x: 0, y: 3, z: 0.15}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 1, y: 4, z: 1}
+    m_scale: {x: 1, y: 6, z: 1}
     m_startFrame: 12
     m_endFrame: 20
     m_groupID: 1
@@ -29,7 +29,7 @@ MonoBehaviour:
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: -1
+      m_damage: 1
       m_statuses:
       - rid: 2001016855599513791
   m_eventData:
@@ -44,14 +44,14 @@ MonoBehaviour:
     m_startFrame: 45
     m_endFrame: 46
   m_nextComboInput:
-    m_nextComboAttack: TestString2
-    m_comboAttackInput: 8
-    m_comboInputTimeStart: 20
-    m_comboInputTimeEnd: 45
+    m_nextComboAttack: {fileID: 11400000, guid: 28bb705b0d4cdbc729a2e40f764eebd2, type: 2}
+    m_comboAttackInput: 1
+    m_comboInputTimeStart: 23
+    m_comboInputTimeEnd: 37
   references:
     version: 2
     RefIds:
     - rid: 2001016855599513791
       type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_stunLength: 0.5
+        m_length: 0.5

@@ -8,6 +8,20 @@ namespace Stirge.Tools
     {
         protected override void DrawGUI(GUIContent label)
         {
+            // If property is not expanded, show the value
+            if (!m_property.isExpanded)
+            {
+                if (FindPropertyRelative("m_isRandom").boolValue)
+                {
+                    SerializedProperty rangeProp = FindPropertyRelative("m_range");
+                    label.text += $": {rangeProp.vector2Value.x} - {rangeProp.vector2Value.y}";
+                }
+                else
+                {
+                    label.text += $": {FindPropertyRelative("m_value").floatValue}";
+                }
+            }
+
             EditorGUI.BeginProperty(m_position, label, m_property);
             m_property.isExpanded = EditorGUI.Foldout(GetNewRect(), m_property.isExpanded, label);
             if (m_property.isExpanded)

@@ -8,8 +8,15 @@ namespace Stirge.Combat
         protected bool m_isCleared = false;
         public bool IsCleared => m_isCleared;
 
-        public virtual void OnInflict(CombatEntity entity) { }
-     
+        public virtual void OnInflict(CombatEntity targetEntity)
+        {
+            throw new System.NotImplementedException();
+        }
+        public virtual void OnInflict(CombatEntity targetEntity, CombatEntity attackingEntity)
+        {
+            OnInflict(targetEntity);
+        }
+
         public static readonly System.Type[] StatusTypes =
         {
             typeof(AirJuggle),
@@ -18,6 +25,7 @@ namespace Stirge.Combat
         };
     }
 
+    [System.Serializable]
     public abstract class TimedStatus : Status
     {
         public TimedStatus(float length)
@@ -33,7 +41,9 @@ namespace Stirge.Combat
 
         private float m_timer;
 
-        public override void OnInflict(CombatEntity entity)
+        protected float Length => m_length;
+
+        public override void OnInflict(CombatEntity targetEntity)
         {
             m_timer = m_length;
         }
@@ -58,10 +68,10 @@ namespace Stirge.Combat
         public Stun(float length) : base(length) { }
         public Stun(Stun original) : base(original) { }
 
-        public override void OnInflict(CombatEntity entity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
-            base.OnInflict(entity);
-            entity.SetIsStunned(true);
+            base.OnInflict(targetEntity);
+            targetEntity.SetIsStunned(true, Length);
         }
 
         public override void OnClear(CombatEntity entity)
@@ -87,10 +97,10 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_height;
 
-        public override void OnInflict(CombatEntity entity)
+        public override void OnInflict(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
-            Vector3 dir = -entity.transform.GetChild(0).forward;
-            entity.EnterKnockback(m_strength, dir, m_height, 0);
+            Vector3 dir = attackingEntity.GetForward();
+            targetEntity.EnterKnockback(m_strength, dir, m_height, 0);
         }
     }
 
@@ -111,9 +121,9 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_stallLength;
 
-        public override void OnInflict(CombatEntity entity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
-            entity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0);
+            targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0);
         }
     }
 }

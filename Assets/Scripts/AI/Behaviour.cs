@@ -18,6 +18,7 @@ namespace Stirge.AI
             typeof(LookAtTargetBehaviour),
             typeof(MoveToTargetBehaviour),
             typeof(UpdateTargetBehaviour),
+            typeof(UpdateLookSpeedBehaviour),
         };
     }
 }
