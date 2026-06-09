@@ -8,12 +8,14 @@ namespace Stirge.Management
     {
         public static Rumbler Instance => m_instance;
         private static Rumbler m_instance;
+        private Coroutine m_haltCoroutine;
 
         void Awake()
         {
             if (m_instance == null) //if null, attempt to become the new instance
             {
                 m_instance = this;
+                Gamepad.current.ResumeHaptics();
             }
             else if (m_instance.name != name)
             {
@@ -21,15 +23,32 @@ namespace Stirge.Management
             }
         }
 
-        public void CallRumble(Vector2 strength, float time)
+        public void RumblePulse(float lowHz, float highHz, float time)
         {
-            StartCoroutine(DoRumble(strength, time));
+            var pad = Gamepad.current;
+
+            if(pad != null)
+            {
+                Debug.Log($"Setting the rumble to {lowHz} and {highHz} for {time} seconds.");
+                pad.SetMotorSpeeds(lowHz, highHz);
+
+                m_haltCoroutine = StartCoroutine(StopRumble(time, pad));
+            }
         }
-        private IEnumerator DoRumble(Vector2 strength, float time)
+        private IEnumerator StopRumble(float time, Gamepad pad)
         {
-            Gamepad.current.SetMotorSpeeds(strength.x, strength.y);
-            InputSystem.ResetHaptics();
-            yield return new WaitForSecondsRealtime(time);
+            float timePassed = 0f;
+            while (timePassed < time)
+            {
+                timePassed += Time.deltaTime;
+                yield return null;
+            }
+            Debug.Log("Stopping the rumble");
+            pad.SetMotorSpeeds(0f, 0f);
+        }
+        public void TestRumble()
+        {
+            RumblePulse(0.2f, 0.5f, 1f);
         }
     }
 }
