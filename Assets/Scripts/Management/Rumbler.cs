@@ -29,7 +29,7 @@ namespace Stirge.Management
 
             if(pad != null)
             {
-                Debug.Log($"Setting the rumble to {lowHz} and {highHz} for {time} seconds.");
+                Debug.Log($"Setting the rumble to {lowHz} and {highHz} for {time} second(s).");
                 pad.SetMotorSpeeds(lowHz, highHz);
 
                 m_haltCoroutine = StartCoroutine(StopRumble(time, pad));
