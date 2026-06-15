@@ -72,7 +72,7 @@ namespace Stirge.Camera
             float remainingTime = preset.Duration;
             while (remainingTime > 0)
             {
-                remainingTime -= Time.deltaTime;
+                remainingTime -= Time.unscaledDeltaTime;//Time.deltaTime;
                 perlin.AmplitudeGain = preset.AmplitudeGain * (remainingTime / preset.Duration); //reduce by rate
                 perlin.FrequencyGain = preset.FrequencyGain * (remainingTime / preset.Duration);
                 yield return null;
