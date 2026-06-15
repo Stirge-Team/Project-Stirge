@@ -20,6 +20,7 @@ namespace Stirge.Combat.Attacks
             {
                 switch (label.text)
                 {
+                    #region Nodes
                     case nameof(AnimationNode):
                         DrawPropertyField("m_animationStateName");
                         DrawPropertyField("m_animationClip");
@@ -39,6 +40,12 @@ namespace Stirge.Combat.Attacks
                     case nameof(DelayNode):
                         DrawPropertyField("m_delay");
                         break;
+                    case nameof(RigidbodyMoveNode):
+                        DrawPropertyField("m_time");
+                        DrawPropertyField("m_localOffset");
+                        break;
+                    #endregion
+                    #region Decorators
                     case nameof(ChanceNode):
                         DrawPropertyField("m_chance");
                         DrawPropertyField("m_node");
@@ -78,8 +85,8 @@ namespace Stirge.Combat.Attacks
                             nodesProp.isExpanded = true;
                             newAttackNodeProp.isExpanded = true;
                         }
-
                         break;
+                    #endregion
                 }
             }
 
@@ -96,6 +103,7 @@ namespace Stirge.Combat.Attacks
 
                 switch (label.text)
                 {
+                    #region Nodes
                     case nameof(AnimationNode):
                         totalLines += GetPropertyLineHeight("m_speed");
                         totalLines += 3;
@@ -112,6 +120,12 @@ namespace Stirge.Combat.Attacks
                     case nameof(DelayNode):
                         totalLines += GetPropertyLineHeight("m_delay");
                         break;
+                    case nameof(RigidbodyMoveNode):
+                        totalLines += GetPropertyLineHeight("m_time");
+                        totalLines += GetPropertyLineHeight("m_localOffset");
+                        break;
+                    #endregion
+                    #region Decorators
                     case nameof(ChanceNode):
                         totalLines += GetPropertyLineHeight("m_node");
                         totalLines += 3; // for chance, popup, and add Node button
@@ -125,6 +139,7 @@ namespace Stirge.Combat.Attacks
                         totalLines += GetPropertyLineHeight("m_nodes");
                         totalLines += 3; // for popup and add button, and for Significant Index
                         break;
+                    #endregion
                 }
             }
             
