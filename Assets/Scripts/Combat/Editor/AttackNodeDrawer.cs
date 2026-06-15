@@ -40,8 +40,24 @@ namespace Stirge.Combat.Attacks
                     case nameof(DelayNode):
                         DrawPropertyField("m_delay");
                         break;
-                    case nameof(RigidbodyMoveNode):
+                    case nameof(TimedMoveNode):
                         DrawPropertyField("m_time");
+                        DrawPropertyField("m_localOffset");
+                        break;
+                    case nameof(CurveMoveNode):
+                        DrawPropertyField("m_curve");
+                        DrawPropertyField("m_localOffset");
+                        break;
+                    case nameof(SpeedMoveNode):
+                        DrawPropertyField("m_speed");
+                        DrawPropertyField("m_localOffset");
+                        break;
+                    case nameof(AccelerateMoveNode):
+                        DrawPropertyField("m_acceleration");
+                        EditorGUI.BeginDisabledGroup(true);
+                        EditorGUI.TextArea(GetNewRect(), "If Max Speed is less than or equal to 0, it will be treated as infinite.");
+                        EditorGUI.EndDisabledGroup();
+                        DrawPropertyField("m_maxSpeed");
                         DrawPropertyField("m_localOffset");
                         break;
                     #endregion
@@ -120,8 +136,22 @@ namespace Stirge.Combat.Attacks
                     case nameof(DelayNode):
                         totalLines += GetPropertyLineHeight("m_delay");
                         break;
-                    case nameof(RigidbodyMoveNode):
+                    case nameof(TimedMoveNode):
                         totalLines += GetPropertyLineHeight("m_time");
+                        totalLines += GetPropertyLineHeight("m_localOffset");
+                        break;
+                    case nameof(CurveMoveNode):
+                        totalLines += GetPropertyLineHeight("m_curve");
+                        totalLines += GetPropertyLineHeight("m_localOffset");
+                        break;
+                    case nameof(SpeedMoveNode):
+                        totalLines += GetPropertyLineHeight("m_speed");
+                        totalLines += GetPropertyLineHeight("m_localOffset");
+                        break;
+                    case nameof(AccelerateMoveNode):
+                        totalLines++; // for tooltip
+                        totalLines += GetPropertyLineHeight("m_acceleration");
+                        totalLines += GetPropertyLineHeight("m_maxSpeed");
                         totalLines += GetPropertyLineHeight("m_localOffset");
                         break;
                     #endregion

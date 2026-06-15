@@ -56,6 +56,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
+  m_rb: {fileID: 2713100686291229703}
   m_anim: {fileID: 6992374104284298522}
   m_health: {fileID: 4312719870174949881}
   m_inflictedStatuses: []
@@ -391,6 +392,10 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 70c6e45d-6e67-44ab-acbc-7bc58bd9583c
     m_ActionName: 'Player/A[/Mouse/middleButton]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: b7a5efb1-ce94-49c6-a903-b168263ac74b
+    m_ActionName: 'Debug/Exit Mouse Lock[/Keyboard/escape]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

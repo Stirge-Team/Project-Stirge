@@ -24,7 +24,10 @@ namespace Stirge.Combat.Attacks
             typeof(ChanceNode),
             typeof(DelayNode),
             typeof(SimultaneousAttackNode),
-            typeof(RigidbodyMoveNode),
+            typeof(TimedMoveNode),
+            typeof(CurveMoveNode),
+            typeof(SpeedMoveNode),
+            typeof(AccelerateMoveNode),
         };
     }
 }

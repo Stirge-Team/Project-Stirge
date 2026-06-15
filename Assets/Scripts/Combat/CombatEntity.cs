@@ -10,8 +10,9 @@ namespace Stirge.Combat
     public abstract class CombatEntity : MonoBehaviour
     {
         private static bool s_debug = false;
-        
+
         [Header("Components")]
+        [SerializeField] protected Rigidbody m_rb;
         [SerializeField] protected Animator m_anim;
 
         [Header("Combat Properties")]
@@ -158,6 +159,7 @@ namespace Stirge.Combat
         private AttackNode m_currentAttackNode;
         private int m_currentAttackIndex;
         private Coroutine[] m_attackCoroutines;
+
         public virtual void UseAttack(AttackData attackData)
         {
             StopAttacking();
@@ -304,57 +306,52 @@ namespace Stirge.Combat
                 {
                     m_currentAttackNode = null;
                     m_attackCoroutines = null;
-                    if (s_debug) Debug.Log($"Finished processing Simultaneous Attack Node.");
+                    if (s_debug) Debug.Log($"Finished processing {m_currentAttackNode.GetType().Name}.");
                 }
             }
         }
 
         private void StartAttackCoroutine()
         {
+            void SetAttackCoroutineElement(AttackNode node, int index)
+            {
+                m_attackCoroutines[index] = node.GetType().Name switch
+                {
+                    nameof(AnimationNode) => StartCoroutine(PlayAnimation(node as AnimationNode)),
+                    nameof(ApproachTargetNode) => StartCoroutine(ApproachTarget(node as ApproachTargetNode)),
+                    nameof(TranslateNode) => StartCoroutine(Translate(node as TranslateNode)),
+                    nameof(DelayNode) => StartCoroutine(Delay(node as DelayNode)),
+                    nameof(TimedMoveNode) => StartCoroutine(TimedMove(node as TimedMoveNode)),
+                    nameof(CurveMoveNode) => StartCoroutine(CurveMove(node as CurveMoveNode)),
+                    nameof(SpeedMoveNode) => StartCoroutine(SpeedMove(node as SpeedMoveNode)),
+                    nameof(AccelerateMoveNode) => StartCoroutine(AccelerateMove(node as AccelerateMoveNode)),
+                    _ => null
+                };
+            }
+            
             if (s_debug) Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
 
             if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
             {
-                m_attackCoroutines = new Coroutine[simultaneousAttackNode.Nodes.Length];
-                int num = 0;
-                foreach (AttackNode node in simultaneousAttackNode.Nodes)
+                int nodeCount = simultaneousAttackNode.Nodes.Length;
+                m_attackCoroutines = new Coroutine[nodeCount];
+                for (int i = 0; i < nodeCount; i++)
                 {
-                    switch (node.GetType().Name)
-                    {
-                        case nameof(AnimationNode):
-                            m_attackCoroutines[num] = StartCoroutine(PlayAnimation(node as AnimationNode));
-                            break;
-                        case nameof(ApproachTargetNode):
-                            m_attackCoroutines[num] = StartCoroutine(ApproachTarget(node as ApproachTargetNode));
-                            break;
-                        case nameof(TranslateNode):
-                            m_attackCoroutines[num] = StartCoroutine(Translate(node as TranslateNode));
-                            break;
-                        case nameof(DelayNode):
-                            m_attackCoroutines[num] = StartCoroutine(Delay(node as DelayNode));
-                            break;
-                    }
-                    num++;
+                    SetAttackCoroutineElement(simultaneousAttackNode.Nodes[i], i);
                 }
             }
             else
             {
                 m_attackCoroutines = new Coroutine[1];
-                switch (m_currentAttackNode.GetType().Name)
-                {
-                    case nameof(AnimationNode):
-                        m_attackCoroutines[0] = StartCoroutine(PlayAnimation(m_currentAttackNode as AnimationNode));
-                        break;
-                    case nameof(ApproachTargetNode):
-                        m_attackCoroutines[0] = StartCoroutine(ApproachTarget(m_currentAttackNode as ApproachTargetNode));
-                        break;
-                    case nameof(TranslateNode):
-                        m_attackCoroutines[0] = StartCoroutine(Translate(m_currentAttackNode as TranslateNode));
-                        break;
-                    case nameof(DelayNode):
-                        m_attackCoroutines[0] = StartCoroutine(Delay(m_currentAttackNode as DelayNode));
-                        break;
-                }
+                SetAttackCoroutineElement(m_currentAttackNode, 0);
+            }
+
+            // If all the AttackCoroutines are already null, then the attack is invalid
+            if (m_attackCoroutines.All(c => c == null))
+            {
+                m_currentAttackNode = null;
+                m_attackCoroutines = null;
+                if (s_debug) Debug.Log($"None of the provided AttackNodes have implemented functionality. Stopping processing.");
             }
         }
 
@@ -373,7 +370,7 @@ namespace Stirge.Combat
             if (node.HasRootMotion)
                 ApplyRootMotion();
 
-            if (s_debug) Debug.Log($"Finished processing Animation Node.");
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
             OnAttackCoroutineFinished(node);
         }
         private IEnumerator ApproachTarget(ApproachTargetNode node)
@@ -414,7 +411,7 @@ namespace Stirge.Combat
             }
 
             // exit
-            if (s_debug) Debug.Log($"Finished processing Approach Target node.");
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
             OnAttackCoroutineFinished(node);
         }
         private IEnumerator Translate(TranslateNode node)
@@ -425,16 +422,17 @@ namespace Stirge.Combat
 
             if (node.IsLocalTranslation)
             {
-                endPosition = GetPosition() + GetRotation() * node.Translation;
+                endPosition = startPosition + GetRotation() * node.Translation;
             }
             else
             {
-                endPosition = GetPosition() + node.Translation;
+                endPosition = startPosition + node.Translation;
             }
 
-            // running
             float elapsedTime = 0f;
             bool arrived = false;
+
+            // running
             while (!arrived)
             {
                 float t = Mathf.Clamp01(elapsedTime / node.Time);
@@ -452,7 +450,7 @@ namespace Stirge.Combat
             }
 
             // exit
-            if (s_debug) Debug.Log($"Finished processing Translate Node.");
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
             OnAttackCoroutineFinished(node);
         }
         private IEnumerator Delay(DelayNode node)
@@ -463,7 +461,137 @@ namespace Stirge.Combat
             yield return new WaitForSeconds(node.Delay);
 
             // exit
-            if (s_debug) Debug.Log($"Finished processing Delay Node.");
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
+            OnAttackCoroutineFinished(node);
+        }
+        private IEnumerator TimedMove(TimedMoveNode node)
+        {
+            // init
+            Vector3 startPosition = GetPosition();
+            Vector3 endPosition = startPosition + GetRotation() * node.LocalOffset;
+
+            float time = node.Time;
+            float elapsedTime = 0f;
+            bool arrived = false;
+
+            // running
+            while (!arrived)
+            {
+                float t = Mathf.Clamp01(elapsedTime / time);
+                m_rb.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
+
+                // if arrived at end position
+                if (t >= 1)
+                {
+                    arrived = true;
+                    break;
+                }
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }        
+
+            // exit
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
+            OnAttackCoroutineFinished(node);
+        }
+        private IEnumerator CurveMove(CurveMoveNode node)
+        {
+            // init
+            Vector3 startPosition = GetPosition();
+            Vector3 endPosition = startPosition + GetRotation() * node.LocalOffset;
+
+            // WATCH: Unsure if last key in array will always be the key with the highest x/time value (the one at the end)
+            float time = node.Curve.keys[^1].time;
+            float elapsedTime = 0f;
+            bool arrived = false;
+
+            // running
+            while (!arrived)
+            {
+                // divide by time to get normalised 0 - 1 t value as Lerp clamps t to 0 - 1
+                float t = Mathf.Clamp(node.Curve.Evaluate(elapsedTime), 0, time) / time;
+                m_rb.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
+
+                // if arrived at end position
+                if (t >= 1)
+                {
+                    arrived = true;
+                    break;
+                }
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            // exit
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
+            OnAttackCoroutineFinished(node);
+        }
+        private IEnumerator SpeedMove(SpeedMoveNode node)
+        {
+            // init
+            Vector3 endPosition = GetPosition() + GetRotation() * node.LocalOffset;
+
+            float speed = node.Speed;
+            bool arrived = false;
+
+            // running
+            while (!arrived)
+            {
+                Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, speed * Time.deltaTime);
+                m_rb.MovePosition(target);
+
+                // if arrived at end position
+                if (m_rb.position == endPosition)
+                {
+                    arrived = true;
+                    break;
+                }
+                yield return null;
+            }
+
+            // exit
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
+            OnAttackCoroutineFinished(node);
+        }
+        private IEnumerator AccelerateMove(AccelerateMoveNode node)
+        {
+            // init
+            Vector3 endPosition = GetPosition() + GetRotation() * node.LocalOffset;
+
+            float acceleration = node.Acceleration;
+            // If maxSpeed is not greater than 0, then there is no max speed
+            float maxSpeed = node.MaxSpeed > 0 ? node.MaxSpeed : Mathf.Infinity;
+            bool arrived = false;
+
+            float currentSpeed = 0;
+
+            // running
+            while (!arrived)
+            {
+                // Increase speed by acceleration
+                if (currentSpeed < maxSpeed)
+                {
+                    currentSpeed += acceleration * Time.deltaTime;
+                    if (currentSpeed > maxSpeed)
+                        currentSpeed = maxSpeed;
+                }
+
+                Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, currentSpeed * Time.deltaTime);
+                m_rb.MovePosition(target);
+
+                // if arrived at end position
+                if (m_rb.position == endPosition)
+                {
+                    arrived = true;
+                    break;
+                }
+                yield return null;
+            }
+
+            // exit
+            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
             OnAttackCoroutineFinished(node);
         }
         #endregion

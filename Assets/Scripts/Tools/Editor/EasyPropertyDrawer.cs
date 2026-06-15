@@ -23,6 +23,12 @@ namespace Stirge.Tools
 
         protected abstract void DrawGUI(GUIContent label);
 
+        /// <summary>
+        /// Do not use this to get the height of an <see cref="EasyPropertyDrawer"/> property!! Instead use <see cref="GetPropertyLineHeight"/>.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="label"></param>
+        /// <returns></returns>
         public sealed override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SaveProperties(property);
