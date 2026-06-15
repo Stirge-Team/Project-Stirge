@@ -73,8 +73,9 @@ namespace Stirge.Camera
             while (remainingTime > 0)
             {
                 remainingTime -= Time.unscaledDeltaTime;//Time.deltaTime;
-                perlin.AmplitudeGain = preset.AmplitudeGain * (remainingTime / preset.Duration); //reduce by rate
-                perlin.FrequencyGain = preset.FrequencyGain * (remainingTime / preset.Duration);
+                var scale = preset.Curve.Evaluate(1 - (remainingTime / preset.Duration));
+                perlin.AmplitudeGain = preset.AmplitudeGain * scale; //reduce by rate
+                perlin.FrequencyGain = preset.FrequencyGain * scale;
                 yield return null;
             }
 
