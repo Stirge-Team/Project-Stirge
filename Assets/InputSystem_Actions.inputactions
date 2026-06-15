@@ -885,6 +885,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Exit Mouse Lock",
+                    "type": "Button",
+                    "id": "b7a5efb1-ce94-49c6-a903-b168263ac74b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -907,6 +916,17 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Reload Current Scene",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2a692d2c-7d0c-4d6a-a5c6-b5ecbfef3462",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Exit Mouse Lock",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

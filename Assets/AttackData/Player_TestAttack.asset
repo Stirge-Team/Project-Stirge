@@ -13,11 +13,17 @@ MonoBehaviour:
   m_Name: Player_TestAttack
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.AttackData
   m_root:
-    rid: 5206302206032347204
+    rid: 5206302521619120320
   references:
     version: 2
     RefIds:
-    - rid: 5206302206032347204
+    - rid: 5206302521619120320
+      type: {class: SimultaneousAttackNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
+      data:
+        m_significantAttackNodeIndex: -1
+        m_nodes:
+        - rid: 5206302521619120321
+    - rid: 5206302521619120321
       type: {class: AnimationNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
         m_animationStateName: TestAttack

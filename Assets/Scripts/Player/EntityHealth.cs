@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Stirge.Management
+namespace Stirge.Combat
 {
     public class EntityHealth : MonoBehaviour
     {
