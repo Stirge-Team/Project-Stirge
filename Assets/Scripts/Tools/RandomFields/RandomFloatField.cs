@@ -11,8 +11,16 @@ namespace Stirge.Tools
         public RandomFloatField()
         {
             m_isRandom = false;
-            m_range = new();
+            m_range = default;
             m_value = 1f;
+        }
+        public RandomFloatField(float value) : base()
+        {
+            m_value = value;
+        }
+        public RandomFloatField(Vector2 range) : base()
+        {
+            m_range = range;
         }
 
         public override void DetermineValue()

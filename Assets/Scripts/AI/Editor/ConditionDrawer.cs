@@ -15,6 +15,8 @@ namespace Stirge.AI
             else
                 label.text = "Empty, pls delete";
 
+            string typeName = label.text;
+
             // add "Not" to the start of a label if the value is inverted
             if (FindPropertyRelative("m_invertValue").boolValue)
             {
@@ -23,12 +25,12 @@ namespace Stirge.AI
             
             EditorGUI.BeginProperty(m_position, label, m_property);
             DrawLabelHeader(label);
-            if (m_property.isExpanded && label.text != "Empty, pls delete")
+            if (m_property.isExpanded && typeName != "Empty, pls delete")
             {
                 // draw the Invert Value prop
                 DrawPropertyField("m_invertValue");
 
-                if (label.text == nameof(DistanceCondition))
+                if (typeName == nameof(DistanceCondition))
                     DrawPropertyField("m_distance");
             }
 

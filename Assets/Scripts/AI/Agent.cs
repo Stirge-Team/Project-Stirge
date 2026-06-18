@@ -195,14 +195,7 @@ namespace Stirge.AI
             m_nav.transform.rotation = newRotation;
         }
 
-        public Vector3 GetVelocity()
-        {
-            if (m_physicsMode == PhysicsMode.NavMesh)
-                return m_nav.velocity;
-            else
-                return m_rb.linearVelocity;
-        }
-
+        
         public void RotateTowards(Vector3 pos, float maxDelta)
         {
             Vector3 curPos = m_transform.position;
@@ -212,6 +205,21 @@ namespace Stirge.AI
             m_nav.transform.rotation = m_transform.rotation;
         }
 
+        #endregion
+
+        #region Physics
+        public Vector3 GetVelocity()
+        {
+            if (m_physicsMode == PhysicsMode.NavMesh)
+                return m_nav.velocity;
+            else
+                return m_rb.linearVelocity;
+        }
+
+        public void ApplyPhysicsToTransform()
+        {
+            SetPosition(m_rb.position);
+        }
         #endregion
 
         #region Memory

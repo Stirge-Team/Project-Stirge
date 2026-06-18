@@ -6,18 +6,16 @@ namespace Stirge.Combat.Attacks
     using Tools;
 
     [System.Serializable]
-    public class TimedMoveNode : AttackNode
+    public class TimedMoveNode : MoveNode
     {
         [SerializeField] private RandomFloatField m_time;
-        [SerializeField] private RandomVector3Field m_localOffset;
-
+        
         public float Time => m_time.Value;
-        public Vector3 LocalOffset => m_localOffset.Value;
 
         public override void Evaluate(List<AttackNode> activeNodes)
         {
+            base.Evaluate(null);
             m_time.DetermineValue();
-            m_localOffset.DetermineValue();
             
             activeNodes.Add(this);
         }

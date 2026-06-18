@@ -13,12 +13,23 @@ namespace Stirge.Combat.Attacks
         protected override void DrawGUI(GUIContent label)
         {
             SetLabelTextToTypeName(label);
+            string typeName = label.text;
 
             EditorGUI.BeginProperty(m_position, label, m_property);
             DrawLabelHeader(label);
             if (m_property.isExpanded)
             {
-                switch (label.text)
+                // check for abstract types
+                var obj = m_property.managedReferenceValue;
+                if (obj is MoveNode)
+                {
+                    DrawPropertyField("m_localOffset");
+                    m_totalLines += GetPropertyLineHeight("m_localOffset") - 1;
+                    DrawPropertyField("m_stoppingDistance");
+                    DrawPropertyField("m_considerYPosition");
+                }
+
+                switch (typeName)
                 {
                     #region Nodes
                     case nameof(AnimationNode):
@@ -42,23 +53,18 @@ namespace Stirge.Combat.Attacks
                         break;
                     case nameof(TimedMoveNode):
                         DrawPropertyField("m_time");
-                        DrawPropertyField("m_localOffset");
                         break;
                     case nameof(CurveMoveNode):
                         DrawPropertyField("m_curve");
-                        DrawPropertyField("m_localOffset");
                         break;
                     case nameof(SpeedMoveNode):
                         DrawPropertyField("m_speed");
-                        DrawPropertyField("m_localOffset");
                         break;
                     case nameof(AccelerateMoveNode):
                         DrawPropertyField("m_acceleration");
-                        EditorGUI.BeginDisabledGroup(true);
-                        EditorGUI.TextArea(GetNewRect(), "If Max Speed is less than or equal to 0, it will be treated as infinite.");
-                        EditorGUI.EndDisabledGroup();
+                        using (new EditorGUI.DisabledScope(true))
+                            EditorGUI.TextArea(GetNewRect(), "If Max Speed is less than or equal to 0, it will be treated as infinite.");
                         DrawPropertyField("m_maxSpeed");
-                        DrawPropertyField("m_localOffset");
                         break;
                     #endregion
                     #region Decorators
@@ -116,8 +122,17 @@ namespace Stirge.Combat.Attacks
             if (m_property.isExpanded)
             {
                 SetLabelTextToTypeName(label);
+                string typeName = label.text;
 
-                switch (label.text)
+                var obj = m_property.managedReferenceValue;
+                if (obj is MoveNode)
+                {
+                    totalLines++; // considerY bool
+                    totalLines += GetPropertyLineHeight("m_stoppingDistance");
+                    totalLines += GetPropertyLineHeight("m_localOffset");
+                }
+
+                switch (typeName)
                 {
                     #region Nodes
                     case nameof(AnimationNode):
@@ -138,21 +153,17 @@ namespace Stirge.Combat.Attacks
                         break;
                     case nameof(TimedMoveNode):
                         totalLines += GetPropertyLineHeight("m_time");
-                        totalLines += GetPropertyLineHeight("m_localOffset");
                         break;
                     case nameof(CurveMoveNode):
                         totalLines += GetPropertyLineHeight("m_curve");
-                        totalLines += GetPropertyLineHeight("m_localOffset");
                         break;
                     case nameof(SpeedMoveNode):
                         totalLines += GetPropertyLineHeight("m_speed");
-                        totalLines += GetPropertyLineHeight("m_localOffset");
                         break;
                     case nameof(AccelerateMoveNode):
                         totalLines++; // for tooltip
                         totalLines += GetPropertyLineHeight("m_acceleration");
                         totalLines += GetPropertyLineHeight("m_maxSpeed");
-                        totalLines += GetPropertyLineHeight("m_localOffset");
                         break;
                     #endregion
                     #region Decorators
