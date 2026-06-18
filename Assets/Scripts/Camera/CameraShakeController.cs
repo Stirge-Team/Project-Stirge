@@ -7,9 +7,9 @@ namespace Stirge.Camera
     public class CameraShakeController : MonoBehaviour
     {
         [Header("Global Settings")]
-        [SerializeField]
+        [SerializeField, Tooltip("The asset containing the Noise Profile. Define the frequencies and amplitudes there to make a characteristic noise profile. Make your own or just use one of the many presets.")]
         private NoiseSettings m_noisePattern;
-        [SerializeField]
+        [SerializeField, Tooltip("When rotating the camera, offset the camera's pivot position by this much.")]
         private Vector3 m_pivotOffset;
         private CinemachineStateDrivenCamera m_stateCamera;
         private Coroutine m_shakeCorountine;
@@ -73,7 +73,7 @@ namespace Stirge.Camera
             while (remainingTime > 0)
             {
                 remainingTime -= Time.unscaledDeltaTime;//Time.deltaTime;
-                var scale = preset.Curve.Evaluate(1 - (remainingTime / preset.Duration));
+                var scale = preset.StrengthOverTime.Evaluate(1 - (remainingTime / preset.Duration));
                 perlin.AmplitudeGain = preset.AmplitudeGain * scale; //reduce by rate
                 perlin.FrequencyGain = preset.FrequencyGain * scale;
                 yield return null;
