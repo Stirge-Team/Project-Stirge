@@ -171,28 +171,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RectMask2D
   m_Padding: {x: -8, y: -5, z: -8, w: -5}
   m_Softness: {x: 0, y: 0}
---- !u!1 &249310065 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7656041658202867559, guid: ae4777eac01693fbda08f8951615af84, type: 3}
-  m_PrefabInstance: {fileID: 1374010858}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &249310071
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 249310065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68bb026fafb42b14791938953eaace77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineBasicMultiChannelPerlin
-  NoiseProfile: {fileID: 0}
-  PivotOffset: {x: 0, y: 0, z: 0}
-  AmplitudeGain: 1
-  FrequencyGain: 1
-  m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &260209407
 GameObject:
   m_ObjectHideFlags: 0
@@ -2440,10 +2418,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7656041658202867559, guid: ae4777eac01693fbda08f8951615af84, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 249310071}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae4777eac01693fbda08f8951615af84, type: 3}
 --- !u!1 &1379822993
 GameObject:
