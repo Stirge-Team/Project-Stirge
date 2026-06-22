@@ -78,27 +78,27 @@ namespace Stirge.Player
         #endregion
 
         #region Transformation
-        public override Vector3 GetPosition()
+        protected override Vector3 GetPosition()
         {
             return transform.position;
         }
-        public override Quaternion GetRotation()
+        protected override Quaternion GetRotation()
         {
             return transform.rotation;
         }
-        public override Vector3 GetEulerRotation()
+        protected Vector3 GetEulerRotation()
         {
             throw new System.NotImplementedException();
         }
-        public override void SetPosition(Vector3 position)
+        protected override void SetPosition(Vector3 position)
         {
             transform.position = position;
         }
-        public override void SetRotation(Quaternion rotation)
+        protected override void SetRotation(Quaternion rotation)
         {
             transform.rotation = rotation;
         }
-        public override void SetEulerRotation(Vector3 eulerRotation)
+        protected void SetEulerRotation(Vector3 eulerRotation)
         {
             transform.rotation = Quaternion.Euler(eulerRotation);
         }
@@ -107,24 +107,24 @@ namespace Stirge.Player
             return transform.forward;
         }
 
-        public override void BeginGoToPosition(Vector3 newPosition)
+        protected override void BeginGoToPosition(Vector3 newPosition)
         {
             throw new System.NotImplementedException();
         }
-        public override void StopGoToPosition()
+        protected override void StopGoToPosition()
         {
             throw new System.NotImplementedException();
         }
 
-        public override float GetMovementSpeed()
+        protected override float GetMovementSpeed()
         {
             throw new System.NotImplementedException();
         }
-        public override void SetMovementSpeed(float speed)
+        protected override void SetMovementSpeed(float speed)
         {
             throw new System.NotImplementedException();
         }
-        public override void ResetMovementSpeed()
+        protected override void ResetMovementSpeed()
         {
             throw new System.NotImplementedException();
         }
