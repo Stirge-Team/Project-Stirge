@@ -2,8 +2,10 @@ using UnityEngine;
 
 namespace Stirge.Enemy
 {
+    using System.Collections;
     using AI;
     using Combat;
+    using Stirge.Combat.Attacks;
 
     public class Enemy : CombatEntity
     {
@@ -17,6 +19,8 @@ namespace Stirge.Enemy
         [SerializeField] private State m_airJuggle;
 
         [HideInInspector] public EnemySpawner spawner = null;
+
+        protected bool m_hasAttackToken = false;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -37,6 +41,14 @@ namespace Stirge.Enemy
                 return;
             }
 
+            if(TargetTransform != null) //if there is a target
+            {
+                if (AttackTokenDispenser.instance != null)
+                    AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+                else
+                    m_hasAttackToken = true;
+            }
+
             m_agent.Update(deltaTime);
         }
 
@@ -44,78 +56,113 @@ namespace Stirge.Enemy
         {
             m_agent.FixedUpdate();
         }
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             m_agent.OnEnable();
         }
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             m_agent.OnDisable();
+        }
+
+        public override void UseAttack(AttackData attackData)
+        {
+            if (m_hasAttackToken) //fail if no attack token
+                base.UseAttack(attackData);
+        }
+        #endregion
+
+        #region Attack Tokens
+        public virtual bool GiveToken(float timeout = 0)
+        {
+            m_hasAttackToken = true;
+            //remove token after given time, if any
+            if (timeout > 0) StartCoroutine(TokenTimeout(timeout));
+            return m_hasAttackToken;
+        }
+        private IEnumerator TokenTimeout(float waitTime)
+        {
+            yield return new WaitForSeconds(waitTime);
+            RemoveToken();
+        }
+        public virtual bool RemoveToken()
+        {
+            return m_hasAttackToken = false;
+        }
+
+        public virtual void LostRaffle()
+        {
+            Debug.Log($"[{name}]: dude i can't believe i lost the attack token raffle this is so sad :(", this);
         }
         #endregion
 
         #region Transformation
-        public override bool IsGrounded()
-        {
-            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-        }
         public override void ApplyRootMotion()
         {
             m_agent.ApplyRootMotion();
         }
 
-        public override Vector3 GetPosition()
+        protected override Vector3 GetPosition()
         {
             return m_agent.Transform.position;
         }
-        public override void SetPosition(Vector3 newPosition)
+        protected override void SetPosition(Vector3 newPosition)
         {
             m_agent.SetPosition(newPosition);
         }
-        public override Quaternion GetRotation()
+        protected override Quaternion GetRotation()
         {
             return m_agent.Transform.rotation;
         }
-        public override void SetRotation(Quaternion newRotation)
+        protected override void SetRotation(Quaternion newRotation)
         {
             m_agent.SetRotation(newRotation);
         }
-        public override Vector3 GetEulerRotation()
+        protected override void SetRotation(Vector3 eulerRotation)
         {
-            return m_agent.Transform.eulerAngles;
-        }
-        public override void SetEulerRotation(Vector3 newEulerRotation)
-        {
-            SetRotation(Quaternion.Euler(newEulerRotation));
+            m_agent.SetRotation(Quaternion.Euler(eulerRotation));
         }
         public override Vector3 GetForward()
         {
             return m_agent.Transform.forward;
         }
+        #endregion
 
-        public override void BeginGoToPosition(Vector3 newPosition)
+        #region Navigation
+        protected override void BeginGoToPosition(Vector3 newPosition)
         {
             m_agent.TargetPosition = newPosition;
             m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
             m_agent.CalculatePath();
         }
-        public override void StopGoToPosition()
+        protected override void StopGoToPosition()
         {
             m_agent.TargetPosition = null;
             m_agent.ClearPath();
         }
 
-        public override float GetMovementSpeed()
+        protected override float GetMovementSpeed()
         {
             return m_agent.NavMeshAgent.speed;
         }
-        public override void SetMovementSpeed(float speed)
+        protected override void SetMovementSpeed(float speed)
         {
             m_agent.NavMeshAgent.speed = speed;
         }
-        public override void ResetMovementSpeed()
+        protected override void ResetMovementSpeed()
         {
             m_agent.SetDefaultNavSpeed();
+        }
+        #endregion
+
+        #region Physics
+        public override bool IsGrounded()
+        {
+            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
+        }
+        public override void ApplyPhysicsToTransform()
+        {
+            m_agent.ApplyPhysicsToTransform();
         }
         #endregion
 
@@ -160,13 +207,10 @@ namespace Stirge.Enemy
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (m_agent != null && m_agent.Transform != null)
-            {
-                m_agent.OnDrawGizmos();
+            m_agent.OnDrawGizmos();
 
-                Gizmos.color = Color.magenta;
-                Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
-            }
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
         }
 #endif
     }

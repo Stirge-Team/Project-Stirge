@@ -68,6 +68,7 @@ namespace Stirge.Combat.Attacks
             // remove existing root section
             else
             {
+                EGL.Space();
                 EG.BeginDisabledGroup(true);
                 EGL.TextArea("Warning! Deleting the root AttackNode will delete ANY and ALL attached AttackNodes.", new GUIStyle(EditorStyles.textArea) { wordWrap = true, alignment = TextAnchor.MiddleCenter });
                 EG.EndDisabledGroup();
