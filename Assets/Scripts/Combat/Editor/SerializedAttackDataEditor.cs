@@ -73,22 +73,22 @@ namespace Stirge.Combat.Attacks.Serialization
             EGL.LabelField(GetUIName(objectValue.attackNodeType), EditorStyles.boldLabel);
             objectValue.name = EGL.TextField("Name", objectValue.name);
 
-            // If there are bindings to this AttackNode, draw those nodes here
-            for (int bindingIndex = 0, bindingCount = bindingsProperty.arraySize; bindingIndex < bindingCount; ++bindingIndex)
+            // If there are bindings to this AttackNode, draw those nodes here.
+            for (int attackNodeIndex = 0, attackNodeCount = attackNodesProperty.arraySize; attackNodeIndex < attackNodeCount; ++attackNodeIndex)
             {
-                SerializedProperty bindingProperty = bindingsProperty.GetArrayElementAtIndex(bindingIndex);
+                SerializedProperty bindingProperty = bindingsProperty.GetArrayElementAtIndex(attackNodeIndex);
 
                 // Binding Index represents each existing AttackNode. If the value at that AttackNode's index is equal to the index of THIS Node,
                 // that means that Attack Node is bound to THIS Attack Node and we want to draw it now.
-                if (bindingProperty.intValue == nodeIndex)
+                if (bindingProperty != null && bindingProperty.intValue == nodeIndex)
                 {
-                    SerializedProperty boundNodeProperty = attackNodesProperty.GetArrayElementAtIndex(bindingIndex);
+                    SerializedProperty boundNodeProperty = attackNodesProperty.GetArrayElementAtIndex(attackNodeIndex);
 
                     // if the node is removed, then adjust the loop index and count to account for array resizing
-                    if (DrawAttackNode(attackNodesProperty, bindingsProperty, boundNodeProperty, bindingIndex))
+                    if (DrawAttackNode(attackNodesProperty, bindingsProperty, boundNodeProperty, attackNodeIndex))
                     {
-                        --bindingIndex;
-                        bindingCount = attackNodesProperty.arraySize;
+                        --attackNodeIndex;
+                        attackNodeCount = attackNodesProperty.arraySize;
                     }
                 }
             }
@@ -97,14 +97,15 @@ namespace Stirge.Combat.Attacks.Serialization
 
             // If the AttackNode being drawn is a Decorator Attack Node, then we want to be able to add AttackNodes to it
             // In the case of Multi Decorators, we also need to be able to remove them.
-            if (objectValue.attackNodeType.IsSubclassOf(typeof(DecoratorNodeSingle)) && GUILayout.Button("Set Attack Node"))
+            if (objectValue.attackNodeType.IsSubclassOf(typeof(DecoratorNodeSingle)))
             {
                 EGL.Separator();
 
-                // Because this is a Single Decorator, we need to replace the existing bound Attack Node
-                // Find the existing bound AttackNode
+                // Because this is a Single Decorator, we need to remove the existing bound Attack Node before adding a new one
+                // Find the existing bound AttackNode.
+                // Ignore the Attack Node at index 0 as this is always the root Node
                 int nodeIndexToBeRemoved = -1;
-                for (int i = 0, count = bindingsProperty.arraySize; i < count; i++)
+                for (int i = 1, count = bindingsProperty.arraySize; i < count; i++)
                 {
                     SerializedProperty bindingPropertyAtThisIndex = bindingsProperty.GetArrayElementAtIndex(i);
                     if (bindingPropertyAtThisIndex.intValue == nodeIndex)
@@ -113,8 +114,29 @@ namespace Stirge.Combat.Attacks.Serialization
                     }
                 }
 
-                // Add the new Attack Node, providing the index to overwrite
-                AddAttackNode(attackNodesProperty, bindingsProperty, nodeIndex, nodeIndexToBeRemoved);
+                if (nodeIndexToBeRemoved == -1)
+                {
+                    if (GUILayout.Button("Set Attack Node"))
+                    {
+                        // Add the new Attack Node, providing the index to overwrite
+                        AddAttackNode(attackNodesProperty, bindingsProperty, nodeIndex);
+                    }
+                }
+                // Add a prompt to remove the existing Node    
+                else
+                {
+                    SerializedProperty nodePropertyToBeRemoved = attackNodesProperty.GetArrayElementAtIndex(nodeIndexToBeRemoved);
+                    if (GUILayout.Button($"Remove {nodePropertyToBeRemoved.objectReferenceValue.name} from this Decorator"))
+                    {
+                        m_removeLoopDepth = 0;
+                        RemoveAttackNode(attackNodesProperty, bindingsProperty, nodeIndexToBeRemoved);
+
+                        removed = true;
+
+                        serializedObject.ApplyModifiedProperties();
+                        AssetDatabase.SaveAssets();
+                    }
+                }
             }
             else if (objectValue.attackNodeType.IsSubclassOf(typeof(DecoratorNodeMulti)))
             {
@@ -183,7 +205,7 @@ namespace Stirge.Combat.Attacks.Serialization
             return removed;
         }
 
-        private void AddAttackNode(SerializedProperty attackNodesProperty, SerializedProperty bindingsProperty, int bindingIndex, int replacementNodeIndex = -1)
+        private void AddAttackNode(SerializedProperty attackNodesProperty, SerializedProperty bindingsProperty, int bindingIndex)
         {
             var genericMenu = new GenericMenu();
             IReadOnlyList<Type> attackNodeTypes = SerializedAttackNodeTypesCollection.attackNodeTypes;
@@ -220,27 +242,14 @@ namespace Stirge.Combat.Attacks.Serialization
                     }
                     else
                     {
-                        // If this is going to replace an existing Node
-                        if (replacementNodeIndex != -1)
-                        {
-                            SerializedProperty attackNodePropertyToReplace = attackNodesProperty.GetArrayElementAtIndex(replacementNodeIndex);
-                            DestroyImmediate(attackNodePropertyToReplace.objectReferenceValue, true);
-                            attackNodePropertyToReplace.objectReferenceValue = instance;
+                        // Add to end of array bound to specified node
+                        int newAttackNodeIndex = attackNodesProperty.arraySize++;
+                        SerializedProperty newAttackNodeProperty = attackNodesProperty.GetArrayElementAtIndex(newAttackNodeIndex);
+                        newAttackNodeProperty.objectReferenceValue = instance;
 
-                            SerializedProperty bindingPropertyToReplace = bindingsProperty.GetArrayElementAtIndex(replacementNodeIndex);
-                            bindingPropertyToReplace.intValue = bindingIndex;
-                        }
-                        else
-                        {
-                            // Add to end of array bound to specified node
-                            int newAttackNodeIndex = attackNodesProperty.arraySize++;
-                            SerializedProperty newAttackNodeProperty = attackNodesProperty.GetArrayElementAtIndex(newAttackNodeIndex);
-                            newAttackNodeProperty.objectReferenceValue = instance;
-
-                            int newAttackNodeBindingIndex = bindingsProperty.arraySize++;
-                            SerializedProperty newAttackNodeBindingProperty = bindingsProperty.GetArrayElementAtIndex(newAttackNodeBindingIndex);
-                            newAttackNodeBindingProperty.intValue = bindingIndex;
-                        }
+                        int newAttackNodeBindingIndex = bindingsProperty.arraySize++;
+                        SerializedProperty newAttackNodeBindingProperty = bindingsProperty.GetArrayElementAtIndex(newAttackNodeBindingIndex);
+                        newAttackNodeBindingProperty.intValue = bindingIndex;
                     }
 
                     serializedObject.ApplyModifiedProperties();
