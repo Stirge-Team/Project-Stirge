@@ -15,7 +15,6 @@ namespace Stirge.Tools
         public sealed override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             m_totalLines = 0;
-
             SaveProperties(property, position);
 
             DrawGUI(label);
@@ -90,7 +89,7 @@ namespace Stirge.Tools
                 SerializedProperty property = m_property.FindPropertyRelative(propertyName);
                 if (property == null)
                 {
-                    Debug.LogWarning("Could not find property relative with name '" + propertyName + "', path '" + m_property.propertyPath + '.');
+                    Debug.LogWarning($"Could not find property relative with name '{propertyName}', path '{m_property.propertyPath}'.");
                     return null;
                 }
 

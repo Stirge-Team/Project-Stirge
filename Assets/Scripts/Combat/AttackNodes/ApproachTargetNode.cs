@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
+    using Stirge.Serialization;
     using Tools;
 
     [System.Serializable]
-    public class ApproachTargetNode : AttackNode
+    public class ApproachTargetNode : AttackNode, ISetupable<RandomFloatField, bool, RandomFloatField>
     {
         [SerializeField] private RandomFloatField m_stoppingDistance;
         [SerializeField] private bool m_useInitialPosition = true;
@@ -21,6 +22,13 @@ namespace Stirge.Combat.Attacks
             m_stoppingDistance.DetermineValue();
             m_speed.DetermineValue();
             activeNodes.Add(this);
+        }
+
+        public void Setup(RandomFloatField stoppingDistance, bool useInitialPosition, RandomFloatField speed)
+        {
+            m_stoppingDistance = stoppingDistance;
+            m_useInitialPosition = useInitialPosition;
+            m_speed = speed;
         }
     }
 }

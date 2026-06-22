@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
+    using Stirge.Serialization;
     using Tools;
 
     [System.Serializable]
-    public class TranslateNode : AttackNode
+    public class TranslateNode : AttackNode, ISetupable<Vector3, bool, RandomFloatField>
     {
         [SerializeField] private Vector3 m_translation;
         [SerializeField] private bool m_isLocalTranslation = true;
@@ -19,6 +20,13 @@ namespace Stirge.Combat.Attacks
         public override void Evaluate(List<AttackNode> activeNodes)
         {
             activeNodes.Add(this);
+        }
+
+        public void Setup(Vector3 translation, bool isLocalTranslation, RandomFloatField time)
+        {
+            m_translation = translation;
+            m_isLocalTranslation = isLocalTranslation;
+            m_time = time;
         }
     }
 }

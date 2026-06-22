@@ -4,14 +4,12 @@ using System.Collections.Generic;
 namespace Stirge.Combat.Attacks
 {
     [System.Serializable]
-    public class SelectAttackNode : AttackNode
+    public class SelectAttackNode : DecoratorNodeMulti
     {
         public SelectAttackNode()
         {
             m_nodes = new AttackNode[0];
         }
-
-        [SerializeReference] private AttackNode[] m_nodes = new AttackNode[0];
 
         private int m_chosenIndex = -1;
         
