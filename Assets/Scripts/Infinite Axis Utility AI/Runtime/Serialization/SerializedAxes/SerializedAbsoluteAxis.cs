@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Serialization.SerializedAxes
 {
-    using Attributes;
+    using Stirge.Serialization;
     using Core.Axes;
 
     [NameOverride("Value Delegate Name", 0)]

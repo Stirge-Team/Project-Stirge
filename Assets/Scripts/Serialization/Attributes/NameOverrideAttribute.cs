@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Attributes
+namespace Stirge.Serialization
 {
     /// <summary>
 	/// Overrides a default field name in a

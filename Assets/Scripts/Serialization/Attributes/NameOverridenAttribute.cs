@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Attributes
+namespace Stirge.Serialization
 {
     /// <summary>
 	/// The name of a field with this attribute may be overriden with <see cref="NameOverrideAttribute"/>.

@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 namespace Stirge.UtilityAI
 {
-    using Attributes;
+    using Stirge.Serialization;
 
     [CustomPropertyDrawer(typeof(NameOverridenAttribute))]
     public sealed class NameOverridenAttributeEditor : PropertyDrawer
