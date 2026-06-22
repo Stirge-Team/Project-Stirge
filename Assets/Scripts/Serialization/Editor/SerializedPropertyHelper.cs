@@ -1,6 +1,6 @@
 using UnityEditor;
 
-namespace Stirge.UtilityAI.Helpers
+namespace Stirge.Serialization
 {
     internal static class SerializedPropertyHelper
     {

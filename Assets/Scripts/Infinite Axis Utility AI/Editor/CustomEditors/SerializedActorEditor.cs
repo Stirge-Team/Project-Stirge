@@ -4,12 +4,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
+using Stirge.Serialization;
 using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
     using EditorTools;
-    using Helpers;
     using Serialization;
 
     [CustomEditor(typeof(SerializedActor))]
