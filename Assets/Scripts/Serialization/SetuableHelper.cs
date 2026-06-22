@@ -26,7 +26,9 @@ namespace Stirge.Serialization
                 1 => typeof(ISetupable<>),
                 2 => typeof(ISetupable<,>),
                 3 => typeof(ISetupable<,,>),
-                _ => throw new ArgumentException($"Failed to setup an object of type {type}. Too many parameters are passed. It supports up to 3 parameters.")
+                4 => typeof(ISetupable<,,,>),
+                5 => typeof(ISetupable<,,,,>),
+                _ => throw new ArgumentException($"Failed to setup an object of type {type}. Too many parameters are passed. It supports up to 5 parameters.")
             };
 
             for (int i = 0, iCount = interfaceTypes.Length; i < iCount; ++i)
