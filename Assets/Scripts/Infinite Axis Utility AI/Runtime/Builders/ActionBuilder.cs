@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Builders
 {
-    using Core;
+    using Stirge.Serialization;
     using Action = Core.Action;
 
     public sealed class ActionBuilder<TAction> : IActionBuilder where TAction : Action, INotSetupable, new()

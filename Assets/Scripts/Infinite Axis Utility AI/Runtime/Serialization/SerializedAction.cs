@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Serialization
 {
+    using Stirge.Serialization;
     using Attributes;
     using Builders;
     using Core;

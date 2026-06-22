@@ -1,5 +1,7 @@
 namespace Stirge.UtilityAI.Core.Axes
 {
+    using Stirge.Serialization;
+
     public class ConstantAxis : Axis, ISetupable<float>
     {
         private float m_score;

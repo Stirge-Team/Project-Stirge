@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Stirge.UtilityAI.Builders
 {
     using Core;
+    using Stirge.Serialization;
 
     public class ActorBuilder
     {

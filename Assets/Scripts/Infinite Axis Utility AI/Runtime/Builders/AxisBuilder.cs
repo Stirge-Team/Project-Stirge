@@ -5,6 +5,7 @@ namespace Stirge.UtilityAI.Builders
 {
     using Core;
     using System.Collections.Generic;
+    using Stirge.Serialization;
 
     public sealed class AxisBuilder<TAxis> : IAxisBuilder where TAxis : Axis, INotSetupable, new()
     {

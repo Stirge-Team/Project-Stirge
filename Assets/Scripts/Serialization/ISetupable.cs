@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Core
+namespace Stirge.Serialization
 {
     public interface ISetupable<in TArg>
     {

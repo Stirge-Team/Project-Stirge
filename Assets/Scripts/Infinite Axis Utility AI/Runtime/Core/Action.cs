@@ -3,6 +3,7 @@ using System;
 namespace Stirge.UtilityAI.Core
 {
     using Blackboard;
+    using Stirge.Serialization;
 
     public abstract class Action
     {

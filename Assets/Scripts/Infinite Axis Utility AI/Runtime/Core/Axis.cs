@@ -4,7 +4,8 @@ namespace Stirge.UtilityAI.Core
 {
     using Blackboard;
     using Enemy;
-    
+    using Stirge.Serialization;
+
     public abstract class Axis
     {
         private EnemyBlackboard m_blackboard;

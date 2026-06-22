@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace Stirge.UtilityAI.Core
+namespace Stirge.Serialization
 {
     public static class SetuableHelper
     {

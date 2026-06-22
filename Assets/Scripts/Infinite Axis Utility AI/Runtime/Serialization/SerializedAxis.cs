@@ -6,6 +6,7 @@ namespace Stirge.UtilityAI.Serialization
     using Attributes;
     using Builders;
     using Core;
+    using Stirge.Serialization;
 
     public abstract class SerializedAxis<TAxis> : SerializedAxis_Base where TAxis : Axis, INotSetupable, new()
     {
