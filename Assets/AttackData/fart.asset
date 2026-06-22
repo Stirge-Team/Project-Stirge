@@ -28,6 +28,6 @@ MonoBehaviour:
   m_Name: DieNode
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedDieNode
   m_arg:
-    m_value: 1
+    m_value: 13.08
     m_range: {x: 0, y: 0}
     m_isRandom: 0
