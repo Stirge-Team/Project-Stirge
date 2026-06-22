@@ -362,6 +362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135975f7ca699134eab7d64d980cf3ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.Enemy
+  m_rb: {fileID: 8994596366229947912}
   m_anim: {fileID: 3650999910069174583}
   m_health: {fileID: 2288186502371622423}
   m_inflictedStatuses: []
