@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.AI
 {
+    [System.Serializable]
     public class EnterPhysicsBehaviour : Behaviour
     {
         [SerializeField] private PhysicsMode m_newMode;

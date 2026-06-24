@@ -31,6 +31,7 @@ namespace Stirge.Combat.Attacks.Serialization
             {
                 SerializedAttackNode_Base serializedAttackNodeBase = m_serializedAttackNodes[i];
                 serializedAttackNodeBase.AddAttackNode(m_builder);
+                m_builder.AddBinding(m_nodeBindings[i]);
             }
         }
 

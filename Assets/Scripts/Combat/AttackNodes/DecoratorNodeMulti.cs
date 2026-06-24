@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Stirge.Combat.Attacks
 {
-    public abstract class DecoratorNodeMulti : AttackNode, ISetupable<AttackNode[]>
+    public abstract class DecoratorNodeMulti : AttackNode, IDecoratorNode, ISetupable<AttackNode[]>
     {
         [SerializeField] protected AttackNode[] m_nodes;
 
@@ -12,6 +12,13 @@ namespace Stirge.Combat.Attacks
         public void Setup(AttackNode[] nodes)
         {
             m_nodes = nodes;
+        }
+
+        void IDecoratorNode.AddAttackNode(AttackNode attackNode)
+        {
+            int arraySize = m_nodes.Length;
+            System.Array.Resize(ref m_nodes, arraySize + 1);
+            m_nodes[arraySize] = attackNode;
         }
     }
 }

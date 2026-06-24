@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Stirge.Combat.Attacks
 {
+    [System.Serializable]
     public class DieNode : AttackNode, ISetupable<RandomFloatField>
     {
         private RandomFloatField m_delay;
