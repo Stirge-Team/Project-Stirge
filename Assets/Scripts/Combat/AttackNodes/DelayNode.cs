@@ -3,12 +3,13 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
+    using Stirge.Serialization;
     using Tools;
 
     [System.Serializable]
-    public class DelayNode : AttackNode
+    public class DelayNode : AttackNode, ISetupable<RandomFloatField>
     {
-        [SerializeField] private RandomFloatField m_delay;
+        private RandomFloatField m_delay;
 
         public float Delay => m_delay.Value;
 
@@ -16,6 +17,11 @@ namespace Stirge.Combat.Attacks
         {
             m_delay.DetermineValue();
             activeNodes.Add(this);
+        }
+
+        void ISetupable<RandomFloatField>.Setup(RandomFloatField arg)
+        {
+            m_delay = arg;
         }
     }
 }

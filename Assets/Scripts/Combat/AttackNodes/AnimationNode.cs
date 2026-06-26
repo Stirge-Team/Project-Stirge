@@ -3,10 +3,11 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
+    using Stirge.Serialization;
     using Tools;
 
     [System.Serializable]
-    public class AnimationNode : AttackNode
+    public class AnimationNode : AttackNode, ISetupable<string, AnimationClip, RandomFloatField, bool>
     {
         [SerializeField] private string m_animationStateName;
         [SerializeField] private AnimationClip m_animationClip;
@@ -28,6 +29,14 @@ namespace Stirge.Combat.Attacks
                 m_animationStateName = m_animationClip.name;
 
             activeNodes.Add(this);
+        }
+
+        public void Setup(string animationStateName, AnimationClip animationClip, RandomFloatField speed, bool hasRootMotion)
+        {
+            m_animationStateName = animationStateName;
+            m_animationClip = animationClip;
+            m_speed = speed;
+            m_hasRootMotion = hasRootMotion;
         }
     }
 }
