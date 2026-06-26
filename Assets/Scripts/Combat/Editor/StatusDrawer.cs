@@ -15,6 +15,8 @@ namespace Stirge.Combat
             else
                 label.text = "Empty, pls remove";
 
+            string typeName = label.text;
+
             EditorGUI.BeginProperty(m_position, label, m_property);
             DrawLabelHeader(label);
             m_property.isExpanded = true; // Fixes display bug in Frame Data Viewer
@@ -22,7 +24,8 @@ namespace Stirge.Combat
             {
                 if (m_property.managedReferenceValue is TimedStatus)
                     DrawPropertyField("m_length");
-                switch (label.text)
+
+                switch (typeName)
                 {
                     case nameof(AirJuggle):
                         DrawPropertyField("m_strength");
@@ -45,10 +48,12 @@ namespace Stirge.Combat
             {
                 SetLabelTextToTypeName(label);
 
+                string typeName = label.text;
+
                 if (m_property.managedReferenceValue is TimedStatus)
                     totalLines++;
 
-                switch (label.text)
+                switch (typeName)
                 {
                     case nameof(AirJuggle):
                     case nameof(Knockback):

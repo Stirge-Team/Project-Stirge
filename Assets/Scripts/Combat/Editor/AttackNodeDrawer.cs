@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Stirge.Combat.Attacks
 {
     using Tools;
-
+    
     [CustomPropertyDrawer(typeof(AttackNode), true)]
     public class AttackNodeDrawer : EasyPropertyDrawer
     {
@@ -13,13 +13,25 @@ namespace Stirge.Combat.Attacks
         protected override void DrawGUI(GUIContent label)
         {
             SetLabelTextToTypeName(label);
+            string typeName = label.text;
 
             EditorGUI.BeginProperty(m_position, label, m_property);
             DrawLabelHeader(label);
             if (m_property.isExpanded)
             {
-                switch (label.text)
+                // check for abstract types
+                var obj = m_property.managedReferenceValue;
+                if (obj is MoveNode)
                 {
+                    DrawPropertyField("m_localOffset");
+                    m_totalLines += GetPropertyLineHeight("m_localOffset") - 1;
+                    DrawPropertyField("m_stoppingDistance");
+                    DrawPropertyField("m_considerYPosition");
+                }
+
+                switch (typeName)
+                {
+                    #region Nodes
                     case nameof(AnimationNode):
                         DrawPropertyField("m_animationStateName");
                         DrawPropertyField("m_animationClip");
@@ -39,6 +51,23 @@ namespace Stirge.Combat.Attacks
                     case nameof(DelayNode):
                         DrawPropertyField("m_delay");
                         break;
+                    case nameof(TimedMoveNode):
+                        DrawPropertyField("m_time");
+                        break;
+                    case nameof(CurveMoveNode):
+                        DrawPropertyField("m_curve");
+                        break;
+                    case nameof(SpeedMoveNode):
+                        DrawPropertyField("m_speed");
+                        break;
+                    case nameof(AccelerateMoveNode):
+                        DrawPropertyField("m_acceleration");
+                        using (new EditorGUI.DisabledScope(true))
+                            EditorGUI.TextArea(GetNewRect(), "If Max Speed is less than or equal to 0, it will be treated as infinite.");
+                        DrawPropertyField("m_maxSpeed");
+                        break;
+                    #endregion
+                    #region Decorators
                     case nameof(ChanceNode):
                         DrawPropertyField("m_chance");
                         DrawPropertyField("m_node");
@@ -78,27 +107,8 @@ namespace Stirge.Combat.Attacks
                             nodesProp.isExpanded = true;
                             newAttackNodeProp.isExpanded = true;
                         }
-
                         break;
-                    case nameof(RangeNode):
-                        DrawPropertyField("m_rangedNodes");
-
-                        // add Attack Node to array button
-                        // select AttackNode popup
-                        m_selectedAttackNode = EditorGUI.Popup(GetNewRect(), m_selectedAttackNode, AttackDataEditor.AttackNodeNames);
-
-                        // create new AttackNode button
-                        if (GUI.Button(GetNewRect(), "Add new" + AttackDataEditor.AttackNodeNames[m_selectedAttackNode]))
-                        {
-                            AttackNode newAttackNode = System.Activator.CreateInstance(AttackNode.AttackNodeTypes[m_selectedAttackNode]) as AttackNode;
-                            SerializedProperty nodesProp = FindPropertyRelative("m_rangedNodes");
-                            nodesProp.arraySize++;
-                            SerializedProperty newAttackNodeProp = nodesProp.GetArrayElementAtIndex(nodesProp.arraySize - 1);
-                            newAttackNodeProp.managedReferenceValue = new RangeNode.RangedNode(newAttackNode);
-                            nodesProp.isExpanded = true;
-                            newAttackNodeProp.isExpanded = true;
-                        }
-                    break;
+                    #endregion
                 }
             }
 
@@ -112,9 +122,19 @@ namespace Stirge.Combat.Attacks
             if (m_property.isExpanded)
             {
                 SetLabelTextToTypeName(label);
+                string typeName = label.text;
 
-                switch (label.text)
+                var obj = m_property.managedReferenceValue;
+                if (obj is MoveNode)
                 {
+                    totalLines++; // considerY bool
+                    totalLines += GetPropertyLineHeight("m_stoppingDistance");
+                    totalLines += GetPropertyLineHeight("m_localOffset");
+                }
+
+                switch (typeName)
+                {
+                    #region Nodes
                     case nameof(AnimationNode):
                         totalLines += GetPropertyLineHeight("m_speed");
                         totalLines += 3;
@@ -131,6 +151,22 @@ namespace Stirge.Combat.Attacks
                     case nameof(DelayNode):
                         totalLines += GetPropertyLineHeight("m_delay");
                         break;
+                    case nameof(TimedMoveNode):
+                        totalLines += GetPropertyLineHeight("m_time");
+                        break;
+                    case nameof(CurveMoveNode):
+                        totalLines += GetPropertyLineHeight("m_curve");
+                        break;
+                    case nameof(SpeedMoveNode):
+                        totalLines += GetPropertyLineHeight("m_speed");
+                        break;
+                    case nameof(AccelerateMoveNode):
+                        totalLines++; // for tooltip
+                        totalLines += GetPropertyLineHeight("m_acceleration");
+                        totalLines += GetPropertyLineHeight("m_maxSpeed");
+                        break;
+                    #endregion
+                    #region Decorators
                     case nameof(ChanceNode):
                         totalLines += GetPropertyLineHeight("m_node");
                         totalLines += 3; // for chance, popup, and add Node button
@@ -144,13 +180,10 @@ namespace Stirge.Combat.Attacks
                         totalLines += GetPropertyLineHeight("m_nodes");
                         totalLines += 3; // for popup and add button, and for Significant Index
                         break;
-                    case nameof(RangeNode):
-                        totalLines += GetPropertyLineHeight("m_rangedNodes");
-                        totalLines += 2;
-                        break;
+                    #endregion
                 }
             }
-
+            
             return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
         }
     }

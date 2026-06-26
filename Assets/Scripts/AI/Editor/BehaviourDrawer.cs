@@ -11,6 +11,7 @@ namespace Stirge.AI
         protected override void DrawGUI(GUIContent label)
         {
             SetLabelTextToTypeName(label);
+            string typeName = label.text;
 
             EditorGUI.BeginProperty(m_position, label, m_property);
 
@@ -18,7 +19,7 @@ namespace Stirge.AI
             m_property.isExpanded = EditorGUI.Foldout(foldoutRect, m_property.isExpanded, label);
             if (m_property.isExpanded)
             {
-                switch (label.text)
+                switch (typeName)
                 {
                     case nameof(AirJuggleBehaviour):
                     case nameof(KnockbackBehaviour):
@@ -36,11 +37,14 @@ namespace Stirge.AI
                         DrawPropertyField("m_speed");
                         break;
                     case nameof(AttackingBehaviour):
-                        DrawPropertyField("m_exitState");
                         DrawPropertyField("m_attackData");
                         break;
                     case nameof(UpdateLookSpeedBehaviour):
                         DrawPropertyField("m_newDegreesDelta");
+                        break;
+                    case nameof(EnterPhysicsBehaviour):
+                        DrawPropertyField("m_newMode");
+                        DrawPropertyField("m_returnToOldModeOnExit");
                         break;
                 }
             }
@@ -55,22 +59,23 @@ namespace Stirge.AI
             if (m_property.isExpanded)
             {
                 SetLabelTextToTypeName(label);
+                string typeName = label.text;
 
-                switch (label.text)
+                switch (typeName)
                 {
                     case nameof(AirJuggleBehaviour):
                     case nameof(KnockbackBehaviour):
                     case nameof(LookAtTargetBehaviour):
                     case nameof(MoveToTargetBehaviour):
                     case nameof(UpdateLookSpeedBehaviour):
+                    case nameof(AttackingBehaviour):
                         totalLines++;
+                        break;
+                    case nameof(EnterPhysicsBehaviour):
+                        totalLines += 2;
                         break;
                     case nameof(PhysicsBehaviour):
                         totalLines += 3;
-                        break;
-                    case nameof(AttackingBehaviour):
-                        totalLines++;
-                        totalLines += GetPropertyLineHeight("m_attackData");
                         break;
                 }
             }
