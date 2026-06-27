@@ -13,24 +13,24 @@ namespace Stirge
             SetChildKinematics(true);
         }
 
-        public void OnTriggerEnter(Collider collision)
+        public void OnTriggerEnter(Collider incommingCollision)
         {
-            if(collision.transform.IsChildOf(transform)) return; //exit if child object
+            if(incommingCollision.transform.IsChildOf(transform)) return; //exit if child object
 
 
-            Rigidbody rigidbody = collision.gameObject.GetComponent<Rigidbody>(); //get the incoming rigidbody
+            Rigidbody incommingRigidbody = incommingCollision.gameObject.GetComponent<Rigidbody>(); //get the incoming rigidbody
 
-            if (!rigidbody) //no rb?
-                rigidbody = collision.gameObject.GetComponentInChildren<Rigidbody>(); //look for one in the children
+            if (!incommingRigidbody) //no rb?
+                incommingRigidbody = incommingCollision.gameObject.GetComponentInChildren<Rigidbody>(); //look for one in the children
 
 
-            if (rigidbody) //rb found!
+            if (incommingRigidbody) //rb found!
             {
-                if (rigidbody.linearVelocity.sqrMagnitude >= m_forceThreashhold) //are they moving fast enough to break this object?
+                var impactForce = 0.5f * incommingRigidbody.mass * incommingRigidbody.linearVelocity.sqrMagnitude;
+                if (impactForce >= m_forceThreashhold) //are they moving fast enough to break this object?
                 {
-                    var direction = -(rigidbody.transform.position - transform.position).normalized;
-                    Debug.DrawRay(rigidbody.transform.position, rigidbody.linearVelocity, Color.red, 3);
-                    SetChildKinematics(direction * rigidbody.linearVelocity.sqrMagnitude * m_impactExaggeration, rigidbody.transform.position);
+                    //Debug.DrawRay(imcommingRigidbody.transform.position, imcommingRigidbody.linearVelocity, Color.red, 3);
+                    SetChildKinematics(incommingRigidbody.linearVelocity * impactForce * m_impactExaggeration, incommingRigidbody.transform.position);
 
                     if (m_dustParticles)
                     {
@@ -57,6 +57,7 @@ namespace Stirge
             foreach(var child in GetComponentsInChildren<Rigidbody>())
             {
                 child.isKinematic = false;
+                child.transform.SetParent(null);
                 child.AddForceAtPosition(force, position, ForceMode.Impulse);
             }
         }
