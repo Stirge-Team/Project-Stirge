@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9003177980281756858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfc9e3202014d63837919b22efb5aba, type: 3}
+  m_Name: QuadraticConsideration
+  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Serialization.SerializedConsiderations.SerializedQuadraticConsideration
+  m_Arg0: 1
+  m_Arg1: 1
+  m_Arg2: 1
+  m_Arg3: 0
+  m_Arg4: y
+--- !u!114 &-4258888055088524697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff55213c05114af2824853ddac29fb44, type: 3}
+  m_Name: Set1Action
+  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Serialization.SerializedActions.SerializedSetIntAction
+  m_Arg0: 1
+  m_Arg1: value
+--- !u!114 &-2353300526809320013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff55213c05114af2824853ddac29fb44, type: 3}
+  m_Name: Set0Action
+  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Serialization.SerializedActions.SerializedSetIntAction
+  m_Arg0: 0
+  m_Arg1: value
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe0a61152754c4c83ec83fe422fee4c, type: 3}
+  m_Name: SerializedBrain
+  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Serialization.SerializedBrain
+  m_SerializedActions:
+  - {fileID: -2353300526809320013}
+  - {fileID: -4258888055088524697}
+  m_SerializedConsiderations:
+  - {fileID: 3977725997765920203}
+  - {fileID: -9003177980281756858}
+  - {fileID: 1695250548814771163}
+  m_ConsiderationIndices:
+  - m_Considerations: 0000000001000000
+  - m_Considerations: 0100000002000000
+  m_BrainSettings:
+    minimalUtilityDifference: 0.01
+--- !u!114 &1695250548814771163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7e36ff072634d6896b402b3b64ce67a, type: 3}
+  m_Name: LogarithmicConsideration
+  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Serialization.SerializedConsiderations.SerializedLogarithmicConsideration
+  m_Arg0: 1
+  m_Arg1: 1
+  m_Arg2: 1
+  m_Arg3: 1
+  m_Arg4: z
+--- !u!114 &3977725997765920203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1b639a7963e4404bcef47af3e3d0632, type: 3}
+  m_Name: LinearConsideration
+  m_EditorClassIdentifier: Zor.UtilityAI::Zor.UtilityAI.Serialization.SerializedConsiderations.SerializedLinearConsideration
+  m_Arg0: 1
+  m_Arg1: 0
+  m_Arg2: 1
+  m_Arg3: x

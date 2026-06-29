@@ -15,7 +15,7 @@ namespace Stirge.UtilityAI.Core
         private float[] m_actionScores;
 
         /// <summary>
-        /// m_actionAxisBindings[x] contains an array of indicies of the Axes in m_axes considered by the Action at m_actions[x].
+        /// <see cref="m_actionAxisBindings"/>[x] contains an array of indicies pointing to the Axes in m_axes which are bound to the Action at m_actions[x].
         /// </summary>
         private int[][] m_actionAxisBindings;
 
@@ -24,31 +24,12 @@ namespace Stirge.UtilityAI.Core
         public Actor() { }
         public static Actor Create(UtilityEnemy enemy, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
-            // Check if enemy alreay has Actor, and if so, remove it
-            if (enemy.gameObject.TryGetComponent(out Actor existingActor))
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(existingActor);
-#else
-                Destroy(existingActor);
-#endif
-            }
-            // Check if enemy already has EnemyBlackboard, and if so, reset it
-            if (enemy.gameObject.TryGetComponent(out EnemyBlackboard existingBlackboard))
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(existingBlackboard);
-#else
-                Destroy(existingBlackboard);
-#endif
-            }
-
             Actor actor = enemy.CreateActorComponent();
             EnemyBlackboard blackboard = enemy.CreateBlackboardComponent();
 
+            actor.m_blackboard = blackboard;
             actor.m_axes = axes;
             actor.m_actions = actions;
-            actor.m_blackboard = blackboard;
             actor.m_actionAxisBindings = actionAxisBindings;
 
             actor.m_axisScores = new float[actor.m_axes.Length];

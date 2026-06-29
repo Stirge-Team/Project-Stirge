@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f5b35aa54b0ac47a90bb041963c7c3, type: 3}
+  m_Name: SimpleSerializedTablesContainer
+  m_EditorClassIdentifier: Zor.SimpleBlackboard::Zor.SimpleBlackboard.Serialization.SimpleSerializedTablesContainer
+  m_SerializedTables:
+  - {fileID: 6934668545858899750}
+--- !u!114 &6934668545858899750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83f28316c765f774487376fa5d128d66, type: 3}
+  m_Name: IntSerializedTable
+  m_EditorClassIdentifier: Zor.SimpleBlackboard::Zor.SimpleBlackboard.Serialization.IntSerializedTable
+  m_Keys:
+  - x
+  - y
+  - z
+  - value
+  m_Values: 00000000000000000000000000000000

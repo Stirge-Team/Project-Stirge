@@ -348,15 +348,16 @@ GameObject:
   m_Component:
   - component: {fileID: 986388239}
   - component: {fileID: 986388238}
-  - component: {fileID: 986388241}
-  - component: {fileID: 986388240}
+  - component: {fileID: 986388242}
+  - component: {fileID: 986388244}
+  - component: {fileID: 986388243}
   m_Layer: 0
   m_Name: UtilityEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &986388238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,36 +370,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333585be454d5e540ab08e4c2c10680c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
-  m_anim: {fileID: 0}
-  m_health: {fileID: 0}
-  m_inflictedStatuses: []
-  m_groundedCheckDistance: 0
-  m_groundedCheckMask:
-    serializedVersion: 2
-    m_Bits: 0
-  m_agent:
-    m_enemy: {fileID: 0}
-    m_transform: {fileID: 0}
-    m_modelTransform: {fileID: 0}
-    m_nav: {fileID: 0}
-    m_rb: {fileID: 0}
-    m_defaultState: {fileID: 0}
-    m_defaultNavSpeed: 3.5
-    m_targetDetectionRadius: 10
-    m_attackRadius: 4.5
-    m_defualtGravityAcceleration: 9
-    isOffGround: 0
-    airStallLength: 0
-  m_stunState: {fileID: 0}
-  m_airStunState: {fileID: 0}
-  m_knockbackState: {fileID: 0}
-  m_airJuggle: {fileID: 0}
-  spawner: {fileID: 0}
-  m_blackboard: {fileID: 986388240}
+  m_rb: {fileID: 986388242}
   m_actorData: {fileID: 11400000, guid: 1a2c9633e41c0c64eb203aff7053ce9c, type: 2}
-  references:
-    version: 2
-    RefIds: []
+  m_actor: {fileID: 986388244}
+  m_blackboard: {fileID: 986388243}
 --- !u!4 &986388239
 Transform:
   m_ObjectHideFlags: 0
@@ -414,7 +389,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &986388240
+--- !u!54 &986388242
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986388237}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &986388243
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -427,15 +429,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Blackboard.EnemyBlackboard
   m_enemy: {fileID: 986388238}
-  m_floatDict:
-    m_keys:
-    - IsGrounded
-    - GetSpeed
-  m_vector3Dict:
-    m_keys:
-    - GetPosition
-    - GetEulerRotation
---- !u!114 &986388241
+--- !u!114 &986388244
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -559,6 +553,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1294582119
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1294582123}
+  - component: {fileID: 1294582122}
+  m_Layer: 0
+  m_Name: TestSerializedCallback
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1294582122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294582119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aab808d82989a148ad1f35d32c1e6dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestSerializedCallback
+  condition:
+    _target: {fileID: 986388238}
+    _methodName: IsGrounded
+    _args: []
+    _dynamic: 0
+    _typeName: Condition, Siccity.SerializableCallback, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    dirty: 0
+--- !u!4 &1294582123
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294582119}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -567,3 +613,4 @@ SceneRoots:
   - {fileID: 95063979}
   - {fileID: 986388239}
   - {fileID: 1229491833}
+  - {fileID: 1294582123}

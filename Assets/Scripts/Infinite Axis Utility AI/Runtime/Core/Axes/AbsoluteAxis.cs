@@ -15,7 +15,8 @@ namespace Stirge.UtilityAI.Core.Axes
 
         public override float ComputeScore()
         {
-            return Blackboard.GetFloatValue(m_getValue);
+            //if (Blackboard.TryGetClassValue<Serialized;
+            return 0;
         }
     }
 }

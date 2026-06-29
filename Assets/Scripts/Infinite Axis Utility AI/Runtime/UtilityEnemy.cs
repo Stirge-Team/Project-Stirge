@@ -3,9 +3,8 @@ using UnityEngine;
 namespace Stirge.UtilityAI
 {
     using Blackboard;
-    using Enemy;
-    using Stirge.UtilityAI.Core;
-    using Stirge.UtilityAI.Serialization;
+    using Core;
+    using Serialization;
 
     public class UtilityEnemy : MonoBehaviour
     {
@@ -53,11 +52,31 @@ namespace Stirge.UtilityAI
 
         public Actor CreateActorComponent()
         {
+            // Check if enemy alreay has Actor, and if so, remove it
+            if (gameObject.TryGetComponent(out Actor existingActor))
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(existingActor);
+#else
+                Destroy(existingActor);
+#endif
+            }
+
             m_actor = gameObject.AddComponent<Actor>();
             return m_actor;
         }
         public EnemyBlackboard CreateBlackboardComponent()
         {
+            // Check if enemy already has EnemyBlackboard, and if so, reset it
+            if (gameObject.TryGetComponent(out EnemyBlackboard existingBlackboard))
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(existingBlackboard);
+#else
+                Destroy(existingBlackboard);
+#endif
+            }
+
             m_blackboard = gameObject.AddComponent<EnemyBlackboard>();
             m_blackboard.Init(this);
             return m_blackboard;
