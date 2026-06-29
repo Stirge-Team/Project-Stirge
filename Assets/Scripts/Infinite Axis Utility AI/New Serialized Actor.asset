@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dce6e3a27665cd047ad8e795c5589965, type: 3}
   m_Name: AbsoluteAxis
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedAbsoluteAxis
-  m_arg: IsGrounded
+  m_arg: 
 --- !u!114 &-887342171058838706
 MonoBehaviour:
   m_ObjectHideFlags: 0

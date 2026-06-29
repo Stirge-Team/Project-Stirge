@@ -1,7 +1,11 @@
-using Stirge.UtilityAI;
 using UnityEngine;
 
-public class TestSerializedCallback : MonoBehaviour
+namespace Stirge.UtilityAI.Callbacks
 {
-    public ScoreCallback scoreCallback;
+    public class TestSerializedCallback : MonoBehaviour
+    {
+        public BoolCallback boolCallback;
+        public FloatCallback floatCallback;
+        public Vector3Callback vector3Callback;
+    }
 }

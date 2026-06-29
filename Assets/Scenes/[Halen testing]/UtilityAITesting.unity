@@ -348,10 +348,9 @@ GameObject:
   m_Component:
   - component: {fileID: 986388239}
   - component: {fileID: 986388238}
-  - component: {fileID: 986388245}
+  - component: {fileID: 986388248}
+  - component: {fileID: 986388247}
   - component: {fileID: 986388242}
-  - component: {fileID: 986388244}
-  - component: {fileID: 986388243}
   m_Layer: 0
   m_Name: UtilityEnemy
   m_TagString: Untagged
@@ -371,10 +370,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333585be454d5e540ab08e4c2c10680c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
+  m_blackboardContainer: {fileID: 986388247}
   m_rb: {fileID: 986388242}
   m_actorData: {fileID: 11400000, guid: 1a2c9633e41c0c64eb203aff7053ce9c, type: 2}
-  m_actor: {fileID: 986388244}
-  m_blackboard: {fileID: 986388243}
+  m_actor: {fileID: 986388248}
 --- !u!4 &986388239
 Transform:
   m_ObjectHideFlags: 0
@@ -417,7 +416,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &986388243
+--- !u!114 &986388247
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -426,22 +425,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 986388237}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93614d7b247fa67438f8cb932a373ba4, type: 3}
+  m_Script: {fileID: 11500000, guid: 27052f068f6efaa4b9da00b91fa69be0, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Blackboard.EnemyBlackboard
-  m_enemy: {fileID: 986388238}
-  m_callbacks:
-    m_keys:
-    - IsGrounded
-    m_values:
-    - _target: {fileID: 986388245}
-      _methodName: IsGrounded
-      _args: []
-      _dynamic: 0
-      _typeName: Stirge.UtilityAI.ScoreCallback, Assembly-CSharp, Version=0.0.0.0,
-        Culture=neutral, PublicKeyToken=null
-      dirty: 0
---- !u!114 &986388244
+  m_EditorClassIdentifier: Zor.SimpleBlackboard::Zor.SimpleBlackboard.Components.SimpleBlackboardContainer
+  m_SerializedContainers:
+  - {fileID: 11400000, guid: 0c136f50c8921e447857d130e47a100c, type: 2}
+  m_ComponentReferences:
+  - m_PropertyName: UtilityEnemy
+    m_Component: {fileID: 986388238}
+--- !u!114 &986388248
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -453,19 +445,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9af5b4c338885c04ba386a78d30a1215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Core.Actor
---- !u!114 &986388245
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986388237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 967f5ec7239a8bc44be5d95c07c18a29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemyScores
-  m_enemy: {fileID: 986388238}
 --- !u!1 &1229491829
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,12 +586,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aab808d82989a148ad1f35d32c1e6dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestSerializedCallback
-  scoreCallback:
-    _target: {fileID: 986388245}
-    _methodName: IsGrounded
+  boolCallback:
+    _target: {fileID: 0}
+    _methodName: 
     _args: []
     _dynamic: 0
-    _typeName: Stirge.UtilityAI.ScoreCallback, Assembly-CSharp, Version=0.0.0.0,
+    _typeName: Stirge.UtilityAI.Callbacks.BoolCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  floatCallback:
+    _target: {fileID: 0}
+    _methodName: 
+    _args: []
+    _dynamic: 0
+    _typeName: Stirge.UtilityAI.Callbacks.FloatCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    dirty: 0
+  vector3Callback:
+    _target: {fileID: 0}
+    _methodName: 
+    _args: []
+    _dynamic: 0
+    _typeName: Stirge.UtilityAI.Callbacks.Vector3Callback, Assembly-CSharp, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
     dirty: 0
 --- !u!4 &1294582123
@@ -636,6 +631,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 360717486}
   - {fileID: 95063979}
-  - {fileID: 986388239}
   - {fileID: 1229491833}
   - {fileID: 1294582123}
+  - {fileID: 986388239}

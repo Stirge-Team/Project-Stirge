@@ -2,20 +2,28 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Core.Axes
 {
+    using Stirge.Combat;
     using Stirge.Serialization;
+    using Stirge.UtilityAI.Callbacks;
 
     public class AbsoluteAxis : Axis, ISetupable<string>
     {
-        private string m_getValue;
+        private string m_callbackName;
 
-        void ISetupable<string>.Setup(string getValue)
+        void ISetupable<string>.Setup(string callbackName)
         {
-            m_getValue = getValue;
+            m_callbackName = new(callbackName);
         }
 
         public override float ComputeScore()
         {
-            //if (Blackboard.TryGetClassValue<Serialized;
+            /*
+            if (enemy.TryGetClassValue(m_callbackName, out FloatCallback callback))
+            {
+                float score = callback.Invoke();
+                return Scoring.GetNormalisedScore(score, 0, 1);
+            }
+            */
             return 0;
         }
     }

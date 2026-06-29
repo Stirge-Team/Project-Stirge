@@ -1,5 +1,4 @@
 using System;
-using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Core
 {
@@ -7,7 +6,7 @@ namespace Stirge.UtilityAI.Core
 
     public abstract class Action
     {
-        private Blackboard m_blackboard;
+        private UtilityEnemy m_enemy;
 
         public string name { get; set; }
         
@@ -39,9 +38,9 @@ namespace Stirge.UtilityAI.Core
             OnEnd();
         }
 
-        public void SetBlackboard(Blackboard blackboard)
+        public void SetEnemy(UtilityEnemy enemy)
         {
-            m_blackboard = blackboard;
+            m_enemy = enemy;
         }
 
         #region Initialisers

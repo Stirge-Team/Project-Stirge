@@ -1,10 +1,11 @@
 using UnityEngine;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Serialization.SerializedAxes
 {
-    using Stirge.Serialization;
     using Core.Axes;
+    using Stirge.Serialization;
 
-    [NameOverride("Value Delegate Name", 0)]
+    [NameOverride("Callback Name", 0)]
     public sealed class SerializedAbsoluteAxis : SerializedAxis<AbsoluteAxis, string> { }
 }

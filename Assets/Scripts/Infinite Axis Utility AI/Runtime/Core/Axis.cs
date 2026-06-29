@@ -7,10 +7,10 @@ namespace Stirge.UtilityAI.Core
 
     public abstract class Axis
     {
-        private Blackboard m_blackboard;
+        private UtilityEnemy m_enemy;
 
         public string name { get; set; }
-        public Blackboard Blackboard => m_blackboard;
+        public UtilityEnemy enemy => m_enemy;
 
         public abstract float ComputeScore();
 
@@ -21,9 +21,9 @@ namespace Stirge.UtilityAI.Core
             OnInitialise();
         }
 
-        public void SetBlackboard(Blackboard blackboard)
+        public void SetEnemy(UtilityEnemy enemy)
         {
-            m_blackboard = blackboard;
+            m_enemy = enemy;
         }
 
         #region Initialisers
