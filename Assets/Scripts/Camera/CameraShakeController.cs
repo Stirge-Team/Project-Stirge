@@ -14,8 +14,23 @@ namespace Stirge.Camera
         private CinemachineStateDrivenCamera m_stateCamera;
         private Coroutine m_shakeCorountine;
 
+        private static CameraShakeController m_instance;
+        public static CameraShakeController Instance => m_instance;
+
         void Start()
         {
+            //singlton
+            if(m_instance == null)
+            {
+                m_instance = this;
+            }
+            else if(m_instance != this)
+            {
+                Debug.LogWarning("There are too many Camera shake controllers in the scene! Please ensure that there is only 1 camera shake controller!");
+                enabled = false;
+                return;
+            }
+
             m_stateCamera = GetComponentInChildren<CinemachineStateDrivenCamera>();
             if (m_stateCamera != null) Debug.Log($"Found {m_stateCamera.name} as the state driven camera!", this);
             else { Debug.LogError($"Failed to find a state driven camera. Removin the camera shaker.", this); enabled = false; return; }

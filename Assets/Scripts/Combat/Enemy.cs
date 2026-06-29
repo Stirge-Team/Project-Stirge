@@ -169,7 +169,6 @@ namespace Stirge.Enemy
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            HitStopManager.Instance.HitStopTime(damage);
         }
         #endregion
 

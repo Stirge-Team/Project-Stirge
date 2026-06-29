@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d52a14f44d605d7c9a7837c1e79a133, type: 3}
   m_Name: BasicShake
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Camera.CameraShakePreset
-  m_amp: 10
-  m_freq: 1
-  m_dur: 1
-  m_curve:
+  m_amplitude: 10
+  m_frequency: 10
+  m_duration: 0.1
+  m_strengthOverTime:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3

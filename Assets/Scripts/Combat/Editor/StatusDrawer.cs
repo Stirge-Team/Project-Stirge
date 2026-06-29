@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Stirge.Combat
 {
     using Tools;
-    
+
     [CustomPropertyDrawer(typeof(Status), true)]
     public class StatusDrawer : EasyPropertyDrawer
     {
@@ -35,6 +35,13 @@ namespace Stirge.Combat
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_height");
                         break;
+                    case nameof(HitStopStatus):
+                        DrawPropertyField("m_duration");
+                        DrawPropertyField("m_scale");
+                        break;
+                    case nameof(ScreenShakeEffect):
+                        DrawPropertyField("m_preset");
+                        break;
                 }
             }
             EditorGUI.EndProperty();
@@ -57,9 +64,11 @@ namespace Stirge.Combat
                 {
                     case nameof(AirJuggle):
                     case nameof(Knockback):
+                    case nameof(HitStopStatus):
                         totalLines += 2;
                         break;
                     case nameof(Stun):
+                    case nameof(ScreenShakeEffect):
                         totalLines++;
                         break;
                 }
