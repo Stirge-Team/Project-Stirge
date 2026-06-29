@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4660795556198851519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807651cbf66753b4bbac0c9c77f77966, type: 3}
+  m_Name: AnimationNode
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAnimationNode
+  m_arg0: TestString2
+  m_arg1: {fileID: 7400000, guid: f37246c5359cabebc997f1a69688a6aa, type: 2}
+  m_arg2:
+    m_value: 1
+    m_range: {x: 0, y: 0}
+    m_isRandom: 0
+  m_arg3: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3992c478a2507e842b7ee1dbbd1eec23, type: 3}
+  m_Name: PlayerTestString2
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAttackData
+  m_serializedAttackNodes:
+  - {fileID: -4660795556198851519}
+  m_nodeBindings: ffffffff

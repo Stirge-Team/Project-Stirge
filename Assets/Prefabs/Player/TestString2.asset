@@ -44,7 +44,7 @@ MonoBehaviour:
     m_startFrame: 50
     m_endFrame: 50
   m_nextComboInput:
-    m_nextComboAttack: {fileID: 11400000, guid: 78296964f76c8e224a3741e459cd2cef, type: 2}
+    m_nextComboAttack: {fileID: 11400000, guid: d4ec596a1b478314fa8a089a7c86a433, type: 2}
     m_comboAttackInput: 1
     m_comboInputTimeStart: 29
     m_comboInputTimeEnd: 41
