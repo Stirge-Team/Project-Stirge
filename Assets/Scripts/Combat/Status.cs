@@ -1,3 +1,6 @@
+using System;
+using Stirge.Camera;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Stirge.Combat
@@ -21,7 +24,9 @@ namespace Stirge.Combat
         {
             typeof(AirJuggle),
             typeof(Knockback),
-            typeof(Stun)
+            typeof(Stun),
+            typeof(HitStopStatus),
+            typeof(ScreenShakeEffect)
         };
     }
 
@@ -124,6 +129,49 @@ namespace Stirge.Combat
         public override void OnInflict(CombatEntity targetEntity)
         {
             targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0);
+        }
+    }
+
+    [System.Serializable]
+    public class HitStopStatus : Status
+    {
+        public HitStopStatus()
+        {
+            m_duration = 1f;
+            m_scale = 0f;
+        }
+        public HitStopStatus(float duration, float scale)
+        {
+            m_duration = duration;
+            m_scale = scale;
+        }
+
+        [SerializeField, Min(0f)] private float m_duration;
+        [SerializeField, Range(0f, 1f)] private float m_scale;
+
+        public override void OnInflict(CombatEntity targetEntity)
+        {
+            TimeManager.Instance.SetTimeScaleForTime(m_scale, m_duration);//wanna change function
+        }
+    }
+
+    [System.Serializable]
+    public class ScreenShakeEffect : Status
+    {
+        public ScreenShakeEffect()
+        {
+            m_preset = null;
+        }
+        public ScreenShakeEffect(CameraShakePreset preset)
+        {
+            m_preset = preset;
+        }
+
+        [SerializeField] private CameraShakePreset m_preset;
+
+        public override void OnInflict(CombatEntity targetEntity)
+        {
+            CameraShakeController.Instance.BeginScreenshake(m_preset);
         }
     }
 }
