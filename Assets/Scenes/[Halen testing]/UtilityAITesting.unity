@@ -349,7 +349,6 @@ GameObject:
   - component: {fileID: 986388239}
   - component: {fileID: 986388238}
   - component: {fileID: 986388248}
-  - component: {fileID: 986388247}
   - component: {fileID: 986388242}
   m_Layer: 0
   m_Name: UtilityEnemy
@@ -370,7 +369,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333585be454d5e540ab08e4c2c10680c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
-  m_blackboardContainer: {fileID: 986388247}
   m_rb: {fileID: 986388242}
   m_actorData: {fileID: 11400000, guid: 1a2c9633e41c0c64eb203aff7053ce9c, type: 2}
   m_actor: {fileID: 986388248}
@@ -416,23 +414,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &986388247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 986388237}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27052f068f6efaa4b9da00b91fa69be0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Zor.SimpleBlackboard::Zor.SimpleBlackboard.Components.SimpleBlackboardContainer
-  m_SerializedContainers:
-  - {fileID: 11400000, guid: 0c136f50c8921e447857d130e47a100c, type: 2}
-  m_ComponentReferences:
-  - m_PropertyName: UtilityEnemy
-    m_Component: {fileID: 986388238}
 --- !u!114 &986388248
 MonoBehaviour:
   m_ObjectHideFlags: 0

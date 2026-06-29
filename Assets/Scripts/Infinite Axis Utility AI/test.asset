@@ -34,8 +34,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3592f4b9f3043c340857aa688e5cfccb, type: 3}
   m_Name: TransformSerializedTable
   m_EditorClassIdentifier: Zor.SimpleBlackboard::Zor.SimpleBlackboard.Serialization.TransformSerializedTable
-  m_Keys: []
-  m_Values: []
+  m_Keys:
+  - Target
+  m_Values:
+  - {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
