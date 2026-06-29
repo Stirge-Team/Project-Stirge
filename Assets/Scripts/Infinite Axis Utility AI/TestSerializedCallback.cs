@@ -1,7 +1,7 @@
+using Stirge.UtilityAI;
 using UnityEngine;
 
 public class TestSerializedCallback : MonoBehaviour
 {
-    public SerializableCallback<float> callback;
-    public Condition condition;
+    public ScoreCallback scoreCallback;
 }

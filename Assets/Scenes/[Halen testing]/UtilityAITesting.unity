@@ -348,6 +348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 986388239}
   - component: {fileID: 986388238}
+  - component: {fileID: 986388245}
   - component: {fileID: 986388242}
   - component: {fileID: 986388244}
   - component: {fileID: 986388243}
@@ -441,6 +442,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9af5b4c338885c04ba386a78d30a1215, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Core.Actor
+--- !u!114 &986388245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986388237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 967f5ec7239a8bc44be5d95c07c18a29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemyScores
+  m_enemy: {fileID: 986388238}
 --- !u!1 &1229491829
 GameObject:
   m_ObjectHideFlags: 0
@@ -582,13 +596,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aab808d82989a148ad1f35d32c1e6dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestSerializedCallback
-  condition:
-    _target: {fileID: 986388238}
+  scoreCallback:
+    _target: {fileID: 986388245}
     _methodName: IsGrounded
     _args: []
     _dynamic: 0
-    _typeName: Condition, Siccity.SerializableCallback, Version=0.0.0.0, Culture=neutral,
-      PublicKeyToken=null
+    _typeName: Stirge.UtilityAI.ScoreCallback, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
     dirty: 0
 --- !u!4 &1294582123
 Transform:
