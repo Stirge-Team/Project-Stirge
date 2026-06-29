@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Stirge.Combat
 {
     using Tools;
-    
+
     [CustomPropertyDrawer(typeof(Status), true)]
     public class StatusDrawer : EasyPropertyDrawer
     {
@@ -15,6 +15,8 @@ namespace Stirge.Combat
             else
                 label.text = "Empty, pls remove";
 
+            string typeName = label.text;
+
             EditorGUI.BeginProperty(m_position, label, m_property);
             DrawLabelHeader(label);
             m_property.isExpanded = true; // Fixes display bug in Frame Data Viewer
@@ -22,7 +24,8 @@ namespace Stirge.Combat
             {
                 if (m_property.managedReferenceValue is TimedStatus)
                     DrawPropertyField("m_length");
-                switch (label.text)
+
+                switch (typeName)
                 {
                     case nameof(AirJuggle):
                         DrawPropertyField("m_strength");
@@ -31,6 +34,13 @@ namespace Stirge.Combat
                     case nameof(Knockback):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_height");
+                        break;
+                    case nameof(HitStopStatus):
+                        DrawPropertyField("m_duration");
+                        DrawPropertyField("m_scale");
+                        break;
+                    case nameof(ScreenShakeEffect):
+                        DrawPropertyField("m_preset");
                         break;
                 }
             }
@@ -45,16 +55,20 @@ namespace Stirge.Combat
             {
                 SetLabelTextToTypeName(label);
 
+                string typeName = label.text;
+
                 if (m_property.managedReferenceValue is TimedStatus)
                     totalLines++;
 
-                switch (label.text)
+                switch (typeName)
                 {
                     case nameof(AirJuggle):
                     case nameof(Knockback):
+                    case nameof(HitStopStatus):
                         totalLines += 2;
                         break;
                     case nameof(Stun):
+                    case nameof(ScreenShakeEffect):
                         totalLines++;
                         break;
                 }

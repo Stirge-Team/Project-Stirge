@@ -31,8 +31,6 @@ namespace Stirge.Tools
                 if (!isInArray)
                     EditorGUI.indentLevel++;
                 
-                DrawPropertyField("m_isRandom");
-
                 if (FindPropertyRelative("m_isRandom").boolValue)
                 {
                     DrawPropertyField("m_range");
@@ -41,6 +39,8 @@ namespace Stirge.Tools
                 {
                     DrawPropertyField("m_value");
                 }
+
+                DrawPropertyField("m_isRandom");
 
                 if (!isInArray)
                     EditorGUI.indentLevel--;

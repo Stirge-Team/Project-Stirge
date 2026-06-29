@@ -30,19 +30,19 @@ MonoBehaviour:
         m_animationStateName: DefaultAttack
         m_animationClip: {fileID: 7400000, guid: 5a5f27f26d2169340b96db56ba1290b3, type: 2}
         m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
           m_value: 1
+          m_range: {x: 0, y: 0}
+          m_isRandom: 0
         m_hasRootMotion: 0
     - rid: 5281897754630029374
       type: {class: ApproachTargetNode, ns: Stirge.Combat.Attacks, asm: Assembly-CSharp}
       data:
         m_stoppingDistance:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
           m_value: 1.3
+          m_range: {x: 0, y: 0}
+          m_isRandom: 0
         m_useInitialPosition: 0
         m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
           m_value: 10
+          m_range: {x: 0, y: 0}
+          m_isRandom: 0

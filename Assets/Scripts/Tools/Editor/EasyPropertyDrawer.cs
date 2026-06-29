@@ -23,6 +23,12 @@ namespace Stirge.Tools
 
         protected abstract void DrawGUI(GUIContent label);
 
+        /// <summary>
+        /// Do not use this to get the height of an <see cref="EasyPropertyDrawer"/> property!! Instead use <see cref="GetPropertyLineHeight"/>.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="label"></param>
+        /// <returns></returns>
         public sealed override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SaveProperties(property);
@@ -45,22 +51,22 @@ namespace Stirge.Tools
 
         protected void DrawPropertyField(string propertyName)
         {
-            SerializedProperty propToDraw = FindPropertyRelative(propertyName);
-            if (propToDraw != null)
+            SerializedProperty propertyToDraw = FindPropertyRelative(propertyName);
+            if (propertyToDraw != null)
             {
-                EditorGUI.PropertyField(GetNewRect(), propToDraw);
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
+                EditorGUI.PropertyField(GetNewRect(), propertyToDraw);
+                if (propertyToDraw.propertyType == SerializedPropertyType.Float)
                 {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
+                    if (propertyToDraw.floatValue < 0)
+                        propertyToDraw.floatValue = 0;
                 }
-                else if (propToDraw.isArray && propToDraw.isExpanded)
+                else if (propertyToDraw.isArray && propertyToDraw.isExpanded)
                 {
-                    m_totalLines += GetPropertyLineHeight(propToDraw);
+                    m_totalLines += GetPropertyLineHeight(propertyToDraw);
                 }
-                else if (propToDraw.type == nameof(RandomFloatField))
+                else if (propertyToDraw.type == nameof(RandomFloatField))
                 {
-                    m_totalLines += GetPropertyLineHeight(propToDraw) - 1;
+                    m_totalLines += GetPropertyLineHeight(propertyToDraw) - 1;
                 }
             }
             else
@@ -122,7 +128,7 @@ namespace Stirge.Tools
 
         protected void SetLabelTextToTypeName(GUIContent label)
         {
-            if (m_property != null)
+            if (m_property != null && m_property.managedReferenceValue != null)
                 label.text = m_property.managedReferenceValue.GetType().Name;
             else
                 label.text = "Empty, pls delete";

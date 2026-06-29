@@ -33,6 +33,8 @@ MonoBehaviour:
       m_statuses:
       - rid: 2001017013982199878
       - rid: 2001017013982199913
+      - rid: 2315525968026402898
+      - rid: 2315525968026402899
   m_eventData:
   - m_eventType: 0
     m_eventID: TestAttackEvent0
@@ -61,3 +63,12 @@ MonoBehaviour:
       data:
         m_strength: 3
         m_height: 1
+    - rid: 2315525968026402898
+      type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_preset: {fileID: 11400000, guid: 5988a491bd0972b458fed2ad53868290, type: 2}
+    - rid: 2315525968026402899
+      type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_duration: 0.1
+        m_scale: 0.1

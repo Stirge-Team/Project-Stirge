@@ -43,7 +43,10 @@ namespace Stirge.Enemy
 
             if(TargetTransform != null) //if there is a target
             {
-                AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+                if (AttackTokenDispenser.instance != null)
+                    AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+                else
+                    m_hasAttackToken = true;
             }
 
             m_agent.Update(deltaTime);
@@ -64,8 +67,8 @@ namespace Stirge.Enemy
 
         public override void UseAttack(AttackData attackData)
         {
-            if (!m_hasAttackToken) return; //fail if no attack token
-            base.UseAttack(attackData);
+            if (m_hasAttackToken) //fail if no attack token
+                base.UseAttack(attackData);
         }
         #endregion
 
@@ -94,10 +97,6 @@ namespace Stirge.Enemy
         #endregion
 
         #region Transformation
-        public override bool IsGrounded()
-        {
-            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-        }
         public override void ApplyRootMotion()
         {
             m_agent.ApplyRootMotion();
@@ -127,7 +126,9 @@ namespace Stirge.Enemy
         {
             return m_agent.Transform.forward;
         }
+        #endregion
 
+        #region Navigation
         protected override void BeginGoToPosition(Vector3 newPosition)
         {
             m_agent.TargetPosition = newPosition;
@@ -154,10 +155,20 @@ namespace Stirge.Enemy
         }
         #endregion
 
+        #region Physics
+        public override bool IsGrounded()
+        {
+            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
+        }
+        public override void ApplyPhysicsToTransform()
+        {
+            m_agent.ApplyPhysicsToTransform();
+        }
+        #endregion
+
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            HitStopManager.Instance.HitStopTime(damage);
         }
         #endregion
 
