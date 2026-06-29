@@ -8,11 +8,11 @@ public class ParticleInstancer : MonoBehaviour
     public struct ParticleRef
     {
         public string Name => m_name;
-        [SerializeField]
+        [SerializeField, Tooltip("The name of this particle effect (for referencing)")]
         private string m_name;
-        [SerializeField]
+        [SerializeField, Tooltip("The particle effect you want to play.")]
         private ParticleSystem m_particleEffect;
-        [SerializeField]
+        [SerializeField, Tooltip("Where the above particle should normal be spawned in.")]
         private Transform m_defaultLocation;
         public void PlayParticle(Transform location = null)
         {
