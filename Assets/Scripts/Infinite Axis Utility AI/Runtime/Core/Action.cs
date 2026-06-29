@@ -1,13 +1,13 @@
 using System;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Core
 {
-    using Blackboard;
     using Stirge.Serialization;
 
     public abstract class Action
     {
-        private EnemyBlackboard m_blackboard;
+        private Blackboard m_blackboard;
 
         public string name { get; set; }
         
@@ -39,7 +39,7 @@ namespace Stirge.UtilityAI.Core
             OnEnd();
         }
 
-        public void SetBlackboard(EnemyBlackboard blackboard)
+        public void SetBlackboard(Blackboard blackboard)
         {
             m_blackboard = blackboard;
         }

@@ -1,4 +1,4 @@
-namespace Stirge.UtilityAI.Blackboard
+namespace Stirge.UtilityAI
 {
     public static class EnemyConstants
     {

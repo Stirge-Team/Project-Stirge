@@ -1,17 +1,16 @@
 using System;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Core
 {
-    using Blackboard;
-    using Enemy;
     using Stirge.Serialization;
 
     public abstract class Axis
     {
-        private EnemyBlackboard m_blackboard;
+        private Blackboard m_blackboard;
 
         public string name { get; set; }
-        public EnemyBlackboard Blackboard => m_blackboard;
+        public Blackboard Blackboard => m_blackboard;
 
         public abstract float ComputeScore();
 
@@ -22,7 +21,7 @@ namespace Stirge.UtilityAI.Core
             OnInitialise();
         }
 
-        public void SetBlackboard(EnemyBlackboard blackboard)
+        public void SetBlackboard(Blackboard blackboard)
         {
             m_blackboard = blackboard;
         }

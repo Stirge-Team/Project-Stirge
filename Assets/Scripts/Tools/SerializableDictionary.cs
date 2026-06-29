@@ -11,7 +11,7 @@ namespace Stirge.Tools
         [SerializeField] private List<TKey> m_keys = new();
         [SerializeField] private List<TValue> m_values = new();
 
-        // Save dictionary to lsts
+        // Save dictionary to lists
         public void OnBeforeSerialize()
         {
             m_keys.Clear();
@@ -31,7 +31,7 @@ namespace Stirge.Tools
             // likely there are null values
             if (m_keys.Count != m_values.Count)
             {
-                Debug.LogError(string.Format($"There are {m_keys.Count} keys and {m_values.Count} values after deserialization. Make sure that both key and value types are serializable."));
+                Debug.LogWarning(string.Format($"There are {m_keys.Count} keys and {m_values.Count} values after deserialization. Make sure that both key and value types are serializable."));
 
                 while (m_values.Count < m_keys.Count)
                 {

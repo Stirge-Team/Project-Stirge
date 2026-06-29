@@ -1,10 +1,11 @@
 using UnityEngine;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI
 {
-    using Blackboard;
     using Core;
     using Serialization;
+    using Zor.SimpleBlackboard.Components;
 
     public class UtilityEnemy : MonoBehaviour
     {
@@ -13,12 +14,13 @@ namespace Stirge.UtilityAI
         private float m_maxHealth;
 
         [Header("Components")]
+        [SerializeField] private SimpleBlackboardContainer m_blackboardContainer;
         [SerializeField] private Rigidbody m_rb;
 
         [Header("Utility AI")]
         [SerializeField] private SerializedActor m_actorData;
         [SerializeField] private Actor m_actor;
-        [SerializeField] private EnemyBlackboard m_blackboard;
+        [SerializeField] private Blackboard m_blackboard;
 
         private void Start()
         {
@@ -65,20 +67,11 @@ namespace Stirge.UtilityAI
             m_actor = gameObject.AddComponent<Actor>();
             return m_actor;
         }
-        public EnemyBlackboard CreateBlackboardComponent()
+        public Blackboard InitialiseBlackboard()
         {
-            // Check if enemy already has EnemyBlackboard, and if so, reset it
-            if (gameObject.TryGetComponent(out EnemyBlackboard existingBlackboard))
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(existingBlackboard);
-#else
-                Destroy(existingBlackboard);
-#endif
-            }
-
-            m_blackboard = gameObject.AddComponent<EnemyBlackboard>();
-            m_blackboard.Init(this);
+            m_blackboard = null;
+            m_blackboardContainer.RecreateBlackboard();
+            m_blackboard = m_blackboardContainer.blackboard;
             return m_blackboard;
         }
         #endregion

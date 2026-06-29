@@ -358,7 +358,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &986388238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -430,6 +430,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Blackboard.EnemyBlackboard
   m_enemy: {fileID: 986388238}
+  m_callbacks:
+    m_keys:
+    - IsGrounded
+    m_values:
+    - _target: {fileID: 986388245}
+      _methodName: IsGrounded
+      _args: []
+      _dynamic: 0
+      _typeName: Stirge.UtilityAI.ScoreCallback, Assembly-CSharp, Version=0.0.0.0,
+        Culture=neutral, PublicKeyToken=null
+      dirty: 0
 --- !u!114 &986388244
 MonoBehaviour:
   m_ObjectHideFlags: 0
