@@ -1,11 +1,11 @@
 using UnityEngine;
 using Zor.SimpleBlackboard.Core;
+using Zor.SimpleBlackboard.Components;
 
 namespace Stirge.UtilityAI
 {
     using Core;
     using Serialization;
-    using Zor.SimpleBlackboard.Components;
 
     public class UtilityEnemy : MonoBehaviour
     {
@@ -18,11 +18,15 @@ namespace Stirge.UtilityAI
 
         [Header("Utility AI")]
         [SerializeField] private SerializedActor m_actorData;
-        [SerializeField] private Actor m_actor;
+        
+        private Actor m_actor;
+        private Blackboard m_blackboard;
+
+        public Blackboard Blackboard => m_blackboard;
 
         private void Start()
         {
-            
+            Initialise();
         }
 
         public bool IsGrounded()
@@ -42,29 +46,18 @@ namespace Stirge.UtilityAI
             return transform.eulerAngles;
         }
 
-        #region AI Setup
-        [ContextMenu("Create Actor from SerializedActor")]
-        private void CreateActorFromSerializedActor()
+        [ContextMenu("Add Random Force")]
+        public void AddForceRandom()
         {
-            m_actorData.CreateActor(this);
-            Debug.Log($"Actor created for {GetType().Name} '{name}'!", this);
+            m_rb.AddForce(new Vector3(Random.value, Random.value, Random.value), ForceMode.VelocityChange);
         }
 
-        public Actor CreateActorComponent()
+        [ContextMenu("Initialise")]
+        private void Initialise()
         {
-            // Check if enemy alreay has Actor, and if so, remove it
-            if (gameObject.TryGetComponent(out Actor existingActor))
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(existingActor);
-#else
-                Destroy(existingActor);
-#endif
-            }
-
-            m_actor = gameObject.AddComponent<Actor>();
-            return m_actor;
+            m_blackboard = new();
+            m_actorData.CreateActor(m_blackboard);
+            Debug.Log($"AI objects initialised for {GetType().Name} '{name}'!", this);
         }
-        #endregion
     }
 }

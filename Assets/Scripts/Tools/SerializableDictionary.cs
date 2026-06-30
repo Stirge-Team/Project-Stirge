@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Stirge.Tools
 {
     [System.Serializable]
-    public abstract class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver where TValue : class
+    public abstract class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
         [SerializeField] private List<TKey> m_keys = new();
         [SerializeField] private List<TValue> m_values = new();
@@ -35,7 +35,7 @@ namespace Stirge.Tools
 
                 while (m_values.Count < m_keys.Count)
                 {
-                    m_values.Add(null);
+                    m_values.Add(default);
                 }
             }
 

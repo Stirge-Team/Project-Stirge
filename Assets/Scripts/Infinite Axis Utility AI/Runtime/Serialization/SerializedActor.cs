@@ -1,10 +1,11 @@
 using UnityEngine;
+using System;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Serialization
 {
     using Builders;
-    using Stirge.UtilityAI.Core;
-    using System;
+    using Core;
 
     [CreateAssetMenu(menuName = "Stirge/Utility AI/Serialized Actor", fileName = "New Serialized Actor", order = 449)]
     public sealed class SerializedActor : SerializedActor_Base
@@ -15,10 +16,10 @@ namespace Stirge.UtilityAI.Serialization
 
         private ActorBuilder m_builder;
 
-        public override Actor CreateActor(UtilityEnemy enemy)
+        public override Actor CreateActor(Blackboard blackboard)
         {
             Deserialize();
-            Actor actor = m_builder.Build(enemy);
+            Actor actor = m_builder.Build(blackboard);
 
             return actor;
         }

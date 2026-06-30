@@ -1,13 +1,14 @@
 using UnityEngine;
+using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Core
 {
-    public sealed class Actor : MonoBehaviour
+    public sealed class Actor
     {
         private Axis[] m_axes;
         private Action[] m_actions;
 
-        private UtilityEnemy m_enemy;
+        private Blackboard m_blackboard;
 
         private float[] m_axisScores;
         private float[] m_actionScores;
@@ -20,11 +21,10 @@ namespace Stirge.UtilityAI.Core
         private int m_currentActionIndex;
 
         public Actor() { }
-        public static Actor Create(UtilityEnemy enemy, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        public static Actor Create(Blackboard blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
-            Actor actor = enemy.CreateActorComponent();
+            Actor actor = new();
 
-            actor.m_enemy = enemy;
             actor.m_axes = axes;
             actor.m_actions = actions;
             actor.m_actionAxisBindings = actionAxisBindings;
@@ -34,11 +34,11 @@ namespace Stirge.UtilityAI.Core
 
             for (int i = 0; i < actor.m_axes.Length; i++)
             {
-                actor.m_axes[i].SetEnemy(enemy);
+                actor.m_axes[i].SetBlackboard(blackboard);
             }
             for (int i = 0; i < actor.m_actions.Length; i++)
             {
-                actor.m_actions[i].SetEnemy(enemy);
+                actor.m_actions[i].SetBlackboard(blackboard);
             }
 
             return actor;
