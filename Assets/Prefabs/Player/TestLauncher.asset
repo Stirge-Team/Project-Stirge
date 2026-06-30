@@ -34,6 +34,7 @@ MonoBehaviour:
       - rid: 2001017013982199898
       - rid: 2315525991129940048
       - rid: 2315525991129940049
+      - rid: 2315525991129940106
   m_eventData:
   - m_eventType: 0
     m_eventID: TestLauncherEvent0
@@ -67,3 +68,7 @@ MonoBehaviour:
       data:
         m_duration: 0.2
         m_scale: 0
+    - rid: 2315525991129940106
+      type: {class: ParticleEffectOnHit, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_particleReference: {fileID: 4375904562942587282, guid: 758c63b4931df6c96b37f505b4cb4060, type: 3}
