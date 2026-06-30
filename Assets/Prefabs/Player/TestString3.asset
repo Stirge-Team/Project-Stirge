@@ -33,6 +33,8 @@ MonoBehaviour:
       m_statuses:
       - rid: 2001016855599513794
       - rid: 2001016855599513806
+      - rid: 2315525991129940046
+      - rid: 2315525991129940047
   m_eventData:
   - m_eventType: 0
     m_eventID: TestString3Event0
@@ -59,5 +61,14 @@ MonoBehaviour:
     - rid: 2001016855599513806
       type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 15
+        m_strength: 5
         m_height: 1
+    - rid: 2315525991129940046
+      type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_duration: 0.4
+        m_scale: 0.1
+    - rid: 2315525991129940047
+      type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_preset: {fileID: 11400000, guid: 8cccd7890c005af838944180740ec357, type: 2}
