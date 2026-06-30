@@ -32,6 +32,9 @@ MonoBehaviour:
       m_damage: 1
       m_statuses:
       - rid: 2001016855599513791
+      - rid: 2315525991129940042
+      - rid: 2315525991129940043
+      - rid: 2315525991129940101
   m_eventData:
   - m_eventType: 0
     m_eventID: TestString1Event0
@@ -45,9 +48,9 @@ MonoBehaviour:
     m_endFrame: 46
   m_nextComboInput:
     m_nextComboAttack: {fileID: 11400000, guid: 28bb705b0d4cdbc729a2e40f764eebd2, type: 2}
-    m_comboAttackInput: 1
+    m_comboAttackInput: 2
     m_comboInputTimeStart: 23
-    m_comboInputTimeEnd: 37
+    m_comboInputTimeEnd: 54
   references:
     version: 2
     RefIds:
@@ -55,3 +58,16 @@ MonoBehaviour:
       type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_length: 0.5
+    - rid: 2315525991129940042
+      type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_preset: {fileID: 11400000, guid: 084f58eb643fc80f0b21a6ffaf227ea1, type: 2}
+    - rid: 2315525991129940043
+      type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_duration: 0.2
+        m_scale: 0
+    - rid: 2315525991129940101
+      type: {class: ParticleEffectOnHit, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_particleReference: {fileID: 4375904562942587282, guid: 758c63b4931df6c96b37f505b4cb4060, type: 3}

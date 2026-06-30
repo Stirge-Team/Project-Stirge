@@ -139,7 +139,7 @@ namespace FrameFighter2.Hitbox
                     CombatEntity targetEntity = hitCollider.GetComponentInParent<CombatEntity>();
                     if (targetEntity != null)
                     {
-                        m_onHitEffect.OnHit(targetEntity, m_thisCombatEntity);
+                        m_onHitEffect.OnHit(hitCollider.transform, targetEntity, m_thisCombatEntity);
                     }
                 }
             }

@@ -23,7 +23,7 @@ MonoBehaviour:
         m_animationStateName: TestString1
         m_animationClip: {fileID: 7400000, guid: f9b1e7abef8c874a6bfc10cb957ef689, type: 2}
         m_speed:
-          m_isRandom: 0
-          m_range: {x: 0, y: 0}
           m_value: 1
+          m_range: {x: 0, y: 0}
+          m_isRandom: 0
         m_hasRootMotion: 0
