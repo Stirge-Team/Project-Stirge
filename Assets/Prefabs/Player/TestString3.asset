@@ -67,7 +67,7 @@ MonoBehaviour:
       type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_duration: 0.4
-        m_scale: 0.1
+        m_scale: 0
     - rid: 2315525991129940047
       type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:

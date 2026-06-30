@@ -64,5 +64,5 @@ MonoBehaviour:
     - rid: 2315525991129940045
       type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_duration: 0.1
-        m_scale: 0.2
+        m_duration: 0.2
+        m_scale: 0
