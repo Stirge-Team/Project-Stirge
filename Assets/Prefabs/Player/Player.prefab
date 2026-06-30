@@ -190,7 +190,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  m_jumpHeight: 1
+  m_jumpHeight: 3
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
   m_landingSound: {fileID: 11400000, guid: 06fd6c5347399e37eb457a4188b52e3a, type: 2}
@@ -242,7 +242,7 @@ MonoBehaviour:
       - m_Target: {fileID: 369394295828842384}
         m_TargetAssemblyTypeName: Stirge.Player.Player, Assembly-CSharp
         m_MethodName: AttemptJump
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
