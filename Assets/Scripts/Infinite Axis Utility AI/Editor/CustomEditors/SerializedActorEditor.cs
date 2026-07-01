@@ -25,6 +25,14 @@ namespace Stirge.UtilityAI.CustomEditors
         private static bool s_axesFoldout = true;
         private static bool s_actionsFoldout = true;
 
+        private void OnDestroy()
+        {
+            foreach (Editor editor in m_editors.Values)
+            {
+                DestroyImmediate(editor);
+            }
+        }
+
         public override void OnInspectorGUI()
         {
             SerializedProperty actionsProperty = serializedObject.FindProperty(SerializedActionsPropertyName);
@@ -136,14 +144,6 @@ namespace Stirge.UtilityAI.CustomEditors
                 }
 
                 EditorGUILayout.EndVertical();
-            }
-        }
-
-        private void OnDestroy()
-        {
-            foreach (Editor editor in m_editors.Values)
-            {
-                DestroyImmediate(editor);
             }
         }
 

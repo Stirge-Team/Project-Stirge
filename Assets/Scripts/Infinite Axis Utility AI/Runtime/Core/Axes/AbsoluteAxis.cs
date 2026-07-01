@@ -4,7 +4,6 @@ namespace Stirge.UtilityAI.Core.Axes
 {
     using Stirge.Combat;
     using Stirge.Serialization;
-    using Stirge.UtilityAI.Callbacks;
 
     public class AbsoluteAxis : Axis, ISetupable<string>
     {

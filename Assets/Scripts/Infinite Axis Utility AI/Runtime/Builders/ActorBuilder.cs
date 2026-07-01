@@ -1,11 +1,11 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using Zor.SimpleBlackboard.Core;
 
 namespace Stirge.UtilityAI.Builders
 {
     using Core;
+    using Enemy;
     using Stirge.Serialization;
 
     public class ActorBuilder
@@ -24,13 +24,13 @@ namespace Stirge.UtilityAI.Builders
             new object[1], new object[2], new object[3]
         };
 
-        public Actor Build(Blackboard blackboard)
+        public Actor Build(UtilityEnemy enemy)
         {
             Axis[] axes = MakeAxes();
             Action[] actions = MakeActions();
             int[][] actionAxisBindings = MakeActionAxisBindings();
 
-            Actor actor = Actor.Create(blackboard, axes, actions, actionAxisBindings);
+            Actor actor = Actor.Create(enemy, axes, actions, actionAxisBindings);
 
             return actor;
         }
