@@ -244,7 +244,7 @@ GameObject:
   - component: {fileID: 5595455137165182384}
   - component: {fileID: 705644104819910969}
   m_Layer: 3
-  m_Name: Transform
+  m_Name: Transform/Rigidbody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

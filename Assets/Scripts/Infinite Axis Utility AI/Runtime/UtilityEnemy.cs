@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -45,7 +49,7 @@ namespace Stirge.UtilityAI
         [SerializeField] private Vector3 m_groundedCheckOffset;
         [SerializeField] private LayerMask m_collisionLayerMask;
 
-        #region Public Accessors
+        #region Public Properties
         // Components
         public new Transform transform => m_transform;
         public new Rigidbody rigidbody => m_rigidbody;
@@ -147,7 +151,7 @@ namespace Stirge.UtilityAI
                 int diff = value - m_currentHealthPoints;
                 if (diff > 0)
                 {
-
+                    //OnDamageTaken(diff);
                 }
                 m_currentHealthPoints = value;
             }
@@ -157,6 +161,18 @@ namespace Stirge.UtilityAI
         public float groundedCheckRadius => m_groundedCheckRadius;
         public Vector3 groundedCheckOffset => m_groundedCheckOffset;
         public LayerMask collisionLayerMask => m_collisionLayerMask;
+
+        // Runtime properties
+        public float distanceToTarget
+        {
+            get
+            {
+                if (target == null)
+                    return Mathf.Infinity;
+
+                return Vector3.Distance(transform.position, target.position);
+            }
+        }
         #endregion
 
         #region Unity Messages
@@ -186,6 +202,7 @@ namespace Stirge.UtilityAI
         {
             m_isGrounded = GetIsGrounded();
         }
+        
         #endregion
 
         public bool GetIsGrounded()

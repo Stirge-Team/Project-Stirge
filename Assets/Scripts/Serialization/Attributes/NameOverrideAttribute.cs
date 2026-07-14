@@ -4,9 +4,7 @@ using UnityEngine;
 namespace Stirge.Serialization
 {
     /// <summary>
-	/// Overrides a default field name in a
-	/// <see cref="Zor.UtilityAI.Serialization.SerializedActions"/> and
-	/// <see cref="Zor.UtilityAI.Serialization.SerializedConsiderations"/>.
+	/// Overrides a default field name.
 	/// The field must have a <see cref="NameOverridenAttribute"/> with the same index.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]

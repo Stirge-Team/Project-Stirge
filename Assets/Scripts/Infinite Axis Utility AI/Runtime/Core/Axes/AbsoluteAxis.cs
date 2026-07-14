@@ -5,25 +5,19 @@ namespace Stirge.UtilityAI.Core.Axes
     using Stirge.Combat;
     using Stirge.Serialization;
 
-    public class AbsoluteAxis : Axis, ISetupable<string>
+    public class AbsoluteAxis : Axis, ISetupable<BlackboardPropertyName>
     {
-        private string m_callbackName;
+        private AxisDelegate<float> m_floatDelegate;
 
-        void ISetupable<string>.Setup(string callbackName)
+        void ISetupable<BlackboardPropertyName>.Setup(BlackboardPropertyName propertyName)
         {
-            m_callbackName = new(callbackName);
+            m_floatDelegate = new(propertyName);
         }
 
         public override float ComputeScore()
         {
-            /*
-            if (enemy.TryGetClassValue(m_callbackName, out FloatCallback callback))
-            {
-                float score = callback.Invoke();
-                return Scoring.GetNormalisedScore(score, 0, 1);
-            }
-            */
-            return 0;
+            float value = m_floatDelegate.GetValue(enemy);
+            return Scoring.GetNormalisedScore(value, 0, 1);
         }
     }
 }
