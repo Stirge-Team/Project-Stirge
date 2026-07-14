@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
+// https://www.youtube.com/watch?v=er9nD-usM1A&t=588s
+// https://www.reddit.com/r/csharp/comments/tz0jso/why_is_reflection_faster_using_delegates/
+
 namespace Stirge.UtilityAI.Blackboard
 {
     public class BlackboardTable<T> : IBlackboardTable
