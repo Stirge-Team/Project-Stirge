@@ -5,6 +5,7 @@ using System.Reflection;
 namespace Stirge.UtilityAI.CustomEditors
 {
     using Core;
+    using Stirge.UtilityAI.Blackboard;
     using Tools;
 
     [CustomPropertyDrawer(typeof(BlackboardPropertyName))]
@@ -16,7 +17,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
             DrawPropertyField("m_propertyName");
 
-            if (GUI.Button(GetNewRect(), new GUIContent("Set Property")))
+            if (GUI.Button(GetNewRect(), new GUIContent("Choose Property")))
             {
                 AddProperty();
             }
@@ -28,9 +29,9 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             var genericMenu = new GenericMenu();
 
-            for (int i = 0, count = UtilityEnemy.CachedPropertyInfosArray.Length; i < count; i++)
+            for (int i = 0, count = EnemyBlackboard.CachedPropertyInfosArray.Length; i < count; i++)
             {
-                PropertyInfo propertyInfo = UtilityEnemy.CachedPropertyInfosArray[i];
+                PropertyInfo propertyInfo = EnemyBlackboard.CachedPropertyInfosArray[i];
                 string name = propertyInfo.Name;
                 genericMenu.AddItem(new GUIContent(name), false, () =>
                 {
@@ -46,11 +47,9 @@ namespace Stirge.UtilityAI.CustomEditors
             genericMenu.ShowAsContext();
         }
 
-        protected override float GetHeight(GUIContent label)
+        protected override int GetHeight(GUIContent label)
         {
-            int totalLines = 2; // for string and button
-
-            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
+            return 2;
         }
     }
 }

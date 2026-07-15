@@ -3,11 +3,11 @@ using System;
 
 namespace Stirge.UtilityAI.Serialization
 {
+    using Blackboard;
     using Builders;
     using Core;
-    using Enemy;
 
-    [CreateAssetMenu(menuName = "Stirge/Utility AI/Serialized Actor", fileName = "New Serialized Actor", order = 449)]
+    [CreateAssetMenu(menuName = "Stirge/Serialized Actor", fileName = "New Serialized Actor", order = 449)]
     public sealed class SerializedActor : SerializedActor_Base
     {
         [SerializeField] private SerializedAction_Base[] m_serializedActions;
@@ -16,10 +16,10 @@ namespace Stirge.UtilityAI.Serialization
 
         private ActorBuilder m_builder;
 
-        public override Actor CreateActor(UtilityEnemy enemy)
+        public override Actor CreateActor(EnemyBlackboard blackboard)
         {
             Deserialize();
-            Actor actor = m_builder.Build(enemy);
+            Actor actor = m_builder.Build(blackboard);
 
             return actor;
         }

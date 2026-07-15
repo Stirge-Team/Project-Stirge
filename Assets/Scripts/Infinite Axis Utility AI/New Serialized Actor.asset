@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: MoveSpeed
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedAbsoluteAxis
   m_arg:
-    m_propertyName: distanceToTarget
-    m_hash: -1771205043
+    m_propertyName: rigidbodyLinearSpeed
+    m_hash: 1647370691
 --- !u!114 &-887342171058838706
 MonoBehaviour:
   m_ObjectHideFlags: 0

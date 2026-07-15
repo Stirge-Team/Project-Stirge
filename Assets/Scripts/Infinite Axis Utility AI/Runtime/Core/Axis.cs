@@ -2,15 +2,15 @@ using System;
 
 namespace Stirge.UtilityAI.Core
 {
-    using Enemy;
+    using Blackboard;
     using Stirge.Serialization;
 
     public abstract class Axis
     {
-        private UtilityEnemy m_enemy;
+        private EnemyBlackboard m_blackboard;
 
         public string name { get; set; }
-        public UtilityEnemy enemy => m_enemy;
+        public EnemyBlackboard Blackboard => m_blackboard;
 
         public abstract float ComputeScore();
 
@@ -21,9 +21,9 @@ namespace Stirge.UtilityAI.Core
             OnInitialise();
         }
 
-        public void SetEnemy(UtilityEnemy enemy)
+        public void SetBlackboard(EnemyBlackboard blackboard)
         {
-            m_enemy = enemy;
+            m_blackboard = blackboard;
         }
 
         #region Initialisers

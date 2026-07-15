@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.Blackboard
 {
     using Core;
+    using UnityEditor.ShaderGraph.Internal;
+    using static UnityEditor.Search.SearchValue;
 
     public class EnemyBlackboard
     {
+        #region Static Setup
         public static readonly PropertyInfo[] CachedPropertyInfosArray = typeof(UtilityEnemy).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
         private static readonly Dictionary<Type, IBlackboardTable> m_tables = new();
@@ -17,18 +21,46 @@ namespace Stirge.UtilityAI.Blackboard
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Setup()
         {
-            foreach (var info in CachedPropertyInfosArray)
+            Dictionary<Type, PropertyInfo[]> propertyInfosByType = new();
+
+            foreach (PropertyInfo info in CachedPropertyInfosArray)
             {
                 Type propertyType = info.PropertyType;
-                int propertyHash = info.Name.GetHashCode();
+                if (!propertyInfosByType.ContainsKey(propertyType))
+                {
+                    propertyInfosByType.Add(propertyType, CachedPropertyInfosArray.Where(info => info.PropertyType == propertyType).ToArray());
+                }
+            }
 
-                // try get table of type
-                m_tables.TryGetValue(propertyType, out var table);
-                table ??= new();
-                table.Add(propertyHash, (Func<UtilityEnemy, object>)Delegate.CreateDelegate(typeof(Func<UtilityEnemy, object>), info.GetGetMethod()!));
+            foreach (var e in propertyInfosByType)
+            {
+                Type propertyType = e.Key;
+                PropertyInfo[] propertyInfos = e.Value;
+
+                // Create a new Table
+                Type tableType = typeof(BlackboardTable<>).MakeGenericType(propertyType);
+                var table = (IBlackboardTable)Activator.CreateInstance(tableType);
+                m_tables.Add(propertyType, table);
+                table.Setup(propertyInfos);
+
+                // Cache properties
+                for (int i = 0, count = propertyInfos.Length; i < count; i++)
+                {
+                    PropertyInfo info = propertyInfos[i];
+                    m_properties.Add(new BlackboardPropertyName(info.Name), new ValueIndex(table, i));
+                }
             }
         }
+        #endregion
 
+        public EnemyBlackboard(UtilityEnemy enemy)
+        {
+            m_enemy = enemy;
+        }
+
+        private UtilityEnemy m_enemy;
+
+        #region Get
         public bool TryGetStructValue<T>(BlackboardPropertyName propertyName, out T value) where T : struct
         {
             if (!m_properties.TryGetValue(propertyName, out ValueIndex valueIndex) || valueIndex.table.valueType != typeof(T))
@@ -38,7 +70,7 @@ namespace Stirge.UtilityAI.Blackboard
             }
 
             var table = (BlackboardTable<T>)valueIndex.table;
-            value = table.GetValue(valueIndex.index);
+            value = table.GetValue(m_enemy, valueIndex.index);
             return true;
         }
         public bool TryGetClassValue<T>(BlackboardPropertyName propertyName, out T value) where T : class
@@ -56,10 +88,12 @@ namespace Stirge.UtilityAI.Blackboard
             }
 
             IBlackboardTable table = valueIndex.table;
-            value = table.GetObjectValue(valueIndex.index);
+            value = table.GetObjectValue(m_enemy, valueIndex.index);
             return true;
         }
+        #endregion
 
+        #region Set
         public void SetStructValue<T>(BlackboardPropertyName propertyName, T value) where T : struct
         {
             Type newType = typeof(T);
@@ -69,7 +103,7 @@ namespace Stirge.UtilityAI.Blackboard
                 if (valueIndex.table.valueType == newType)
                 {
                     var table = (BlackboardTable<T>)valueIndex.table;
-                    table.SetValue(value, valueIndex.index);
+                    table.SetValue(m_enemy, value, valueIndex.index);
                 }
                 else
                 {
@@ -90,7 +124,7 @@ namespace Stirge.UtilityAI.Blackboard
                 if (valueIndex.table.valueType == valueType)
                 {
                     IBlackboardTable table = valueIndex.table;
-                    table.SetObjectValue(value, valueIndex.index);
+                    table.SetObjectValue(m_enemy, value, valueIndex.index);
                 }
                 else
                 {
@@ -114,11 +148,11 @@ namespace Stirge.UtilityAI.Blackboard
                 if (valueIndex.table.valueType == valueType)
                 {
                     IBlackboardTable table = m_tables[valueType];
-                    table.SetObjectValue(value, valueIndex.index);
+                    table.SetObjectValue(m_enemy, value, valueIndex.index);
                 }
                 else
                 {
-                    Debug.LogError($"Table of Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!");
+                    Debug.LogError($"Property with Name '{propertyName.Name}' exists with Type '{valueIndex.table.valueType}', not Type '{valueType}' on {nameof(UtilityEnemy)}!");
                 }
             }
             else
@@ -126,6 +160,7 @@ namespace Stirge.UtilityAI.Blackboard
                 Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!");
             }
         }
+        #endregion
 
         private struct ValueIndex
         {

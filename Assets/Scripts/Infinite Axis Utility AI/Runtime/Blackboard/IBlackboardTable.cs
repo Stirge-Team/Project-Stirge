@@ -6,12 +6,14 @@ namespace Stirge.UtilityAI.Blackboard
 {
     public interface IBlackboardTable
     {
-        void Setup(UtilityEnemy enemy, PropertyInfo[] propertyInfos);
+        void Setup(PropertyInfo[] propertyInfos);
         
         Type valueType { get; }
 
-        object GetObjectValue(int index);
+        int count { get; }
 
-        void SetObjectValue(object value, int index);
+        object GetObjectValue(UtilityEnemy enemy, int index);
+
+        void SetObjectValue(UtilityEnemy enemy, object value, int index);
     }
 }

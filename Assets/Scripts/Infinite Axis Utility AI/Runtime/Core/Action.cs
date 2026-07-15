@@ -4,13 +4,14 @@ namespace Stirge.UtilityAI.Core
 {
     using Enemy;
     using Stirge.Serialization;
+    using Stirge.UtilityAI.Blackboard;
 
     public abstract class Action
     {
-        private UtilityEnemy m_enemy;
+        private EnemyBlackboard m_blackboard;
 
         public string name { get; set; }
-        public UtilityEnemy enemy => m_enemy;
+        public EnemyBlackboard Blackboard => m_blackboard;
         
         protected virtual void OnInitialise() { }
 
@@ -40,9 +41,9 @@ namespace Stirge.UtilityAI.Core
             OnEnd();
         }
 
-        public void SetEnemy(UtilityEnemy enemy)
+        public void SetEnemy(EnemyBlackboard blackboard)
         {
-            m_enemy = enemy;
+            m_blackboard = blackboard;
         }
 
         #region Initialisers

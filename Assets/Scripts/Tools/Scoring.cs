@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.Combat
+namespace Stirge.Tools
 {
     public static class Scoring
     {

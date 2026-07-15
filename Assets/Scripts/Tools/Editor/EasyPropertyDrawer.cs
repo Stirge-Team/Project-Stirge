@@ -23,7 +23,7 @@ namespace Stirge.Tools
         protected abstract void DrawGUI(GUIContent label);
 
         /// <summary>
-        /// Do not use this to get the height of an <see cref="EasyPropertyDrawer"/> property!! Instead use <see cref="GetPropertyLineHeight"/>.
+        /// Do not use this to get the height of an <see cref="EasyPropertyDrawer"/> property!! Instead use <see cref="GetPropertyLineHeight(SerializedProperty)"/>.
         /// </summary>
         /// <param name="property"></param>
         /// <param name="label"></param>
@@ -31,10 +31,11 @@ namespace Stirge.Tools
         public sealed override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             SaveProperties(property);
-            return GetHeight(label);
+            int totalLines = GetHeight(label);
+            return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
         }
 
-        protected abstract float GetHeight(GUIContent label);
+        protected abstract int GetHeight(GUIContent label);
 
         protected void SaveProperties(SerializedProperty property)
         {
@@ -79,24 +80,28 @@ namespace Stirge.Tools
         protected Rect GetNewRect()
         {
             m_totalLines++;
-            return new Rect(m_position.min.x + EditorGUI.indentLevel * 15f, m_position.min.y + EditorGUIUtility.singleLineHeight * (m_totalLines - 1), m_position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
+            return new Rect(
+                /* x */ m_position.min.x + EditorGUI.indentLevel * 15f,
+                /* y */ m_position.min.y + (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * (m_totalLines - 1),
+                /* w */ m_position.size.x - EditorGUI.indentLevel * 15f,
+                /* h */ EditorGUIUtility.singleLineHeight);
         }
 
         protected SerializedProperty FindPropertyRelative(string propertyName)
         {
-            if (!m_cachedProperties.ContainsKey(propertyName))
+            if (!m_cachedProperties.TryGetValue(propertyName, out var property))//!m_cachedProperties.ContainsKey(propertyName))
             {
-                SerializedProperty property = m_property.FindPropertyRelative(propertyName);
+                property = m_property.FindPropertyRelative(propertyName);
                 if (property == null)
                 {
-                    Debug.LogWarning($"Could not find property relative with name '{propertyName}', path '{m_property.propertyPath}'.");
+                    Debug.LogWarning($"Could not find property relative with Name '{propertyName}' with Path '{m_property.propertyPath}'.");
                     return null;
                 }
 
                 m_cachedProperties.Add(propertyName, property);
             }
 
-            return m_cachedProperties[propertyName];
+            return property;
         }
 
         protected int GetPropertyLineHeight(string propertyName)
@@ -105,19 +110,15 @@ namespace Stirge.Tools
             return GetPropertyLineHeight(property);
         }
 
-        protected int GetPropertyLineHeight(SerializedProperty property)
+        protected static int GetPropertyLineHeight(SerializedProperty property)
         {
             if (property != null)
             {
                 int lines = (int)(EditorGUI.GetPropertyHeight(property) / EditorGUIUtility.singleLineHeight);
-                if (property.isExpanded)
+                if (property.isExpanded && property.isArray)
                 {
-                    if (property.isArray)
-                    {
+                    if (property.arraySize < 2)
                         lines++; // for +/- button
-                        if (property.arraySize < 2)
-                            lines--;
-                    }
                 }
                 return lines;
             }

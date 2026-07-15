@@ -11,6 +11,7 @@ namespace Stirge.UtilityAI
 {
     using Core;
     using Serialization;
+    using Stirge.UtilityAI.Blackboard;
 
     public enum ActorPhysicsMode
     {
@@ -23,6 +24,7 @@ namespace Stirge.UtilityAI
     public class UtilityEnemy : MonoBehaviour
     {
         private Actor m_actor;
+        private EnemyBlackboard m_blackboard;
 
         [Header("Components")]
         [SerializeField] private SerializedActor m_actorData;
@@ -173,6 +175,13 @@ namespace Stirge.UtilityAI
                 return Vector3.Distance(transform.position, target.position);
             }
         }
+        public float rigidbodyLinearSpeed
+        {
+            get
+            {
+                return m_rigidbody.linearVelocity.magnitude;
+            }
+        }
         #endregion
 
         #region Unity Messages
@@ -278,8 +287,9 @@ namespace Stirge.UtilityAI
         [ContextMenu("Initialise")]
         private void InitialiseAIComponents()
         {
-            m_actor = m_actorData.CreateActor(this);
-            Debug.Log($"AI objects initialised for {GetType().Name} '{name}'!", this);
+            m_blackboard = new(this);
+            m_actor = m_actorData.CreateActor(m_blackboard);
+            Debug.Log($"AI objects initialised for Type '{nameof(UtilityEnemy)}' with Name '{name}'!", this);
         }
 
         [ContextMenu("Apply Default Values")]

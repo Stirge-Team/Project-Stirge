@@ -1,0 +1,35 @@
+#ROOTNAMESPACEBEGIN#using UnityEngine;
+
+namespace Stirge.UtilityAI.Core.Actions
+{
+    using Stirge.Serialization;
+
+    public class #SCRIPTNAME# : Action, ISetupable<>
+    {
+        void ISetupable<>.Setup()
+        {
+            
+        }
+        
+        protected override void OnInitialise()
+        {
+
+        }
+
+        protected override void OnBegin()
+        {
+            
+        }
+
+        protected override void OnUpdate()
+        {
+
+        }
+
+        protected override void OnEnd()
+        {
+            
+        }
+    }
+}
+#ROOTNAMESPACEEND#
