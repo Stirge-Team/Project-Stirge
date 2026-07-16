@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,9 +5,9 @@ using Random = UnityEngine.Random;
 
 namespace Stirge.UtilityAI
 {
+    using Blackboard;
     using Core;
     using Serialization;
-    using Stirge.UtilityAI.Blackboard;
 
     public enum ActorPhysicsMode
     {
@@ -23,7 +19,7 @@ namespace Stirge.UtilityAI
 
     public class UtilityEnemy : MonoBehaviour
     {
-        private Actor m_actor;
+        [SerializeReference, HideInInspector] private Actor m_actor;
         private EnemyBlackboard m_blackboard;
 
         [Header("Components")]
@@ -47,6 +43,7 @@ namespace Stirge.UtilityAI
         [SerializeField] private int m_currentHealthPoints;
 
         [Header("Constant Properties")]
+        [SerializeField] private float m_gravityStrength;
         [SerializeField] private float m_groundedCheckRadius;
         [SerializeField] private Vector3 m_groundedCheckOffset;
         [SerializeField] private LayerMask m_collisionLayerMask;
@@ -160,6 +157,7 @@ namespace Stirge.UtilityAI
         }
 
         // Constant properties
+        public float gravityStrength => m_gravityStrength;
         public float groundedCheckRadius => m_groundedCheckRadius;
         public Vector3 groundedCheckOffset => m_groundedCheckOffset;
         public LayerMask collisionLayerMask => m_collisionLayerMask;
@@ -175,13 +173,17 @@ namespace Stirge.UtilityAI
                 return Vector3.Distance(transform.position, target.position);
             }
         }
-        public float rigidbodyLinearSpeed
+        public float distanceToTargetPosition
         {
             get
             {
-                return m_rigidbody.linearVelocity.magnitude;
+                if (m_hasTargetPosition)
+                    return Vector3.Distance(transform.position, targetPosition);
+
+                return Mathf.Infinity;
             }
         }
+        public float rigidbodyLinearSpeed => m_rigidbody.linearVelocity.magnitude;
         #endregion
 
         #region Unity Messages
@@ -193,6 +195,7 @@ namespace Stirge.UtilityAI
         private void Start()
         {
             ApplyDefaultValues();
+            m_actor.Start();
         }
 
         private void Update()
@@ -210,8 +213,11 @@ namespace Stirge.UtilityAI
         private void FixedUpdate()
         {
             m_isGrounded = GetIsGrounded();
+            if (m_physicsMode == ActorPhysicsMode.PhysicsVelocity)
+            {
+                rigidbody.AddForce(new Vector3(0, -0.1f, 0) * Time.fixedDeltaTime, ForceMode.VelocityChange);
+            }
         }
-        
         #endregion
 
         public bool GetIsGrounded()
@@ -241,6 +247,13 @@ namespace Stirge.UtilityAI
                         {
                             m_navMeshAgent.transform.position = m_transform.position;
                         }
+
+                        // check if there is a target position to go to
+                        if (hasTargetPosition)
+                        {
+                            CalculatePath();
+                        }
+
                         m_rigidbody.isKinematic = true;
                         break;
                     case ActorPhysicsMode.PhysicsVelocity:
@@ -263,6 +276,7 @@ namespace Stirge.UtilityAI
         {
             m_targetPosition = newTargetPosition;
             m_hasTargetPosition = true;
+            SwitchPhysicsMode(ActorPhysicsMode.NavMesh);
             CalculatePath();
         }
 
@@ -284,12 +298,15 @@ namespace Stirge.UtilityAI
             m_rigidbody.AddForce(new Vector3(Random.value, Random.value, Random.value), ForceMode.VelocityChange);
         }
 
-        [ContextMenu("Initialise")]
-        private void InitialiseAIComponents()
+        public void InitialiseAIComponents()
         {
             m_blackboard = new(this);
             m_actor = m_actorData.CreateActor(m_blackboard);
-            Debug.Log($"AI objects initialised for Type '{nameof(UtilityEnemy)}' with Name '{name}'!", this);
+        }
+        public void ClearAIComponents()
+        {
+            m_blackboard = null;
+            m_actor = null;
         }
 
         [ContextMenu("Apply Default Values")]
@@ -304,6 +321,12 @@ namespace Stirge.UtilityAI
             m_physicsMode = ActorPhysicsMode.NONE;
             SwitchPhysicsMode(ActorPhysicsMode.NavMesh);
             m_currentHealthPoints = m_maxHealthPoints;
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawWireSphere(m_navMeshAgent.destination, 0.4f);
         }
     }
 }

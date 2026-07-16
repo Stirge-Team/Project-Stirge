@@ -15,7 +15,7 @@ namespace Stirge.UtilityAI.Core
         public BlackboardPropertyName(string name)
         {
             m_propertyName = name;
-            m_hash = name.GetHashCode();
+            m_hash = GetHashCode(name);
         }
 
         public override bool Equals(object obj)
@@ -33,6 +33,11 @@ namespace Stirge.UtilityAI.Core
         public override int GetHashCode()
         {
             return Hash;
+        }
+
+        public static int GetHashCode(string name)
+        {
+            return name.GetHashCode(0);
         }
     }
 }

@@ -19,9 +19,9 @@ namespace Stirge.UtilityAI.Builders
             new(), new(), new(), new(), new(), new(), new(), new(), new()
         };
 
-        private readonly object[][] m_parametersCache = new object[3][]
+        private readonly object[][] m_parametersCache = new object[5][]
         {
-            new object[1], new object[2], new object[3]
+            new object[1], new object[2], new object[3], new object[4], new object[5]
         };
 
         public Actor Build(EnemyBlackboard blackboard)
@@ -274,6 +274,121 @@ namespace Stirge.UtilityAI.Builders
                 m_actionAxisBindings[^1].Add(count);
                 axesLookup.Add(count);
                 m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1, TArg2>(arg0, arg1, arg2, name));
+            }
+        }
+        public void AddAxis<TAxis, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, string name = "") where TAxis : Axis, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+        {
+            if (m_actionAxisBindings.Count == 0)
+            {
+                throw new InvalidOperationException($"Failed to add an axis of type {typeof(TAxis)}. No action was added before.");
+            }
+
+            const int parametersCount = 4;
+            List<int> axesLookup = m_fastAxesLookup[parametersCount];
+            int sameIndex = -1;
+
+            for (int i = 0, count = axesLookup.Count; i < count; ++i)
+            {
+                int axisIndex = axesLookup[i];
+                IAxisBuilder axisBuilder = m_axisBuilders[axisIndex];
+
+                if (axisBuilder is AxisBuilder<TAxis, TArg0, TArg1, TArg2, TArg3> genericAxisBuilder)
+                {
+                    if (genericAxisBuilder.AreEqual(arg0, arg1, arg2, arg3))
+                    {
+                        sameIndex = axisIndex;
+                        break;
+                    }
+                }
+                else if (axisBuilder is AxisBuilder nonGenericAxisBuilder &&
+                        nonGenericAxisBuilder.axisType == typeof(TAxis))
+                {
+                    const int parametersCacheIndex = parametersCount - 1;
+                    object[] parametersCache = m_parametersCache[parametersCacheIndex];
+                    parametersCache[0] = arg0;
+                    parametersCache[1] = arg1;
+                    parametersCache[2] = arg2;
+                    parametersCache[3] = arg3;
+
+                    if (nonGenericAxisBuilder.AreEqual(parametersCache))
+                    {
+                        sameIndex = axisIndex;
+                        Array.Clear(parametersCache, 0, parametersCount);
+                        break;
+                    }
+
+                    Array.Clear(parametersCache, 0, parametersCount);
+                }
+            }
+
+            if (sameIndex >= 0)
+            {
+                m_actionAxisBindings[^1].Add(sameIndex);
+            }
+            else
+            {
+                int count = m_axisBuilders.Count;
+                m_actionAxisBindings[^1].Add(count);
+                axesLookup.Add(count);
+                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1, TArg2, TArg3>(arg0, arg1, arg2, arg3, name));
+            }
+        }
+        public void AddAxis<TAxis, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, string name = "") where TAxis : Axis, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+        {
+            if (m_actionAxisBindings.Count == 0)
+            {
+                throw new InvalidOperationException($"Failed to add an axis of type {typeof(TAxis)}. No action was added before.");
+            }
+
+            const int parametersCount = 5;
+            List<int> axesLookup = m_fastAxesLookup[parametersCount];
+            int sameIndex = -1;
+
+            for (int i = 0, count = axesLookup.Count; i < count; ++i)
+            {
+                int axisIndex = axesLookup[i];
+                IAxisBuilder axisBuilder = m_axisBuilders[axisIndex];
+
+                if (axisBuilder is AxisBuilder<TAxis, TArg0, TArg1, TArg2, TArg3, TArg4> genericAxisBuilder)
+                {
+                    if (genericAxisBuilder.AreEqual(arg0, arg1, arg2, arg3, arg4))
+                    {
+                        sameIndex = axisIndex;
+                        break;
+                    }
+                }
+                else if (axisBuilder is AxisBuilder nonGenericAxisBuilder &&
+                        nonGenericAxisBuilder.axisType == typeof(TAxis))
+                {
+                    const int parametersCacheIndex = parametersCount - 1;
+                    object[] parametersCache = m_parametersCache[parametersCacheIndex];
+                    parametersCache[0] = arg0;
+                    parametersCache[1] = arg1;
+                    parametersCache[2] = arg2;
+                    parametersCache[3] = arg3;
+                    parametersCache[4] = arg4;
+
+                    if (nonGenericAxisBuilder.AreEqual(parametersCache))
+                    {
+                        sameIndex = axisIndex;
+                        Array.Clear(parametersCache, 0, parametersCount);
+                        break;
+                    }
+
+                    Array.Clear(parametersCache, 0, parametersCount);
+                }
+            }
+
+            if (sameIndex >= 0)
+            {
+                m_actionAxisBindings[^1].Add(sameIndex);
+            }
+            else
+            {
+                int count = m_axisBuilders.Count;
+                m_actionAxisBindings[^1].Add(count);
+                axesLookup.Add(count);
+                m_axisBuilders.Add(new AxisBuilder<TAxis, TArg0, TArg1, TArg2, TArg3, TArg4>(arg0, arg1, arg2, arg3, arg4, name));
             }
         }
         public void AddAxis(Type axisType, string name = "", params object[] parameters)

@@ -21,10 +21,12 @@ namespace Stirge.UtilityAI.Blackboard
             for (int i = 0; i < count; i++)
             {
                 PropertyInfo info = propertyInfos[i];
-                m_values[i] = new(
+                MethodInfo getMethod = info.GetGetMethod();
+                MethodInfo setMethod = info.GetSetMethod();
+                m_values[i] = new BlackboardTableProperty(
                     info.Name,
-                    (Func<UtilityEnemy, T>) Delegate.CreateDelegate(typeof(Func<UtilityEnemy, T>), info.GetGetMethod()),
-                    (Action<UtilityEnemy, T>) Delegate.CreateDelegate(typeof(Action<UtilityEnemy, T>), info.GetSetMethod())
+                    getMethod == null ? null : (Func<UtilityEnemy, T>)Delegate.CreateDelegate(typeof(Func<UtilityEnemy, T>), info.GetGetMethod()),
+                    setMethod == null ? null : (Action<UtilityEnemy, T>)Delegate.CreateDelegate(typeof(Action<UtilityEnemy, T>), info.GetSetMethod())
                 );
             }
         }

@@ -41,7 +41,7 @@ namespace Stirge.UtilityAI.Core
             OnEnd();
         }
 
-        public void SetEnemy(EnemyBlackboard blackboard)
+        public void SetBlackboard(EnemyBlackboard blackboard)
         {
             m_blackboard = blackboard;
         }

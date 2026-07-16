@@ -49,12 +49,16 @@ namespace Stirge.Tools
             m_cachedProperties.Clear();
         }
 
-        protected void DrawPropertyField(string propertyName)
+        protected void DrawPropertyField(string propertyName, GUIContent label = null)
         {
             SerializedProperty propertyToDraw = FindPropertyRelative(propertyName);
             if (propertyToDraw != null)
             {
-                EditorGUI.PropertyField(GetNewRect(), propertyToDraw);
+                if (label == null)
+                    EditorGUI.PropertyField(GetNewRect(), propertyToDraw);
+                else
+                    EditorGUI.PropertyField(GetNewRect(), propertyToDraw, label);
+
                 if (propertyToDraw.propertyType == SerializedPropertyType.Float)
                 {
                     if (propertyToDraw.floatValue < 0)

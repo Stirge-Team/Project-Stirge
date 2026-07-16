@@ -96,23 +96,23 @@ namespace Stirge.UtilityAI.Blackboard
         #region Set
         public void SetStructValue<T>(BlackboardPropertyName propertyName, T value) where T : struct
         {
-            Type newType = typeof(T);
+            Type valueType = typeof(T);
 
             if (m_properties.TryGetValue(propertyName, out ValueIndex valueIndex))
             {
-                if (valueIndex.table.valueType == newType)
+                if (valueIndex.table.valueType == valueType)
                 {
                     var table = (BlackboardTable<T>)valueIndex.table;
                     table.SetValue(m_enemy, value, valueIndex.index);
                 }
                 else
                 {
-                    Debug.LogError($"Table of Type '{newType.Name}' does not exist on {nameof(UtilityEnemy)}!");
+                    Debug.LogError($"Table of Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!", m_enemy);
                 }
             }
             else
             {
-                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{newType.Name}' does not exist on {nameof(UtilityEnemy)}!");
+                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!", m_enemy);
             }
         }
         public void SetClassValue<T>(BlackboardPropertyName propertyName, T value) where T : class
@@ -128,12 +128,12 @@ namespace Stirge.UtilityAI.Blackboard
                 }
                 else
                 {
-                    Debug.LogError($"Table of Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!");
+                    Debug.LogError($"Table of Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!", m_enemy);
                 }
             }
             else
             {
-                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!");
+                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!", m_enemy);
             }
         }
         public void SetObjectValue(Type valueType, BlackboardPropertyName propertyName, object value)
@@ -152,12 +152,12 @@ namespace Stirge.UtilityAI.Blackboard
                 }
                 else
                 {
-                    Debug.LogError($"Property with Name '{propertyName.Name}' exists with Type '{valueIndex.table.valueType}', not Type '{valueType}' on {nameof(UtilityEnemy)}!");
+                    Debug.LogError($"Property with Name '{propertyName.Name}' exists with Type '{valueIndex.table.valueType}', not Type '{valueType}' on {nameof(UtilityEnemy)}!", m_enemy);
                 }
             }
             else
             {
-                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!");
+                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {nameof(UtilityEnemy)}!", m_enemy);
             }
         }
         #endregion

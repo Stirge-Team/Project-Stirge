@@ -157,6 +157,110 @@ namespace Stirge.UtilityAI.Builders
         }
     }
 
+    public sealed class AxisBuilder<TAxis, TArg0, TArg1, TArg2, TArg3> : IAxisBuilder where TAxis : Axis, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+    {
+        private readonly TArg0 m_arg0;
+        private readonly TArg1 m_arg1;
+        private readonly TArg2 m_arg2;
+        private readonly TArg3 m_arg3;
+
+        private readonly string m_name;
+
+        public AxisBuilder(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, string name)
+        {
+            m_arg0 = arg0;
+            m_arg1 = arg1;
+            m_arg2 = arg2;
+            m_arg3 = arg3;
+
+            m_name = name;
+        }
+
+        public Type axisType => typeof(TAxis);
+
+        public Axis Build()
+        {
+            TAxis axis = Axis.Create<TAxis, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3);
+            axis.name = m_name;
+            return axis;
+        }
+
+        public bool AreEqual(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3)
+        {
+            return EqualityComparer<TArg0>.Default.Equals(m_arg0, arg0) &&
+                EqualityComparer<TArg1>.Default.Equals(m_arg1, arg1) &&
+                EqualityComparer<TArg2>.Default.Equals(m_arg2, arg2) &&
+                EqualityComparer<TArg3>.Default.Equals(m_arg3, arg3);
+        }
+
+        public bool AreEqual(object[] parameters)
+        {
+            if (parameters == null)
+            {
+                return false;
+            }
+
+            return m_arg0 == null ? parameters[0] == null : parameters[0] is TArg0 parameter0 && EqualityComparer<TArg0>.Default.Equals(m_arg0, parameter0) &&
+                   m_arg1 == null ? parameters[1] == null : parameters[1] is TArg1 parameter1 && EqualityComparer<TArg1>.Default.Equals(m_arg1, parameter1) &&
+                   m_arg2 == null ? parameters[2] == null : parameters[2] is TArg2 parameter2 && EqualityComparer<TArg2>.Default.Equals(m_arg2, parameter2) &&
+                   m_arg3 == null ? parameters[3] == null : parameters[3] is TArg3 parameter3 && EqualityComparer<TArg3>.Default.Equals(m_arg3, parameter3);
+        }
+    }
+
+    public sealed class AxisBuilder<TAxis, TArg0, TArg1, TArg2, TArg3, TArg4> : IAxisBuilder where TAxis : Axis, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+    {
+        private readonly TArg0 m_arg0;
+        private readonly TArg1 m_arg1;
+        private readonly TArg2 m_arg2;
+        private readonly TArg3 m_arg3;
+        private readonly TArg4 m_arg4;
+
+        private readonly string m_name;
+
+        public AxisBuilder(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, string name)
+        {
+            m_arg0 = arg0;
+            m_arg1 = arg1;
+            m_arg2 = arg2;
+            m_arg3 = arg3;
+            m_arg4 = arg4;
+
+            m_name = name;
+        }
+
+        public Type axisType => typeof(TAxis);
+
+        public Axis Build()
+        {
+            TAxis axis = Axis.Create<TAxis, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4);
+            axis.name = m_name;
+            return axis;
+        }
+
+        public bool AreEqual(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4)
+        {
+            return EqualityComparer<TArg0>.Default.Equals(m_arg0, arg0) &&
+                EqualityComparer<TArg1>.Default.Equals(m_arg1, arg1) &&
+                EqualityComparer<TArg2>.Default.Equals(m_arg2, arg2) &&
+                EqualityComparer<TArg3>.Default.Equals(m_arg3, arg3) &&
+                EqualityComparer<TArg4>.Default.Equals(m_arg4, arg4);
+        }
+
+        public bool AreEqual(object[] parameters)
+        {
+            if (parameters == null)
+            {
+                return false;
+            }
+
+            return m_arg0 == null ? parameters[0] == null : parameters[0] is TArg0 parameter0 && EqualityComparer<TArg0>.Default.Equals(m_arg0, parameter0) &&
+                   m_arg1 == null ? parameters[1] == null : parameters[1] is TArg1 parameter1 && EqualityComparer<TArg1>.Default.Equals(m_arg1, parameter1) &&
+                   m_arg2 == null ? parameters[2] == null : parameters[2] is TArg2 parameter2 && EqualityComparer<TArg2>.Default.Equals(m_arg2, parameter2) &&
+                   m_arg3 == null ? parameters[3] == null : parameters[3] is TArg3 parameter3 && EqualityComparer<TArg3>.Default.Equals(m_arg3, parameter3) &&
+                   m_arg4 == null ? parameters[4] == null : parameters[4] is TArg4 parameter4 && EqualityComparer<TArg4>.Default.Equals(m_arg4, parameter4);
+        }
+    }
+
     public sealed class AxisBuilder : IAxisBuilder
     {
         [SerializeField] private string m_name;

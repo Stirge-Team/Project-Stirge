@@ -1,0 +1,11 @@
+using UnityEngine;
+
+namespace Stirge.UtilityAI.Serialization.SerializedAxes
+{
+    using Core;
+    using Core.Axes;
+    using Stirge.Serialization;
+
+    [NameOverride("Bool Property", 0), NameOverride("Invert Value", 1)]
+    public class SerializedBoolAxis : SerializedAxis<BoolAxis, BlackboardPropertyName, bool> { }
+}

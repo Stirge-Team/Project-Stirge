@@ -1,9 +1,12 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stirge.UtilityAI.Core
 {
     using Blackboard;
 
+    [System.Serializable]
     public sealed class Actor
     {
         private Axis[] m_axes;
@@ -24,16 +27,15 @@ namespace Stirge.UtilityAI.Core
         public Actor() { }
         public static Actor Create(EnemyBlackboard blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
-            Actor actor = new();
-
-            actor.m_blackboard = blackboard;
-
-            actor.m_axes = axes;
-            actor.m_actions = actions;
-            actor.m_actionAxisBindings = actionAxisBindings;
-
-            actor.m_axisScores = new float[actor.m_axes.Length];
-            actor.m_actionScores = new float[actor.m_actions.Length];
+            Actor actor = new()
+            {
+                m_blackboard = blackboard,
+                m_axes = axes,
+                m_actions = actions,
+                m_actionAxisBindings = actionAxisBindings,
+                m_axisScores = new float[axes.Length],
+                m_actionScores = new float[actions.Length],
+            };
 
             for (int i = 0; i < actor.m_axes.Length; i++)
             {
@@ -41,7 +43,7 @@ namespace Stirge.UtilityAI.Core
             }
             for (int i = 0; i < actor.m_actions.Length; i++)
             {
-                actor.m_actions[i].SetEnemy(blackboard);
+                actor.m_actions[i].SetBlackboard(blackboard);
             }
 
             return actor;
@@ -145,6 +147,46 @@ namespace Stirge.UtilityAI.Core
             m_actions[m_currentActionIndex].End();
             m_currentActionIndex = newActionIndex;
             m_actions[m_currentActionIndex].Begin();
+        }
+
+        public static void GetDebugInfo(Actor actor, ref string[] output)
+        {
+            int indentLevel = 0;
+            List<string> data = new();
+
+            string GetIndent() => indentLevel == 0 ? string.Empty : string.Concat(Enumerable.Repeat("\t", indentLevel));
+            void Add(string value) => data.Add(GetIndent() + value);
+
+            Axis[] axes = actor.m_axes;
+            Action[] actions = actor.m_actions;
+            float[] axisScores = actor.m_axisScores;
+            float[] actionScores = actor.m_actionScores;
+            int[][] actionAxisBindings = actor.m_actionAxisBindings;
+            int currentActionIndex = actor.m_currentActionIndex;
+
+            Add($"Current Action: {actions[currentActionIndex].name}");
+            Add("Actions:");
+
+            indentLevel++;
+            for (int i = 0, actionCount = actions.Length; i < actionCount; i++)
+            {
+                Action action = actions[i];
+                Add($"'{action.name}' : {actionScores[i]}");
+                Add("Axes:");
+
+                int[] axisScoreIndices = actionAxisBindings[i];
+                indentLevel++;
+                for (int j = 0, axisCount = axisScoreIndices.Length; j < axisCount; j++)
+                {
+                    int axisIndex = axisScoreIndices[j];
+                    Axis axis = axes[axisIndex];
+                    Add($"'{axis.name}' : {axisScores[axisIndex]}");
+                }
+                indentLevel--;
+            }
+            //indentLevel--;
+
+            output = data.ToArray();
         }
     }
 }

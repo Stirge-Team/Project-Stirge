@@ -1,0 +1,12 @@
+#ROOTNAMESPACEBEGIN#using UnityEngine;
+
+namespace Stirge.UtilityAI.Serialization.SerializedAxes
+{
+    using Core;
+    using Core.Axes;
+    using Stirge.Serialization;
+
+    [NameOverride("Property", 0)]
+    public class #SCRIPTNAME# : SerializedAxis<> { }
+}
+#ROOTNAMESPACEEND#

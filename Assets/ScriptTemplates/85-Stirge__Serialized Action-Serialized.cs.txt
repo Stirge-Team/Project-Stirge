@@ -1,0 +1,12 @@
+#ROOTNAMESPACEBEGIN#using UnityEngine;
+
+namespace Stirge.UtilityAI.Serialization.SerializedActions
+{
+    using Core;
+    using Core.Actions;
+    using Stirge.Serialization;
+
+    [NameOverride("Property", 0)]
+    public class #SCRIPTNAME# : SerializedAction<> { }
+}
+#ROOTNAMESPACEEND#

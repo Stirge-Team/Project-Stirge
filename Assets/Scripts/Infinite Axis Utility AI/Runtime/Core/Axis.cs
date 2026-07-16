@@ -50,6 +50,18 @@ namespace Stirge.UtilityAI.Core
             axis.Setup(arg0, arg1, arg2);
             return axis;
         }
+        public static TAxis Create<TAxis, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3) where TAxis : Axis, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
+        {
+            var axis = new TAxis();
+            axis.Setup(arg0, arg1, arg2, arg3);
+            return axis;
+        }
+        public static TAxis Create<TAxis, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4) where TAxis : Axis, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
+        {
+            var axis = new TAxis();
+            axis.Setup(arg0, arg1, arg2, arg3, arg4);
+            return axis;
+        }
 
         public static Axis Create(Type axisType)
         {
