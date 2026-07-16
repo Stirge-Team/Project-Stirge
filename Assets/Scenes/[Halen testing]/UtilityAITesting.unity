@@ -719,18 +719,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7810391413302859346, guid: c59914e05fbdee84ba5b76ac7b4de509, type: 3}
-      propertyPath: m_actor
-      value: 2408577341567008851
-      objectReference: {fileID: 0}
-    - target: {fileID: 7810391413302859346, guid: c59914e05fbdee84ba5b76ac7b4de509, type: 3}
-      propertyPath: 'managedReferences[-2]'
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7810391413302859346, guid: c59914e05fbdee84ba5b76ac7b4de509, type: 3}
-      propertyPath: 'managedReferences[2408577341567008851]'
-      value: Assembly-CSharp Stirge.UtilityAI.Core.Actor
-      objectReference: {fileID: 0}
     - target: {fileID: 8204349342947686812, guid: c59914e05fbdee84ba5b76ac7b4de509, type: 3}
       propertyPath: m_Name
       value: UtilityEnemy

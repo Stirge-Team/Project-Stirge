@@ -215,7 +215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
   m_actor:
-    rid: 2408577341567008842
+    rid: 2408577341567008851
   m_actorData: {fileID: 11400000, guid: 1a2c9633e41c0c64eb203aff7053ce9c, type: 2}
   m_transform: {fileID: 5595455137165182384}
   m_rigidbody: {fileID: 705644104819910969}
@@ -230,6 +230,7 @@ MonoBehaviour:
   m_physicsMode: 0
   m_maxHealthPoints: 10
   m_currentHealthPoints: 10
+  m_gravityStrength: 0.3
   m_groundedCheckRadius: 0.15
   m_groundedCheckOffset: {x: 0, y: -1, z: 0}
   m_collisionLayerMask:
@@ -238,7 +239,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 2408577341567008842
+    - rid: 2408577341567008851
       type: {class: Actor, ns: Stirge.UtilityAI.Core, asm: Assembly-CSharp}
       data: 
 --- !u!1 &8492539859825594986

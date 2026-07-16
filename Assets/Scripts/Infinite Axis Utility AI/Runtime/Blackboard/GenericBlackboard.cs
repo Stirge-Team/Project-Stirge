@@ -1,4 +1,3 @@
-using Stirge.UtilityAI.Demo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +33,7 @@ namespace Stirge.UtilityAI.Blackboard
                 PropertyInfo[] propertyInfos = e.Value;
 
                 // Create a new Table
-                Type tableType = typeof(BlackboardTable<,>).MakeGenericType(typeof(Guy), propertyType);
+                Type tableType = typeof(BlackboardTable<,>).MakeGenericType(typeof(TBase), propertyType);
                 var table = (IBlackboardTable<TBase>)Activator.CreateInstance(tableType);
                 m_tables.Add(propertyType, table);
                 table.Setup(propertyInfos);

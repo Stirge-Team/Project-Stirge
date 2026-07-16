@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: BoolAxis
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedBoolAxis
   m_arg0:
-    m_propertyName: speed
-    m_hash: 941
+    m_propertyName: moveSpeed
+    m_hash: 170
   m_arg1: 0
 --- !u!114 &11400000
 MonoBehaviour:
@@ -28,8 +28,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
   m_Name: New Serialized Actor
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
-  m_targetTypeAssemblyQualifiedName: Stirge.UtilityAI.Demo.Guy, Assembly-CSharp,
-    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_targetTypeAssemblyQualifiedName: FartGuy, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    PublicKeyToken=null
   m_serializedActions: []
   m_serializedAxes:
   - {fileID: -450528025559558881}

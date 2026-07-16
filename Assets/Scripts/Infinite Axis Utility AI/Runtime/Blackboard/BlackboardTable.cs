@@ -31,9 +31,9 @@ namespace Stirge.UtilityAI.Blackboard
             }
         }
         
-        public TValue GetValue(TBase enemy, int index)
+        public TValue GetValue(TBase target, int index)
         {
-            return m_values[index].getMethod(enemy);
+            return m_values[index].getMethod(target);
         }
         public object GetObjectValue(TBase target, int index)
         {

@@ -16,6 +16,24 @@ MonoBehaviour:
     m_propertyName: isGrounded
     m_hash: 1133
   m_arg1: 1
+--- !u!114 &-6036329912026531851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58858c4ef690ebd408a2482418945944, type: 3}
+  m_Name: LinearAxis
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedLinearAxis
+  m_arg0: 1
+  m_arg1: 0
+  m_arg2: 0
+  m_arg3:
+    m_propertyName: navMeshAgentSpeed
+    m_hash: 368
 --- !u!114 &-5147880342484518636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -121,6 +139,7 @@ MonoBehaviour:
   - {fileID: -8053625344994655213}
   - {fileID: -1190423292302090822}
   - {fileID: -3600114418968224451}
+  - {fileID: -6036329912026531851}
   m_axisIndices:
   - m_axes: 0000000002000000
   - m_axes: 0000000003000000

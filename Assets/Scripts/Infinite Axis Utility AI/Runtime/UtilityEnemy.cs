@@ -214,7 +214,7 @@ namespace Stirge.UtilityAI
             m_isGrounded = GetIsGrounded();
             if (m_physicsMode == ActorPhysicsMode.PhysicsVelocity)
             {
-                rigidbody.AddForce(new Vector3(0, -0.1f, 0) * Time.fixedDeltaTime, ForceMode.VelocityChange);
+                rigidbody.AddForce(new Vector3(0, -m_gravityStrength, 0) * Time.fixedDeltaTime, ForceMode.VelocityChange);
             }
         }
         #endregion

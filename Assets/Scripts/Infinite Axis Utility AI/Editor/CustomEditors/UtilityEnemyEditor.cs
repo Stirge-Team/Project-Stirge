@@ -10,6 +10,11 @@ namespace Stirge.UtilityAI.CustomEditors
     [CustomEditor(typeof(UtilityEnemy))]
     public class UtilityEnemyEditor : Editor
     {
+        public override bool RequiresConstantRepaint()
+        {
+            return true;
+        }
+
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
