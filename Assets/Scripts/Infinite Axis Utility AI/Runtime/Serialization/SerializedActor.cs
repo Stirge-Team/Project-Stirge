@@ -10,13 +10,16 @@ namespace Stirge.UtilityAI.Serialization
     [CreateAssetMenu(menuName = "Stirge/Serialized Actor", fileName = "New Serialized Actor", order = 449)]
     public sealed class SerializedActor : SerializedActor_Base
     {
+        [SerializeField] private string m_targetTypeAssemblyQualifiedName;
         [SerializeField] private SerializedAction_Base[] m_serializedActions;
         [SerializeField] private SerializedAxis_Base[] m_serializedAxes;
         [SerializeField] private AxisIndices[] m_axisIndices;
 
         private ActorBuilder m_builder;
 
-        public override Actor CreateActor(EnemyBlackboard blackboard)
+        public Type targetType => Type.GetType(m_targetTypeAssemblyQualifiedName);
+
+        public override Actor CreateActor(GenericBlackboard_Base blackboard)
         {
             Deserialize();
             Actor actor = m_builder.Build(blackboard);

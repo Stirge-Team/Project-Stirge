@@ -110,6 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
   m_Name: New Serialized Actor
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
+  m_targetTypeAssemblyQualifiedName: Stirge.UtilityAI.UtilityEnemy, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   m_serializedActions:
   - {fileID: -4181418348461432513}
   - {fileID: 8722959059835827651}

@@ -24,7 +24,7 @@ namespace Stirge.UtilityAI.Builders
             new object[1], new object[2], new object[3], new object[4], new object[5]
         };
 
-        public Actor Build(EnemyBlackboard blackboard)
+        public Actor Build(GenericBlackboard_Base blackboard)
         {
             Axis[] axes = MakeAxes();
             Action[] actions = MakeActions();

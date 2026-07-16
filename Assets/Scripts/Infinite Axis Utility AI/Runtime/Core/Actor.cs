@@ -12,7 +12,7 @@ namespace Stirge.UtilityAI.Core
         private Axis[] m_axes;
         private Action[] m_actions;
 
-        private EnemyBlackboard m_blackboard;
+        private GenericBlackboard_Base m_blackboard;
 
         private float[] m_axisScores;
         private float[] m_actionScores;
@@ -25,7 +25,7 @@ namespace Stirge.UtilityAI.Core
         private int m_currentActionIndex;
 
         public Actor() { }
-        public static Actor Create(EnemyBlackboard blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        public static Actor Create(GenericBlackboard_Base blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
             Actor actor = new()
             {

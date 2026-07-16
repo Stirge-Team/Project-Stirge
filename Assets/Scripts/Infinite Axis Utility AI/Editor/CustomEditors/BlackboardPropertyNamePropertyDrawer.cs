@@ -1,16 +1,17 @@
-using UnityEngine;
-using UnityEditor;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
     using Blackboard;
-    using Core;
+    using Stirge.UtilityAI.Serialization;
+    using System;
     using Tools;
 
     [CustomPropertyDrawer(typeof(BlackboardPropertyName))]
     public class BlackboardPropertyNamePropertyDrawer : EasyPropertyDrawer
-    {
+    {      
         protected override void DrawGUI(GUIContent label)
         {         
             EditorGUI.BeginProperty(m_position, label, m_property);
@@ -29,9 +30,14 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             var genericMenu = new GenericMenu();
 
-            for (int i = 0, count = EnemyBlackboard.CachedPropertyInfosArray.Length; i < count; i++)
+            SerializedActor actorData = (SerializedActor)m_property.serializedObject.context;
+            Type targetType = actorData.targetType;
+            Type blackboardType = typeof(GenericBlackboard<>).MakeGenericType(targetType);
+            var tempBlackboard = (GenericBlackboard_Base)Activator.CreateInstance(blackboardType);
+
+            for (int i = 0, count = tempBlackboard.GetCachedPropertyInfosArray.Length; i < count; i++)
             {
-                PropertyInfo propertyInfo = EnemyBlackboard.CachedPropertyInfosArray[i];
+                PropertyInfo propertyInfo = tempBlackboard.GetCachedPropertyInfosArray[i];
                 string name = propertyInfo.Name;
                 genericMenu.AddItem(new GUIContent(name + $" : {propertyInfo.PropertyType.Name}"), false, () =>
                 {

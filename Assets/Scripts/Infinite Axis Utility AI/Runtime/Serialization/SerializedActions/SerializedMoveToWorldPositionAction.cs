@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Serialization.SerializedActions
 {
-    using Core;
+    using Blackboard;
     using Core.Actions;
     using Stirge.Serialization;
 

@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Core.Axes
 {
+    using Blackboard;
     using Stirge.Serialization;
 
     public class BoolAxis : Axis, ISetupable<BlackboardPropertyName, bool>

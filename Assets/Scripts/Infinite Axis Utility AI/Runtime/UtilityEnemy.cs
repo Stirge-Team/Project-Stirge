@@ -1,13 +1,12 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-using Random = UnityEngine.Random;
-
 namespace Stirge.UtilityAI
 {
-    using Blackboard;
     using Core;
     using Serialization;
+
+    using Random = UnityEngine.Random;
 
     public enum ActorPhysicsMode
     {

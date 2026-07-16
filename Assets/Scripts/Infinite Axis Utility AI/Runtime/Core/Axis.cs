@@ -7,10 +7,10 @@ namespace Stirge.UtilityAI.Core
 
     public abstract class Axis
     {
-        private EnemyBlackboard m_blackboard;
+        private GenericBlackboard_Base m_blackboard;
 
         public string name { get; set; }
-        public EnemyBlackboard Blackboard => m_blackboard;
+        public GenericBlackboard_Base Blackboard => m_blackboard;
 
         public abstract float ComputeScore();
 
@@ -21,7 +21,7 @@ namespace Stirge.UtilityAI.Core
             OnInitialise();
         }
 
-        public void SetBlackboard(EnemyBlackboard blackboard)
+        public void SetBlackboard(GenericBlackboard_Base blackboard)
         {
             m_blackboard = blackboard;
         }

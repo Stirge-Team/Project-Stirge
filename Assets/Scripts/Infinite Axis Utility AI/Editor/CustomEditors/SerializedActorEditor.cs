@@ -15,6 +15,7 @@ namespace Stirge.UtilityAI.CustomEditors
     [CustomEditor(typeof(SerializedActor))]
     public class SerializedActorEditor : Editor
     {
+        private const string TargetTypePropertyName = "m_targetTypeAssemblyQualifiedName";
         private const string SerializedActionsPropertyName = "m_serializedActions";
         private const string SerializedAxesPropertyName = "m_serializedAxes";
         private const string SerializedAxisIndicesPropertyName = "m_axisIndices";
@@ -35,6 +36,27 @@ namespace Stirge.UtilityAI.CustomEditors
 
         public override void OnInspectorGUI()
         {
+            SerializedProperty targetTypeProperty = serializedObject.FindProperty(TargetTypePropertyName);
+            string typeName;
+            using (new EditorGUI.DisabledScope(true))
+            {
+                typeName = EditorGUILayout.TextField(new GUIContent("Target Type"), targetTypeProperty.stringValue);
+                GUIStyle style = new(EditorStyles.textField) { alignment = TextAnchor.MiddleCenter };
+                if (typeName.Contains(','))
+                    EditorGUILayout.TextField(typeName[..typeName.IndexOf(',')], style);
+            }
+
+            if (GUILayout.Button("Choose Target Type"))
+            {
+                MakeTargetTypeMenu(targetTypeProperty);
+            }
+
+            if (typeName != targetTypeProperty.stringValue)
+            {
+                targetTypeProperty.stringValue = typeName;
+            }
+            
+            
             SerializedProperty actionsProperty = serializedObject.FindProperty(SerializedActionsPropertyName);
             SerializedProperty axesProperty = serializedObject.FindProperty(SerializedAxesPropertyName);
             SerializedProperty axisIndicesProperty = serializedObject.FindProperty(SerializedAxisIndicesPropertyName);
@@ -205,7 +227,9 @@ namespace Stirge.UtilityAI.CustomEditors
 
             genericMenu.ShowAsContext();
         }
+        #endregion
 
+        #region RemoveAxisIndex
         private static void RemoveAxisIndex(SerializedProperty axisIndices, int index)
         {
             for (int actionIndex = 0, actionCount = axisIndices.arraySize; actionIndex < actionCount; ++actionIndex)
@@ -331,6 +355,29 @@ namespace Stirge.UtilityAI.CustomEditors
         private static string GetNameWithSpaces(string typeName)
         {
             return Regex.Replace(typeName, @"((?<=\p{Ll})\p{Lu})|((?!\A)\p{Lu}(?>\p{Ll}))", " $0");
+        }
+        #endregion
+
+        #region GenericMenus
+        public void MakeTargetTypeMenu(SerializedProperty targetTypeProperty)
+        {
+            var genericMenu = new GenericMenu();
+
+            for (int i = 0, count = ValidBlackboardBaseTypesCollection.validGenericBlackboardTypes.Count; i < count; i++)
+            {
+                Type type = ValidBlackboardBaseTypesCollection.validGenericBlackboardTypes[i];
+                string typeName = type.Name;
+                string assemblyQualifiedName = type.AssemblyQualifiedName;
+                genericMenu.AddItem(new GUIContent(typeName), false, () =>
+                {
+                    targetTypeProperty.stringValue = assemblyQualifiedName;
+
+                    serializedObject.ApplyModifiedProperties();
+                    AssetDatabase.SaveAssets();
+                });
+            }
+
+            genericMenu.ShowAsContext();
         }
         #endregion
     }

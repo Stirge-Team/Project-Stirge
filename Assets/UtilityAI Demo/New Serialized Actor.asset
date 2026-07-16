@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-450528025559558881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af3d0ef9c364f704ea0daeb4e3462e9d, type: 3}
+  m_Name: BoolAxis
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedBoolAxis
+  m_arg0:
+    m_propertyName: speed
+    m_hash: 941
+  m_arg1: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
+  m_Name: New Serialized Actor
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
+  m_targetTypeAssemblyQualifiedName: Stirge.UtilityAI.Demo.Guy, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_serializedActions: []
+  m_serializedAxes:
+  - {fileID: -450528025559558881}
+  m_axisIndices: []

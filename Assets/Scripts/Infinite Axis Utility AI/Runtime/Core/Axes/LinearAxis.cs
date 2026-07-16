@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Core.Axes
 {
+    using Blackboard;
     using Stirge.Serialization;
-    using Tools;
 
     public class LinearAxis : Axis, ISetupable<float, float, float, BlackboardPropertyName>
     {

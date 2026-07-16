@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Blackboard
 {
-    public sealed class BlackboardTable<T> : IBlackboardTable
+    public sealed class BlackboardTable<TBase, TValue> : IBlackboardTable<TBase>
     {
         private BlackboardTableProperty[] m_values;
 
-        public Type valueType => typeof(T);
+        public Type valueType => typeof(TValue);
         public int count => m_values.Length;
 
         public void Setup(PropertyInfo[] propertyInfos)
@@ -25,42 +25,42 @@ namespace Stirge.UtilityAI.Blackboard
                 MethodInfo setMethod = info.GetSetMethod();
                 m_values[i] = new BlackboardTableProperty(
                     info.Name,
-                    getMethod == null ? null : (Func<UtilityEnemy, T>)Delegate.CreateDelegate(typeof(Func<UtilityEnemy, T>), info.GetGetMethod()),
-                    setMethod == null ? null : (Action<UtilityEnemy, T>)Delegate.CreateDelegate(typeof(Action<UtilityEnemy, T>), info.GetSetMethod())
+                    getMethod == null ? null : (Func<TBase, TValue>)Delegate.CreateDelegate(typeof(Func<TBase, TValue>), info.GetGetMethod()),
+                    setMethod == null ? null : (Action<TBase, TValue>)Delegate.CreateDelegate(typeof(Action<TBase, TValue>), info.GetSetMethod())
                 );
             }
         }
         
-        public T GetValue(UtilityEnemy enemy, int index)
+        public TValue GetValue(TBase enemy, int index)
         {
             return m_values[index].getMethod(enemy);
         }
-        public object GetObjectValue(UtilityEnemy enemy, int index)
+        public object GetObjectValue(TBase target, int index)
         {
-            return GetValue(enemy, index);
+            return GetValue(target, index);
         }
 
-        public void SetValue(UtilityEnemy enemy, T value, int index)
+        public void SetValue(TBase target, TValue value, int index)
         {
             BlackboardTableProperty property = m_values[index];
             if (property.setMethod != null)
-                property.setMethod(enemy, value);
+                property.setMethod(target, value);
             else
                 Debug.LogError($"Property with Name '{property.propertyName}' is read-only and/or does not have a defined Set method!");
         }
 
-        public void SetObjectValue(UtilityEnemy enemy, object value, int index)
+        public void SetObjectValue(TBase target, object value, int index)
         {
-            SetValue(enemy, (T)value, index);
+            SetValue(target, (TValue)value, index);
         }
 
         private readonly struct BlackboardTableProperty
         {
             public readonly string propertyName;
-            public readonly Func<UtilityEnemy, T> getMethod;
-            public readonly Action<UtilityEnemy, T> setMethod;
+            public readonly Func<TBase, TValue> getMethod;
+            public readonly Action<TBase, TValue> setMethod;
 
-            public BlackboardTableProperty(string name, Func<UtilityEnemy, T> getMethod, Action<UtilityEnemy, T> setMethod)
+            public BlackboardTableProperty(string name, Func<TBase, TValue> getMethod, Action<TBase, TValue> setMethod)
             {
                 propertyName = name;
                 this.getMethod = getMethod;

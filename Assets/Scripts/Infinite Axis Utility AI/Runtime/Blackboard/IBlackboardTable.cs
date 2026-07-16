@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Blackboard
 {
-    public interface IBlackboardTable
+    public interface IBlackboardTable<T>
     {
         void Setup(PropertyInfo[] propertyInfos);
         
@@ -12,8 +12,8 @@ namespace Stirge.UtilityAI.Blackboard
 
         int count { get; }
 
-        object GetObjectValue(UtilityEnemy enemy, int index);
+        object GetObjectValue(T target, int index);
 
-        void SetObjectValue(UtilityEnemy enemy, object value, int index);
+        void SetObjectValue(T target, object value, int index);
     }
 }
