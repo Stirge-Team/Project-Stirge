@@ -56,7 +56,8 @@ namespace Stirge.UtilityAI.Blackboard
             m_target = target;
         }
 
-        private TBase m_target;
+        private readonly TBase m_target;
+        public TBase Target => m_target;
 
         #region Get
         public override bool TryGetStructValue<TValue>(BlackboardPropertyName propertyName, out TValue value) where TValue : struct

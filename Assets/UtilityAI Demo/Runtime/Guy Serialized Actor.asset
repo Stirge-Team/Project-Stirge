@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-4635635425369476639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1d6242d37bd394b846746bdd969642, type: 3}
+  m_Name: DoNothingAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedDoNothingAction
+--- !u!114 &-1280087875458630790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8731cd681b0c2ba4bbb4a4e8268da4d3, type: 3}
+  m_Name: ConstantAxis
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedConstantAxis
+  m_arg: 1
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
+  m_Name: Guy Serialized Actor
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
+  m_targetTypeAssemblyQualifiedName: FartGuy, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    PublicKeyToken=null
+  m_serializedActions:
+  - {fileID: -4635635425369476639}
+  m_serializedAxes:
+  - {fileID: -1280087875458630790}
+  m_axisIndices:
+  - m_axes: 00000000

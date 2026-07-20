@@ -1,12 +1,9 @@
-using Stirge.UtilityAI.Blackboard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.Demo
 {
+    using Blackboard;
+
     public class GuyBlackboard : GenericBlackboard<Guy>
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
