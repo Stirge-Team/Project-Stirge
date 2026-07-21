@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Stirge.Camera;
 using Stirge.Combat;
 using Stirge.Input;
@@ -11,27 +12,20 @@ namespace Stirge.Player
     [RequireComponent(typeof(MovementMotor))]
     public class PlayerMovement : MonoBehaviour
     {
+        #region Movement Vars
         [System.Serializable]
         private struct stateVariables
         {
-            [Tooltip(
-                "The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around."
-            )]
+            [Tooltip("The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around.")]
             public float _horizontalAcceleration;
 
-            [Tooltip(
-                "The maximum velocity the player can reach. Once reaching this speed, more force will not be applied in the player's current direction of travel."
-            )]
+            [Tooltip("The maximum velocity the player can reach. Once reaching this speed, more force will not be applied in the player's current direction of travel.")]
             public float _maximumHorizontalSpeed;
 
-            [Tooltip(
-                "The speed at which the player turns around to face the given input direction"
-            )]
+            [Tooltip("The speed at which the player turns around to face the given input direction")]
             public float _rotationSpeed;
 
-            [Tooltip(
-                "A constant force applied to the player. It works to reduce the player's speed down to zero."
-            )]
+            [Tooltip("A constant force applied to the player. It works to reduce the player's speed down to zero.")]
             public float _friction;
 
             [Tooltip("Scales the user input.")]
@@ -44,22 +38,17 @@ namespace Stirge.Player
         //I bet you can't guess what this one is for
         //private Rigidbody m_playerBody;
         [Header("Horizontal Movement Settings")]
-        [
-            SerializeField,
-            Tooltip("These are the values that will be used while the player is grounded")
-        ]
+        [SerializeField,Tooltip("These are the values that will be used while the player is grounded")]
         private stateVariables m_groundSettings;
 
-        [
-            SerializeField,
-            Tooltip("These are the values that will be used while the player is in the air.")
-        ]
+        [SerializeField,Tooltip("These are the values that will be used while the player is in the air.")]
         private stateVariables m_aerialSettings;
 
         //Selector for the settings
-        private stateVariables m_currentStateSettings =>
-            IsGrounded ? m_groundSettings : m_aerialSettings;
+        private stateVariables m_currentStateSettings => IsGrounded ? m_groundSettings : m_aerialSettings;
+        #endregion
 
+        #region Jump Settings
         [Header("Jump Settings")]
         [SerializeField, Tooltip("The desired height you'd like the player to reach.")]
         private float m_jumpHeight = 5f;
@@ -73,10 +62,7 @@ namespace Stirge.Player
         //The layers that the player considers "ground"
         private LayerMask m_groundCheckLayers;
 
-        [
-            SerializeField,
-            Tooltip("The window after falling off an object that the player can still jump.")
-        ]
+        [SerializeField, Tooltip("The window after falling off an object that the player can still jump.")]
         private float m_coyoteTime = 0.2f;
         [SerializeField, Tooltip("The sound that plays when the player lands.")]
         private SoundClip m_landingSound;
@@ -84,20 +70,16 @@ namespace Stirge.Player
         //The remaining time for coyote time
         private float m_coyoteCountdown;
 
+        [SerializeField, Tooltip("How long (in seconds) the player should stay at their max jump height before falling.")]
+        private float m_hangTime = 0.2f;
+        #endregion
+
+        #region Fall Settings
         [Header("Fall Speed")]
-        [
-            SerializeField,
-            Tooltip("The maximum speed the player can fall (0 will skip this check"),
-            Min(0)
-        ]
+        [SerializeField, Tooltip("The maximum speed the player can fall (0 will skip this check"), Min(0)]
         private float m_fallSpeedCap = 0;
 
-        [
-            SerializeField,
-            Tooltip(
-                "How much the time the player has spent falling should affect their falling speed."
-            )
-        ]
+        [SerializeField, Tooltip("How much the time the player has spent falling should affect their falling speed.")]
         private float m_fallTimeSpeedMultiplier = 0;
 
         //The time the player has been falling
@@ -105,6 +87,7 @@ namespace Stirge.Player
 
         //The maximum height the player reached - used for the fall speed mult check
         private float m_lastCheckedHeight = 0;
+        #endregion
 
         private Transform m_cameraTransform;
         private Transform m_lockOnTarget;
@@ -243,6 +226,7 @@ namespace Stirge.Player
                 );
                 //Remove all coyote time
                 m_coyoteCountdown = 0;
+                m_motor.StartJumpApexCheck(transform.position.y, m_jumpHeight, m_hangTime);
                 //Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
                 return true;
             }

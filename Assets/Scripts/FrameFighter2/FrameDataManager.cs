@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using static FrameFighter2.Data.CharacterAnimationData;
+using System.ComponentModel;
 
 namespace FrameFighter2.Manager
 {
@@ -107,6 +108,7 @@ namespace FrameFighter2.Manager
         {
 
             m_anim = GetComponent<Animator>();
+            if(m_anim.runtimeAnimatorController == null) enabled = false; //do not bother running the update function if there is not controller to reference
             m_eventLookup = new Dictionary<string, UnityEvent[]>();
 
             foreach (var e in m_animationEvents)
