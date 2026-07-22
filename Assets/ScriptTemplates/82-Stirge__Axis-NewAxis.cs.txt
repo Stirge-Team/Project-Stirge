@@ -1,7 +1,9 @@
 #ROOTNAMESPACEBEGIN#using UnityEngine;
 
-namespace Stirge.UtilityAI.Core.Axes
+namespace Stirge.UtilityAI
 {
+    using Blackboard;
+    using Core;
     using Stirge.Serialization;
     using Tools;
 

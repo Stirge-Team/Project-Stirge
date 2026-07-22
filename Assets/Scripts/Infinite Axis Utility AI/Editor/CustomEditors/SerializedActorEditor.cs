@@ -4,12 +4,12 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
-using Stirge.Serialization;
 using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
     using EditorTools;
+    using Stirge.Serialization;
     using Serialization;
 
     [CustomEditor(typeof(SerializedActor))]
@@ -37,25 +37,20 @@ namespace Stirge.UtilityAI.CustomEditors
         public override void OnInspectorGUI()
         {
             SerializedProperty targetTypeProperty = serializedObject.FindProperty(TargetTypePropertyName);
-            string typeName;
             using (new EditorGUI.DisabledScope(true))
             {
-                typeName = EditorGUILayout.TextField(new GUIContent("Target Type"), targetTypeProperty.stringValue);
+                string typeName = targetTypeProperty.stringValue;
                 GUIStyle style = new(EditorStyles.textField) { alignment = TextAnchor.MiddleCenter };
                 if (typeName.Contains(','))
                     EditorGUILayout.TextField(typeName[..typeName.IndexOf(',')], style);
+                else
+                    EditorGUILayout.TextField(typeName, style);
             }
 
             if (GUILayout.Button("Choose Target Type"))
             {
                 MakeTargetTypeMenu(targetTypeProperty);
             }
-
-            if (typeName != targetTypeProperty.stringValue)
-            {
-                targetTypeProperty.stringValue = typeName;
-            }
-            
             
             SerializedProperty actionsProperty = serializedObject.FindProperty(SerializedActionsPropertyName);
             SerializedProperty axesProperty = serializedObject.FindProperty(SerializedAxesPropertyName);

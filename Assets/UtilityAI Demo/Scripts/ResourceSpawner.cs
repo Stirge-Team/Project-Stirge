@@ -1,9 +1,11 @@
-﻿using Stirge.Tools;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace Stirge.UtilityAI.Demo
 {
+    using Tools;
+
     public class ResourceSpawner : MonoBehaviour
     {
         [Header("Prefabs")]
@@ -18,6 +20,9 @@ namespace Stirge.UtilityAI.Demo
         [SerializeField, Range(0f, 1f)] private float m_logSpawnChance;
         [SerializeField, Range(0f, 1f)] private float m_foodSpawnChance;
         [SerializeField] private int m_maxSpawnCount;
+
+        private List<DemoResource> m_spawnedLogs;
+        private List<DemoResource> m_spawnedFood;
 
         private float m_spawnTimer;
         private bool m_waitingToSpawn;
@@ -73,10 +78,55 @@ namespace Stirge.UtilityAI.Demo
             m_spawnTimer = m_spawnDuration.Value;
         }
 
-        public void ResourceRemoved()
+        public void LogRemoved(DemoResource log)
         {
+            m_spawnedLogs.Remove(log);
+            m_currentSpawnCount--;
+
+        }
+        public void FoodRemoved(DemoResource food)
+        {
+            m_spawnedFood.Remove(food);
             m_currentSpawnCount--;
         }
 
+        public DemoResource GetClosestLog(Vector3 position)
+        {
+            if (m_spawnedLogs.Count == 0)
+            {
+                return null;
+            }
+
+            DemoResource closestLog = m_spawnedLogs[0];
+            for (int i = 1, count = m_spawnedLogs.Count; i < count; i++)
+            {
+                DemoResource log = m_spawnedLogs[i];
+                if (Vector3.SqrMagnitude(log.transform.position - position) < Vector3.SqrMagnitude(closestLog.transform.position - position))
+                {
+                    closestLog = log;
+                }
+            }
+
+            return closestLog;
+        }
+        public DemoResource GetClosestFood(Vector3 position)
+        {
+            if (m_spawnedFood.Count == 0)
+            {
+                return null;
+            }
+
+            DemoResource closestFood = m_spawnedFood[0];
+            for (int i = 1, count = m_spawnedFood.Count; i < count; i++)
+            {
+                DemoResource food = m_spawnedFood[i];
+                if (Vector3.SqrMagnitude(food.transform.position - position) < Vector3.SqrMagnitude(closestFood.transform.position - position))
+                {
+                    closestFood = food;
+                }
+            }
+
+            return closestFood;
+        }
     }
 }

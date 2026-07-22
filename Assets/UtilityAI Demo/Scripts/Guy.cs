@@ -20,7 +20,7 @@ namespace Stirge.UtilityAI.Demo
 
         [Header("References")]
         [SerializeField] private Campfire m_campfire;
-        [SerializeField] private ResourceSpawner m_spawner;
+        [SerializeField] private ResourceSpawner m_resourceSpawner;
 
         [Header("Properties")]
         [SerializeField] private float m_baseMoveSpeed;
@@ -33,6 +33,8 @@ namespace Stirge.UtilityAI.Demo
         [SerializeField] private float m_interactionRadius;
         [SerializeField] private float m_actionDuration;
 
+        private DemoResource m_targetResource;
+
         private float m_currentWarmth;
         private float m_currentFullness;
 
@@ -42,6 +44,21 @@ namespace Stirge.UtilityAI.Demo
         private ResourceType m_currentAction;
 
         #region Properties
+        // components/references
+        public NavMeshAgent navMeshAgent => m_navMeshAgent;
+        public Campfire campfire => m_campfire;
+        public ResourceSpawner resourceSpawner => m_resourceSpawner;
+
+        // standard
+        public DemoResource targetResource
+        {
+            get => m_targetResource;
+            set
+            {
+                m_targetResource = value;
+                m_navMeshAgent.SetDestination(m_targetResource.transform.position);
+            }
+        }
         public float baseMoveSpeed
         {
             get { return m_baseMoveSpeed; }
@@ -52,8 +69,37 @@ namespace Stirge.UtilityAI.Demo
             }
         }
 
+        public float currentWarmth
+        {
+            get => m_currentWarmth;
+            set
+            {
+                float diff = value - m_currentWarmth;
+                ChangeWarmth(diff);
+            }
+        }
+        public float currentFullness
+        {
+            get => m_currentFullness;
+            set
+            {
+                float diff = value - m_currentFullness;
+                ChangeFullness(diff);
+            }
+        }
+
         // runtime properties
+        public int resourceCount => m_logHeldCount + m_foodHeldCount;
+        public bool isBagFull => resourceCount < m_bagSize;
         public bool isPerformingAction => m_actionTimer > 0;
+
+        // Scores
+        public float warmthScore => m_currentWarmth / m_maxWarmth;
+        public float fullnessScore => m_currentFullness / m_maxFullness;
+
+        // constant properties
+        public int bagSize => m_bagSize;
+        public float interactionRadius => m_interactionRadius;
         #endregion
 
         private void Start()
@@ -103,7 +149,7 @@ namespace Stirge.UtilityAI.Demo
                     }
                     else
                     {
-                        IncreaseFullness(m_foodValue);
+                        ChangeFullness(m_foodValue);
                         m_foodHeldCount--;
                     }
                 }
@@ -130,12 +176,17 @@ namespace Stirge.UtilityAI.Demo
             if (m_logHeldCount + m_foodHeldCount < m_bagSize)
             {
                 if (resource.IsTypeOfResource(ResourceType.Log))
+                {
+                    m_resourceSpawner.LogRemoved(resource);
                     m_logHeldCount++;
+                }
                 else
+                {
+                    m_resourceSpawner.FoodRemoved(resource);
                     m_foodHeldCount++;
+                }
 
                 Destroy(resource.gameObject);
-                m_spawner.ResourceRemoved();
             }
         }
 
@@ -159,13 +210,13 @@ namespace Stirge.UtilityAI.Demo
             m_currentAction = type;
         }
 
-        public void IncreaseWarmth(float amount)
+        public void ChangeWarmth(float amount)
         {
             m_currentWarmth += amount;
             if (m_currentWarmth > m_maxWarmth)
                 m_currentWarmth = m_maxWarmth;
         }
-        public void IncreaseFullness(float amount)
+        public void ChangeFullness(float amount)
         {
             m_currentFullness += amount;
             if (m_currentFullness > m_maxFullness)

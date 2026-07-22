@@ -31,7 +31,7 @@ namespace Stirge.UtilityAI.Demo
             {
                 if (m_guy != null)
                 {
-                    m_guy.IncreaseWarmth(m_warmthGainRate * Time.deltaTime);
+                    m_guy.ChangeWarmth(m_warmthGainRate * Time.deltaTime);
                 }
 
                 m_logBurnTimer -= m_logBurnRate * Time.deltaTime;

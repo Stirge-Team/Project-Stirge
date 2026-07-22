@@ -6,26 +6,28 @@ namespace Stirge.UtilityAI.Demo.Axes
     using Core;
     using Stirge.Serialization;
 
-    public class QuadraticAxis : Axis, ISetupable<float, float, float, BlackboardPropertyName>
+    public class LogarithmicAxis : Axis, ISetupable<float, float, float, float, BlackboardPropertyName>
     {
         private float m_a;
         private float m_b;
-        private float m_c;
+        private float m_h;
+        private float m_k;
         private BlackboardPropertyName m_floatPropertyName;
         
-        void ISetupable<float, float, float, BlackboardPropertyName>.Setup(float a, float b, float c, BlackboardPropertyName floatPropertyName)
+        void ISetupable<float, float, float, float, BlackboardPropertyName>.Setup(float a, float b, float h, float k, BlackboardPropertyName floatPropertyName)
         {
             m_a = a;
             m_b = b;
-            m_c = c;
+            m_h = h;
+            m_k = k;
             m_floatPropertyName = floatPropertyName;
         }
-
+        
         public override float ComputeScore()
         {
             if (Blackboard.TryGetStructValue(m_floatPropertyName, out float value))
             {
-                return m_a * value * value + m_b * value + m_c;
+                return m_a * Mathf.Log(value - m_h, m_b) + m_k;
             }
             return 0;
         }
