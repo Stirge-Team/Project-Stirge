@@ -28,7 +28,7 @@ MonoBehaviour:
     - rid: 5206302000990388283
       type: {class: AttackingBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_attackData: {fileID: 11400000, guid: 20471eb6c749bb84e8adc368c7345aae, type: 2}
+        m_attackData: {fileID: 11400000, guid: 5b5f2c20e33e94c4da6b9a3a9ba39424, type: 2}
     - rid: 5281897754630029402
       type: {class: UpdateLookSpeedBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:

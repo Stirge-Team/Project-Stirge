@@ -1,24 +1,28 @@
 using UnityEngine;
+using System;
 
 namespace Stirge.UtilityAI.Serialization
 {
+    using Blackboard;
     using Builders;
-    using Stirge.UtilityAI.Core;
-    using System;
+    using Core;
 
-    [CreateAssetMenu(menuName = "Stirge/Utility AI/Serialized Actor", fileName = "New Serialized Actor", order = 449)]
+    [CreateAssetMenu(menuName = "Stirge/Serialized Actor", fileName = "New Serialized Actor", order = 449)]
     public sealed class SerializedActor : SerializedActor_Base
     {
+        [SerializeField] private string m_targetTypeAssemblyQualifiedName;
         [SerializeField] private SerializedAction_Base[] m_serializedActions;
         [SerializeField] private SerializedAxis_Base[] m_serializedAxes;
         [SerializeField] private AxisIndices[] m_axisIndices;
 
         private ActorBuilder m_builder;
 
-        public override Actor CreateActor(UtilityEnemy enemy)
+        public Type targetType => Type.GetType(m_targetTypeAssemblyQualifiedName);
+
+        public override Actor CreateActor(GenericBlackboard_Base blackboard)
         {
             Deserialize();
-            Actor actor = m_builder.Build(enemy);
+            Actor actor = m_builder.Build(blackboard);
 
             return actor;
         }

@@ -2,14 +2,16 @@ using System;
 
 namespace Stirge.UtilityAI.Core
 {
-    using Blackboard;
+    using Enemy;
     using Stirge.Serialization;
+    using Stirge.UtilityAI.Blackboard;
 
     public abstract class Action
     {
-        private EnemyBlackboard m_blackboard;
+        private GenericBlackboard_Base m_blackboard;
 
         public string name { get; set; }
+        public GenericBlackboard_Base Blackboard => m_blackboard;
         
         protected virtual void OnInitialise() { }
 
@@ -39,7 +41,7 @@ namespace Stirge.UtilityAI.Core
             OnEnd();
         }
 
-        public void SetBlackboard(EnemyBlackboard blackboard)
+        public void SetBlackboard(GenericBlackboard_Base blackboard)
         {
             m_blackboard = blackboard;
         }

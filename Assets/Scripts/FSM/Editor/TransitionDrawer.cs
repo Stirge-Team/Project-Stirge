@@ -52,7 +52,7 @@ namespace Stirge.AI
             EditorGUI.EndProperty();
         }
 
-        protected override float GetHeight(GUIContent label)
+        protected override int GetHeight(GUIContent label)
         {
             int totalLines = 1; // for foldout
 
@@ -66,7 +66,7 @@ namespace Stirge.AI
                 totalLines += GetPropertyLineHeight(conditionsProp); // for Conditions array
             }
 
-            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
+            return totalLines;
         }
     }
 }

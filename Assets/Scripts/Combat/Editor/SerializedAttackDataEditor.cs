@@ -1,16 +1,17 @@
-using Stirge.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.tvOS;
+
 using EGL = UnityEditor.EditorGUILayout;
 using Object = UnityEngine.Object;
 
 namespace Stirge.Combat.Attacks.Serialization
 {
+    using Stirge.Serialization;
+
     [CustomEditor(typeof(SerializedAttackData))]
     public class SerializedAttackDataEditor : Editor
     {

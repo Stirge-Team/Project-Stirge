@@ -72,7 +72,7 @@ namespace Stirge.Tools
             EditorGUI.EndProperty();
         }
 
-        protected override float GetHeight(GUIContent label)
+        protected override int GetHeight(GUIContent label)
         {
             int totalLines = 1;
             if (m_property.isExpanded)
@@ -81,7 +81,7 @@ namespace Stirge.Tools
                 totalLines += GetPropertyLineHeight("m_y");
                 totalLines += GetPropertyLineHeight("m_z");
             }
-            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1); ;
+            return totalLines;
         }
     }
 }

@@ -1,58 +1,41 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Stirge.UtilityAI.Core
 {
     using Blackboard;
 
-    public sealed class Actor : MonoBehaviour
+    [System.Serializable]
+    public sealed class Actor
     {
         private Axis[] m_axes;
         private Action[] m_actions;
 
-        private EnemyBlackboard m_blackboard;
+        private GenericBlackboard_Base m_blackboard;
 
         private float[] m_axisScores;
         private float[] m_actionScores;
 
         /// <summary>
-        /// m_actionAxisBindings[x] contains an array of indicies of the Axes in m_axes considered by the Action at m_actions[x].
+        /// <see cref="m_actionAxisBindings"/>[x] contains an array of indicies pointing to the Axes in m_axes which are bound to the Action at m_actions[x].
         /// </summary>
         private int[][] m_actionAxisBindings;
 
         private int m_currentActionIndex;
 
         public Actor() { }
-        public static Actor Create(UtilityEnemy enemy, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        public static Actor Create(GenericBlackboard_Base blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
-            // Check if enemy alreay has Actor, and if so, remove it
-            if (enemy.gameObject.TryGetComponent(out Actor existingActor))
+            Actor actor = new()
             {
-#if UNITY_EDITOR
-                DestroyImmediate(existingActor);
-#else
-                Destroy(existingActor);
-#endif
-            }
-            // Check if enemy already has EnemyBlackboard, and if so, reset it
-            if (enemy.gameObject.TryGetComponent(out EnemyBlackboard existingBlackboard))
-            {
-#if UNITY_EDITOR
-                DestroyImmediate(existingBlackboard);
-#else
-                Destroy(existingBlackboard);
-#endif
-            }
-
-            Actor actor = enemy.CreateActorComponent();
-            EnemyBlackboard blackboard = enemy.CreateBlackboardComponent();
-
-            actor.m_axes = axes;
-            actor.m_actions = actions;
-            actor.m_blackboard = blackboard;
-            actor.m_actionAxisBindings = actionAxisBindings;
-
-            actor.m_axisScores = new float[actor.m_axes.Length];
-            actor.m_actionScores = new float[actor.m_actions.Length];
+                m_blackboard = blackboard,
+                m_axes = axes,
+                m_actions = actions,
+                m_actionAxisBindings = actionAxisBindings,
+                m_axisScores = new float[axes.Length],
+                m_actionScores = new float[actions.Length],
+            };
 
             for (int i = 0; i < actor.m_axes.Length; i++)
             {
@@ -164,6 +147,46 @@ namespace Stirge.UtilityAI.Core
             m_actions[m_currentActionIndex].End();
             m_currentActionIndex = newActionIndex;
             m_actions[m_currentActionIndex].Begin();
+        }
+
+        public static void GetDebugInfo(Actor actor, ref string[] output)
+        {
+            int indentLevel = 0;
+            List<string> data = new();
+
+            string GetIndent() => indentLevel == 0 ? string.Empty : string.Concat(Enumerable.Repeat("\t", indentLevel));
+            void Add(string value) => data.Add(GetIndent() + value);
+
+            Axis[] axes = actor.m_axes;
+            Action[] actions = actor.m_actions;
+            float[] axisScores = actor.m_axisScores;
+            float[] actionScores = actor.m_actionScores;
+            int[][] actionAxisBindings = actor.m_actionAxisBindings;
+            int currentActionIndex = actor.m_currentActionIndex;
+
+            Add($"Current Action: {actions[currentActionIndex].name}");
+            Add("Actions:");
+
+            indentLevel++;
+            for (int i = 0, actionCount = actions.Length; i < actionCount; i++)
+            {
+                Action action = actions[i];
+                Add($"'{action.name}' : {actionScores[i]}");
+                Add("Axes:");
+
+                int[] axisScoreIndices = actionAxisBindings[i];
+                indentLevel++;
+                for (int j = 0, axisCount = axisScoreIndices.Length; j < axisCount; j++)
+                {
+                    int axisIndex = axisScoreIndices[j];
+                    Axis axis = axes[axisIndex];
+                    Add($"'{axis.name}' : {axisScores[axisIndex]}");
+                }
+                indentLevel--;
+            }
+            //indentLevel--;
+
+            output = data.ToArray();
         }
     }
 }

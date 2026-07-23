@@ -16,6 +16,8 @@ namespace Stirge.Combat.Attacks
 
         void IDecoratorNode.AddAttackNode(AttackNode attackNode)
         {
+            m_nodes ??= new AttackNode[0];
+            
             int arraySize = m_nodes.Length;
             System.Array.Resize(ref m_nodes, arraySize + 1);
             m_nodes[arraySize] = attackNode;

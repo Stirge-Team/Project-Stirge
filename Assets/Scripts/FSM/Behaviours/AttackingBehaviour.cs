@@ -32,6 +32,7 @@ namespace Stirge.AI
 
         public void DeserializeAttackData()
         {
+            m_deserializedAttackData = null;
             m_deserializedAttackData = m_attackData.CreateAttackData();
         }
     }

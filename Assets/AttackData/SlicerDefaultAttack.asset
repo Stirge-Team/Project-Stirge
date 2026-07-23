@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8685111188750914775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19699e16a2ef5994cb65a6cb26b2e304, type: 3}
+  m_Name: SimultaneousAttackNode
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedSimultaneousAttackNode
+  m_arg0: 0
+--- !u!114 &-1929765821558319256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fc2f651943f5ff46a2eb7d972adde11, type: 3}
+  m_Name: ApproachTargetNode
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedApproachTargetNode
+  m_arg0:
+    m_value: 1.3
+    m_range: {x: 0, y: 0}
+    m_isRandom: 0
+  m_arg1: 0
+  m_arg2:
+    m_value: 10
+    m_range: {x: 0, y: 0}
+    m_isRandom: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3992c478a2507e842b7ee1dbbd1eec23, type: 3}
+  m_Name: SlicerDefaultAttack
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAttackData
+  m_serializedAttackNodes:
+  - {fileID: -8685111188750914775}
+  - {fileID: 1916486656351294519}
+  - {fileID: -1929765821558319256}
+  m_nodeBindings: ffffffff0000000000000000
+--- !u!114 &1916486656351294519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807651cbf66753b4bbac0c9c77f77966, type: 3}
+  m_Name: AnimationNode
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAnimationNode
+  m_arg0: DefaultAttack
+  m_arg1: {fileID: 7400000, guid: 5a5f27f26d2169340b96db56ba1290b3, type: 2}
+  m_arg2:
+    m_value: 1
+    m_range: {x: 0, y: 0}
+    m_isRandom: 0
+  m_arg3: 0
