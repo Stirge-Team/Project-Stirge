@@ -21,6 +21,7 @@ namespace Stirge.Enemy
         [HideInInspector] public EnemySpawner spawner = null;
 
         protected bool m_hasAttackToken = false;
+        public bool AttackToken => m_hasAttackToken;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
