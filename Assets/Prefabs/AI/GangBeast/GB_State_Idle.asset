@@ -16,7 +16,7 @@ MonoBehaviour:
   - rid: 6072857299943161937
   - rid: 6072857299943161944
   m_transitions:
-  - m_targetState: {fileID: 11400000, guid: 77218164759b1b677b97c7e7e85125ee, type: 2}
+  - m_targetState: {fileID: 11400000, guid: 101162ef205bfd59681a37ed0706be26, type: 2}
     m_conditions:
     - rid: 6072857299943161940
   - m_targetState: {fileID: 11400000, guid: 03c464fa1e0284b619046938f2ddbdc3, type: 2}

@@ -20,6 +20,7 @@ namespace Stirge.AI
             typeof(UpdateTargetBehaviour),
             typeof(UpdateLookSpeedBehaviour),
             typeof(EnterPhysicsBehaviour),
+            typeof(CircleTargetBehaviour),
         };
     }
 }

@@ -15,9 +15,9 @@ MonoBehaviour:
   m_behaviours:
   - rid: 6072857299943161945
   - rid: 6072857299943161946
-  - rid: 6072857299943161947
+  - rid: 6072857299943161965
   m_transitions:
-  - m_targetState: {fileID: 11400000, guid: bb07202ab9e66e4788a8723f7f792160, type: 2}
+  - m_targetState: {fileID: 11400000, guid: 8b33a3940c637a3c6b4dc3eff048be00, type: 2}
     m_conditions:
     - rid: 6072857299943161948
   m_timedTransitionState: {fileID: 0}
@@ -33,12 +33,11 @@ MonoBehaviour:
       type: {class: UpdateLookSpeedBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_newDegreesDelta: 360
-    - rid: 6072857299943161947
-      type: {class: EnterPhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
-      data:
-        m_newMode: 2
-        m_returnToOldModeOnExit: 1
     - rid: 6072857299943161948
       type: {class: AttackingCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_invertValue: 1
+    - rid: 6072857299943161965
+      type: {class: MoveToTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_speed: 5

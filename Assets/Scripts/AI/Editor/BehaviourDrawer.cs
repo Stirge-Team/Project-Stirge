@@ -34,6 +34,7 @@ namespace Stirge.AI
                         DrawPropertyField("m_maxDegreesDelta");
                         break;
                     case nameof(MoveToTargetBehaviour):
+                    case nameof(CircleTargetBehaviour):
                         DrawPropertyField("m_speed");
                         break;
                     case nameof(AttackingBehaviour):
@@ -69,6 +70,7 @@ namespace Stirge.AI
                     case nameof(MoveToTargetBehaviour):
                     case nameof(UpdateLookSpeedBehaviour):
                     case nameof(AttackingBehaviour):
+                    case nameof(CircleTargetBehaviour):
                         totalLines++;
                         break;
                     case nameof(EnterPhysicsBehaviour):

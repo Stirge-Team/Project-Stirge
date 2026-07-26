@@ -12,10 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
   m_Name: GB_State_BackOff
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
-  m_behaviours: []
-  m_transitions: []
+  m_behaviours:
+  - rid: 6072857299943161966
+  m_transitions:
+  - m_targetState: {fileID: 11400000, guid: 101162ef205bfd59681a37ed0706be26, type: 2}
+    m_conditions:
+    - rid: 6072857299943161967
   m_timedTransitionState: {fileID: 0}
   m_timedTransitionDelay: 0
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 6072857299943161966
+      type: {class: MoveToTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_speed: 0
+    - rid: 6072857299943161967
+      type: {class: TargetInAttackRadiusCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 1

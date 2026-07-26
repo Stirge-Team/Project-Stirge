@@ -1116,10 +1116,10 @@ MonoBehaviour:
     m_defualtGravityAcceleration: 9
     isOffGround: 0
     airStallLength: 0
-  m_stunState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
-  m_airStunState: {fileID: 11400000, guid: 9cb1eb542f50d2c4992b39eaefe1ec30, type: 2}
-  m_knockbackState: {fileID: 11400000, guid: ad02730f5802b034bbc259f707fad916, type: 2}
-  m_airJuggle: {fileID: 11400000, guid: c0ee1255359da2d4caa5165757df1c05, type: 2}
+  m_stunState: {fileID: 11400000, guid: 62cbc1095ee331618be41d0e5cdf79fd, type: 2}
+  m_airStunState: {fileID: 11400000, guid: 6a7e62f597e816c96a6ef09d200038bd, type: 2}
+  m_knockbackState: {fileID: 11400000, guid: bc468c0bf5d2747929e59829855ffedd, type: 2}
+  m_airJuggle: {fileID: 11400000, guid: 2926f996ed34b863eaa7a7757e1d70b0, type: 2}
   spawner: {fileID: 0}
   references:
     version: 2
