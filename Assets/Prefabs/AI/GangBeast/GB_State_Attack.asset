@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: GB_State_Attack
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - rid: 6072857299943161945
+  - rid: 6072857323652776023
   - rid: 6072857299943161946
-  - rid: 6072857299943161965
+  - rid: 6072857299943161945
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 8b33a3940c637a3c6b4dc3eff048be00, type: 2}
     m_conditions:
@@ -37,7 +37,6 @@ MonoBehaviour:
       type: {class: AttackingCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_invertValue: 1
-    - rid: 6072857299943161965
-      type: {class: MoveToTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
-      data:
-        m_speed: 5
+    - rid: 6072857323652776023
+      type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 

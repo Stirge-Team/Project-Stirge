@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GB_State_CircleTarget
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
+  - rid: 6072857323652776007
   - rid: 6072857299943161970
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 77218164759b1b677b97c7e7e85125ee, type: 2}
@@ -48,3 +49,6 @@ MonoBehaviour:
       type: {class: CircleTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_speed: 0
+    - rid: 6072857323652776007
+      type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 

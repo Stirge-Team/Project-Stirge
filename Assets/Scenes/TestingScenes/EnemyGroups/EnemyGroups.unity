@@ -2626,7 +2626,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.EnemySpawner
   m_spawnOnStart: 0
   m_enemyPrefab: {fileID: 8789200735737572135, guid: fd8e9be15de7e4e04a8c3d0f14f3ebcf, type: 3}
-  m_targetSpawnCount: 3
+  m_targetSpawnCount: 1
   m_spawnLocation: {fileID: 0}
 --- !u!4 &1733724719
 Transform:
