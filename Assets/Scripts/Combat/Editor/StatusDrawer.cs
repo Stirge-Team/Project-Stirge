@@ -49,7 +49,7 @@ namespace Stirge.Combat
             EditorGUI.EndProperty();
         }
 
-        protected override float GetHeight(GUIContent label)
+        protected override int GetHeight(GUIContent label)
         {
             int totalLines = 1; // for foldout/label
 
@@ -78,7 +78,7 @@ namespace Stirge.Combat
                 }
             }
 
-            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
+            return totalLines;
         }
     }
 }

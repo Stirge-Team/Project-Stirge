@@ -86,6 +86,10 @@ namespace Stirge.Player
         {
             return transform.rotation;
         }
+        protected Vector3 GetEulerRotation()
+        {
+            throw new System.NotImplementedException();
+        }
         protected override void SetPosition(Vector3 position)
         {
             transform.position = position;
@@ -94,7 +98,7 @@ namespace Stirge.Player
         {
             transform.rotation = rotation;
         }
-        protected override void SetRotation(Vector3 eulerRotation)
+        protected void SetEulerRotation(Vector3 eulerRotation)
         {
             transform.rotation = Quaternion.Euler(eulerRotation);
         }

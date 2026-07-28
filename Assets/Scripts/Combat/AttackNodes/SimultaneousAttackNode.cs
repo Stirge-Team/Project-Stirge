@@ -1,10 +1,11 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Stirge.Serialization;
 
 namespace Stirge.Combat.Attacks
 {
     [System.Serializable]
-    public class SimultaneousAttackNode : AttackNode
+    public class SimultaneousAttackNode : DecoratorNodeMulti, ISetupable<int, AttackNode[]>
     {
         public SimultaneousAttackNode()
         {
@@ -12,14 +13,18 @@ namespace Stirge.Combat.Attacks
         }
 
         [SerializeField] private int m_significantAttackNodeIndex = -1;
-        [SerializeReference] private AttackNode[] m_nodes;
 
         public int SignificantAttackNodeIndex => m_significantAttackNodeIndex;
-        public AttackNode[] Nodes => m_nodes;
 
         public override void Evaluate(List<AttackNode> activeNodes)
         {
             activeNodes.Add(this);
+        }
+
+        public void Setup(int significantNodeIndex, AttackNode[] nodes)
+        {
+            m_significantAttackNodeIndex = significantNodeIndex;
+            base.Setup(nodes);
         }
     }
 }

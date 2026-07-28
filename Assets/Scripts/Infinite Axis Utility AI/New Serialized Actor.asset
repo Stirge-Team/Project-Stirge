@@ -1,0 +1,162 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8053625344994655213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af3d0ef9c364f704ea0daeb4e3462e9d, type: 3}
+  m_Name: Is Not Grounded
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedBoolAxis
+  m_arg0:
+    m_propertyName: isGrounded
+    m_hash: 1133
+  m_arg1: 1
+--- !u!114 &-6036329912026531851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58858c4ef690ebd408a2482418945944, type: 3}
+  m_Name: LinearAxis
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedLinearAxis
+  m_arg0: 1
+  m_arg1: 0
+  m_arg2: 0
+  m_arg3:
+    m_propertyName: navMeshAgentSpeed
+    m_hash: 368
+--- !u!114 &-5147880342484518636
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af3d0ef9c364f704ea0daeb4e3462e9d, type: 3}
+  m_Name: Is Grounded
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedBoolAxis
+  m_arg0:
+    m_propertyName: isGrounded
+    m_hash: 1133
+  m_arg1: 0
+--- !u!114 &-4181418348461432513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4588757abdba6b842917ce6d4e0d0089, type: 3}
+  m_Name: Pos1
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedMoveToWorldPositionAction
+  m_Arg0: {x: -10, y: 0, z: -10}
+  m_Arg1:
+    m_propertyName: targetPosition
+    m_hash: 1479
+--- !u!114 &-3600114418968224451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8dffc7269fe5e84fa2ffc5279b922eb, type: 3}
+  m_Name: Close to World Pos (-10, 0, 10)
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedDistanceFromWorldPositionAxis
+  m_arg0:
+    m_propertyName: transform
+    m_hash: 727
+  m_arg1: {x: -10, y: 0, z: -10}
+  m_arg2: 0
+  m_arg3: 10
+  m_arg4: 1
+--- !u!114 &-2046071241541882172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1d6242d37bd394b846746bdd969642, type: 3}
+  m_Name: DoNothingAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedDoNothingAction
+--- !u!114 &-1190423292302090822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8dffc7269fe5e84fa2ffc5279b922eb, type: 3}
+  m_Name: Far from World Pos (-10, 0, -10)
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedDistanceFromWorldPositionAxis
+  m_arg0:
+    m_propertyName: transform
+    m_hash: 727
+  m_arg1: {x: -10, y: 0, z: -10}
+  m_arg2: 0
+  m_arg3: 10
+  m_arg4: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
+  m_Name: New Serialized Actor
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
+  m_targetTypeAssemblyQualifiedName: Stirge.UtilityAI.UtilityEnemy, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_serializedActions:
+  - {fileID: -4181418348461432513}
+  - {fileID: 8722959059835827651}
+  - {fileID: -2046071241541882172}
+  m_serializedAxes:
+  - {fileID: -5147880342484518636}
+  - {fileID: -8053625344994655213}
+  - {fileID: -1190423292302090822}
+  - {fileID: -3600114418968224451}
+  - {fileID: -6036329912026531851}
+  m_axisIndices:
+  - m_axes: 0000000002000000
+  - m_axes: 0000000003000000
+  - m_axes: 01000000
+--- !u!114 &8722959059835827651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4588757abdba6b842917ce6d4e0d0089, type: 3}
+  m_Name: Pos2
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedMoveToWorldPositionAction
+  m_Arg0: {x: 10, y: 0, z: -10}
+  m_Arg1:
+    m_propertyName: targetPosition
+    m_hash: 1479

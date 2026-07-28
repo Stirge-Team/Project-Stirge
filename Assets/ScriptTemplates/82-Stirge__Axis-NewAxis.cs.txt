@@ -1,0 +1,23 @@
+#ROOTNAMESPACEBEGIN#using UnityEngine;
+
+namespace Stirge.UtilityAI
+{
+    using Blackboard;
+    using Core;
+    using Stirge.Serialization;
+    using Tools;
+
+    public class #SCRIPTNAME# : Axis, ISetupable<>
+    {
+        void ISetupable<>.Setup()
+        {
+            
+        }
+        
+        #NOTRIM#public override float ComputeScore()
+        {
+            return 0;
+        }
+    }
+}
+#ROOTNAMESPACEEND#
