@@ -89,6 +89,7 @@ namespace Stirge.UtilityAI.Demo
         }
 
         // runtime properties
+        public bool hasTarget => m_targetResource != null;
         public int resourceCount => m_logHeldCount + m_foodHeldCount;
         public bool isBagFull => resourceCount < m_bagSize;
         public bool isPerformingAction => m_actionTimer > 0;

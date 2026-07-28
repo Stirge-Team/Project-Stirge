@@ -743,7 +743,7 @@ MonoBehaviour:
   m_navMeshAgent: {fileID: 1472210144}
   m_interactionTrigger: {fileID: 1472210145}
   m_campfire: {fileID: 950527256}
-  m_spawner: {fileID: 1265875929}
+  m_resourceSpawner: {fileID: 0}
   m_baseMoveSpeed: 5
   m_maxWarmth: 100
   m_warmthLossRate: 0
