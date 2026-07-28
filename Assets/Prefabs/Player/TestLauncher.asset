@@ -56,3 +56,4 @@ MonoBehaviour:
       data:
         m_strength: 5
         m_stallLength: 3
+        m_ignoreGrounded: 0

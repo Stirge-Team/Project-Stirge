@@ -61,12 +61,12 @@ namespace Stirge.Player
             m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
-        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
         {
             //lazy implementation - do more later
             EnterStun(stunLength);
         }
-        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
             m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
         }
