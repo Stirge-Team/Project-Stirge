@@ -22,6 +22,6 @@ namespace Stirge.UtilityAI.EditorTools
                 .ToArray();
         }
 
-        public static IReadOnlyList<Type> validGenericBlackboardTypes => s_validTypes;
+        public static IReadOnlyList<Type> ValidGenericBlackboardTypes => s_validTypes;
     }
 }

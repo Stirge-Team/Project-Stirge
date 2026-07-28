@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.Blackboard
 {
-    public class GenericBlackboard<TBase> : GenericBlackboard_Base where TBase : MonoBehaviour
+    public abstract class GenericBlackboard<TBase> : GenericBlackboard_Base where TBase : MonoBehaviour
     {
         #region Static Setup
         public static readonly PropertyInfo[] CachedPropertyInfosArray = typeof(TBase).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);

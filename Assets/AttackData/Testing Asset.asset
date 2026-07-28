@@ -29,7 +29,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3992c478a2507e842b7ee1dbbd1eec23, type: 3}
-  m_Name: fart
+  m_Name: Testing Asset
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAttackData
   m_serializedAttackNodes:
   - {fileID: -6072214860156835398}
