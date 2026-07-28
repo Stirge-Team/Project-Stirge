@@ -156,8 +156,8 @@ namespace Stirge.Combat
         }
 
         public abstract void EnterStun(float stunLength);
-        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength);
-        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength);
+        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded);
+        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded);
         #endregion
 
         #region Attacks

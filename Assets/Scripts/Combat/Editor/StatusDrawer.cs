@@ -30,10 +30,12 @@ namespace Stirge.Combat
                     case nameof(AirJuggle):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_stallLength");
+                        DrawPropertyField("m_ignoreGrounded");
                         break;
                     case nameof(Knockback):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_height");
+                        DrawPropertyField("m_ignoreGrounded");
                         break;
                     case nameof(HitStopStatus):
                         DrawPropertyField("m_duration");
@@ -64,6 +66,8 @@ namespace Stirge.Combat
                 {
                     case nameof(AirJuggle):
                     case nameof(Knockback):
+                        totalLines += 3;
+                        break;
                     case nameof(HitStopStatus):
                         totalLines += 2;
                         break;
