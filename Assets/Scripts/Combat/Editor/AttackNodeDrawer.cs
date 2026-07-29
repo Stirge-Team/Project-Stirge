@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+/*
 namespace Stirge.Combat.Attacks
 {
     using Tools;
@@ -188,3 +189,4 @@ namespace Stirge.Combat.Attacks
         }
     }
 }
+*/

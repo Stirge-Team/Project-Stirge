@@ -6,7 +6,6 @@ namespace Stirge.Combat.Attacks
     using Stirge.Serialization;
     using Tools;
 
-    [System.Serializable]
     public class DelayNode : AttackNode, ISetupable<RandomFloatField>
     {
         private RandomFloatField m_delay;

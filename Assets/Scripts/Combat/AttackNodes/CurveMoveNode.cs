@@ -1,14 +1,14 @@
-using Stirge.Serialization;
-using Stirge.Tools;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Stirge.Combat.Attacks
 {
-    [System.Serializable]
+    using Stirge.Serialization;
+    using Tools;
+
     public class CurveMoveNode : MoveNode, ISetupable<RandomVector3Field, RandomFloatField, bool, AnimationCurve>
     {
-        [SerializeField] private AnimationCurve m_curve;
+        private AnimationCurve m_curve;
 
         public AnimationCurve Curve => m_curve;
 
