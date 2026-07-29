@@ -49,6 +49,7 @@ namespace Stirge.UtilityAI
 
         #region Public Properties
         // Components
+        public UtilityEnemy This => this;
         public new Transform transform => m_transform;
         public new Rigidbody rigidbody => m_rigidbody;
         public NavMeshAgent navMeshAgent => m_navMeshAgent;
