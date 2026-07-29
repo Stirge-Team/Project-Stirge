@@ -2,9 +2,11 @@ using UnityEngine;
 
 namespace Stirge.Combat.Attacks
 {
-    public abstract class DecoratorNodeSingle : AttackNode, IDecoratorNode, Stirge.Serialization.ISetupable<AttackNode>
+    using Stirge.Serialization;
+
+    public abstract class DecoratorNodeSingle : AttackNode, IDecoratorNode, ISetupable<AttackNode>
     {
-        [SerializeField] protected AttackNode m_node;
+        protected AttackNode m_node;
 
         public void Setup(AttackNode node)
         {

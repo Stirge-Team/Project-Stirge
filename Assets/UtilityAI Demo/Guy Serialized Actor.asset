@@ -24,6 +24,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a1d6242d37bd394b846746bdd969642, type: 3}
   m_Name: DoNothingAction
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedDoNothingAction
+--- !u!114 &-2232002527988375401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c11f743d0a22642a9bafe01dc3a55a, type: 3}
+  m_Name: MoveToTargetAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Actions.SerializedMoveToTargetAction
+  m_Arg0:
+    m_propertyName: navMeshAgent
+    m_hash: 731
+  m_Arg1:
+    m_propertyName: targetResource
+    m_hash: 799
 --- !u!114 &-2118142832892351863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -56,11 +74,13 @@ MonoBehaviour:
     Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
   m_serializedActions:
   - {fileID: -4635635425369476639}
+  - {fileID: -2232002527988375401}
   m_serializedAxes:
   - {fileID: -2118142832892351863}
   - {fileID: 1773919780857577859}
   m_axisIndices:
   - m_axes: 00000000
+  - m_axes: 01000000
 --- !u!114 &1773919780857577859
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,9 +91,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: af3d0ef9c364f704ea0daeb4e3462e9d, type: 3}
-  m_Name: Bag is Full
+  m_Name: Bag Is Not Full
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedAxes.SerializedBoolAxis
   m_arg0:
     m_propertyName: isBagFull
     m_hash: 1572
-  m_arg1: 0
+  m_arg1: 1

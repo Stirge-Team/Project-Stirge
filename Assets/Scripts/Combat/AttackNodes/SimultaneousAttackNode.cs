@@ -1,18 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Stirge.Serialization;
 
 namespace Stirge.Combat.Attacks
 {
-    [System.Serializable]
+    using Stirge.Serialization;
+
     public class SimultaneousAttackNode : DecoratorNodeMulti, ISetupable<int, AttackNode[]>
     {
-        public SimultaneousAttackNode()
-        {
-            m_nodes = new AttackNode[0];
-        }
-
-        [SerializeField] private int m_significantAttackNodeIndex = -1;
+        private int m_significantAttackNodeIndex = -1;
 
         public int SignificantAttackNodeIndex => m_significantAttackNodeIndex;
 

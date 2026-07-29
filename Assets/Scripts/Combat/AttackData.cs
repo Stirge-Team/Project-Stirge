@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
-    [System.Serializable]
     public class AttackData
     {
-        [SerializeReference] private AttackNode m_root;
+        private AttackNode m_root;
 
         public AttackNode[] EvaluateSequence()
         {

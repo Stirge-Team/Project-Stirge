@@ -6,10 +6,9 @@ namespace Stirge.Combat.Attacks
     using Stirge.Serialization;
     using Tools;
 
-    [System.Serializable]
     public class TimedMoveNode : MoveNode, ISetupable<RandomVector3Field, RandomFloatField, bool, RandomFloatField>
     {
-        [SerializeField] private RandomFloatField m_time;
+        private RandomFloatField m_time;
         
         public float Time => m_time.Value;
 
