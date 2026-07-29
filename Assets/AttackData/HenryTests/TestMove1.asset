@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7590995701223859300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 807651cbf66753b4bbac0c9c77f77966, type: 3}
+  m_Name: AnimationNode
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAnimationNode
+  m_arg0: Swing1
+  m_arg1: {fileID: 7400000, guid: f9b1e7abef8c874a6bfc10cb957ef689, type: 2}
+  m_arg2:
+    m_value: 1.5
+    m_range: {x: 0, y: 0}
+    m_isRandom: 0
+  m_arg3: 0
+--- !u!114 &-6754139221412727288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f169c2a4f03a863408716f1224ed3853, type: 3}
+  m_Name: Step1
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedTranslateNode
+  m_arg0: {x: 1, y: 0, z: 0}
+  m_arg1: 0
+  m_arg2:
+    m_value: 1
+    m_range: {x: 0, y: 0}
+    m_isRandom: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3992c478a2507e842b7ee1dbbd1eec23, type: 3}
+  m_Name: TestMove1
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedAttackData
+  m_serializedAttackNodes:
+  - {fileID: 6389284195275121099}
+  - {fileID: -7590995701223859300}
+  - {fileID: -6754139221412727288}
+  m_nodeBindings: ffffffff0000000000000000
+--- !u!114 &6389284195275121099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19699e16a2ef5994cb65a6cb26b2e304, type: 3}
+  m_Name: SimultaneousAttackNode
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.Attacks.Serialization.SerializedSimultaneousAttackNode
+  m_arg0: 0

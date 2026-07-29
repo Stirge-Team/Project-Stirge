@@ -30,7 +30,7 @@ MonoBehaviour:
   m_arg0: TestLauncher
   m_arg1: {fileID: 7400000, guid: 8e76393e05515a774bc1f0d23871066d, type: 2}
   m_arg2:
-    m_value: 1
+    m_value: 1.5
     m_range: {x: 0, y: 0}
     m_isRandom: 0
   m_arg3: 0
