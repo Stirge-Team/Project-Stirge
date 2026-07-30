@@ -27,7 +27,10 @@ namespace Stirge.UtilityAI.Demo.Axes
         {
             if (Blackboard.TryGetStructValue(m_floatPropertyName, out float value))
             {
-                return m_a * Mathf.Log(value - m_h, m_b) + m_k;
+                float score = m_a * Mathf.Log(value - m_h, m_b) + m_k;
+                if (!float.IsFinite(score))
+                    return 0;
+                return score;
             }
             return 0;
         }

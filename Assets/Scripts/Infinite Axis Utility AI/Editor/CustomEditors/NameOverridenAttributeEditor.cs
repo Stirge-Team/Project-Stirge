@@ -21,6 +21,13 @@ namespace Stirge.UtilityAI
                 label.text = name;
             }
 
+            string tooltip = GetTooltip(property);
+
+            if (tooltip != null)
+            {
+                label.tooltip = tooltip;
+            }
+
             EditorGUI.PropertyField(position, property, label);
         }
 
@@ -48,6 +55,24 @@ namespace Stirge.UtilityAI
                 if (nameOverride.index == nameOverriden.index)
                 {
                     return nameOverride.name;
+                }
+            }
+
+            return null;
+        }
+
+        private string GetTooltip(SerializedProperty property)
+        {
+            var nameOverriden = (NameOverridenAttribute)attribute;
+            NameOverrideAttribute[] nameOverrides = property.serializedObject.targetObject.GetType().GetCustomAttributes<NameOverrideAttribute>().ToArray();
+
+            for (int i = 0, count = nameOverrides.Length; i < count; i++)
+            {
+                NameOverrideAttribute nameOverride = nameOverrides[i];
+
+                if (nameOverride.index == nameOverriden.index)
+                {
+                    return nameOverride.tooltip;
                 }
             }
 

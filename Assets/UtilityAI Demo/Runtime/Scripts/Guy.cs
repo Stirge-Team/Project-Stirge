@@ -45,6 +45,8 @@ namespace Stirge.UtilityAI.Demo
 
         #region Properties
         // components/references
+        public Guy This => this;
+        public Transform Transform => transform;
         public NavMeshAgent navMeshAgent => m_navMeshAgent;
         public Campfire campfire => m_campfire;
         public ResourceSpawner resourceSpawner => m_resourceSpawner;
@@ -91,7 +93,6 @@ namespace Stirge.UtilityAI.Demo
         // runtime properties
         public bool hasTarget => m_targetResource != null;
         public int resourceCount => m_logHeldCount + m_foodHeldCount;
-        public bool isBagFull => resourceCount < m_bagSize;
         public bool isPerformingAction => m_actionTimer > 0;
 
         // Scores
@@ -191,7 +192,7 @@ namespace Stirge.UtilityAI.Demo
             }
         }
 
-        public void AddLogToCampfire()
+        public void BeginDepositLog()
         {
             if (!isPerformingAction && m_logHeldCount > 0)
             {
@@ -209,6 +210,10 @@ namespace Stirge.UtilityAI.Demo
         {
             m_actionTimer = m_actionDuration;
             m_currentAction = type;
+        }
+        public void StopAction()
+        {
+            m_actionTimer = 0;
         }
 
         public void ChangeWarmth(float amount)

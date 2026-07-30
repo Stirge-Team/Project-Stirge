@@ -15,15 +15,28 @@ namespace Stirge.Serialization
         /// </summary>
         public readonly string name;
         /// <summary>
+        /// New field tooltip.
+        /// </summary>
+        public readonly string tooltip;
+        /// <summary>
         /// Target field index.
         /// </summary>
         public readonly int index;
 
-        /// <param name="name">New field name.</param>
-        /// <param name="index">Target field index.</param>
         public NameOverrideAttribute(string name, int index)
         {
             this.name = name;
+            this.tooltip = null;
+            this.index = index;
+        }
+
+        /// <param name="name">New field name.</param>
+        /// <param tooltip="tooltip">New field tooltip.</param>
+        /// <param name="index">Target field index.</param>
+        public NameOverrideAttribute(string name, string tooltip, int index)
+        {
+            this.name = name;
+            this.tooltip = tooltip;
             this.index = index;
         }
     }
