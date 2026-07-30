@@ -120,8 +120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cbd5dc4c47fa2c45b2cbc8188ad66ba, type: 3}
   m_Name: LogarithmicAxis
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Axes.SerializedLogarithmicAxis
-  m_arg0: 0
-  m_arg1: 0
+  m_arg0: 1
+  m_arg1: 10
   m_arg2: 0
   m_arg3: 0
   m_arg4:
