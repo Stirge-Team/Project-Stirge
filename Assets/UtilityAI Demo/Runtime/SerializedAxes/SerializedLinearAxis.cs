@@ -1,10 +1,11 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Serialization.SerializedAxes
+namespace Stirge.UtilityAI.Demo.Axes
 {
     using Blackboard;
     using Core.Axes;
     using Stirge.Serialization;
+    using Serialization;
 
     [NameOverride("Slope", 0), NameOverride("Horizontal Shift", 1), NameOverride("Vertical Shift", 2), NameOverride("Float Property", 3)]
     public class SerializedLinearAxis : SerializedAxis<LinearAxis, float, float, float, BlackboardPropertyName> { }

@@ -33,13 +33,13 @@ namespace Stirge.UtilityAI.Demo.Axes
                     return 0;
 
                 // build terms
-                List<float> terms = new();
+                float score = 0;
                 for (int i = 0; i < paramCount; i++)
                 {
-                    terms[i] = m_params[i] * Mathf.Pow(value, paramCount - i);
+                    score += m_params[i] * Mathf.Pow(value, paramCount - i - 1);
                 }
 
-                return terms.Sum();
+                return score;
             }
             return 0;
         }

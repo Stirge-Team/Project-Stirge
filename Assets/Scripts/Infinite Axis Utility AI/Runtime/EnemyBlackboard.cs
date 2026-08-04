@@ -7,7 +7,6 @@ using UnityEngine;
 namespace Stirge.UtilityAI
 {
     using Blackboard;
-    using Stirge.UtilityAI.Demo;
 
     public class EnemyBlackboard : GenericBlackboard<UtilityEnemy>
     {
