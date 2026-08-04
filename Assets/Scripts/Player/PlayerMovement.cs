@@ -12,26 +12,18 @@ namespace Stirge.Player
     public class PlayerMovement : MonoBehaviour
     {
         [System.Serializable]
-        private struct stateVariables
+        public struct stateVariables
         {
-            [Tooltip(
-                "The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around."
-            )]
+            [Tooltip("The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around.")]
             public float _horizontalAcceleration;
 
-            [Tooltip(
-                "The maximum velocity the player can reach. Once reaching this speed, more force will not be applied in the player's current direction of travel."
-            )]
+            [Tooltip("The maximum velocity the player can reach. Once reaching this speed, more force will not be applied in the player's current direction of travel.")]
             public float _maximumHorizontalSpeed;
 
-            [Tooltip(
-                "The speed at which the player turns around to face the given input direction"
-            )]
+            [Tooltip("The speed at which the player turns around to face the given input direction")]
             public float _rotationSpeed;
 
-            [Tooltip(
-                "A constant force applied to the player. It works to reduce the player's speed down to zero."
-            )]
+            [Tooltip("A constant force applied to the player. It works to reduce the player's speed down to zero.")]
             public float _friction;
 
             [Tooltip("Scales the user input.")]
@@ -44,20 +36,14 @@ namespace Stirge.Player
         //I bet you can't guess what this one is for
         //private Rigidbody m_playerBody;
         [Header("Horizontal Movement Settings")]
-        [
-            SerializeField,
-            Tooltip("These are the values that will be used while the player is grounded")
-        ]
+        [SerializeField, Tooltip("These are the values that will be used while the player is grounded")]
         private stateVariables m_groundSettings;
 
-        [
-            SerializeField,
-            Tooltip("These are the values that will be used while the player is in the air.")
-        ]
+        [SerializeField, Tooltip("These are the values that will be used while the player is in the air.")]
         private stateVariables m_aerialSettings;
 
         //Selector for the settings
-        private stateVariables m_currentStateSettings =>
+        public stateVariables CurrentStateSettings =>
             IsGrounded ? m_groundSettings : m_aerialSettings;
 
         [Header("Jump Settings")]
@@ -73,10 +59,7 @@ namespace Stirge.Player
         //The layers that the player considers "ground"
         private LayerMask m_groundCheckLayers;
 
-        [
-            SerializeField,
-            Tooltip("The window after falling off an object that the player can still jump.")
-        ]
+        [SerializeField, Tooltip("The window after falling off an object that the player can still jump.")]
         private float m_coyoteTime = 0.2f;
         [SerializeField, Tooltip("The sound that plays when the player lands.")]
         private SoundClip m_landingSound;
@@ -85,19 +68,10 @@ namespace Stirge.Player
         private float m_coyoteCountdown;
 
         [Header("Fall Speed")]
-        [
-            SerializeField,
-            Tooltip("The maximum speed the player can fall (0 will skip this check"),
-            Min(0)
-        ]
+        [SerializeField, Tooltip("The maximum speed the player can fall (0 will skip this check"), Min(0)]
         private float m_fallSpeedCap = 0;
 
-        [
-            SerializeField,
-            Tooltip(
-                "How much the time the player has spent falling should affect their falling speed."
-            )
-        ]
+        [SerializeField, Tooltip("How much the time the player has spent falling should affect their falling speed.")]
         private float m_fallTimeSpeedMultiplier = 0;
 
         //The time the player has been falling
@@ -147,7 +121,7 @@ namespace Stirge.Player
                     Quaternion.RotateTowards(
                         transform.rotation,
                         lockOnLookAt,
-                        m_currentStateSettings._rotationSpeed * Time.deltaTime
+                        CurrentStateSettings._rotationSpeed * Time.deltaTime
                     )
                 );
             }
@@ -159,7 +133,7 @@ namespace Stirge.Player
                     Quaternion.RotateTowards(
                         transform.rotation,
                         Quaternion.LookRotation(attemptedMoveDirection),
-                        m_currentStateSettings._rotationSpeed * Time.deltaTime
+                        CurrentStateSettings._rotationSpeed * Time.deltaTime
                     )
                 );
             }
@@ -175,22 +149,22 @@ namespace Stirge.Player
             //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
             //OR if the player's input is in the opposite direction of the player's current direction
             if (
-                m_motor._horizontalSpeed < m_currentStateSettings._maximumHorizontalSpeed
+                m_motor._horizontalSpeed < CurrentStateSettings._maximumHorizontalSpeed
                 || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f
             )
             {
                 //Apply the force to the player
                 m_motor.ApplyForce(
-                    m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude)
+                    CurrentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude)
                         * m_inputDirection.sqrMagnitude
                         * transform.forward
-                        * m_currentStateSettings._horizontalAcceleration
+                        * CurrentStateSettings._horizontalAcceleration
                         * Time.deltaTime
                 );
             }
 
             //do some decceleration - the clamped value helps when getting the movement down to zero
-            m_motor.ApplyForce(m_motor._horizontalDirection * -m_currentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
+            m_motor.ApplyForce(m_motor._horizontalDirection * -CurrentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
 
             //Clamping the players fall speed
             m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
@@ -299,13 +273,13 @@ namespace Stirge.Player
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(
                 transform.position,
-                m_currentStateSettings._maximumHorizontalSpeed
+                CurrentStateSettings._maximumHorizontalSpeed
             );
 
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(
                 transform.position,
-                (m_currentStateSettings._horizontalAcceleration - m_currentStateSettings._friction)
+                (CurrentStateSettings._horizontalAcceleration - CurrentStateSettings._friction)
             );
 
             Gizmos.color = Color.purple;
