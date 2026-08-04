@@ -18,6 +18,10 @@ namespace Stirge.Combat.Attacks
 
         public override void Evaluate(List<AttackNode> activeNodes)
         {
+            foreach(var node in m_nodes)
+            {
+                node.Evaluate(new()); //nodes on in a SimulNode do not get added to the main sequence, as the SimulNode has its own behaviour for its child nodes.
+            }
             activeNodes.Add(this);
         }
 

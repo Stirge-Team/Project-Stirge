@@ -110,7 +110,7 @@ namespace Stirge.Player
         protected override void BeginGoToPosition(Vector3 newPosition)
         {
             Vector3 direction = (newPosition - transform.position).normalized;
-            m_movement.Motor.ApplyForce(direction * m_movement.CurrentStateSettings._maximumHorizontalSpeed);
+            m_movement.Motor.ApplyForce(direction * m_movement.CurrentStateSettings._horizontalAcceleration);
         }
         protected override void StopGoToPosition()
         {
@@ -124,9 +124,13 @@ namespace Stirge.Player
 
         public override void ApplyPhysicsToTransform()
         {
-            //m_movement.Motor.SetActive(false);
+            //nothing has to be done here - function name unclear?
         }
-        
+
+        public override void ApplyRootMotion()
+        {
+            //nothing needs to be done here also?
+        }
         #endregion
     }
 }
