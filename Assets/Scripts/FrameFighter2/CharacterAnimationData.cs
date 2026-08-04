@@ -1,4 +1,5 @@
 using Stirge.Combat.Attacks;
+using Stirge.Combat.Attacks.Serialization;
 using Stirge.Input;
 using System;
 using System.Collections.Generic;
@@ -25,18 +26,18 @@ namespace FrameFighter2.Data
         {
             
             //Combination inputs for halen's input system
-            [SerializeField] private AttackData m_nextComboAttack;
+            [SerializeField] private SerializedAttackData m_nextComboAttack;
             [SerializeField] private AttackInput m_comboAttackInput;
             [SerializeField] private float m_comboInputTimeStart;
             [SerializeField] private float m_comboInputTimeEnd;
 
-            public AttackData NextComboAttack => m_nextComboAttack;
+            public SerializedAttackData NextComboAttack => m_nextComboAttack;
             public AttackInput ComboAttackInput => m_comboAttackInput;
             public float ComboInputTimeStart => m_comboInputTimeStart;
             public float ComboInputTimeEnd => m_comboInputTimeEnd;
             
 
-            public ComboInput(AttackData nextComboAttack, AttackInput comboAttackInput, float comboInputTimeStart, float comboInputTimeEnd)
+            public ComboInput(SerializedAttackData nextComboAttack, AttackInput comboAttackInput, float comboInputTimeStart, float comboInputTimeEnd)
             {
                 m_nextComboAttack = nextComboAttack;
                 m_comboAttackInput = comboAttackInput;

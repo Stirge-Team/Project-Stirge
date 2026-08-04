@@ -3,23 +3,28 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
-    [System.Serializable]
-    public class SimultaneousAttackNode : AttackNode
-    {
-        public SimultaneousAttackNode()
-        {
-            m_nodes = new AttackNode[0];
-        }
+    using Stirge.Serialization;
 
-        [SerializeField] private int m_significantAttackNodeIndex = -1;
-        [SerializeReference] private AttackNode[] m_nodes;
+    public class SimultaneousAttackNode : DecoratorNodeMulti, ISetupable<int, AttackNode[]>
+    {
+        private int m_significantAttackNodeIndex = -1;
 
         public int SignificantAttackNodeIndex => m_significantAttackNodeIndex;
-        public AttackNode[] Nodes => m_nodes;
 
         public override void Evaluate(List<AttackNode> activeNodes)
         {
+            List<AttackNode> fakeList = new();
+            foreach(var node in m_nodes)
+            {
+                node.Evaluate(fakeList); //nodes on in a SimulNode do not get added to the main sequence, as the SimulNode has its own behaviour for its child nodes.
+            }
             activeNodes.Add(this);
+        }
+
+        public void Setup(int significantNodeIndex, AttackNode[] nodes)
+        {
+            m_significantAttackNodeIndex = significantNodeIndex;
+            base.Setup(nodes);
         }
     }
 }
