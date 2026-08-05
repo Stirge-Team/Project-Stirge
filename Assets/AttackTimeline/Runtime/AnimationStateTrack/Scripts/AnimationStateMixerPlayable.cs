@@ -7,32 +7,28 @@ public class AnimationStateMixerPlayable : PlayableBehaviour
 
     private readonly int m_targetAnimationStateHash;
     private readonly int m_triggerParameterID;
-    private bool m_hasExitTrigger;
+    private readonly bool m_hasExitTrigger;
+
     private Animator m_boundAnimator;
     
     public AnimationStateMixerPlayable() { }
     public AnimationStateMixerPlayable(string targetAnimationStateName, string triggerParameterName)
     {
         m_targetAnimationStateHash = Animator.StringToHash(targetAnimationStateName);
-        if (triggerParameterName != string.Empty)
-        {
+        m_hasExitTrigger = triggerParameterName != string.Empty;
+        if (m_hasExitTrigger)
             m_triggerParameterID = Animator.StringToHash(triggerParameterName);
-            m_hasExitTrigger = true;
-        }
-        else
-        {
-            m_hasExitTrigger = false;
-        }
+    }
+
+    public AnimationStateTrack.PostPlaybackState postPlaybackState
+    {
+        get => m_postPlaybackState;
+        set => m_postPlaybackState = value;
     }
 
     public static ScriptPlayable<AnimationStateMixerPlayable> Create(PlayableGraph graph, int inputCount, string targetAnimationStateName, string triggerParameterName)
     {
         return ScriptPlayable<AnimationStateMixerPlayable>.Create(graph, new(targetAnimationStateName, triggerParameterName), inputCount);
-    }
-    public AnimationStateTrack.PostPlaybackState postPlaybackState
-    {
-        get => m_postPlaybackState;
-        set => m_postPlaybackState = value;
     }
 
     public override void OnPlayableDestroy(Playable playable)

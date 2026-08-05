@@ -31,7 +31,7 @@ namespace Stirge.UtilityAI.Actions
 
         protected override void OnBegin()
         {
-            m_combatEntity.UseAttack(m_attackData);
+            //m_combatEntity.UseAttack(m_attackData);
         }
 
         protected override void OnUpdate()

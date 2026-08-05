@@ -38,7 +38,8 @@ public class AnimationStateTrack : TrackAsset
 
     protected override void OnCreateClip(TimelineClip clip)
     {
-        clip.displayName = m_targetAnimationStateName;
+        if (m_targetAnimationStateName != null && m_targetAnimationStateName != string.Empty)
+            clip.displayName = m_targetAnimationStateName;
         clip.duration = 1.5d;
         base.OnCreateClip(clip);
     }

@@ -6,6 +6,7 @@ namespace Stirge.Enemy
     using AI;
     using Combat;
     using Stirge.Combat.Attacks;
+    using UnityEngine.Timeline;
 
     public class Enemy : CombatEntity
     {
@@ -65,10 +66,10 @@ namespace Stirge.Enemy
             m_agent.OnDisable();
         }
 
-        public override void UseAttack(AttackData attackData)
+        public override void UseAttack(TimelineAsset attackTimeline)
         {
             if (m_hasAttackToken) //fail if no attack token
-                base.UseAttack(attackData);
+                base.UseAttack(attackTimeline);
         }
         #endregion
 

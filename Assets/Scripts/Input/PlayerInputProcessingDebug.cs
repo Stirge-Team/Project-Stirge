@@ -2,19 +2,25 @@ using UnityEngine;
 using System.Collections.Generic;
 using Stirge.Combat.Attacks;
 using System.Linq;
+using UnityEngine.Timeline;
 
 namespace Stirge.Input
 {
     public class PlayerInputProcessingDebug : MonoBehaviour
     {
         [SerializeField] private List<AttackInput> m_inputs;
-        [SerializeField] private List<AttackData> m_datas;
+        [SerializeField] private List<TimelineAsset> m_timelines;
 
         private void Update()
         {
-            var dict = PlayerInputProcessing.Instance.ComboBindings.ToList();
-            m_inputs = dict.Select(x => x.Key).ToList();
-            m_datas = dict.Select(y => y.Value).ToList();
+            m_inputs.Clear();
+            m_timelines.Clear();
+            var bindings = PlayerInputProcessing.Instance.ComboBindingDebugList;
+            foreach (AttackBinding binding in bindings)
+            {
+                m_inputs.Add(binding.attackInput);
+                m_timelines.Add(binding.attackTimeline);
+            }
         }
     }
 }

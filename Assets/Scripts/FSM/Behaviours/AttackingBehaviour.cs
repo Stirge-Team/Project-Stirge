@@ -4,20 +4,16 @@ namespace Stirge.AI
 {
     using Combat.Attacks;
     using Combat.Attacks.Serialization;
+    using UnityEngine.Timeline;
 
     [System.Serializable]
     public class AttackingBehaviour : Behaviour
     {
-        [SerializeField] private SerializedAttackData m_attackData;
-
-        private AttackData m_deserializedAttackData;
+        [SerializeField] private TimelineAsset m_attackTimeline;
 
         public override void _Enter(Agent agent)
         {
-            if (m_deserializedAttackData == null)
-                DeserializeAttackData();
-
-            agent.Enemy.UseAttack(m_deserializedAttackData);
+            agent.Enemy.UseAttack(m_attackTimeline);
         }
 
         public override void _Update(Agent agent, float deltaTime)
@@ -28,12 +24,6 @@ namespace Stirge.AI
         public override void _Exit(Agent agent)
         {
             agent.Enemy.StopAttacking();
-        }
-
-        public void DeserializeAttackData()
-        {
-            m_deserializedAttackData = null;
-            m_deserializedAttackData = m_attackData.CreateAttackData();
         }
     }
 }

@@ -46,19 +46,6 @@ namespace Stirge.AI
                         break;
                     case nameof(AttackingBehaviour):
                         DrawPropertyField("m_attackData");
-                        if (GUI.Button(GetNewRect(), "DeserializeAttackData"))
-                        {
-                            var thisValue = m_property.managedReferenceValue;
-                            if (thisValue is AttackingBehaviour attackingBehaviour)
-                            {
-                                attackingBehaviour.DeserializeAttackData();
-                                Debug.Log("Successfully Deserialized AttackData!");
-                            }
-                            else
-                            {
-                                Debug.LogError("This Behaviour is null or not AttackingBehaviour, somehow.");
-                            }
-                        }
                         break;
                 }
             }
@@ -82,9 +69,9 @@ namespace Stirge.AI
                     case nameof(LookAtTargetBehaviour):
                     case nameof(MoveToTargetBehaviour):
                     case nameof(UpdateLookSpeedBehaviour):
+                    case nameof(AttackingBehaviour):
                         totalLines++;
                         break;
-                    case nameof(AttackingBehaviour):
                     case nameof(EnterPhysicsBehaviour):
                         totalLines += 2;
                         break;
