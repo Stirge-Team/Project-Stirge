@@ -5,7 +5,7 @@ using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
 // A behaviour that is attached to a playable
-public class ComboMixerPlayable : PlayableBehaviour
+public class ComboMixer : PlayableBehaviour
 {
     private readonly AttackInput m_comboInput;
     private readonly TimelineAsset m_comboTimeline;
@@ -13,17 +13,17 @@ public class ComboMixerPlayable : PlayableBehaviour
     private PlayerInputProcessing m_boundPIP;
     private ComboState m_comboState;
     
-    public ComboMixerPlayable() { }
-    public ComboMixerPlayable(AttackInput comboInput, TimelineAsset comboTimeline)
+    public ComboMixer() { }
+    public ComboMixer(AttackInput comboInput, TimelineAsset comboTimeline)
     {
         m_comboInput = comboInput;
         m_comboTimeline = comboTimeline;
         m_comboState = ComboState.Closed;
     }
 
-    public static ScriptPlayable<ComboMixerPlayable> Create(PlayableGraph graph, int inputCount, AttackInput comboInput, TimelineAsset comboTimeline)
+    public static ScriptPlayable<ComboMixer> Create(PlayableGraph graph, int inputCount, AttackInput comboInput, TimelineAsset comboTimeline)
     {
-        return ScriptPlayable<ComboMixerPlayable>.Create(graph, new(comboInput, comboTimeline), inputCount);
+        return ScriptPlayable<ComboMixer>.Create(graph, new(comboInput, comboTimeline), inputCount);
     }
 
     public override void OnPlayableDestroy(Playable playable)

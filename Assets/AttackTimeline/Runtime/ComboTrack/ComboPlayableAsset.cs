@@ -4,7 +4,7 @@ using UnityEngine.Playables;
 
 #if UNITY_EDITOR
 using System.ComponentModel;
-[DisplayName("Animation State Clip")]
+[DisplayName("Combo Clip")]
 #endif
 [Serializable]
 public class ComboPlayableAsset : PlayableAsset

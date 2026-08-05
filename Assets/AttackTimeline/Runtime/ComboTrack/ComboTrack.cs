@@ -11,11 +11,11 @@ public class ComboTrack : TrackAsset
     [SerializeField] private AttackInput m_comboInput;
     [SerializeField] private TimelineAsset m_comboTimeline;
 
-    private ComboMixerPlayable m_comboMixer;
+    private ComboMixer m_comboMixer;
 
     public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
     {
-        var mixer = ComboMixerPlayable.Create(graph, inputCount, m_comboInput, m_comboTimeline);
+        var mixer = ComboMixer.Create(graph, inputCount, m_comboInput, m_comboTimeline);
         m_comboMixer = mixer.GetBehaviour();
 
         return mixer;
