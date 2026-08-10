@@ -36,6 +36,9 @@ public class ComboMixer : PlayableBehaviour
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
+        if (!Application.isPlaying)
+            return;
+        
         // checks if clip is playing
         bool HasInput()
         {
