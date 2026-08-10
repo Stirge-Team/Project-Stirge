@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
@@ -14,40 +13,12 @@ using UnityEditor.Animations;
 [TrackBindingType(typeof(Animator))]
 public class AnimationStateTrack : TrackAsset
 {
-    protected override void OnCreateClip(TimelineClip clip)
-    {
-        /*
-        if (m_targetAnimationStateName != null && m_targetAnimationStateName != string.Empty)
-            clip.displayName = m_targetAnimationStateName;
-        */
-        clip.duration = 1d;
-        base.OnCreateClip(clip);
-    }
-
-    public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
-    {
-
-        // Create the animation mixer playable for blending clips
-        AnimationMixerPlayable animMixer = AnimationMixerPlayable.Create(graph, inputCount);
-
-        // If avatar mask is set, use a layer mixer
-        Playable outputPlayable = animMixer;
-
-        return outputPlayable;
-    }
-
-    /// <inheritdoc />
-    public override IEnumerable<PlayableBinding> outputs
-    {
-        get { yield return AnimationPlayableBinding.Create(name, this); }
-    }
-
+#if UNITY_EDITOR
     /// <summary>
     /// Gathers properties for preview
     /// </summary>
     public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
     {
-        #if UNITY_EDITOR
         //get the bound animator
         Animator boundAnimator = null;
         foreach (var track in timelineAsset.GetOutputTracks())
@@ -94,8 +65,6 @@ public class AnimationStateTrack : TrackAsset
                 driver.AddFromClip(ASPAclip.PreviewClip);
             }
         }
-        #endif
-
-        base.GatherProperties(director, driver);
     }
+#endif
 }

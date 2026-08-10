@@ -2,10 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using UnityEngine.Animations;
-using System.Collections.Generic;
-
-
 
 #if UNITY_EDITOR
 using System.ComponentModel;
@@ -51,28 +47,6 @@ public class AnimationStatePlayableAsset : PlayableAsset, ITimelineClipAsset
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
-        if (!Application.isPlaying)
-        {
-            if (m_previewClip != null && !m_previewClip.legacy)
-            {
-                // Create the animation clip playable
-                var clipPlayable = AnimationClipPlayable.Create(graph, m_previewClip);
-
-                //clipPlayable.SetApplyFootIK(false);
-
-                return clipPlayable;
-            }
-            return Playable.Null;
-        }
-
-        return AnimationStateBehaviour.Create(graph, m_targetAnimationStateName, m_exitParameterName);
-    }
-
-    /// <summary>
-    /// Outputs for this playable
-    /// </summary>
-    public override IEnumerable<PlayableBinding> outputs
-    {
-        get { yield return AnimationPlayableBinding.Create(name, this); }
+        return AnimationStateBehaviour.Create(graph, m_targetAnimationStateName, m_exitParameterName, PreviewClip);
     }
 }

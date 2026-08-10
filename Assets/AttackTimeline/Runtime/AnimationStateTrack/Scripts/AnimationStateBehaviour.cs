@@ -1,6 +1,14 @@
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Playables;
+using System.Linq;
+using UnityEngine.Timeline;
+
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.Timeline;
+#endif
 
 // A behaviour that is attached to a playable
 public class AnimationStateBehaviour : PlayableBehaviour
@@ -8,11 +16,12 @@ public class AnimationStateBehaviour : PlayableBehaviour
     private readonly int m_targetAnimationStateHash;
     private readonly int m_exitParameterID;
     private readonly bool m_hasExitTrigger;
+    private readonly AnimationClip m_previewClip;
 
     private Animator m_boundAnimator;
 
     public AnimationStateBehaviour() { }
-    public AnimationStateBehaviour(string targetAnimationStateName, string exitParameterName)
+    public AnimationStateBehaviour(string targetAnimationStateName, string exitParameterName, AnimationClip previewClip)
     {
         m_targetAnimationStateHash = Animator.StringToHash(targetAnimationStateName);
         if (exitParameterName != null && exitParameterName != string.Empty)
@@ -24,14 +33,34 @@ public class AnimationStateBehaviour : PlayableBehaviour
         {
             m_hasExitTrigger = false;
         }
+
+        m_previewClip = previewClip;
     }
 
-    public static ScriptPlayable<AnimationStateBehaviour> Create(PlayableGraph graph, string targetAnimationStateName, string exitParameterName)
+    public static ScriptPlayable<AnimationStateBehaviour> Create(PlayableGraph graph, string targetAnimationStateName, string exitParameterName, AnimationClip previewClip)
     {
-        return ScriptPlayable<AnimationStateBehaviour>.Create(graph, new AnimationStateBehaviour(targetAnimationStateName, exitParameterName));
+        return ScriptPlayable<AnimationStateBehaviour>.Create(graph, new AnimationStateBehaviour(targetAnimationStateName, exitParameterName, previewClip));
     }
+
+#if UNITY_EDITOR
+    public override void OnPlayableCreate(Playable playable)
+    {
+        if (!Application.isPlaying)
+        {
+            AnimationMode.StartAnimationMode();
+        }
+    }
+#endif
+
     public override void OnPlayableDestroy(Playable playable)
     {
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            AnimationMode.StopAnimationMode();
+            return;
+        }
+#endif
         if (m_boundAnimator == null)
             return;
 
@@ -48,6 +77,30 @@ public class AnimationStateBehaviour : PlayableBehaviour
         if (m_boundAnimator == null)
             return;
 
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            TimelineEditorWindow window = TimelineEditor.GetWindow();
+            // if the Timeline Editor Window is opened
+            if (window != null)
+            {
+                // get the current double time of the Timeline
+                double currentTime = window.playbackControls.GetCurrentTime();
+
+                TimelineClip activeClip = GetActiveAnimationStateClip(currentTime);
+
+                // If there is an active clip, preview the Animation of that clip
+                if (activeClip != null)
+                {
+                    float sampleTime = (float)(currentTime - activeClip.start);
+                    AnimationMode.BeginSampling();
+                    AnimationMode.SampleAnimationClip(m_boundAnimator.gameObject, m_previewClip, sampleTime);
+                    AnimationMode.EndSampling();
+                }
+            }
+            return;
+        }
+#endif
         if (m_boundAnimator.GetCurrentAnimatorStateInfo(0).fullPathHash != m_targetAnimationStateHash)
         {
             // Just in case, reset trigger before entering state
@@ -61,7 +114,7 @@ public class AnimationStateBehaviour : PlayableBehaviour
     public override void OnBehaviourPause(Playable playable, FrameData info)
     {
         // This block allows us to do logic specifically when a clip stops playing.
-        if (m_hasExitTrigger && Application.isPlaying)
+        if (m_boundAnimator != null && m_hasExitTrigger && Application.isPlaying)
         {
             float duration = (float)playable.GetDuration();
             float time = (float)playable.GetTime();
@@ -76,4 +129,31 @@ public class AnimationStateBehaviour : PlayableBehaviour
 
         base.OnBehaviourPause(playable, info);
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Assumes there is only one AnimationStateTrack in this TimelineAsset
+    /// </summary>
+    /// <param name="currentTime"></param>
+    /// <returns>The currently active TimelineClip of the currently active TimelineAsset's AnimationStateTrack, if such a track exists and there is a clip active at the time <paramref name="currentTime"/>.</returns>
+    private TimelineClip GetActiveAnimationStateClip(double currentTime)
+    {
+        foreach (TrackAsset track in TimelineEditor.masterAsset.GetRootTracks())
+        {
+            if (track is AnimationStateTrack animationStateTrack)
+            {
+                // NOTE: Potentially could use animationStateTrack to get the Preview each frame instead of saving it locally using the Constructor here
+                foreach (TimelineClip clip in animationStateTrack.GetClips())
+                {
+                    if (clip.start <= currentTime && clip.end >= currentTime)
+                    {
+                        return clip;
+                    }
+                }
+                return null;
+            }
+        }
+        return null;
+    }
+#endif
 }
