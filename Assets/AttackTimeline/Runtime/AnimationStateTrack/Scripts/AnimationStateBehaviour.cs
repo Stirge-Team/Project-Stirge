@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.Playables;
 
 // A behaviour that is attached to a playable
@@ -29,7 +30,6 @@ public class AnimationStateBehaviour : PlayableBehaviour
     {
         return ScriptPlayable<AnimationStateBehaviour>.Create(graph, new AnimationStateBehaviour(targetAnimationStateName, exitParameterName));
     }
-
     public override void OnPlayableDestroy(Playable playable)
     {
         if (m_boundAnimator == null)
