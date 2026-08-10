@@ -15,6 +15,8 @@ MonoBehaviour:
   m_behaviours:
   - rid: 6072857323652776007
   - rid: 6072857299943161970
+  - rid: 8303261352949710986
+  - rid: 8303261357187006533
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 77218164759b1b677b97c7e7e85125ee, type: 2}
     m_conditions:
@@ -48,7 +50,14 @@ MonoBehaviour:
     - rid: 6072857299943161970
       type: {class: CircleTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_speed: 0
+        m_speed: 1
     - rid: 6072857323652776007
       type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 
+    - rid: 8303261352949710986
+      type: {class: LookAtTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maxDegreesDelta: 1000
+    - rid: 8303261357187006533
+      type: {class: EnterAttackTokenRaffleBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data: 

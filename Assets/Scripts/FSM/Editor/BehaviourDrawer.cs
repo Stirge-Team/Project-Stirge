@@ -89,7 +89,6 @@ namespace Stirge.AI
                     case nameof(MoveAwayFromTargetBehaviour):
                         totalLines++;
                         break;
-                    case nameof(AttackingBehaviour):
                     case nameof(EnterPhysicsBehaviour):
                         totalLines += 2;
                         break;

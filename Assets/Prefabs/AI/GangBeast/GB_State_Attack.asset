@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
   - rid: 6072857323652776023
-  - rid: 6072857299943161946
   - rid: 6072857299943161945
+  - rid: 8303261352949710918
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 8b33a3940c637a3c6b4dc3eff048be00, type: 2}
     m_conditions:
@@ -28,11 +28,7 @@ MonoBehaviour:
     - rid: 6072857299943161945
       type: {class: AttackingBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
-        m_attackData: {fileID: 11400000, guid: 52c62a61d800d5d208a89c2609a863f6, type: 2}
-    - rid: 6072857299943161946
-      type: {class: UpdateLookSpeedBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
-      data:
-        m_newDegreesDelta: 360
+        m_attackData: {fileID: 11400000, guid: bc355594a6e4d03a1b4e845c2951c22f, type: 2}
     - rid: 6072857299943161948
       type: {class: AttackingCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
@@ -40,3 +36,8 @@ MonoBehaviour:
     - rid: 6072857323652776023
       type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data: 
+    - rid: 8303261352949710918
+      type: {class: EnterPhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_newMode: 1
+        m_returnToOldModeOnExit: 1

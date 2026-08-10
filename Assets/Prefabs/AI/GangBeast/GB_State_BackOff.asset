@@ -15,20 +15,16 @@ MonoBehaviour:
   m_behaviours:
   - rid: 6072857323652776008
   - rid: 6072857323652776005
+  - rid: 8303261352949710964
   m_transitions:
-  - m_targetState: {fileID: 11400000, guid: 101162ef205bfd59681a37ed0706be26, type: 2}
+  - m_targetState: {fileID: 11400000, guid: bb07202ab9e66e4788a8723f7f792160, type: 2}
     m_conditions:
-    - rid: 6072857299943161967
-    - rid: 6072857323652776019
-  m_timedTransitionState: {fileID: 0}
-  m_timedTransitionDelay: 0
+    - rid: 8303261352949710992
+  m_timedTransitionState: {fileID: 11400000, guid: bb07202ab9e66e4788a8723f7f792160, type: 2}
+  m_timedTransitionDelay: 1
   references:
     version: 2
     RefIds:
-    - rid: 6072857299943161967
-      type: {class: TargetInAttackRadiusCondition, ns: Stirge.AI, asm: Assembly-CSharp}
-      data:
-        m_invertValue: 1
     - rid: 6072857323652776005
       type: {class: MoveAwayFromTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
@@ -36,7 +32,13 @@ MonoBehaviour:
     - rid: 6072857323652776008
       type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data: 
-    - rid: 6072857323652776019
-      type: {class: HasTargetCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+    - rid: 8303261352949710964
+      type: {class: PhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maintainPriorMode: 0
+        m_enterMode: 0
+        m_exitMode: 0
+    - rid: 8303261352949710992
+      type: {class: ArrivedAtDestinationCondition, ns: Stirge.AI, asm: Assembly-CSharp}
       data:
         m_invertValue: 0

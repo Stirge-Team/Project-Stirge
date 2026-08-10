@@ -42,14 +42,6 @@ namespace Stirge.Enemy
                 return;
             }
 
-            if (TargetTransform != null) //if there is a target
-            {
-                if (AttackTokenDispenser.instance != null)
-                    AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
-                else
-                    m_hasAttackToken = true;
-            }
-
             m_agent.Update(deltaTime);
         }
 
