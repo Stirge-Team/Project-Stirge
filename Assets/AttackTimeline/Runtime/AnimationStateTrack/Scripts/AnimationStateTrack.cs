@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
+
+#if UNITY_EDITOR
+using UnityEditor.Animations;
+#endif
 
 [Serializable]
 [TrackClipType(typeof(AnimationStatePlayableAsset))]
@@ -44,6 +47,7 @@ public class AnimationStateTrack : TrackAsset
     /// </summary>
     public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
     {
+        #if UNITY_EDITOR
         //get the bound animator
         Animator boundAnimator = null;
         foreach (var track in timelineAsset.GetOutputTracks())
@@ -90,5 +94,8 @@ public class AnimationStateTrack : TrackAsset
                 driver.AddFromClip(ASPAclip.PreviewClip);
             }
         }
+        #endif
+
+        base.GatherProperties(director, driver);
     }
 }
