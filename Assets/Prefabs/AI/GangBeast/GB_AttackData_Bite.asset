@@ -23,7 +23,7 @@ MonoBehaviour:
       m_range: {x: 0, y: 0}
       m_isRandom: 0
     m_z:
-      m_value: 3
+      m_value: 2
       m_range: {x: 0, y: 0}
       m_isRandom: 0
   m_arg1:

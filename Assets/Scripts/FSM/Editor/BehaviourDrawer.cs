@@ -62,6 +62,10 @@ namespace Stirge.AI
                             }
                         }
                         break;
+                    case nameof(AvoidColliderBehaviour):
+                        DrawPropertyField("m_clearance");
+                        DrawPropertyField("m_targetLayers");
+                        break;
                 }
             }
 
@@ -90,6 +94,7 @@ namespace Stirge.AI
                         totalLines++;
                         break;
                     case nameof(EnterPhysicsBehaviour):
+                    case nameof(AvoidColliderBehaviour):
                         totalLines += 2;
                         break;
                     case nameof(PhysicsBehaviour):

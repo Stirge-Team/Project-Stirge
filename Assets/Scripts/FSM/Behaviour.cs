@@ -23,6 +23,7 @@ namespace Stirge.AI
             typeof(CircleTargetBehaviour),
             typeof(MoveAwayFromTargetBehaviour),
             typeof(EnterAttackTokenRaffleBehaviour),
+            typeof(AvoidColliderBehaviour),
         };
     }
 }
