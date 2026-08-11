@@ -31,12 +31,23 @@ namespace Stirge.Combat
             if(count < 1) count = m_targetSpawnCount;
 
             for (int i = 0; i < count; i++)
-                SpawnEnemy();
+            {
+                float angle = 2*Mathf.PI * ((i+1)/count);
+                Vector3 spawnPosition = (m_spawnLocation != null ? m_spawnLocation.position : transform.position) + new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * m_enemyPrefab.Agent.NavMeshAgent.radius;
+                SpawnEnemy(spawnPosition);
+            }
         }
 
         private void SpawnEnemy()
         {
             Enemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation != null ? m_spawnLocation.position : transform.position, Quaternion.identity); //spawn the enemy either at the spawn location or here
+            spawnedEnemy.spawner = this;
+            spawnedEnemy.name = m_enemyPrefab.name;
+            m_spawnedEnemies.Add(spawnedEnemy);
+        }
+        private void SpawnEnemy(Vector3 spawnPosition)
+        {
+            Enemy spawnedEnemy = Instantiate(m_enemyPrefab, spawnPosition, Quaternion.identity);
             spawnedEnemy.spawner = this;
             spawnedEnemy.name = m_enemyPrefab.name;
             m_spawnedEnemies.Add(spawnedEnemy);

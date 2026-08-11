@@ -11,6 +11,7 @@ namespace Stirge.Enemy
     {
         [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
+        public Agent Agent => m_agent;
 
         [Header("Combat States")]
         [SerializeField] private State m_stunState;
