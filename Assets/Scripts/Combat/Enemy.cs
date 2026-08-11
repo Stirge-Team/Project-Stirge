@@ -1,17 +1,17 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace Stirge.Enemy
 {
-    using System.Collections;
     using AI;
     using Combat;
-    using Stirge.Combat.Attacks;
-    using UnityEngine.Timeline;
 
     public class Enemy : CombatEntity
     {
         [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
+        [SerializeField] private EnemyMotor m_motor;
 
         [Header("Combat States")]
         [SerializeField] private State m_stunState;
@@ -22,6 +22,9 @@ namespace Stirge.Enemy
         [HideInInspector] public EnemySpawner spawner = null;
 
         protected bool m_hasAttackToken = false;
+
+        // properties
+        public EnemyMotor Motor => m_motor;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -53,10 +56,6 @@ namespace Stirge.Enemy
             m_agent.Update(deltaTime);
         }
 
-        private void FixedUpdate()
-        {
-            m_agent.FixedUpdate();
-        }
         protected virtual void OnEnable()
         {
             m_agent.OnEnable();
@@ -98,61 +97,29 @@ namespace Stirge.Enemy
         #endregion
 
         #region Transformation
-        public override void ApplyRootMotion()
+        public override Vector3 GetPosition()
         {
-            m_agent.ApplyRootMotion();
+            return m_motor.transform.position;
         }
-
-        protected override Vector3 GetPosition()
+        public override void SetPosition(Vector3 newPosition)
         {
-            return m_agent.Transform.position;
+            m_motor.SetPosition(newPosition);
         }
-        protected override void SetPosition(Vector3 newPosition)
+        public override Quaternion GetRotation()
         {
-            m_agent.SetPosition(newPosition);
+            return m_motor.transform.rotation;
         }
-        protected override Quaternion GetRotation()
+        public override void SetRotation(Quaternion newRotation)
         {
-            return m_agent.Transform.rotation;
+            m_motor.SetRotation(newRotation);
         }
-        protected override void SetRotation(Quaternion newRotation)
+        public override void SetRotation(Vector3 eulerRotation)
         {
-            m_agent.SetRotation(newRotation);
-        }
-        protected override void SetRotation(Vector3 eulerRotation)
-        {
-            m_agent.SetRotation(Quaternion.Euler(eulerRotation));
+            m_motor.SetRotation(Quaternion.Euler(eulerRotation));
         }
         public override Vector3 GetForward()
         {
-            return m_agent.Transform.forward;
-        }
-        #endregion
-
-        #region Navigation
-        protected override void BeginGoToPosition(Vector3 newPosition)
-        {
-            m_agent.TargetPosition = newPosition;
-            m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
-            m_agent.CalculatePath();
-        }
-        protected override void StopGoToPosition()
-        {
-            m_agent.TargetPosition = null;
-            m_agent.ClearPath();
-        }
-
-        protected override float GetMovementSpeed()
-        {
-            return m_agent.NavMeshAgent.speed;
-        }
-        protected override void SetMovementSpeed(float speed)
-        {
-            m_agent.NavMeshAgent.speed = speed;
-        }
-        protected override void ResetMovementSpeed()
-        {
-            m_agent.SetDefaultNavSpeed();
+            return m_motor.transform.forward;
         }
         #endregion
 
@@ -161,9 +128,13 @@ namespace Stirge.Enemy
         {
             return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
         }
-        public override void ApplyPhysicsToTransform()
+        public override void MovePosition(Vector3 newPosition)
         {
-            m_agent.ApplyPhysicsToTransform();
+            m_motor.SetPosition(newPosition);
+        }
+        public override void SetVelocityForAttack(Vector3 newVelocity)
+        {
+            m_motor.SetAttackVelocity(newVelocity);
         }
         #endregion
 

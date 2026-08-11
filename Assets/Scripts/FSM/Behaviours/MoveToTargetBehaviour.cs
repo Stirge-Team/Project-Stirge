@@ -4,16 +4,9 @@ namespace Stirge.AI
 {
     [System.Serializable]
     public class MoveToTargetBehaviour : Behaviour
-    {
-        [Tooltip("If less than or equal to 0, will use the default speed set on the Nav Mesh Agent on the prefab.")]
-        [SerializeField] private float m_speed;
-        
+    {       
         public override void _Enter(Agent agent)
         {
-            if (m_speed > 0)
-            {
-                agent.NavMeshAgent.speed = m_speed;
-            }
             base._Enter(agent);
         }
 
@@ -28,11 +21,6 @@ namespace Stirge.AI
         public override void _Exit(Agent agent)
         {
             agent.ClearPath();
-
-            // reset speed if it was changed
-            if (m_speed > 0)
-                agent.SetDefaultNavSpeed();
-
             base._Exit(agent);
         }
     }

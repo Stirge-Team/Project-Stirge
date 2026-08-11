@@ -55,30 +55,27 @@ namespace Stirge.Combat
         #endregion
 
         #region Transformation
-        public virtual void ApplyRootMotion() { throw new System.NotImplementedException(); }
-
-        protected virtual Vector3 GetPosition() { throw new System.NotImplementedException(); }
-        protected virtual void SetPosition(Vector3 position) { throw new System.NotImplementedException(); }
-        protected virtual Quaternion GetRotation() { throw new System.NotImplementedException(); }
-        protected virtual void SetRotation(Quaternion rotation) { throw new System.NotImplementedException(); }
-        protected virtual void SetRotation(Vector3 eulerRotation) { throw new System.NotImplementedException(); }
+        public virtual Vector3 GetPosition() { throw new System.NotImplementedException(); }
+        public virtual void SetPosition(Vector3 position) { throw new System.NotImplementedException(); }
+        public virtual Quaternion GetRotation() { throw new System.NotImplementedException(); }
+        public virtual void SetRotation(Quaternion rotation) { throw new System.NotImplementedException(); }
+        public virtual void SetRotation(Vector3 eulerRotation) { throw new System.NotImplementedException(); }
         public virtual Vector3 GetForward() { throw new System.NotImplementedException(); }
-        #endregion
-
-        #region Navigation
-        public void SetTargetTransform(Transform target) => m_targetTransform = target;
-
-        protected virtual void BeginGoToPosition(Vector3 newPosition) { throw new System.NotImplementedException(); }
-        protected virtual void StopGoToPosition() { throw new System.NotImplementedException(); }
-
-        protected virtual float GetMovementSpeed() { throw new System.NotImplementedException(); }
-        protected virtual void SetMovementSpeed(float speed) { throw new System.NotImplementedException(); }
-        protected virtual void ResetMovementSpeed() { throw new System.NotImplementedException(); }
         #endregion
 
         #region Physics
         public virtual bool IsGrounded() { throw new System.NotImplementedException(); }
-        public virtual void ApplyPhysicsToTransform() { throw new System.NotImplementedException(); }
+        /// <summary>
+        /// Move to position with respect to Physics.
+        /// </summary>
+        /// <param name="newPosition"></param>
+        public virtual void MovePosition(Vector3 newPosition) { throw new System.NotImplementedException(); }
+        /// <summary>
+        /// This is specifically used by MoveBehaviour in the Timeline MoveTrack to be able to move Combat Entities during attacks.
+        /// </summary>
+        /// <param name="newVelocity"></param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        public virtual void SetVelocityForAttack(Vector3 newVelocity) { throw new System.NotImplementedException(); }
         #endregion
 
         #region Death State
@@ -210,8 +207,8 @@ namespace Stirge.Combat
             Vector3 targetPosition = m_targetTransform.position;
 
             // running
-            BeginGoToPosition(targetPosition);
-            SetMovementSpeed(node.Speed);
+            //BeginGoToPosition(targetPosition);
+            //SetMovementSpeed(node.Speed);
             bool withinRange = false;
             while (!withinRange)
             {
@@ -219,7 +216,7 @@ namespace Stirge.Combat
                 if (!node.UseInitialPosition)
                 {
                     targetPosition = m_targetTransform.position;
-                    BeginGoToPosition(targetPosition);
+                    //BeginGoToPosition(targetPosition);
                 }
 
                 // provide some leeway for vertical difference
@@ -310,9 +307,7 @@ namespace Stirge.Combat
             while (!arrived)
             {
                 float t = Mathf.Clamp01(elapsedTime / time);
-                m_rb.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
-
-                ApplyPhysicsToTransform();
+                MovePosition(Vector3.Lerp(startPosition, endPosition, t));
 
                 Vector3 currentPos = m_rb.position;
                 Vector3 targetPos = endPosition;
@@ -356,9 +351,7 @@ namespace Stirge.Combat
             {
                 // divide by time to get normalised 0 - 1 t value as Lerp clamps t to 0 - 1
                 float t = Mathf.Clamp(node.Curve.Evaluate(elapsedTime), 0, time) / time;
-                m_rb.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
-                
-                ApplyPhysicsToTransform();
+                MovePosition(Vector3.Lerp(startPosition, endPosition, t));
 
                 Vector3 currentPos = m_rb.position;
                 Vector3 targetPos = endPosition;
@@ -398,9 +391,7 @@ namespace Stirge.Combat
             while (!arrived)
             {
                 Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, speed * Time.fixedDeltaTime);
-                m_rb.MovePosition(target);
-
-                ApplyPhysicsToTransform();
+                MovePosition(target);
 
                 Vector3 currentPos = m_rb.position;
                 Vector3 targetPos = endPosition;
@@ -449,9 +440,7 @@ namespace Stirge.Combat
                 }
 
                 Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, currentSpeed * Time.fixedDeltaTime);
-                m_rb.MovePosition(target);
-
-                ApplyPhysicsToTransform();
+                MovePosition(target);
 
                 Vector3 currentPos = m_rb.position;
                 Vector3 targetPos = endPosition;

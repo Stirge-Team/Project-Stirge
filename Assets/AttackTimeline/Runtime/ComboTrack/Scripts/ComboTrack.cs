@@ -26,6 +26,5 @@ public class ComboTrack : TrackAsset
         if (m_comboTimeline != null)
             clip.displayName = m_comboTimeline.name;
         clip.duration = 1.5d;
-        base.OnCreateClip(clip);
     }
 }

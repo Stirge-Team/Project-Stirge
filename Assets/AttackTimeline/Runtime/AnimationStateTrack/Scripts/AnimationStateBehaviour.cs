@@ -126,8 +126,6 @@ public class AnimationStateBehaviour : PlayableBehaviour
                 m_boundAnimator.SetTrigger(m_exitParameterID);
             }
         }
-
-        base.OnBehaviourPause(playable, info);
     }
 
 #if UNITY_EDITOR

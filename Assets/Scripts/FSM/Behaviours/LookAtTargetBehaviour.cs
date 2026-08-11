@@ -7,25 +7,23 @@ namespace Stirge.AI
     {
         [SerializeField, Min(0)] private float m_maxDegreesDelta;
 
+        private bool m_prevHeadingBehaviour;
+
         public override void _Enter(Agent agent)
         {
+            m_prevHeadingBehaviour = agent.Enemy.Motor.headingIsTargetPosition;
+            agent.Enemy.Motor.ChangeHeadingBehaviour(true);
             base._Enter(agent);
         }
 
         public override void _Update(Agent agent, float deltaTime)
         {
-            if (agent.TargetPosition != null)
-            {
-                agent.RotateTowards((Vector3)agent.TargetPosition, m_maxDegreesDelta * deltaTime);
-            }
-            else if (agent.TargetTransform != null)
-            {
-                agent.RotateTowards(agent.TargetTransform.position, m_maxDegreesDelta * deltaTime);
-            }
+            
         }
 
         public override void _Exit(Agent agent)
         {
+            agent.Enemy.Motor.ChangeHeadingBehaviour(m_prevHeadingBehaviour);
             base._Exit(agent);
         }
     }

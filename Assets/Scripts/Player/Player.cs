@@ -79,23 +79,23 @@ namespace Stirge.Player
         #endregion
 
         #region Transformation
-        protected override Vector3 GetPosition()
+        public override Vector3 GetPosition()
         {
             return transform.position;
         }
-        protected override Quaternion GetRotation()
+        public override Quaternion GetRotation()
         {
             return transform.rotation;
         }
-        protected Vector3 GetEulerRotation()
+        public Vector3 GetEulerRotation()
         {
             return transform.rotation.eulerAngles;
         }
-        protected override void SetPosition(Vector3 position)
+        public override void SetPosition(Vector3 position)
         {
             transform.position = position;
         }
-        protected override void SetRotation(Quaternion rotation)
+        public override void SetRotation(Quaternion rotation)
         {
             transform.rotation = rotation;
         }
@@ -108,29 +108,19 @@ namespace Stirge.Player
             return transform.forward;
         }
 
-        protected override void BeginGoToPosition(Vector3 newPosition)
+        public void BeginGoToPosition(Vector3 newPosition)
         {
             Vector3 direction = (newPosition - transform.position).normalized;
             m_movement.Motor.ApplyForce(direction * m_movement.CurrentStateSettings._horizontalAcceleration);
         }
-        protected override void StopGoToPosition()
+        public void StopGoToPosition()
         {
             m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
         }
 
-        protected override float GetMovementSpeed()
+        public float GetMovementSpeed()
         {
             return m_movement.Motor._horizontalSpeed;
-        }
-
-        public override void ApplyPhysicsToTransform()
-        {
-            //nothing has to be done here - function name unclear?
-        }
-
-        public override void ApplyRootMotion()
-        {
-            //nothing needs to be done here also?
         }
         #endregion
     }
