@@ -5,6 +5,7 @@ namespace Stirge.Enemy
 {
     public enum MotorMovementState
     {
+        Force,
         Velocity,
         Kinematic,
         Navigation
@@ -76,7 +77,7 @@ namespace Stirge.Enemy
             m_nav.angularSpeed = m_angularSpeed;
             
             if (Application.isPlaying)
-                SetMovementState(MotorMovementState.Velocity);
+                SetMovementState(MotorMovementState.Force);
         }
 
         private void Update()
@@ -89,20 +90,21 @@ namespace Stirge.Enemy
 
         private void FixedUpdate()
         {
+            // only do cast once per physics frame
+            m_isGrounded = PerformIsGroundedCheck();
+
             switch (m_movementState)
             {
                 case MotorMovementState.Velocity:
                     UpdateVelocity();
                     UpdateHeading();
                     break;
-                case MotorMovementState.Kinematic:
-                    break;
                 case MotorMovementState.Navigation:
                     UpdateNavigation();
                     break;
+                default:
+                    break;
             }
-
-            Debug.Log($"Attack Velocity: {m_attackVelocity}. Rigidbody Linear Velocity: {m_rb.linearVelocity}.");
         }
         #endregion
 
@@ -135,12 +137,6 @@ namespace Stirge.Enemy
         #endregion
 
         #region Physics
-        public void SetAttackVelocity(Vector3 newAttackVelocity)
-        {
-            SetMovementState(MotorMovementState.Velocity);
-            m_attackVelocity = newAttackVelocity;
-        }
-
         public bool PerformIsGroundedCheck()
         {
             if (!m_collider)
@@ -193,20 +189,12 @@ namespace Stirge.Enemy
 
         private void UpdateVelocity()
         {
-            // only do cast once per physics frame
-            m_isGrounded = PerformIsGroundedCheck();
-
-            // if has attack velocity, resolve
-            if (m_attackVelocity != Vector3.zero)
-            {
-                m_rb.linearVelocity = m_attackVelocity;
-                return;
-            }
-
             if (!m_isGrounded)
             {
                 m_currentVelocity += Physics.gravity * Time.fixedDeltaTime;
             }
+
+            m_currentVelocity = Vector3.ClampMagnitude(m_currentVelocity, m_topSpeed);
 
             m_rb.linearVelocity = m_currentVelocity;
         }
@@ -245,8 +233,8 @@ namespace Stirge.Enemy
 
         public void AddForce(Vector3 force)
         {
-            SetMovementState(MotorMovementState.Velocity);
-            m_currentVelocity += force / m_rb.mass;
+            SetMovementState(MotorMovementState.Force);
+            m_rb.AddForce(force);
         }
         public void AddVelocity(Vector3 velocity)
         {
@@ -306,7 +294,8 @@ namespace Stirge.Enemy
         }
         public void ClearDestination()
         {
-            m_nav.path = null;
+            if (m_nav.hasPath)
+                m_nav.isStopped = true;
         }
 
         private void SyncNavMeshAgentPosition()
@@ -358,6 +347,18 @@ namespace Stirge.Enemy
                         break;
                 }
             }
+        }
+
+        public void OnAttackStart()
+        {
+            SetMovementState(MotorMovementState.Force);
+        }
+        public void OnAttackEnd()
+        {
+            if (m_isGrounded)
+                SetMovementState(MotorMovementState.Navigation);
+            else
+                SetMovementState(MotorMovementState.Velocity);
         }
         #endregion
     }

@@ -70,12 +70,6 @@ namespace Stirge.Combat
         /// </summary>
         /// <param name="newPosition"></param>
         public virtual void MovePosition(Vector3 newPosition) { throw new System.NotImplementedException(); }
-        /// <summary>
-        /// This is specifically used by MoveBehaviour in the Timeline MoveTrack to be able to move Combat Entities during attacks.
-        /// </summary>
-        /// <param name="newVelocity"></param>
-        /// <exception cref="System.NotImplementedException"></exception>
-        public virtual void SetVelocityForAttack(Vector3 newVelocity) { throw new System.NotImplementedException(); }
         #endregion
 
         #region Death State

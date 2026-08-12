@@ -11,13 +11,13 @@ using System.ComponentModel;
 [Serializable]
 public class MovePlayableAsset : PlayableAsset, ITimelineClipAsset
 {
-    [SerializeField] private AnimationCurve3D m_velocity;
+    [SerializeField] private AnimationCurve3D m_translation;
     [SerializeField] private bool m_isLocal = true;
     
     public ClipCaps clipCaps => ClipCaps.None;
 
     public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
     {
-        return MoveBehaviour.Create(graph, m_velocity, m_isLocal);
+        return MoveBehaviour.Create(graph, m_translation, m_isLocal);
     }
 }

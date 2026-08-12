@@ -101,7 +101,7 @@ public class AnimationStateBehaviour : PlayableBehaviour
             return;
         }
 #endif
-        if (m_boundAnimator.GetCurrentAnimatorStateInfo(0).fullPathHash != m_targetAnimationStateHash)
+        if (!m_boundAnimator.IsInTransition(0) && m_boundAnimator.GetCurrentAnimatorStateInfo(0).fullPathHash != m_targetAnimationStateHash)
         {
             // Just in case, reset trigger before entering state
             // If it is Set, then the Animation State will immediately exit
@@ -130,7 +130,7 @@ public class AnimationStateBehaviour : PlayableBehaviour
 
 #if UNITY_EDITOR
     /// <summary>
-    /// Assumes there is only one AnimationStateTrack in this TimelineAsset
+    /// Assumes there is only one AnimationStateTrack in this TimelineAsset and that you cannot mix clips.
     /// </summary>
     /// <param name="currentTime"></param>
     /// <returns>The currently active TimelineClip of the currently active TimelineAsset's AnimationStateTrack, if such a track exists and there is a clip active at the time <paramref name="currentTime"/>.</returns>

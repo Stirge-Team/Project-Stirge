@@ -23,7 +23,6 @@ namespace Stirge.AI
         [SerializeField] private Enemy m_enemy;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Transform m_transform;
-        [SerializeField] private Transform m_modelTransform;
 
         public Enemy Enemy => m_enemy;
         public Transform Transform => m_transform;
@@ -101,11 +100,11 @@ namespace Stirge.AI
                 {
                     case PhysicsMode.Physics:
                         ClearPath();
-                        m_enemy.Motor.SetMovementState(MotorMovementState.Velocity);
+                        //m_enemy.Motor.SetMovementState(MotorMovementState.Velocity);
                         break;
                     case PhysicsMode.Kinematic:
                         ClearPath();
-                        m_enemy.Motor.SetMovementState(MotorMovementState.Navigation);
+                        //m_enemy.Motor.SetMovementState(MotorMovementState.Navigation);
                         break;
                     default:
                         ClearPath();

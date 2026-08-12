@@ -132,10 +132,6 @@ namespace Stirge.Enemy
         {
             m_motor.SetPosition(newPosition);
         }
-        public override void SetVelocityForAttack(Vector3 newVelocity)
-        {
-            m_motor.SetAttackVelocity(newVelocity);
-        }
         #endregion
 
         #region DeathState
