@@ -1,12 +1,22 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class HitboxData
+namespace Stirge.AttackTimeline
 {
-    [SerializeField] private Vector3 m_position;
-    [SerializeField] private Vector3 m_scale;
+    using Combat;
 
-    [SerializeField] private int m_startFrame;
-    [SerializeField] private int m_endFrame;
+    [Serializable]
+    public class HitboxData
+    {
+        [SerializeField] private float m_damage;
+        [SerializeField] private LayerMask m_mask;
+        [SerializeField] private OnHitEffect m_onHitEffect;
+
+        public LayerMask Mask => m_mask;
+        public OnHitEffect OnHitEffect => m_onHitEffect;
+    }
+
+
 }
+
+
