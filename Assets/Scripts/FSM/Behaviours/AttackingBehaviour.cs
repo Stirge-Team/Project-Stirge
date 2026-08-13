@@ -13,7 +13,7 @@ namespace Stirge.AI
 
         public override void _Enter(Agent agent)
         {
-            agent.Enemy.UseAttack(m_attackTimeline);
+            agent.Enemy.UseAction(m_attackTimeline);
         }
 
         public override void _Update(Agent agent, float deltaTime)
@@ -23,7 +23,7 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
-            agent.Enemy.StopAttacking();
+            agent.Enemy.StopPerformingAction();
         }
     }
 }

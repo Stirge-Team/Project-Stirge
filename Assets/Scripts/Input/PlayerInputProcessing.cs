@@ -128,26 +128,26 @@ namespace Stirge.Input
             // As combo attacks can interrupt other actions
             if (m_comboBindings.TryGetValue(input, out TimelineAsset attackTimeline))
             {
-                m_player.UseAttack(attackTimeline);
+                m_player.UseAction(attackTimeline);
                 ClearComboBinding();
                 return true;
             }
             // check if the player is in a state where they are able to attack
-            if (!m_player.IsAttacking)
+            if (!m_player.IsPerformingAction)
             {
                 // grounded bindings
                 if (m_player.IsGrounded())
                 {
                     if (m_groundedBindings.TryGetValue(input, out attackTimeline))
                     {
-                        m_player.UseAttack(attackTimeline);
+                        m_player.UseAction(attackTimeline);
                         return true;
                     }
                 }
                 // air bindings
                 else if (m_airBindings.TryGetValue(input, out attackTimeline))
                 {
-                    m_player.UseAttack(attackTimeline);
+                    m_player.UseAction(attackTimeline);
                     return true;
                 }
             }

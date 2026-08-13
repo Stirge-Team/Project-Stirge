@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Stirge.Combat
+namespace Stirge.Combat.OldStatus
 {
     using Tools;
 

@@ -26,7 +26,7 @@ namespace Stirge.Player
 
         protected override void UpdateThis(float deltaTime)
         {
-            if (m_isAttacking)
+            if (m_isPerformingAction)
             {
                 m_movement.enabled = false;
             }
@@ -59,7 +59,7 @@ namespace Stirge.Player
         public override void EnterStun(float stunLength)
         {
             m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.Off, stunLength);
-            m_anim.Play("hitstun");
+            //m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -6,40 +5,42 @@ using UnityEngine.Timeline;
 
 namespace Stirge.Combat
 {
-    using Attacks;
+    using UtilityAI;
+    using System;
 
+    public enum ModifierType
+    {
+        Additive,
+        Multiplicative
+    }
+    
     public abstract class CombatEntity : MonoBehaviour
     {
         private static bool s_debug = true;
 
-        [Header("Components")]
-        [SerializeField] protected Rigidbody m_rb;
-        [SerializeField] protected Animator m_anim;
-
-        [Header("Combat Properties")]
+        [Header("Combat Components")]
         [SerializeField] protected EntityHealth m_health;
+        // Director for playing Attack Timelines
+        [SerializeField] private PlayableDirector m_director;
+
         public EntityHealth Health => m_health;
 
-        protected Transform m_targetTransform;
-        public Transform TargetTransform => m_targetTransform;
-
-        protected bool m_isAttacking;
-        public bool IsAttacking => m_isAttacking;
-
-        [Header("Status")]
-        [SerializeReference] protected List<TimedStatus> m_inflictedStatuses = new();
-        
-        protected bool m_isStunned;
+        protected bool m_isPerformingAction;
+        public bool IsPerformingAction => m_isPerformingAction;
 
         [Header("Ground Check Properties")]
         [SerializeField, Min(0)] protected float m_groundedCheckDistance;
         [SerializeField] protected LayerMask m_groundedCheckMask;
 
+        // status
+        protected List<Status> m_inflictedStatuses = new();
+        protected bool m_isStunned;
+
         #region UnityEvents
         private void Awake()
         {
             AwakeThis();
-            m_director.stopped += OnAttackEnd;
+            m_director.stopped += OnActionEnd;
         }
 
         private void Update()
@@ -87,51 +88,31 @@ namespace Stirge.Combat
         #endregion
 
         #region Statuses
-        public void InflictStatus(Status status, CombatEntity attackingEntity)
+        public virtual void InflictStatus(Status status, CombatEntity user)
         {
             // inflict the Status
-            if (attackingEntity == null)
-                status.OnInflict(this);
-            else
-                status.OnInflict(this, attackingEntity);   
-        }
-        public void InflictTimedStatus(TimedStatus status, CombatEntity attackingEntity)
-        {
-            // add to list to be updated
-            switch (status.GetType().Name)
-            {
-                case nameof(Stun):
-                    // only allow one Stun at a time
-                    m_inflictedStatuses.RemoveAll(status => status.GetType() == typeof(Stun));
-
-                    // add and inflict
-                    Stun newStun = new(status as Stun);
-                    if (attackingEntity == null)
-                        newStun.OnInflict(this);
-                    else
-                        newStun.OnInflict(this, attackingEntity);
-
-                    m_inflictedStatuses.Add(newStun);
-                    break;
-            }
+            status.Apply(user, this);
         }
 
         private void UpdateStatuses(float deltaTime)
         {
-            List<TimedStatus> toRemove = new();
-            foreach (TimedStatus status in m_inflictedStatuses)
+            List<int> toRemove = new();
+            int index = 0;
+            foreach (Status status in m_inflictedStatuses)
             {
-                status.Update(this, deltaTime);
-                if (status.IsCleared)
+                if (status.Resolve(this))
                 {
-                    status.OnClear(this);
-                    toRemove.Add(status);
-                    continue;
+                    status.Clear(this);
+                    toRemove.Add(index);
                 }
+                index++;
             }
 
-            if (toRemove.Count > 0)
-                m_inflictedStatuses.RemoveAll(status => toRemove.Contains(status));
+            // remove backwards to avoid indicies from changing before removal
+            for (int count = toRemove.Count, i = count - 1; i >= 0; i--)
+            {
+                m_inflictedStatuses.RemoveAt(toRemove[i]);
+            }
         }
 
         public bool GetIsStunned()
@@ -146,52 +127,75 @@ namespace Stirge.Combat
                 EnterStun(stunLength);
         }
 
-        public abstract void EnterStun(float stunLength);
-        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded);
-        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded);
+        public virtual void EnterStun(float stunLength) { throw new NotImplementedException(); }
+        public virtual void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
+        public virtual void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
         #endregion
 
-        #region Attacks
-        [Header("Attacks")]
-        // Director for playing Attack Timelines
-        [SerializeField] private PlayableDirector m_director;
-
-        public virtual void UseAttack(TimelineAsset attackTimeline)
+        #region Actions
+        public virtual void UseAction(TimelineAsset attackTimeline)
         {
-            StopAttacking();
+            StopPerformingAction();
             m_director.Play(attackTimeline);
-            m_isAttacking = true;
+            m_isPerformingAction = true;
         }
 
-        public void OnAttackEnd(PlayableDirector director)
+        public void OnActionEnd(PlayableDirector director)
         {
-            m_isAttacking = false;
+            m_isPerformingAction = false;
         }
 
-        public void StopAttacking()
+        public void StopPerformingAction()
         {
-            if (m_isAttacking)
+            if (m_isPerformingAction)
             {
                 m_director.Stop();
             }
 
             // Set attacking to false
-            m_isAttacking = false;
+            m_isPerformingAction = false;
+        }
+        #endregion
+
+        #region Combat
+        private float m_baseDamage;
+        private ModifierType m_damageModifierType;
+        private float m_damageModifier;
+
+        public float actualDamage
+        {
+            get
+            {
+                return m_damageModifierType switch
+                {
+                    ModifierType.Additive => m_baseDamage + m_damageModifier,
+                    ModifierType.Multiplicative => m_baseDamage * m_damageModifier,
+                    _ => m_baseDamage,
+                };
+            }
         }
 
+        public void ModifyDamage(ModifierType type, float modifier)
+        {
+            m_damageModifierType = type;
+            m_damageModifier = modifier;
+        }
+        #endregion
+
+        /* Attack Node Logic (OLD)
         #region NodeLogic
         private IEnumerator PlayAnimation(AnimationNode node)
         {
             // If there are issues with animator speed, check this first
             // init
-            m_anim.speed = node.Speed;
-            m_anim.Play(node.AnimationStateName);
+            //m_anim.speed = node.Speed;
+            //m_anim.Play(node.AnimationStateName);
 
             // running
             yield return new WaitForSeconds(node.Time);
 
             // exit
-            m_anim.speed = 1;
+            //m_anim.speed = 1;
 
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
         }
@@ -303,7 +307,7 @@ namespace Stirge.Combat
                 float t = Mathf.Clamp01(elapsedTime / time);
                 MovePosition(Vector3.Lerp(startPosition, endPosition, t));
 
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -347,7 +351,7 @@ namespace Stirge.Combat
                 float t = Mathf.Clamp(node.Curve.Evaluate(elapsedTime), 0, time) / time;
                 MovePosition(Vector3.Lerp(startPosition, endPosition, t));
 
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -387,7 +391,7 @@ namespace Stirge.Combat
                 Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, speed * Time.fixedDeltaTime);
                 MovePosition(target);
 
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -436,7 +440,7 @@ namespace Stirge.Combat
                 Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, currentSpeed * Time.fixedDeltaTime);
                 MovePosition(target);
 
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -459,5 +463,6 @@ namespace Stirge.Combat
         #endregion
 
         #endregion
+        */
     }
 }

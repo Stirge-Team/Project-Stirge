@@ -41,7 +41,7 @@ namespace Stirge.InfiniteAxis.Actions
 
         protected override void OnEnd()
         {
-            m_combatEntity.StopAttacking();
+            m_combatEntity.StopPerformingAction();
         }
     }
 }

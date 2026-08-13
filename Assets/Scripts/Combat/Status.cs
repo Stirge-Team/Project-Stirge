@@ -3,7 +3,7 @@ using Stirge.Camera;
 using Unity.Cinemachine;
 using UnityEngine;
 
-namespace Stirge.Combat
+namespace Stirge.Combat.OldStatus
 {
     [System.Serializable]
     public abstract class Status

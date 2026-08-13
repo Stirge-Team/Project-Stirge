@@ -3,6 +3,7 @@ using UnityEngine;
 namespace Stirge.Combat
 {
     using Enemy;
+    using OldStatus;
 
     [System.Serializable]
     public class OnHitEffect
@@ -18,9 +19,15 @@ namespace Stirge.Combat
                 foreach (Status status in m_statuses)
                 {
                     if (status is TimedStatus)
-                        targetEntity.InflictTimedStatus(status as TimedStatus, attackingEntity);
+                    {
+                        //targetEntity.InflictTimedStatus(status as TimedStatus, attackingEntity);
+                        return;
+                    }
                     else
-                        targetEntity.InflictStatus(status, attackingEntity);
+                    {
+                        //targetEntity.InflictStatus(status, attackingEntity);
+                        return;
+                    }
                 }
             }
         }

@@ -6,6 +6,7 @@ namespace Stirge.Enemy
 {
     using AI;
     using Combat;
+    using Stirge.Combat.OldStatus;
 
     public class Enemy : CombatEntity
     {
@@ -22,6 +23,9 @@ namespace Stirge.Enemy
         [HideInInspector] public EnemySpawner spawner = null;
 
         protected bool m_hasAttackToken = false;
+
+        protected Transform m_targetTransform;
+        public Transform TargetTransform => m_targetTransform;
 
         // properties
         public EnemyMotor Motor => m_motor;
@@ -65,10 +69,10 @@ namespace Stirge.Enemy
             m_agent.OnDisable();
         }
 
-        public override void UseAttack(TimelineAsset attackTimeline)
+        public override void UseAction(TimelineAsset attackTimeline)
         {
             if (m_hasAttackToken) //fail if no attack token
-                base.UseAttack(attackTimeline);
+                base.UseAction(attackTimeline);
         }
         #endregion
 
@@ -151,17 +155,19 @@ namespace Stirge.Enemy
             else
                 m_agent.EnterState(m_airStunState);
 
-            m_anim.Play("hitstun");
+            //m_anim.Play("hitstun");
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
             if (IsGrounded() || ignoreGrounded)
             {
                 if (stunLength > 0f)
-                    InflictTimedStatus(new Stun(stunLength), null);
+                { 
+                    //InflictStatus(new Stun(stunLength), null);
+                }
                 m_agent.EnterState(m_knockbackState);
                 m_agent.ApplyKnockback(strength, direction, height);
-                m_anim.Play("hitstun");
+                //m_anim.Play("hitstun");
             }
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
@@ -169,10 +175,12 @@ namespace Stirge.Enemy
             if (IsGrounded() || ignoreGrounded)
             {
                 if (stunLength > 0f)
-                    InflictTimedStatus(new Stun(stunLength), null);
+                {
+                    //InflictTimedStatus(new Stun(stunLength), null);
+                }
                 m_agent.EnterState(m_airJuggle);
                 m_agent.ApplyKnockback(strength, direction);
-                m_anim.Play("hitstun");
+                //m_anim.Play("hitstun");
             }
         }
         #endregion
