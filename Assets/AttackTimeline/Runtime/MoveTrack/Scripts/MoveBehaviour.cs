@@ -21,10 +21,12 @@ namespace Stirge.AttackTimeline
         private MoveState m_state = MoveState.Waiting;
         private float m_duration;
         private float m_elapsedTime;
-        private Vector3 m_lastTargetMotion;
+        private Vector3 m_lastTargetTranslation;
 
 #if UNITY_EDITOR
-        private Vector3 m_initialPosition;
+        private Vector3 m_previewInitialPosition;
+        private Vector3 m_previewLastTranslation;
+        private double m_previewLastSampleTime;
 #endif
 
         public MoveBehaviour() { }
@@ -41,8 +43,18 @@ namespace Stirge.AttackTimeline
 
         public override void OnPlayableDestroy(Playable playable)
         {
-            if (Application.isPlaying && m_boundMotor != null && m_state == MoveState.Moving)
-                m_boundMotor.OnAttackEnd();
+            if (m_boundMotor != null)
+            {
+                if (Application.isPlaying)
+                {
+                    if (m_state == MoveState.Moving)
+                        m_boundMotor.OnAttackEnd();
+                }
+                else
+                {
+                    m_boundMotor.transform.parent.position = m_previewInitialPosition;
+                }
+            }
         }
 
         // Called when the state of the playable is set to Paused
@@ -80,8 +92,10 @@ namespace Stirge.AttackTimeline
             {
                 if (m_state == MoveState.Waiting)
                 {
-                    m_initialPosition = m_boundMotor.transform.position;
                     m_state = MoveState.Moving;
+                    m_previewInitialPosition = m_boundMotor.transform.parent.position;
+                    m_previewLastTranslation = Vector3.zero;
+                    m_previewLastSampleTime = 0d;
                 }
 
                 TimelineEditorWindow window = TimelineEditor.GetWindow();
@@ -96,13 +110,28 @@ namespace Stirge.AttackTimeline
                     // If there is an active clip, preview the Animation of that clip
                     if (activeClip != null)
                     {
-                        float sampleTime = (float)(currentTime - activeClip.start);
-                        Vector3 translation;
+                        double sampleTime = currentTime - activeClip.start;
+                        Vector3 targetTranslation;
                         if (m_isLocal)
-                            translation = m_boundMotor.transform.rotation * m_translation.Evaluate(sampleTime);
+                            targetTranslation = m_boundMotor.transform.rotation * m_translation.Evaluate((float)sampleTime);
                         else
-                            translation = m_translation.Evaluate(sampleTime);
-                        m_boundMotor.transform.position = m_initialPosition + translation;
+                            targetTranslation = m_translation.Evaluate((float)sampleTime);
+
+                        /*
+                        if (sampleTime > m_previewLastSampleTime)
+                            m_previewAccumulatedTranslation += targetTranslation - m_previewLastTranslation;
+                        else if (sampleTime < m_previewLastSampleTime)
+                            m_previewAccumulatedTranslation -= m_previewLastTranslation - targetTranslation;
+                        */
+
+                        if (sampleTime > m_previewLastSampleTime)
+                            m_boundMotor.transform.parent.position = m_boundMotor.transform.parent.position + targetTranslation - m_previewLastTranslation;
+                        else if (sampleTime < m_previewLastSampleTime)
+                            m_boundMotor.transform.parent.position = m_boundMotor.transform.parent.position - m_previewLastTranslation + targetTranslation;
+
+                        m_previewLastTranslation = targetTranslation;
+                        m_previewLastSampleTime = sampleTime;
+
                     }
                 }
                 return;
@@ -115,7 +144,7 @@ namespace Stirge.AttackTimeline
                 m_state = MoveState.Moving;
                 m_duration = (float)playable.GetDuration();
                 m_elapsedTime = 0f;
-                m_lastTargetMotion = Vector3.zero;
+                m_lastTargetTranslation = Vector3.zero;
                 m_boundMotor.OnAttackStart();
             }
             // Update
@@ -127,15 +156,16 @@ namespace Stirge.AttackTimeline
                 if (m_elapsedTime > m_duration)
                     m_elapsedTime = m_duration;
 
-                Vector3 targetMotionThisStep;
+                Vector3 targetTranslation;
                 if (m_isLocal)
-                    targetMotionThisStep = m_boundMotor.transform.rotation * m_translation.Evaluate(m_elapsedTime);
+                    targetTranslation = m_boundMotor.transform.rotation * m_translation.Evaluate(m_elapsedTime);
                 else
-                    targetMotionThisStep = m_translation.Evaluate(m_elapsedTime);
+                    targetTranslation = m_translation.Evaluate(m_elapsedTime);
 
-                m_boundMotor.SetPosition(m_boundMotor.transform.position + targetMotionThisStep - m_lastTargetMotion);
+                // targetTranslation - m_lastTargetTranslation = motion for this frame
+                m_boundMotor.SetPosition(m_boundMotor.transform.position + targetTranslation - m_lastTargetTranslation);
 
-                m_lastTargetMotion = targetMotionThisStep;
+                m_lastTargetTranslation = targetTranslation;
             }
         }
 
