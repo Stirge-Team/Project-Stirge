@@ -2,16 +2,19 @@ using System;
 using UnityEngine;
 using UnityEngine.Playables;
 
-#if UNITY_EDITOR
-using System.ComponentModel;
-[DisplayName("Combo Clip")]
-#endif
-[Serializable]
-public class ComboPlayableAsset : PlayableAsset
+namespace Stirge.AttackTimeline
 {
-    // Factory method that generates a playable based on this asset
-    public override Playable CreatePlayable(PlayableGraph graph, GameObject go)
+#if UNITY_EDITOR
+    using System.ComponentModel;
+    [DisplayName("Combo Clip")]
+#endif
+    [Serializable]
+    public class ComboPlayableAsset : PlayableAsset
     {
-        return Playable.Create(graph);
+        // Factory method that generates a playable based on this asset
+        public override Playable CreatePlayable(PlayableGraph graph, GameObject go)
+        {
+            return Playable.Create(graph);
+        }
     }
 }

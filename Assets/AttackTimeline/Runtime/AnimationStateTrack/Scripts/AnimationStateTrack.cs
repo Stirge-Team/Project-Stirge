@@ -8,63 +8,66 @@ using UnityEngine.Timeline;
 using UnityEditor.Animations;
 #endif
 
-[Serializable]
-[TrackClipType(typeof(AnimationStatePlayableAsset))]
-[TrackBindingType(typeof(Animator))]
-public class AnimationStateTrack : TrackAsset
+namespace Stirge.AttackTimeline
 {
-#if UNITY_EDITOR
-    /// <summary>
-    /// Gathers properties for preview
-    /// </summary>
-    public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
+    [Serializable]
+    [TrackClipType(typeof(AnimationStatePlayableAsset))]
+    [TrackBindingType(typeof(Animator))]
+    public class AnimationStateTrack : TrackAsset
     {
-        //get the bound animator
-        Animator boundAnimator = null;
-        foreach (var track in timelineAsset.GetOutputTracks())
+#if UNITY_EDITOR
+        /// <summary>
+        /// Gathers properties for preview
+        /// </summary>
+        public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
         {
-            if (track == timelineAsset.markerTrack) continue;
-
-            boundAnimator = (Animator)director.GetGenericBinding(this);
-        }
-        // don't continue if no animator is attached
-        if (boundAnimator == null) return;
-
-        // Gather animation clip properties for preview
-        foreach (var clip in GetClips())
-        {
-            AnimationStatePlayableAsset ASPAclip = clip.asset as AnimationStatePlayableAsset;
-            if (ASPAclip != null && ASPAclip.TargetAnimationStateName != null)
+            //get the bound animator
+            Animator boundAnimator = null;
+            foreach (var track in timelineAsset.GetOutputTracks())
             {
-                AnimatorController controller = boundAnimator.runtimeAnimatorController as AnimatorController;
+                if (track == timelineAsset.markerTrack) continue;
 
-                var childStates = new List<ChildAnimatorState>();
-                var animatorControllerLayers = controller.layers;
+                boundAnimator = (Animator)director.GetGenericBinding(this);
+            }
+            // don't continue if no animator is attached
+            if (boundAnimator == null) return;
 
-                foreach (AnimatorControllerLayer layer in animatorControllerLayers)
+            // Gather animation clip properties for preview
+            foreach (var clip in GetClips())
+            {
+                AnimationStatePlayableAsset ASPAclip = clip.asset as AnimationStatePlayableAsset;
+                if (ASPAclip != null && ASPAclip.TargetAnimationStateName != null)
                 {
-                    childStates.AddRange(layer.stateMachine.states);
-                }
+                    AnimatorController controller = boundAnimator.runtimeAnimatorController as AnimatorController;
 
-                foreach (ChildAnimatorState state in childStates)
-                {
-                    if (state.state.name == ASPAclip.TargetAnimationStateName)
+                    var childStates = new List<ChildAnimatorState>();
+                    var animatorControllerLayers = controller.layers;
+
+                    foreach (AnimatorControllerLayer layer in animatorControllerLayers)
                     {
-                        AnimationClip animationClip = state.state.motion as AnimationClip;
-
-                        ASPAclip.PreviewClip = animationClip;
-
-                        break;
+                        childStates.AddRange(layer.stateMachine.states);
                     }
-                    else
+
+                    foreach (ChildAnimatorState state in childStates)
                     {
-                        ASPAclip.PreviewClip = null;
+                        if (state.state.name == ASPAclip.TargetAnimationStateName)
+                        {
+                            AnimationClip animationClip = state.state.motion as AnimationClip;
+
+                            ASPAclip.PreviewClip = animationClip;
+
+                            break;
+                        }
+                        else
+                        {
+                            ASPAclip.PreviewClip = null;
+                        }
                     }
+                    //idk if this meant to use "ASPAclip.PreviewClip" or the "animationClip" earlier sooooo
+                    driver.AddFromClip(ASPAclip.PreviewClip);
                 }
-                //idk if this meant to use "ASPAclip.PreviewClip" or the "animationClip" earlier sooooo
-                driver.AddFromClip(ASPAclip.PreviewClip);
             }
         }
-    }
 #endif
+    }
 }

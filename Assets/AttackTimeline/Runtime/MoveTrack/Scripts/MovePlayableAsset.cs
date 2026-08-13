@@ -3,21 +3,25 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-#if UNITY_EDITOR
-using System.ComponentModel;
-[DisplayName("Move Clip")]
-#endif
-
-[Serializable]
-public class MovePlayableAsset : PlayableAsset, ITimelineClipAsset
+namespace Stirge.AttackTimeline
 {
-    [SerializeField] private AnimationCurve3D m_translation;
-    [SerializeField] private bool m_isLocal = true;
-    
-    public ClipCaps clipCaps => ClipCaps.None;
+    using Tools;
 
-    public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
+#if UNITY_EDITOR
+    using System.ComponentModel;
+    [DisplayName("Move Clip")]
+#endif
+    [Serializable]
+    public class MovePlayableAsset : PlayableAsset, ITimelineClipAsset
     {
-        return MoveBehaviour.Create(graph, m_translation, m_isLocal);
+        [SerializeField] private AnimationCurve3D m_translation;
+        [SerializeField] private bool m_isLocal = true;
+
+        public ClipCaps clipCaps => ClipCaps.None;
+
+        public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
+        {
+            return MoveBehaviour.Create(graph, m_translation, m_isLocal);
+        }
     }
 }
