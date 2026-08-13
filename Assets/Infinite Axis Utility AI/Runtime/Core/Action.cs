@@ -1,10 +1,10 @@
 using System;
 
-namespace Stirge.UtilityAI.Core
+namespace Stirge.InfiniteAxis.Core
 {
     using Enemy;
     using Stirge.Serialization;
-    using Stirge.UtilityAI.Blackboard;
+    using Stirge.InfiniteAxis.Blackboard;
 
     public abstract class Action
     {

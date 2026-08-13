@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Demo.Axes
+namespace Stirge.InfiniteAxis.Demo.Axes
 {
     [CustomEditor(typeof(SerializedQuadraticAxis))]
     public class SerializedQuadraticAxisEditor : Editor

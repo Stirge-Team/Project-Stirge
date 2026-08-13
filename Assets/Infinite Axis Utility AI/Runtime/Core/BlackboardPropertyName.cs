@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Blackboard
+namespace Stirge.InfiniteAxis.Blackboard
 {
     [Serializable]
     public struct BlackboardPropertyName

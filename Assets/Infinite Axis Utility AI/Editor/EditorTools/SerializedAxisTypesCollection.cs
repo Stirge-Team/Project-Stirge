@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Stirge.UtilityAI.EditorTools
+namespace Stirge.InfiniteAxis.EditorTools
 {
     using Serialization;
 

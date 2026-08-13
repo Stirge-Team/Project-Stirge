@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Stirge.UtilityAI.CustomEditors
+namespace Stirge.InfiniteAxis.CustomEditors
 {
     using EditorTools;
     using Stirge.Serialization;

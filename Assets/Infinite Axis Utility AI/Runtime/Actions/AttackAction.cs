@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Actions
+namespace Stirge.InfiniteAxis.Actions
 {
     using Blackboard;
     using Core;

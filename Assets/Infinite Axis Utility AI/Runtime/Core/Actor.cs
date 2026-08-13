@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Stirge.UtilityAI.Core
+namespace Stirge.InfiniteAxis.Core
 {
     using Blackboard;
 

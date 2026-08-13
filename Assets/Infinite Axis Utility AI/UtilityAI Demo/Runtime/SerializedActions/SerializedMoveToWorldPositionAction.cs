@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Serialization.SerializedActions
+namespace Stirge.InfiniteAxis.Serialization.SerializedActions
 {
     using Blackboard;
     using Core.Actions;

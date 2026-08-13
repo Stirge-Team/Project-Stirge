@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Blackboard
+namespace Stirge.InfiniteAxis.Blackboard
 {
     public interface IBlackboardTable<T>
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Serialization.SerializedAxes
+namespace Stirge.InfiniteAxis.Serialization.SerializedAxes
 {
     using Stirge.Serialization;
     using Core.Axes;

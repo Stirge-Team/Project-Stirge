@@ -2,10 +2,10 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.CustomEditors
+namespace Stirge.InfiniteAxis.CustomEditors
 {
     using Blackboard;
-    using Stirge.UtilityAI.Serialization;
+    using Stirge.InfiniteAxis.Serialization;
     using System;
     using Tools;
 

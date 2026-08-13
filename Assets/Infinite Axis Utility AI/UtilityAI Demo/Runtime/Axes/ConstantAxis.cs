@@ -1,4 +1,4 @@
-namespace Stirge.UtilityAI.Core.Axes
+namespace Stirge.InfiniteAxis.Core.Axes
 {
     using Stirge.Serialization;
 

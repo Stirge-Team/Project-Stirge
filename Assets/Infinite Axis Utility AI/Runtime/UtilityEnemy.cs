@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Stirge.UtilityAI
+namespace Stirge.InfiniteAxis
 {
     using Core;
     using Serialization;

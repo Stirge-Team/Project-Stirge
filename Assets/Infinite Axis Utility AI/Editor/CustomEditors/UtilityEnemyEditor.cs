@@ -3,7 +3,7 @@ using UnityEngine;
 
 using EGL = UnityEditor.EditorGUILayout;
 
-namespace Stirge.UtilityAI.CustomEditors
+namespace Stirge.InfiniteAxis.CustomEditors
 {
     using Core;
 

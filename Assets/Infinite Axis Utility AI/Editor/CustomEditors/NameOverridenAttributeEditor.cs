@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Stirge.UtilityAI
+namespace Stirge.InfiniteAxis
 {
     using Stirge.Serialization;
 

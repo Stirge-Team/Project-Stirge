@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-namespace Stirge.UtilityAI.Serialization
+namespace Stirge.InfiniteAxis.Serialization
 {
     using Blackboard;
     using Builders;

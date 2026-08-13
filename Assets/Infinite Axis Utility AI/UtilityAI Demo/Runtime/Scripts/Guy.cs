@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
 
-namespace Stirge.UtilityAI.Demo
+namespace Stirge.InfiniteAxis.Demo
 {
     using Core;
     using Serialization;

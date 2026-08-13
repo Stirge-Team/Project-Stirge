@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Demo.Axes
+namespace Stirge.InfiniteAxis.Demo.Axes
 {
     using Blackboard;
     using Core;

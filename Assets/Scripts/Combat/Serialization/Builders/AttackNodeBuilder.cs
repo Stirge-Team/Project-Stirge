@@ -1,5 +1,5 @@
 using Stirge.Serialization;
-using Stirge.UtilityAI.Builders;
+using Stirge.InfiniteAxis.Builders;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;

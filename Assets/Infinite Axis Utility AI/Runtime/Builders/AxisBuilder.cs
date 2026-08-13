@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Builders
+namespace Stirge.InfiniteAxis.Builders
 {
     using Core;
     using System.Collections.Generic;

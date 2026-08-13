@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Stirge.UtilityAI.Blackboard
+namespace Stirge.InfiniteAxis.Blackboard
 {
     public class GenericBlackboard<TBase> : GenericBlackboard_Base where TBase : MonoBehaviour
     {

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
-namespace Stirge.UtilityAI.Demo.Axes
+namespace Stirge.InfiniteAxis.Demo.Axes
 {
     [CustomEditor(typeof(SerializedPolynomialAxis))]
     public class SerializedPolynomialAxisEditor : Editor

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-namespace Stirge.UtilityAI
+namespace Stirge.InfiniteAxis
 {
     using Blackboard;
 

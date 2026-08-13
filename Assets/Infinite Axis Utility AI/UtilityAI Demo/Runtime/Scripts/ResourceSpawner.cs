@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Stirge.UtilityAI.Demo
+namespace Stirge.InfiniteAxis.Demo
 {
     using Tools;
 

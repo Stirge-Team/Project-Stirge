@@ -1,6 +1,6 @@
 using System;
 
-namespace Stirge.UtilityAI.Builders
+namespace Stirge.InfiniteAxis.Builders
 {
     using Action = Core.Action;
 
