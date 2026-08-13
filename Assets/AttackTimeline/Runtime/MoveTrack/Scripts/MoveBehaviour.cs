@@ -7,164 +7,168 @@ using UnityEngine.Timeline;
 using UnityEditor.Timeline;
 #endif
 
-// A behaviour that is attached to a playable
-public class MoveBehaviour : PlayableBehaviour
+namespace Stirge.AttackTimeline
 {
-    private readonly AnimationCurve3D m_translation;
-    private readonly bool m_isLocal;
+    using Tools;
 
-    private EnemyMotor m_boundMotor;
+    public class MoveBehaviour : PlayableBehaviour
+    {
+        private readonly AnimationCurve3D m_translation;
+        private readonly bool m_isLocal;
 
-    private MoveState m_state = MoveState.Waiting;
-    private float m_duration;
-    private float m_elapsedTime;
-    private Vector3 m_lastTargetMotion;
+        private EnemyMotor m_boundMotor;
+
+        private MoveState m_state = MoveState.Waiting;
+        private float m_duration;
+        private float m_elapsedTime;
+        private Vector3 m_lastTargetMotion;
 
 #if UNITY_EDITOR
-    private Vector3 m_initialPosition;
+        private Vector3 m_initialPosition;
 #endif
 
-    public MoveBehaviour() { }
-    public MoveBehaviour(AnimationCurve3D translation, bool isLocal)
-    {
-        m_translation = translation;
-        m_isLocal = isLocal;
-    }
-    
-    public static ScriptPlayable<MoveBehaviour> Create(PlayableGraph graph, AnimationCurve3D translation, bool isLocal)
-    {
-        return ScriptPlayable<MoveBehaviour>.Create(graph, new MoveBehaviour(translation, isLocal));
-    }
-
-    public override void OnPlayableDestroy(Playable playable)
-    {
-        if (Application.isPlaying && m_boundMotor != null && m_state == MoveState.Moving)
-            m_boundMotor.OnAttackEnd();
-    }
-
-    // Called when the state of the playable is set to Paused
-    public override void OnBehaviourPause(Playable playable, FrameData info)
-    {
-        // This block allows us to do logic specifically when a clip stops playing.
-        if (m_boundMotor != null && Application.isPlaying)
+        public MoveBehaviour() { }
+        public MoveBehaviour(AnimationCurve3D translation, bool isLocal)
         {
-            float duration = (float)playable.GetDuration();
-            float time = (float)playable.GetTime();
-            float count = time + info.deltaTime;
+            m_translation = translation;
+            m_isLocal = isLocal;
+        }
 
-            if (info.effectivePlayState == PlayState.Paused && count > duration || Mathf.Approximately(time, duration))
-            {
-                // Removed this to avoid Entity teleporting to end position if it is otherwise unreachable normally
-                //m_boundEntity.SetPosition(m_translation.Evaluate(m_duration));
+        public static ScriptPlayable<MoveBehaviour> Create(PlayableGraph graph, AnimationCurve3D translation, bool isLocal)
+        {
+            return ScriptPlayable<MoveBehaviour>.Create(graph, new MoveBehaviour(translation, isLocal));
+        }
+
+        public override void OnPlayableDestroy(Playable playable)
+        {
+            if (Application.isPlaying && m_boundMotor != null && m_state == MoveState.Moving)
                 m_boundMotor.OnAttackEnd();
-                m_state = MoveState.Waiting;
-            }
-        }
-    }
-
-    public override void ProcessFrame(Playable playable, FrameData info, object playerData)
-    {
-        if (m_boundMotor == null)
-        {
-            m_boundMotor = playerData as EnemyMotor;
         }
 
-        if (m_boundMotor == null)
-            return;
-
-#if UNITY_EDITOR
-        if (!Application.isPlaying)
+        // Called when the state of the playable is set to Paused
+        public override void OnBehaviourPause(Playable playable, FrameData info)
         {
-            if (m_state == MoveState.Waiting)
+            // This block allows us to do logic specifically when a clip stops playing.
+            if (m_boundMotor != null && Application.isPlaying)
             {
-                m_initialPosition = m_boundMotor.transform.position;
-                m_state = MoveState.Moving;
-            }
-            
-            TimelineEditorWindow window = TimelineEditor.GetWindow();
-            // if the Timeline Editor Window is opened
-            if (window != null)
-            {
-                // get the current double time of the Timeline
-                double currentTime = window.playbackControls.GetCurrentTime();
+                float duration = (float)playable.GetDuration();
+                float time = (float)playable.GetTime();
+                float count = time + info.deltaTime;
 
-                TimelineClip activeClip = GetActiveMoveClip(currentTime);
-
-                // If there is an active clip, preview the Animation of that clip
-                if (activeClip != null)
+                if (info.effectivePlayState == PlayState.Paused && count > duration || Mathf.Approximately(time, duration))
                 {
-                    float sampleTime = (float)(currentTime - activeClip.start);
-                    Vector3 translation;
-                    if (m_isLocal)
-                        translation = m_boundMotor.transform.rotation * m_translation.Evaluate(sampleTime);
-                    else
-                        translation = m_translation.Evaluate(sampleTime);
-                    m_boundMotor.transform.position = m_initialPosition + translation;
+                    // Removed this to avoid Entity teleporting to end position if it is otherwise unreachable normally
+                    //m_boundEntity.SetPosition(m_translation.Evaluate(m_duration));
+                    m_boundMotor.OnAttackEnd();
+                    m_state = MoveState.Waiting;
                 }
             }
-            return;
         }
-#endif
 
-        // on start
-        if (m_state == MoveState.Waiting)
+        public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            m_state = MoveState.Moving;
-            m_duration = (float)playable.GetDuration();
-            m_elapsedTime = 0f;
-            m_lastTargetMotion = Vector3.zero;
-            m_boundMotor.OnAttackStart();
-        }
-        // Update
-        else
-        {
-            m_elapsedTime += info.deltaTime;
+            if (m_boundMotor == null)
+            {
+                m_boundMotor = playerData as EnemyMotor;
+            }
 
-            // clamp to duration
-            if (m_elapsedTime > m_duration)
-                m_elapsedTime = m_duration;
-
-            Vector3 targetMotionThisStep;
-            if (m_isLocal)
-                targetMotionThisStep = m_boundMotor.transform.rotation * m_translation.Evaluate(m_elapsedTime);
-            else
-                targetMotionThisStep = m_translation.Evaluate(m_elapsedTime);
-
-            m_boundMotor.SetPosition(m_boundMotor.transform.position + targetMotionThisStep - m_lastTargetMotion);
-
-            m_lastTargetMotion = targetMotionThisStep;
-        }
-    }
-
-    private enum MoveState
-    {
-        Waiting,
-        Moving
-    }
+            if (m_boundMotor == null)
+                return;
 
 #if UNITY_EDITOR
-    /// <summary>
-    /// Assumes there is only one MoveTrack in this TimelineAsset and that you cannot mix clips.
-    /// </summary>
-    /// <param name="currentTime"></param>
-    /// <returns>The currently active TimelineClip of the currently active TimelineAsset's MoveTrack, if such a track exists and there is a clip active at the time <paramref name="currentTime"/>.</returns>
-    private TimelineClip GetActiveMoveClip(double currentTime)
-    {
-        foreach (TrackAsset track in TimelineEditor.masterAsset.GetRootTracks())
-        {
-            if (track is MoveTrack moveTrack)
+            if (!Application.isPlaying)
             {
-                foreach (TimelineClip clip in moveTrack.GetClips())
+                if (m_state == MoveState.Waiting)
                 {
-                    if (clip.start <= currentTime && clip.end >= currentTime)
+                    m_initialPosition = m_boundMotor.transform.position;
+                    m_state = MoveState.Moving;
+                }
+
+                TimelineEditorWindow window = TimelineEditor.GetWindow();
+                // if the Timeline Editor Window is opened
+                if (window != null)
+                {
+                    // get the current double time of the Timeline
+                    double currentTime = window.playbackControls.GetCurrentTime();
+
+                    TimelineClip activeClip = GetActiveMoveClip(currentTime);
+
+                    // If there is an active clip, preview the Animation of that clip
+                    if (activeClip != null)
                     {
-                        return clip;
+                        float sampleTime = (float)(currentTime - activeClip.start);
+                        Vector3 translation;
+                        if (m_isLocal)
+                            translation = m_boundMotor.transform.rotation * m_translation.Evaluate(sampleTime);
+                        else
+                            translation = m_translation.Evaluate(sampleTime);
+                        m_boundMotor.transform.position = m_initialPosition + translation;
                     }
                 }
-                return null;
+                return;
+            }
+#endif
+
+            // on start
+            if (m_state == MoveState.Waiting)
+            {
+                m_state = MoveState.Moving;
+                m_duration = (float)playable.GetDuration();
+                m_elapsedTime = 0f;
+                m_lastTargetMotion = Vector3.zero;
+                m_boundMotor.OnAttackStart();
+            }
+            // Update
+            else
+            {
+                m_elapsedTime += info.deltaTime;
+
+                // clamp to duration
+                if (m_elapsedTime > m_duration)
+                    m_elapsedTime = m_duration;
+
+                Vector3 targetMotionThisStep;
+                if (m_isLocal)
+                    targetMotionThisStep = m_boundMotor.transform.rotation * m_translation.Evaluate(m_elapsedTime);
+                else
+                    targetMotionThisStep = m_translation.Evaluate(m_elapsedTime);
+
+                m_boundMotor.SetPosition(m_boundMotor.transform.position + targetMotionThisStep - m_lastTargetMotion);
+
+                m_lastTargetMotion = targetMotionThisStep;
             }
         }
-        return null;
-    }
+
+        private enum MoveState
+        {
+            Waiting,
+            Moving
+        }
+
+#if UNITY_EDITOR
+        /// <summary>
+        /// Assumes there is only one MoveTrack in this TimelineAsset and that you cannot mix clips.
+        /// </summary>
+        /// <param name="currentTime"></param>
+        /// <returns>The currently active TimelineClip of the currently active TimelineAsset's MoveTrack, if such a track exists and there is a clip active at the time <paramref name="currentTime"/>.</returns>
+        private TimelineClip GetActiveMoveClip(double currentTime)
+        {
+            foreach (TrackAsset track in TimelineEditor.masterAsset.GetRootTracks())
+            {
+                if (track is MoveTrack moveTrack)
+                {
+                    foreach (TimelineClip clip in moveTrack.GetClips())
+                    {
+                        if (clip.start <= currentTime && clip.end >= currentTime)
+                        {
+                            return clip;
+                        }
+                    }
+                    return null;
+                }
+            }
+            return null;
+        }
 #endif
+    }
 }
