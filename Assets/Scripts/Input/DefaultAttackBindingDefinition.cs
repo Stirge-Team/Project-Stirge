@@ -10,7 +10,8 @@ namespace Stirge.Input
             Grounded,
             Air,
         }
-        
+
+        [Header("Component References")]
         [SerializeField] private PlayerInputProcessing m_inputManager;
 
         [System.Serializable]
@@ -38,9 +39,13 @@ namespace Stirge.Input
                     m_inputManager.SetAirBindings(AttackBinding.ConvertToDictionary(set.Defaults));
                     break;
             }
-            }
-            
-            Destroy(gameObject);
+
+            // If there is more than one Component attached to this GameObject (Includes Transform)
+            if (gameObject.GetComponents<Component>().Length > 2)
+                Destroy(this);
+            // If this is the ONLY Component attached to this GameObject
+            else
+                Destroy(gameObject);
         }
     }
 }

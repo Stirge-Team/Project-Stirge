@@ -103,11 +103,12 @@ namespace Stirge.Combat
 
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_height;
+        [SerializeField, Tooltip("If true, the knockback this attack applies can affect airborne enemies.")] private bool m_ignoreGrounded = false;
 
         public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity, CombatEntity attackingEntity)
         {
             Vector3 dir = attackingEntity.GetForward();
-            targetEntity.EnterKnockback(m_strength, dir, m_height, 0);
+            targetEntity.EnterKnockback(m_strength, dir, m_height, 0, m_ignoreGrounded);
         }
     }
 
@@ -127,10 +128,11 @@ namespace Stirge.Combat
         
         [SerializeField, Min(0f)] private float m_strength;
         [SerializeField, Min(0f)] private float m_stallLength;
+        [SerializeField, Tooltip("If true, the knockback this attack applies can affect airborne enemies.")] private bool m_ignoreGrounded = false;
 
         public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity)
         {
-            targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0);
+            targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0, m_ignoreGrounded);
         }
     }
 

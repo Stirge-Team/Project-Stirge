@@ -30,10 +30,12 @@ namespace Stirge.Combat
                     case nameof(AirJuggle):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_stallLength");
+                        DrawPropertyField("m_ignoreGrounded");
                         break;
                     case nameof(Knockback):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_height");
+                        DrawPropertyField("m_ignoreGrounded");
                         break;
                     case nameof(HitStopStatus):
                         DrawPropertyField("m_duration");
@@ -50,7 +52,7 @@ namespace Stirge.Combat
             EditorGUI.EndProperty();
         }
 
-        protected override float GetHeight(GUIContent label)
+        protected override int GetHeight(GUIContent label)
         {
             int totalLines = 1; // for foldout/label
 
@@ -67,6 +69,8 @@ namespace Stirge.Combat
                 {
                     case nameof(AirJuggle):
                     case nameof(Knockback):
+                        totalLines += 3;
+                        break;
                     case nameof(HitStopStatus):
                         totalLines += 2;
                         break;
@@ -78,7 +82,7 @@ namespace Stirge.Combat
                 }
             }
 
-            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
+            return totalLines;
         }
     }
 }

@@ -21,6 +21,24 @@ namespace Stirge.Tools
             m_y = new(value);
             m_z = new(value);
         }
+        public RandomVector3Field(float x, float y, float z)
+        {
+            m_x = new(x);
+            m_y = new(y);
+            m_z = new(z);
+        }
+        public RandomVector3Field(Vector2 range)
+        {
+            m_x = new(range);
+            m_y = new(range);
+            m_z = new(range);
+        }
+        public RandomVector3Field(Vector2 xRange, Vector2 yRange, Vector2 zRange)
+        {
+            m_x = new(xRange);
+            m_y = new(yRange);
+            m_z = new(zRange);
+        }
 
         public override void DetermineValue()
         {

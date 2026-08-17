@@ -14,7 +14,7 @@ namespace Stirge.Player
     {
         #region Movement Vars
         [System.Serializable]
-        private struct stateVariables
+        public struct stateVariables
         {
             [Tooltip("The rate at which the player moves around. This value is applied when an input is given by the player. DO NOT set this value far greater then the maximum speed, this will cause the player to jump around.")]
             public float _horizontalAcceleration;
@@ -135,22 +135,22 @@ namespace Stirge.Player
             //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
             //OR if the player's input is in the opposite direction of the player's current direction
             if (
-                m_motor._horizontalSpeed < m_currentStateSettings._maximumHorizontalSpeed
+                m_motor._horizontalSpeed < CurrentStateSettings._maximumHorizontalSpeed
                 || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f
             )
             {
                 //Apply the force to the player
                 m_motor.ApplyForce(
-                    m_currentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude)
+                    CurrentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude)
                         * m_inputDirection.sqrMagnitude
                         * transform.forward
-                        * m_currentStateSettings._horizontalAcceleration
+                        * CurrentStateSettings._horizontalAcceleration
                         * Time.deltaTime
                 );
             }
 
             //do some decceleration - the clamped value helps when getting the movement down to zero
-            m_motor.ApplyForce(m_motor._horizontalDirection * -m_currentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
+            m_motor.ApplyForce(m_motor._horizontalDirection * -CurrentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
 
             //Clamping the players fall speed
             m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
@@ -252,13 +252,13 @@ namespace Stirge.Player
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(
                 transform.position,
-                m_currentStateSettings._maximumHorizontalSpeed
+                CurrentStateSettings._maximumHorizontalSpeed
             );
 
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(
                 transform.position,
-                (m_currentStateSettings._horizontalAcceleration - m_currentStateSettings._friction)
+                (CurrentStateSettings._horizontalAcceleration - CurrentStateSettings._friction)
             );
 
             Gizmos.color = Color.purple;

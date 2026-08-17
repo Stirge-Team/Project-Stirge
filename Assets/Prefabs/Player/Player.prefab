@@ -800,17 +800,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.DefaultAttackBindingDefinition
   m_inputManager: {fileID: 5079235152578265304}
-  m_bindingSets:
-  - m_bindingType: 0
-    m_defaultBindings:
-    - attackInput: 2
-      attackData: {fileID: 11400000, guid: f5161522569b671b2bd3a5e6ef0544c0, type: 2}
-    - attackInput: 8
-      attackData: {fileID: 11400000, guid: d3ff9c08de3263c4f961c11184983aa4, type: 2}
-  - m_bindingType: 1
-    m_defaultBindings:
-    - attackInput: 2
-      attackData: {fileID: 11400000, guid: 281bf5023d8bd609588a37718be7918e, type: 2}
+  m_bindingType: 0
+  m_defaultBindings:
+  - attackInput: 8
+    m_serializedAttackData: {fileID: 11400000, guid: 295d0c008452d50419091a2a4f767237, type: 2}
+  - attackInput: 2
+    m_serializedAttackData: {fileID: 11400000, guid: 336203386e808ae439fafac4b79585a0, type: 2}
+  - attackInput: 1
+    m_serializedAttackData: {fileID: 11400000, guid: a3ddbe6644e81194f980daefcde3b223, type: 2}
 --- !u!1001 &6610752918078484151
 PrefabInstance:
   m_ObjectHideFlags: 0

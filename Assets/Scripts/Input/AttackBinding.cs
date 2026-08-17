@@ -5,23 +5,35 @@ using System.Collections.Generic;
 namespace Stirge.Input
 {
     using Combat.Attacks;
+    using Combat.Attacks.Serialization;
     
     [System.Serializable]
     public class AttackBinding
     {
-        public AttackBinding(AttackInput input, AttackData data)
+        public AttackBinding(AttackInput input, SerializedAttackData data)
         {
             attackInput = input;
-            attackData = data;
+            m_serializedAttackData = data;
         }
         public AttackBinding(AttackBinding binding)
         {
             attackInput = binding.attackInput;
-            attackData = binding.attackData;
+            m_serializedAttackData = binding.m_serializedAttackData;
         }
         
         public AttackInput attackInput;
-        public AttackData attackData;
+        [SerializeField] private SerializedAttackData m_serializedAttackData;
+
+        private AttackData m_deserializedAttackData;
+
+        public AttackData attackData
+        {
+            get
+            {
+                m_deserializedAttackData ??= m_serializedAttackData.CreateAttackData();
+                return m_deserializedAttackData;
+            }
+        }
 
         public KeyValuePair<AttackInput, AttackData> ConvertToDictionaryEntry()
         {

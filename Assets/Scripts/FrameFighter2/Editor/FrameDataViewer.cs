@@ -13,6 +13,7 @@ namespace FrameFighter2.Viewer
 {
     using Data;
     using Manager;
+    using Stirge.Combat.Attacks.Serialization;
     using static Data.CharacterAnimationData;
     using static Data.EventData;
     using static Data.HitboxData;
@@ -628,7 +629,7 @@ namespace FrameFighter2.Viewer
 
                         ComboInput comboInput = data.NextComboInput;
 
-                        AttackData nextComboAttack = comboInput.NextComboAttack;
+                        SerializedAttackData nextComboAttack = comboInput.NextComboAttack;
                         AttackInput comboAttackInput = comboInput.ComboAttackInput;
                         float comboInputTimeStart = comboInput.ComboInputTimeStart;
                         float comboInputTimeEnd = comboInput.ComboInputTimeEnd;
@@ -636,7 +637,7 @@ namespace FrameFighter2.Viewer
                         EditorGUI.BeginChangeCheck();
 
                         // Create an object field to allow users to attach their own AttackData
-                        nextComboAttack = EditorGUILayout.ObjectField("Next Attack in combo", nextComboAttack, typeof(AttackData), false) as AttackData;
+                        nextComboAttack = EditorGUILayout.ObjectField("Next Attack in combo", nextComboAttack, typeof(SerializedAttackData), false) as SerializedAttackData;
 
                         if (nextComboAttack != null)
                         {
