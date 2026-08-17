@@ -1,3 +1,4 @@
+using Stirge.Tools;
 using UnityEngine;
 
 namespace Stirge.AI
@@ -28,16 +29,18 @@ namespace Stirge.AI
                 return;
             }
 
-            Vector3 desiredPosition = agent.Transform.position;
+            Vector3 desiredPosition = agent.Transform.position; //prep a target end position starting from the current position
             foreach (var hitObject in hits)
             {
-                Vector3 vector = hitObject.point - desiredPosition;
-                float distance = vector.magnitude;
-                if (distance > m_clearance)
+                if(AbsoluteParent.SharedParent(new Transform[] {agent.Transform, hitObject.transform})) continue; //skip if we've hit ourself
+
+                Vector3 vector = hitObject.point - desiredPosition; //get the direction and distance to the hit object
+                float distance = vector.magnitude; //isolate the distance
+                if (distance > m_clearance) //if outside the clearance range, skip the next steps
                     continue;
 
-                Vector3 direction = vector.normalized;
-                desiredPosition += direction * (m_clearance - distance);
+                Vector3 direction = vector.normalized; //isolate the direction
+                desiredPosition += direction * (m_clearance - distance); //target position has now be moved away from the hit object so that the distance between them is outside the clearance range.
             }
             agent.NavMeshAgent.SetDestination(desiredPosition);
         }
