@@ -6,7 +6,6 @@ using System.Linq;
 namespace Stirge.Combat
 {
     using Attacks;
-    using FrameFighter2.Hitbox;
 
     public abstract class CombatEntity : MonoBehaviour
     {
@@ -97,15 +96,15 @@ namespace Stirge.Combat
         #endregion
 
         #region Statuses
-        public void InflictStatus(Status status, Transform hitboxTransform, CombatEntity attackingEntity)
+        public void InflictStatus(Status status, CombatEntity attackingEntity)
         {
             // inflict the Status
             if (attackingEntity == null)
-                status.OnInflict(hitboxTransform, this);
+                status.OnInflict(this);
             else
-                status.OnInflict(hitboxTransform, this, attackingEntity);   
+                status.OnInflict(this, attackingEntity);   
         }
-        public void InflictTimedStatus(TimedStatus status, Transform hitboxTransform, CombatEntity attackingEntity)
+        public void InflictTimedStatus(TimedStatus status, CombatEntity attackingEntity)
         {
             // add to list to be updated
             switch (status.GetType().Name)
@@ -117,9 +116,9 @@ namespace Stirge.Combat
                     // add and inflict
                     Stun newStun = new(status as Stun);
                     if (attackingEntity == null)
-                        newStun.OnInflict(hitboxTransform, this);
+                        newStun.OnInflict(this);
                     else
-                        newStun.OnInflict(hitboxTransform, this, attackingEntity);
+                        newStun.OnInflict(this, attackingEntity);
 
                     m_inflictedStatuses.Add(newStun);
                     break;
