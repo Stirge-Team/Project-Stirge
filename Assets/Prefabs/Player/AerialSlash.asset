@@ -10,43 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bc25a87e365d9bb429123a3fb7b1f3d2, type: 3}
-  m_Name: TestString3
+  m_Name: AerialSlash
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 3, z: 0.15}
+  - m_position: {x: 0, y: 2.5, z: 0}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 1, y: 6, z: 1}
-    m_startFrame: 21
-    m_endFrame: 41
+    m_scale: {x: 1, y: 5, z: 2}
+    m_startFrame: 7
+    m_endFrame: 11
     m_groupID: 1
     m_hitboxShape: 0
     m_hitboxType: 2
     m_hitboxParent: 0000020000
     m_onHitEvent:
       m_eventType: 0
-      m_eventID: TestString3OnHit0
+      m_eventID: 
       m_shouldEndOnCancel: 0
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
-      m_damage: 2
+      m_damage: 1
       m_statuses:
-      - rid: 2001016855599513794
-      - rid: 2001016855599513806
-      - rid: 2315525991129940046
-      - rid: 2315525991129940047
-      - rid: 2315525991129940105
-  m_eventData:
-  - m_eventType: 0
-    m_eventID: TestString3Event0
-    m_shouldEndOnCancel: 0
-    m_startFrame: 0
-    m_endFrame: 0
-  - m_eventType: 0
-    m_eventID: TestString3Event1
-    m_shouldEndOnCancel: 0
-    m_startFrame: 40
-    m_endFrame: 41
+      - rid: 6072857163679400028
+      - rid: 6072857163679400025
+      - rid: 6072857163679400029
+      - rid: 6072857163679400030
+      - rid: 6072857163679400031
+  m_eventData: []
   m_nextComboInput:
     m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 0
@@ -55,25 +45,25 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 2001016855599513794
-      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
-      data:
-        m_length: 1.3
-    - rid: 2001016855599513806
+    - rid: 6072857163679400025
       type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 5
-        m_height: 1
-    - rid: 2315525991129940046
+        m_strength: 10
+        m_height: 0
+    - rid: 6072857163679400028
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_length: 1
+    - rid: 6072857163679400029
       type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_duration: 0.4
+        m_duration: 0.1
         m_scale: 0
-    - rid: 2315525991129940047
+    - rid: 6072857163679400030
       type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_preset: {fileID: 11400000, guid: 8cccd7890c005af838944180740ec357, type: 2}
-    - rid: 2315525991129940105
+        m_preset: {fileID: 11400000, guid: 084f58eb643fc80f0b21a6ffaf227ea1, type: 2}
+    - rid: 6072857163679400031
       type: {class: ParticleEffectOnHit, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_particleReference: {fileID: 4375904562942587282, guid: 758c63b4931df6c96b37f505b4cb4060, type: 3}

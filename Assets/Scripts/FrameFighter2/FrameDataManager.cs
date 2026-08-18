@@ -111,6 +111,7 @@ namespace FrameFighter2.Manager
         {
 
             m_anim = GetComponent<Animator>();
+            if(m_anim.runtimeAnimatorController == null) enabled = false; //do not bother running the update function if there is not controller to reference
             m_eventLookup = new Dictionary<string, UnityEvent[]>();
 
             foreach (var e in m_animationEvents)

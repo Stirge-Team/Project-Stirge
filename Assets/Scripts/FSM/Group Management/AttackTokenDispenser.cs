@@ -144,11 +144,18 @@ namespace Stirge.Combat
                 return EnterAttackRaffle(entrant, scoreMethod); //else enter the raffle 
             }
         }
-        private void ScoreEntries()
+        private bool ScoreEntries()
         {
             for (int i = 0; i < m_entrantList.Count; i++)
-                if (m_entrantList[i] != null)
+                if (m_entrantList[i] != null && !m_entrantList[i].Entrant.IsDead()) //check if the entry exists/isn't dead.
                     m_entrantList[i].SetScore();
+                else if (m_entrantList[i].Entrant.IsDead()) //if entry has died, remove them then check the remaining number of entries. Stop if there are no valid entries anymore.
+                {
+                    m_entrantList.RemoveAt(i);
+                    if(m_entrantList.Count == 0) return false;
+                }
+
+            return true;
         }
         private List<EntryData> SortEntrantsByScore()
         {
@@ -184,7 +191,7 @@ namespace Stirge.Combat
 
         private void DrawRaffle()
         {
-            ScoreEntries();
+            if(!ScoreEntries()) return;
             SortEntrantsByScore();
             CheckWinners();
             ResetList();
