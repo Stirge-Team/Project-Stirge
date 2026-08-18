@@ -1,0 +1,36 @@
+using Stirge.Combat;
+using System;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.Timeline;
+
+namespace Stirge.UtilityAI
+{
+    [CreateAssetMenu(menuName = "Stirge/Serialized Action", fileName = "New Serialized Action", order = 450)]
+    public class SerializedAction : ScriptableObject
+    {
+        [SerializeField, Range(0, 5f)] private float m_scaling = 1f;
+        [SerializeField] private string m_displayName;
+        [SerializeField] private ActionType m_actionType;
+        [SerializeField] private TimelineAsset m_timeline;
+        [SerializeField, Min(0)] private float m_damage = 1f;
+        [SerializeField, Min(0)] private float m_range = 1f;
+        [SerializeField] private SerializedStatus_Base[] m_statuses = new SerializedStatus_Base[0];
+        [SerializeField] private Condition[] m_conditions = new Condition[0];
+
+        public Action CreateRuntimeAction()
+        {
+            int statusCount = m_statuses.Length;
+            Status[] statuses = new Status[statusCount];
+            for (int i = 0; i < statusCount; i++)
+            {
+                statuses[i] = m_statuses[i].CreateRuntimeStatus();
+            }
+
+            int conditionCount = 0;
+            Condition[] conditions =  new Condition[0];
+
+            return Action.Create(m_scaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions);
+        }
+    }
+}

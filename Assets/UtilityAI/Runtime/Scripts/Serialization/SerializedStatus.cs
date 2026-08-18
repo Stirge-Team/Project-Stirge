@@ -9,9 +9,9 @@ namespace Stirge.UtilityAI
     {
         public override Type statusType => typeof(TStatus);
         
-        public sealed override Status CreateRuntimeStatus()
+        protected sealed override Status _CreateRuntimeStatus()
         {
-            return Status.Create<TStatus>(this);
+            return Status.Create<TStatus>();
         }
     }
     public abstract class SerializedStatus<TStatus, TArg> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg>, new()
@@ -21,9 +21,9 @@ namespace Stirge.UtilityAI
 
         public override Type statusType => typeof(TStatus);
 
-        public sealed override Status CreateRuntimeStatus()
+        protected sealed override Status _CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg>(this, m_arg);
+            return Status.Create<TStatus, TArg>(m_arg);
         }
     }
     public abstract class SerializedStatus<TStatus, TArg0, TArg1> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg0, TArg1>, new()
@@ -34,9 +34,9 @@ namespace Stirge.UtilityAI
 
         public override Type statusType => typeof(TStatus);
 
-        public sealed override Status CreateRuntimeStatus()
+        protected sealed override Status _CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1>(this, m_arg0, m_arg1);
+            return Status.Create<TStatus, TArg0, TArg1>(m_arg0, m_arg1);
         }
     }
 
@@ -49,9 +49,9 @@ namespace Stirge.UtilityAI
 
         public override Type statusType => typeof(TStatus);
 
-        public sealed override Status CreateRuntimeStatus()
+        protected sealed override Status _CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1, TArg2>(this, m_arg0, m_arg1, m_arg2);
+            return Status.Create<TStatus, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2);
         }
     }
 
@@ -65,9 +65,9 @@ namespace Stirge.UtilityAI
 
         public sealed override Type statusType => typeof(TStatus);
 
-        public sealed override Status CreateRuntimeStatus()
+        protected sealed override Status _CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3>(this, m_arg0, m_arg1, m_arg2, m_arg3);
+            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3);
         }
     }
 
@@ -82,9 +82,9 @@ namespace Stirge.UtilityAI
 
         public sealed override Type statusType => typeof(TStatus);
 
-        public sealed override Status CreateRuntimeStatus()
+        protected sealed override Status _CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4>(this, m_arg0, m_arg1, m_arg2, m_arg3, m_arg4);
+            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4);
         }
     }
 }

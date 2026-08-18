@@ -9,15 +9,9 @@ namespace Stirge.UtilityAI
     public abstract class Status
     {
         // constants
-        protected string m_displayName;
-        protected StatusStackType m_stackType;
-        protected StatusDurationType m_durationType;
-        protected int m_maxStackCount;
+        protected StatusData m_data;
 
-        public string displayName => m_displayName;
-        public StatusStackType stackType => m_stackType;
-        public StatusDurationType durationType => m_durationType;
-        public int maxStacks => m_maxStackCount;
+        public StatusData data => m_data;
 
         // variables
         protected int m_currentStackCount;
@@ -30,11 +24,9 @@ namespace Stirge.UtilityAI
 
         public abstract Type statusType { get; }
 
-        public void Init(SerializedStatus_Base serializedStatus)
+        public void Init(StatusData statusData)
         {
-            m_displayName = serializedStatus.displayName;
-            m_durationType = serializedStatus.durationType;
-            m_maxStackCount = serializedStatus.maxStacks;
+            m_data = statusData;
         }
 
         /// <summary>
@@ -59,44 +51,38 @@ namespace Stirge.UtilityAI
         public abstract float Evaluate(CombatEntity user, CombatEntity target);
 
         #region Setup
-        public static TStatus Create<TStatus>(SerializedStatus_Base serializedStatus) where TStatus : Status, INotSetupable, new()
+        public static TStatus Create<TStatus>() where TStatus : Status, INotSetupable, new()
         {
             var status = new TStatus();
-            status.Init(serializedStatus);
             return status;
         }
-        public static TStatus Create<TStatus, TArg>(SerializedStatus_Base serializedStatus, TArg arg) where TStatus : Status, ISetupable<TArg>, new()
+        public static TStatus Create<TStatus, TArg>(TArg arg) where TStatus : Status, ISetupable<TArg>, new()
         {
             var status = new TStatus();
-            status.Init(serializedStatus);
             status.Setup(arg);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ0>(SerializedStatus_Base serializedStatus, TArg0 arg0, Targ0 arg1) where TStatus : Status, ISetupable<TArg0, Targ0>, new()
+        public static TStatus Create<TStatus, TArg0, Targ0>(TArg0 arg0, Targ0 arg1) where TStatus : Status, ISetupable<TArg0, Targ0>, new()
         {
             var status = new TStatus();
-            status.Init(serializedStatus);
             status.Setup(arg0, arg1);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2>(SerializedStatus_Base serializedStatus, TArg0 arg0, Targ1 arg1, Targ2 arg2) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2>, new()
         {
             var status = new TStatus();
-            status.Init(serializedStatus);
             status.Setup(arg0, arg1, arg2);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3>(SerializedStatus_Base serializedStatus, TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
         {
             var status = new TStatus();
-            status.Init(serializedStatus);
             status.Setup(arg0, arg1, arg2, arg3);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3, TArg4>(SerializedStatus_Base serializedStatus, TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
         {
             var status = new TStatus();
-            status.Init(serializedStatus);
             status.Setup(arg0, arg1, arg2, arg3, arg4);
             return status;
         }

@@ -7,8 +7,10 @@ namespace Stirge.UtilityAI
 {
     public class UtiilityEnemy : CombatEntity
     {
-        [SerializeField] private Action[] m_actions;
+        [SerializeField] private SerializedAction[] m_serializedActions;
         [SerializeField] private CombatEntity m_target;
+
+        private Action[] m_actions;
 
         // Stats
         private float m_baseDamage = 1f;
@@ -16,6 +18,13 @@ namespace Stirge.UtilityAI
         private void Start()
         {
             Time.fixedDeltaTime = 0.333f;
+
+            int count = m_serializedActions.Length;
+            m_actions = new Action[count];
+            for (int i = 0; i < count; i++)
+            {
+                m_actions[i] = m_serializedActions[i].CreateRuntimeAction();
+            }
         }
 
         private void FixedUpdate()
@@ -40,12 +49,12 @@ namespace Stirge.UtilityAI
             // if matching status exists
             if (indexOfExistingStatus != -1)
             {
-                switch (status.stackType)
+                switch (status.data.stackType)
                 {
                     case StatusStackType.Stackable:
                         Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
                         int existingStacks = existingStackableStatus.currentStackCount;
-                        int maxStacks = existingStackableStatus.maxStacks;
+                        int maxStacks = existingStackableStatus.data.maxStacks;
                         if (existingStacks < maxStacks)
                         {
                             // add new stacks
