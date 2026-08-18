@@ -4,10 +4,12 @@ using System.Collections.Generic;
 
 namespace Stirge.Combat
 {
+    using System;
     using Enemy;
 
     public class EnemySpawner : MonoBehaviour
     {
+        [SerializeField] private bool m_spawnOnStart;
         [SerializeField] private Enemy m_enemyPrefab;
         [SerializeField, Min(0)] private int m_targetSpawnCount;
         [SerializeField] private Transform m_spawnLocation;
@@ -16,14 +18,36 @@ namespace Stirge.Combat
 
         private void Start()
         {
+            if(m_enemyPrefab == null)
+            {
+                Debug.LogException(new NullReferenceException("No enemy prefab loaded into spawner! Please put a valid enemy prefab into this spawner."), this);
+                Destroy(gameObject);
+            }
             m_spawnedEnemies = new();
-            for (int i = 0; i < m_targetSpawnCount; i++)
-                SpawnEnemy();
+            if(m_spawnOnStart) FillEnemySpawns();
+        }
+        private void FillEnemySpawns(float count = 0)
+        {
+            if(count < 1) count = m_targetSpawnCount;
+
+            for (int i = 0; i < count; i++)
+            {
+                float angle = 2*Mathf.PI * ((i+1)/count);
+                Vector3 spawnPosition = (m_spawnLocation != null ? m_spawnLocation.position : transform.position) + new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * m_enemyPrefab.Agent.NavMeshAgent.radius;
+                SpawnEnemy(spawnPosition);
+            }
         }
 
         private void SpawnEnemy()
         {
-            Enemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation.position, m_spawnLocation.rotation);
+            Enemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation != null ? m_spawnLocation.position : transform.position, Quaternion.identity); //spawn the enemy either at the spawn location or here
+            spawnedEnemy.spawner = this;
+            spawnedEnemy.name = m_enemyPrefab.name;
+            m_spawnedEnemies.Add(spawnedEnemy);
+        }
+        private void SpawnEnemy(Vector3 spawnPosition)
+        {
+            Enemy spawnedEnemy = Instantiate(m_enemyPrefab, spawnPosition, Quaternion.identity);
             spawnedEnemy.spawner = this;
             spawnedEnemy.name = m_enemyPrefab.name;
             m_spawnedEnemies.Add(spawnedEnemy);
@@ -35,11 +59,19 @@ namespace Stirge.Combat
             SpawnEnemy();
         }
 
+        public void OnTriggerEnter(Collider other)
+        {
+            if(other.gameObject.tag == "Player") //only do anything if the player enters the trigger box
+            {
+                FillEnemySpawns();
+            }
+        }
+
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(m_spawnLocation.position, 1f);
+            Gizmos.DrawWireSphere(m_spawnLocation != null ? m_spawnLocation.position : transform.position, 1f);
         }
         public void DebugStun(InputAction.CallbackContext context)
         {
