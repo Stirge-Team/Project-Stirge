@@ -6,7 +6,6 @@ namespace Stirge.Combat.Attacks
     using Stirge.Serialization;
     using Tools;
 
-    [System.Serializable]
     public class TranslateNode : AttackNode, ISetupable<Vector3, bool, RandomFloatField>
     {
         [SerializeField] private Vector3 m_translation;

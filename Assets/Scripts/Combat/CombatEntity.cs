@@ -156,8 +156,8 @@ namespace Stirge.Combat
         }
 
         public abstract void EnterStun(float stunLength);
-        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength);
-        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength);
+        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded);
+        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded);
         #endregion
 
         #region Attacks
@@ -250,11 +250,6 @@ namespace Stirge.Combat
                         // reset animator component
                         m_anim.speed = 1;
                         //m_anim.StopPlayback();
-
-                        // apply motion from animation
-                        AnimationNode animationNode = node as AnimationNode;
-                        if (animationNode.HasRootMotion)
-                            ApplyRootMotion();
                         break;
                     case nameof(ApproachTargetNode):
                         ResetMovementSpeed();
@@ -382,8 +377,6 @@ namespace Stirge.Combat
 
             // exit
             m_anim.speed = 1;
-            if (node.HasRootMotion)
-                ApplyRootMotion();
 
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
             OnAttackCoroutineFinished(node);

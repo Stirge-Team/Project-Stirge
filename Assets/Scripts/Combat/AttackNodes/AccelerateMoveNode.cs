@@ -6,11 +6,10 @@ namespace Stirge.Combat.Attacks
     using Stirge.Serialization;
     using Tools;
 
-    [System.Serializable]
     public class AccelerateMoveNode : MoveNode, ISetupable<RandomVector3Field, RandomFloatField, bool, RandomFloatField, RandomFloatField>
     {
-        [SerializeField] private RandomFloatField m_acceleration;
-        [SerializeField] private RandomFloatField m_maxSpeed;
+        private RandomFloatField m_acceleration;
+        private RandomFloatField m_maxSpeed;
 
         public float Acceleration => m_acceleration.Value;
         public float MaxSpeed => m_maxSpeed.Value;

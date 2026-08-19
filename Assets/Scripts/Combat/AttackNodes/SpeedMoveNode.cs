@@ -6,10 +6,9 @@ namespace Stirge.Combat.Attacks
     using Stirge.Serialization;
     using Tools;
 
-    [System.Serializable]
     public class SpeedMoveNode : MoveNode, ISetupable<RandomVector3Field, RandomFloatField, bool, RandomFloatField>
     {
-        [SerializeField] private RandomFloatField m_speed;
+        private RandomFloatField m_speed;
 
         public float Speed => m_speed.Value;
 

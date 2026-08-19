@@ -7,6 +7,7 @@ using EG = UnityEditor.EditorGUI;
 using EGL = UnityEditor.EditorGUILayout;
 using GL = UnityEngine.GUILayout;
 
+/*
 namespace Stirge.Combat.Attacks
 {
     using Tools;
@@ -91,3 +92,4 @@ namespace Stirge.Combat.Attacks
         }
     }
 }
+*/

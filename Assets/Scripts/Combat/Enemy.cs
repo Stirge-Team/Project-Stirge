@@ -11,7 +11,8 @@ namespace Stirge.Enemy
     {
         [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
-        
+        public Agent Agent => m_agent;
+
         [Header("Combat States")]
         [SerializeField] private State m_stunState;
         [SerializeField] private State m_airStunState;
@@ -21,6 +22,7 @@ namespace Stirge.Enemy
         [HideInInspector] public EnemySpawner spawner = null;
 
         protected bool m_hasAttackToken = false;
+        public bool AttackToken => m_hasAttackToken;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -39,14 +41,6 @@ namespace Stirge.Enemy
                     spawner.ReportDeath(this);
                 Destroy(gameObject);
                 return;
-            }
-
-            if(TargetTransform != null) //if there is a target
-            {
-                if (AttackTokenDispenser.instance != null)
-                    AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
-                else
-                    m_hasAttackToken = true;
             }
 
             m_agent.Update(deltaTime);
@@ -176,7 +170,7 @@ namespace Stirge.Enemy
         public override void EnterStun(float stunLength)
         {
             m_isStunned = true;
-            
+
             // different State for when Grounded
             if (IsGrounded())
                 m_agent.EnterState(m_stunState);
@@ -185,21 +179,27 @@ namespace Stirge.Enemy
 
             m_anim.Play("hitstun");
         }
-        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
-            if (stunLength > 0f)
-                InflictTimedStatus(new Stun(stunLength), null);
-            m_agent.EnterState(m_knockbackState);
-            m_agent.ApplyKnockback(strength, direction, height);
-            m_anim.Play("hitstun");
+            if (IsGrounded() || ignoreGrounded)
+            {
+                if (stunLength > 0f)
+                    InflictTimedStatus(new Stun(stunLength), null);
+                m_agent.EnterState(m_knockbackState);
+                m_agent.ApplyKnockback(strength, direction, height);
+                m_anim.Play("hitstun");
+            }
         }
-        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
         {
-            if (stunLength > 0f)
-                InflictTimedStatus(new Stun(stunLength), null);
-            m_agent.EnterState(m_airJuggle);
-            m_agent.ApplyKnockback(strength, direction);
-            m_anim.Play("hitstun");
+            if (IsGrounded() || ignoreGrounded)
+            {
+                if (stunLength > 0f)
+                    InflictTimedStatus(new Stun(stunLength), null);
+                m_agent.EnterState(m_airJuggle);
+                m_agent.ApplyKnockback(strength, direction);
+                m_anim.Play("hitstun");
+            }
         }
         #endregion
 

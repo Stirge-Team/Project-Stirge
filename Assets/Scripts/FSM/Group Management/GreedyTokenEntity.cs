@@ -67,12 +67,12 @@ namespace Stirge
         }
 
 
-        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
         {
             throw new System.NotImplementedException();
         }
 
-        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
             throw new System.NotImplementedException();
         }

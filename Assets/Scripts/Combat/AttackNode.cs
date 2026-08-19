@@ -5,7 +5,6 @@ using System;
 
 namespace Stirge.Combat.Attacks
 {
-    [System.Serializable]
     public abstract class AttackNode
     {
         public string name { get; set; }
@@ -17,22 +16,6 @@ namespace Stirge.Combat.Attacks
         /// </summary>
         /// <param name="activeNodes">The list of active nodes.</param>
         public abstract void Evaluate(List<AttackNode> activeNodes);
-
-        public static readonly Type[] AttackNodeTypes =
-        {
-            typeof(AnimationNode),
-            typeof(ApproachTargetNode),
-            typeof(SelectAttackNode),
-            typeof(SequenceAttackNode),
-            typeof(TranslateNode),
-            typeof(ChanceNode),
-            typeof(DelayNode),
-            typeof(SimultaneousAttackNode),
-            typeof(TimedMoveNode),
-            typeof(CurveMoveNode),
-            typeof(SpeedMoveNode),
-            typeof(AccelerateMoveNode),
-        };
 
         #region Initialisers
         public static TAttackNode Create<TAttackNode>() where TAttackNode : AttackNode, INotSetupable, new()

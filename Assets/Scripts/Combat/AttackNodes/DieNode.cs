@@ -1,11 +1,11 @@
-using Stirge.Serialization;
-using Stirge.Tools;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Stirge.Combat.Attacks
 {
-    [System.Serializable]
+    using Stirge.Serialization;
+    using Tools;
+
     public class DieNode : AttackNode, ISetupable<RandomFloatField>
     {
         private RandomFloatField m_delay;

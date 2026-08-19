@@ -358,9 +358,9 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             var genericMenu = new GenericMenu();
 
-            for (int i = 0, count = ValidBlackboardBaseTypesCollection.validGenericBlackboardTypes.Count; i < count; i++)
+            for (int i = 0, count = ValidBlackboardBaseTypesCollection.ValidGenericBlackboardTypes.Count; i < count; i++)
             {
-                Type type = ValidBlackboardBaseTypesCollection.validGenericBlackboardTypes[i];
+                Type type = ValidBlackboardBaseTypesCollection.ValidGenericBlackboardTypes[i];
                 string typeName = type.Name;
                 string assemblyQualifiedName = type.AssemblyQualifiedName;
                 genericMenu.AddItem(new GUIContent(typeName), false, () =>

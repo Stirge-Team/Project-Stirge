@@ -61,12 +61,12 @@ namespace Stirge.Player
             m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
-        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength)
+        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
         {
             //lazy implementation - do more later
             EnterStun(stunLength);
         }
-        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength)
+        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
             m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
         }
@@ -88,7 +88,7 @@ namespace Stirge.Player
         }
         protected Vector3 GetEulerRotation()
         {
-            throw new System.NotImplementedException();
+            return transform.rotation.eulerAngles;
         }
         protected override void SetPosition(Vector3 position)
         {
@@ -109,29 +109,27 @@ namespace Stirge.Player
 
         protected override void BeginGoToPosition(Vector3 newPosition)
         {
-            throw new System.NotImplementedException();
+            Vector3 direction = (newPosition - transform.position).normalized;
+            m_movement.Motor.ApplyForce(direction * m_movement.CurrentStateSettings._horizontalAcceleration);
         }
         protected override void StopGoToPosition()
         {
-            throw new System.NotImplementedException();
+            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
         }
 
         protected override float GetMovementSpeed()
         {
-            throw new System.NotImplementedException();
+            return m_movement.Motor._horizontalSpeed;
         }
-        protected override void SetMovementSpeed(float speed)
+
+        public override void ApplyPhysicsToTransform()
         {
-            throw new System.NotImplementedException();
-        }
-        protected override void ResetMovementSpeed()
-        {
-            throw new System.NotImplementedException();
+            //nothing has to be done here - function name unclear?
         }
 
         public override void ApplyRootMotion()
         {
-            throw new System.NotImplementedException();
+            //nothing needs to be done here also?
         }
         #endregion
     }

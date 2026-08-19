@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
+  m_Name: GB_State_CircleTarget
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
+  m_behaviours:
+  - rid: 6072857323652776007
+  - rid: 6072857299943161970
+  - rid: 8303261352949710986
+  - rid: 8303261357187006533
+  - rid: 8303261378770370631
+  m_transitions:
+  - m_targetState: {fileID: 11400000, guid: 77218164759b1b677b97c7e7e85125ee, type: 2}
+    m_conditions:
+    - rid: 6072857299943161961
+    - rid: 6072857299943161962
+  - m_targetState: {fileID: 11400000, guid: bb07202ab9e66e4788a8723f7f792160, type: 2}
+    m_conditions:
+    - rid: 6072857299943161963
+    - rid: 6072857299943161964
+  m_timedTransitionState: {fileID: 0}
+  m_timedTransitionDelay: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 6072857299943161961
+      type: {class: HasAttackTokenCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 0
+    - rid: 6072857299943161962
+      type: {class: TargetInAttackRadiusCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 0
+    - rid: 6072857299943161963
+      type: {class: TargetInAttackRadiusCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 1
+    - rid: 6072857299943161964
+      type: {class: HasAttackTokenCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 1
+    - rid: 6072857299943161970
+      type: {class: CircleTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_speed: 0
+    - rid: 6072857323652776007
+      type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 
+    - rid: 8303261352949710986
+      type: {class: LookAtTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maxDegreesDelta: 1000
+    - rid: 8303261357187006533
+      type: {class: EnterAttackTokenRaffleBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 
+    - rid: 8303261378770370631
+      type: {class: AvoidColliderBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_clearance: 2
+        m_targetLayers:
+          serializedVersion: 2
+          m_Bits: 8
