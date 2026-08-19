@@ -29,6 +29,8 @@ namespace Stirge.UtilityAI
             m_data = statusData;
         }
 
+        public abstract float Evaluate(CombatEntity user, CombatEntity target);
+
         /// <summary>
         /// User is passed here so it may be saved as a reference for any effects that require the applier of the effect during Resolve or Clear.
         /// </summary>
@@ -47,8 +49,6 @@ namespace Stirge.UtilityAI
         /// </summary>
         /// <param name="target"></param>
         public abstract void Clear(CombatEntity target);
-
-        public abstract float Evaluate(CombatEntity user, CombatEntity target);
 
         #region Setup
         public static TStatus Create<TStatus>() where TStatus : Status, INotSetupable, new()

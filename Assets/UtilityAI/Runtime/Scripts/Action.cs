@@ -14,8 +14,8 @@ namespace Stirge.UtilityAI
         private float m_damage = 1f;
         private float m_range = 1f;
 
-        private Condition[] m_conditions;
         private Status[] m_statuses;
+        private ICondition[] m_conditions;
 
         public float Evaluate(CombatEntity user, CombatEntity target)
         {
@@ -39,7 +39,7 @@ namespace Stirge.UtilityAI
             user.UseAction(m_timeline);
         }
 
-        public static Action Create(float scaling, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, Condition[] conditions)
+        public static Action Create(float scaling, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions)
         {
             Action action = new()
             {

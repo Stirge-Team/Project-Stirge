@@ -16,7 +16,7 @@ namespace Stirge.UtilityAI
         [SerializeField, Min(0)] private float m_damage = 1f;
         [SerializeField, Min(0)] private float m_range = 1f;
         [SerializeField] private SerializedStatus_Base[] m_statuses = new SerializedStatus_Base[0];
-        [SerializeField] private Condition[] m_conditions = new Condition[0];
+        [SerializeField] private SerializedCondition[] m_conditions = new SerializedCondition[0];
 
         public Action CreateRuntimeAction()
         {
@@ -27,8 +27,12 @@ namespace Stirge.UtilityAI
                 statuses[i] = m_statuses[i].CreateRuntimeStatus();
             }
 
-            int conditionCount = 0;
-            Condition[] conditions =  new Condition[0];
+            int conditionCount = m_conditions.Length;
+            ICondition[] conditions = new ICondition[conditionCount];
+            for (int i = 0; i < conditionCount; i++)
+            {
+                conditions[i] = m_conditions[i].CreateRuntimeCondition();
+            }
 
             return Action.Create(m_scaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions);
         }

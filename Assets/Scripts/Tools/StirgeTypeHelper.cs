@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 namespace Stirge.Tools
@@ -8,7 +10,7 @@ namespace Stirge.Tools
     {
         static StirgeTypeHelper()
         {
-            DataTypes.UnionWith(NumericTypes);
+            
         }
 
         public static readonly HashSet<Type> NumericTypes = new HashSet<Type>
@@ -22,14 +24,27 @@ namespace Stirge.Tools
             return NumericTypes.Contains(type);
         }
 
-        public static readonly HashSet<Type> DataTypes = new HashSet<Type>
+        private static readonly Dictionary<string, Type> s_builtInTypeNameToType = new()
         {
-            typeof(String), typeof(Vector2), typeof(Vector3)
+            { "bool", typeof(Boolean) },
+            { "byte", typeof(Byte) },
+            { "sbyte", typeof(SByte) },
+            { "char", typeof(Char) },
+            { "decimal", typeof(Decimal) },
+            { "double", typeof(Double) },
+            { "float", typeof(Single) },
+            { "int", typeof(Int32) },
+            { "uint", typeof(UInt32) },
+            { "nint", typeof(IntPtr) },
+            { "nuint", typeof(UIntPtr) },
+            { "long", typeof(Int64) },
+            { "ulong", typeof(UInt64) },
+            { "short", typeof(Int16) },
+            { "ushort", typeof(UInt16) },
+            { "object", typeof(System.Object) },
+            { "string", typeof(String) },
+            { "delegate", typeof(Delegate) },
+            { "dynamic", typeof(System.Object) }
         };
-
-        public static bool IsDataType(Type type)
-        {
-            return DataTypes.Contains(type);
-        }
     }
 }

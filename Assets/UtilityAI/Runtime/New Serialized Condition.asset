@@ -13,3 +13,19 @@ MonoBehaviour:
   m_Name: New Serialized Condition
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedCondition
   m_operation: 0
+  m_firstConstantObject:
+    rid: 5677887281625826138
+  m_secondConstantObject:
+    rid: 5677887281625826139
+  m_firstReferenceObject: {fileID: 0}
+  m_secondReferenceObject: {fileID: 0}
+  m_isValid: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 5677887281625826138
+      type: {class: Int32, ns: System, asm: mscorlib}
+      data: 
+    - rid: 5677887281625826139
+      type: {class: Int32, ns: System, asm: mscorlib}
+      data: 
