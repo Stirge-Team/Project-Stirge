@@ -31,7 +31,6 @@ MonoBehaviour:
     m_value: 1.3
     m_range: {x: 0, y: 0}
     m_isRandom: 0
-  m_arg3: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4547,6 +4547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd060d3806dad3a4594af1e26ae7dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
+  m_spawnOnStart: 0
   m_enemyPrefab: {fileID: 4942877625448988306, guid: 27fff962d825df64db6cc947cb686c13, type: 3}
   m_targetSpawnCount: 1
   m_spawnLocation: {fileID: 1509259609}
@@ -5810,10 +5811,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessingDebug
   m_inputs: 
-  m_datas: []
-  references:
-    version: 2
-    RefIds: []
 --- !u!4 &1913866728
 Transform:
   m_ObjectHideFlags: 0
@@ -6537,9 +6534,17 @@ PrefabInstance:
       value: -157.5
       objectReference: {fileID: 0}
     - target: {fileID: 5026468824895456652, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].m_serializedAttackData
+      value: 
+      objectReference: {fileID: 11400000, guid: 53536eff4c946a6489954d1948096a89, type: 2}
+    - target: {fileID: 5026468824895456652, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_defaultBindings.Array.data[1].m_serializedAttackData
       value: 
       objectReference: {fileID: 11400000, guid: 2adadafbaf8c8604fbf985a4dd6bf226, type: 2}
+    - target: {fileID: 5026468824895456652, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[2].m_serializedAttackData
+      value: 
+      objectReference: {fileID: 11400000, guid: aad5fec47f3bc4449b8345081c01be79, type: 2}
     - target: {fileID: 5079235152578265304, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_inputBufferTime
       value: 0.1
@@ -6640,6 +6645,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.31
       objectReference: {fileID: 0}
+    - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].attackInput
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].m_serializedAttackData
+      value: 
+      objectReference: {fileID: 11400000, guid: f3bfd9b2fa7c60640b63fb6ef1393230, type: 2}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

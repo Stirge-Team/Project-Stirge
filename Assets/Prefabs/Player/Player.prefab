@@ -42,6 +42,7 @@ Transform:
   m_Children:
   - {fileID: 4417360331099796648}
   - {fileID: 2521300203340706763}
+  - {fileID: 1852779184325174334}
   - {fileID: 4181324556013136542}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
@@ -393,6 +394,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: b7a5efb1-ce94-49c6-a903-b168263ac74b
     m_ActionName: 'Debug/Exit Mouse Lock[/Keyboard/escape]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c
+    m_ActionName: 'Player/Hurtself[/Keyboard/h]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -823,6 +828,55 @@ MonoBehaviour:
     m_serializedAttackData: {fileID: 11400000, guid: 336203386e808ae439fafac4b79585a0, type: 2}
   - attackInput: 1
     m_serializedAttackData: {fileID: 11400000, guid: a3ddbe6644e81194f980daefcde3b223, type: 2}
+--- !u!1 &9026884458495549118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1852779184325174334}
+  - component: {fileID: 6529027490485161194}
+  m_Layer: 0
+  m_Name: Attack Binder (Aerial)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1852779184325174334
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9026884458495549118}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: -41.89088, y: 1.6089399, z: -49.49998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6634666910204183250}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6529027490485161194
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9026884458495549118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f0ed661c6c82a74c8176570bfa91ca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.DefaultAttackBindingDefinition
+  m_inputManager: {fileID: 5079235152578265304}
+  m_bindingType: 1
+  m_defaultBindings:
+  - attackInput: 0
+    m_serializedAttackData: {fileID: 11400000, guid: 295d0c008452d50419091a2a4f767237, type: 2}
 --- !u!1001 &6610752918078484151
 PrefabInstance:
   m_ObjectHideFlags: 0
