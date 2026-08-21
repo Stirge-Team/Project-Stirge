@@ -7,7 +7,13 @@ namespace Stirge.AttackTimeline
 
     public class HitboxCollider : MonoBehaviour
     {
-        [SerializeField] private HitboxData m_data;
+        private HitboxData m_data = new();
+
+        public HitboxData Data
+        {
+            get { return m_data; }
+            set { m_data = value; }
+        }
 
         private List<Collider> m_savedColliders = new();
 

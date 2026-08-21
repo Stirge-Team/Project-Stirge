@@ -11,16 +11,16 @@ using UnityEditor.Animations;
 namespace Stirge.AttackTimeline
 {
     [Serializable]
-    [TrackClipType(typeof(HitboxPlayableAsset))]
+    [TrackClipType(typeof(HitboxClip))]
     [TrackBindingType(typeof(GameObject))]
     public class HitboxTrack : TrackAsset
     {
-        HitboxMixerPlayable m_HitboxMixer;
+        HitboxMixerBehaviour m_HitboxMixer;
 
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
-            var mixer = HitboxMixerPlayable.Create(graph, inputCount);
+            var mixer = HitboxMixerBehaviour.Create(graph, inputCount);
             m_HitboxMixer = mixer.GetBehaviour();
 
             return mixer;

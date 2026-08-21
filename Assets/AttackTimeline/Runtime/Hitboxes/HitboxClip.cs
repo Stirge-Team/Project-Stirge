@@ -1,5 +1,7 @@
 #if UNITY_EDITOR
 using System.ComponentModel;
+using Timeline.Samples;
+
 #endif
 using UnityEngine;
 using UnityEngine.Playables;
@@ -10,7 +12,7 @@ namespace Stirge.AttackTimeline
 #if UNITY_EDITOR
     [DisplayName("Hitbox Clip")]
 #endif
-    public class HitboxPlayableAsset : PlayableAsset , ITimelineClipAsset
+    public class HitboxClip : PlayableAsset , ITimelineClipAsset
     {
         [SerializeField] private HitboxData m_data;
 
@@ -18,7 +20,14 @@ namespace Stirge.AttackTimeline
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)
         {
-            return Playable.Create(graph);
+            ScriptPlayable<HitboxBehaviour> playable = ScriptPlayable<HitboxBehaviour>.Create(graph);
+            HitboxBehaviour hitbox = playable.GetBehaviour();
+
+            hitbox.HitboxData = m_data;
+
+            return playable;
+
+            //return Playable.Create(graph);
         }
     }
 }
