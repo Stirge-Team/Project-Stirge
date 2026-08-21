@@ -6646,13 +6646,25 @@ PrefabInstance:
       value: -0.31
       objectReference: {fileID: 0}
     - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_defaultBindings.Array.data[0].attackInput
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].attackInput
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_defaultBindings.Array.data[0].m_serializedAttackData
       value: 
       objectReference: {fileID: 11400000, guid: f3bfd9b2fa7c60640b63fb6ef1393230, type: 2}
+    - target: {fileID: 6529027490485161194, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].m_serializedAttackData
+      value: 
+      objectReference: {fileID: 11400000, guid: 09db1642bc8800a4a89b93c056dd3df7, type: 2}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
