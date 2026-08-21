@@ -14,6 +14,7 @@ namespace Stirge.AttackTimeline
 
         public LayerMask Mask => m_mask;
         public OnHitEffect OnHitEffect => m_onHitEffect;
+        public float Damage => m_damage;
     }
 
 

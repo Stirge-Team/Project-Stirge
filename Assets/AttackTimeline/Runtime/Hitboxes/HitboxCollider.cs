@@ -18,6 +18,8 @@ namespace Stirge.AttackTimeline
 
             //prevent repeat collisions
             if (m_savedColliders.Contains(other)) return;
+            //add 
+            m_savedColliders.Add(other);
 
             // do OnHit Shtuff
             //m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>, );
@@ -27,7 +29,14 @@ namespace Stirge.AttackTimeline
 
         private void OnDisable()
         {
+            //m_savedColliders = new();
+        }
+
+        public void CreateHitbox(HitboxData data)
+        {
             m_savedColliders = new();
+
+            m_data = data;
         }
     }
 }
