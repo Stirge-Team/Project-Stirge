@@ -50,7 +50,7 @@ public class ParticleInstancer : MonoBehaviour
     }
 
     //this function is here to faciliate unityevents being very very limited in the parameters they pass which is stupid and dumb, let me pass 30000 params if that is what i please.
-    public void PlayParticle(string effectName)
+    public void PlayParticleWraper(string effectName)
     {
         PlayParticle(effectName, null);
     }
