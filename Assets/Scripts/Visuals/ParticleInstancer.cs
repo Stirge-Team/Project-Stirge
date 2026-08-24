@@ -43,7 +43,7 @@ public class ParticleInstancer : MonoBehaviour
             if (m_particles[i].Name == effectName || index == i)
             {
                 m_particles[i].PlayParticle(location);
-                return;
+                //return; removed this so its easier to player a group of particles.
             }
         }
         Debug.LogError($"No particle found with name {effectName}. Please make sure you're calling the correct paricle instancer and that your strings are matching.");
