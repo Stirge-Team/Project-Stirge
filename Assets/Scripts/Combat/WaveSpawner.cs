@@ -3,7 +3,10 @@ using UnityEngine;
 namespace Stirge.Combat
 {
     using System.Collections.Generic;
+    using System.Linq;
     using Enemy;
+    using UnityEngine.Events;
+
     public class WaveSpawner : MonoBehaviour
     {
         [System.Serializable]
@@ -54,6 +57,9 @@ namespace Stirge.Combat
         private Wave[] m_waves;
         private int m_waveIndex = 0;
         private Wave m_currentWave => m_waves[m_waveIndex];
+        public bool _wavesCompleted { get { return m_waveIndex >= m_waves.Count(); } }
+        [SerializeField]
+        private UnityEvent m_completeEvent;
 
         [SerializeField]
         private float m_waveDelay = 2f;
@@ -89,8 +95,20 @@ namespace Stirge.Combat
             m_spawnRateCountdown = m_spawnRate;
             if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("Enemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
         }
+        public void StopWaves()
+        {
+            enabled = false;
+        }
+
         void Update()
         {
+            if (_wavesCompleted)
+            {
+                StopWaves();
+                m_completeEvent.Invoke();
+                return;
+            }
+
             if (m_activeEnemies.Count < m_maxSpawnCount) //there is room for more enemies to spawn
                 if (m_waveDelayCountdown <= 0 && m_spawnRateCountdown <= 0) //check countdowns
                 {

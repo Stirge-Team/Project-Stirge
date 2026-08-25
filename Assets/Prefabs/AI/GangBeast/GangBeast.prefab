@@ -1032,7 +1032,6 @@ MonoBehaviour:
   m_airStunState: {fileID: 11400000, guid: 6a7e62f597e816c96a6ef09d200038bd, type: 2}
   m_knockbackState: {fileID: 11400000, guid: bc468c0bf5d2747929e59829855ffedd, type: 2}
   m_airJuggle: {fileID: 11400000, guid: 2926f996ed34b863eaa7a7757e1d70b0, type: 2}
-  spawner: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -1048,7 +1047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
-  m_baseHealth: 10
+  m_baseHealth: 2
   m_healEvents:
     m_PersistentCalls:
       m_Calls: []
