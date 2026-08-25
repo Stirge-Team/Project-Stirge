@@ -11,9 +11,9 @@ namespace Stirge.Environment
     {
         [SerializeField, Tooltip("Even if an object does not has an entity health component, any colliding object should still be destoryed.")]
         private bool m_destroyAnyway = false;
-        public override void OnTriggerEnter(Collider collider)
+        protected override void EnterFunc(Collider collider)
         {
-            base.OnTriggerEnter(collider);
+            base.EnterFunc(collider);
             var health = collider.gameObject.GetComponent<EntityHealth>(); //get collider health component
 
             if(health != null)

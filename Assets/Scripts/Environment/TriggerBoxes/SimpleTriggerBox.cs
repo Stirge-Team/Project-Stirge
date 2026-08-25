@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace Stirge.Environment
@@ -12,10 +13,59 @@ namespace Stirge.Environment
         private List<GameObject> m_colliderPreviews;
         [SerializeField, Tooltip("Forces any attached collider components to become trigger boxes. Keep this as true unless you have a specific collider setup configured.")]
         private bool m_forceTrigger = true;
+        private enum TriggerType
+        {
+            SingleUse,
+            NoRepeatObjects,
+            Repeatable
+        };
+        [System.Serializable]
+        private struct TriggerActivator
+        {
+            [SerializeField]
+            private TriggerType m_repeatable;
+            private bool m_triggered;
+            private List<Transform> m_collidedObjects;
+            public delegate void CollisionCallback(Collider collider);
+            public CollisionCallback _collisionCallback;
+            public void Trigger(Collider collider)
+            {
+                switch (m_repeatable)
+                {
+                    case TriggerType.SingleUse:
+                        if (m_triggered) return;
+                        break;
+                    case TriggerType.NoRepeatObjects:
+                        if (PreviousCollider(collider)) return;
+                        _collisionCallback(collider);
+                        break;
+                }
+                _collisionCallback(collider);
+                m_triggered = true;
+            }
+            public bool PreviousCollider(Collider collider)
+            {
+                if (m_collidedObjects.Contains(collider.transform)) return true;
+                else
+                {
+                    m_collidedObjects.Add(collider.transform);
+                    return false;
+                }
+            }
+        }
+        [SerializeField]
+        private TriggerActivator m_EntryTrigger;
+        [SerializeField]
+        private TriggerActivator m_StayTrigger;
+        [SerializeField]
+        private TriggerActivator m_ExitTrigger;
         #endregion
         #region Setup
         void Awake()
         {
+            m_EntryTrigger._collisionCallback += EnterFunc;
+            m_StayTrigger._collisionCallback += StayFunc;
+            m_ExitTrigger._collisionCallback += ExitFunc;
             SetupForGizmos();
         }
         void Reset()
@@ -47,21 +97,33 @@ namespace Stirge.Environment
         #endregion
         #region Trigger Interactions
         //Trigger Enter
-        public virtual void OnTriggerEnter(Collider collider)
+        public void OnTriggerEnter(Collider collider)
+        {
+            m_EntryTrigger.Trigger(collider);
+        }
+        //Trigger Stay
+        public void OnTriggerStay(Collider collider)
+        {
+            m_StayTrigger.Trigger(collider);
+        }
+        //Trigger Exit
+        public void OnTriggerExit(Collider collider)
+        {
+            m_ExitTrigger.Trigger(collider);
+        }
+        #endregion
+        protected virtual void EnterFunc(Collider collider)
         {
             Debug.Log($"{collider.name} has entered {name} collider.");
         }
-        //Trigger Stay
-        public virtual void OnTriggerStay(Collider collider)
+        protected virtual void StayFunc(Collider collider)
         {
             Debug.Log($"{collider.name} is within the {name} collider.");
         }
-        //Trigger Exit
-        public virtual void OnTriggerExit(Collider collider)
+        protected virtual void ExitFunc(Collider collider)
         {
             Debug.Log($"{collider.name} has exited {name} collider.");
         }
-        #endregion
         #region Previews
         /*
                 public void RenderPreviews()

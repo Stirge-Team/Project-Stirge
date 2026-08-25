@@ -11,19 +11,19 @@ namespace Stirge.Environment
         private UnityEvent<Collider> m_stayEvent;
         [SerializeField]
         private UnityEvent<Collider> m_exitEvent;
-        public override void OnTriggerEnter(Collider collider)
+        protected override void EnterFunc(Collider collider)
         {
-            base.OnTriggerEnter(collider);
+            base.EnterFunc(collider);
             m_enterEvent.Invoke(collider);
         }
-        public override void OnTriggerStay(Collider collider)
+        protected override void StayFunc(Collider collider)
         {
-            base.OnTriggerStay(collider);
+            base.StayFunc(collider);
             m_stayEvent.Invoke(collider);
         }
-        public override void OnTriggerExit(Collider collider)
+        protected override void ExitFunc(Collider collider)
         {
-            base.OnTriggerExit(collider);
+            base.ExitFunc(collider);
             m_exitEvent.Invoke(collider);
         }
     }
