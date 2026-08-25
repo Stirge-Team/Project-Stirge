@@ -38,15 +38,17 @@ public class ParticleInstancer : MonoBehaviour
             Debug.Log("Given string is NOT a valid int. Continuing as normal...\n" + e);
         }
 
+        bool particleFound = false;
         for (int i = index >= 0 ? index : 0; i < m_particles.Length; i++)
         {
             if (m_particles[i].Name == effectName || index == i)
             {
                 m_particles[i].PlayParticle(location);
+                particleFound = true;
                 //return; removed this so its easier to player a group of particles.
             }
         }
-        Debug.LogError($"No particle found with name {effectName}. Please make sure you're calling the correct paricle instancer and that your strings are matching.");
+        if(!particleFound) Debug.LogError($"No particle found with name {effectName}. Please make sure you're calling the correct paricle instancer and that your strings are matching.");
     }
 
     //this function is here to faciliate unityevents being very very limited in the parameters they pass which is stupid and dumb, let me pass 30000 params if that is what i please.
