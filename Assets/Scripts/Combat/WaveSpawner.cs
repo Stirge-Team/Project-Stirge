@@ -49,15 +49,22 @@ namespace Stirge.Combat
                 return null;
             }
         }
+
         [SerializeField]
         private Wave[] m_waves;
         private int m_waveIndex = 0;
         private Wave m_currentWave => m_waves[m_waveIndex];
+
+        [SerializeField]
+        private float m_waveDelay = 2f;
+        private float m_waveDelayCountdown = 0f;
         [SerializeField]
         private float m_spawnRate = 1f;
-        private float m_internalRateCountdown = 0f;
-        private float m_waveDelay = 2f;
-        private float m_internalGapCountdown = 0f;
+        private float m_spawnRateCountdown = 0f;
+        [SerializeField, Tooltip("How many enemies (within the maximum) should be spawned at once.")]
+        private int m_batchSpawn = 1;
+        [SerializeField, Tooltip("Can the number of enemies exceed the maximum limit if spawning a batch of enemies would cause it to do so. i.e. enemy limit is 4, spawning in batches of 3. First batch spawns in, then the second resulting in 6 enemies rather then 4.")]
+        private bool m_canBatchOverflow = false;
         private List<Enemy> m_activeEnemies = new();
         [SerializeField]
         private int m_maxSpawnCount = 5;
@@ -71,39 +78,48 @@ namespace Stirge.Combat
 
         void Start()
         {
-            m_activeEnemies = new();
-            m_particles = GetComponent<ParticleInstancer>();   
+            StartWaves();
         }
         public void StartWaves()
         {
             enabled = true;
+            m_particles = GetComponent<ParticleInstancer>();
             m_activeEnemies = new();
+            m_waveDelayCountdown = m_waveDelay;
+            m_spawnRateCountdown = m_spawnRate;
+            if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("Enemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
         }
         void Update()
         {
-            if (m_internalGapCountdown <= 0 && m_internalRateCountdown <= 0 && m_activeEnemies.Count < m_maxSpawnCount)
-            {
-                Enemy newEnemy = m_currentWave.AttemptSpawnEnemy(transform.position);
-                if (newEnemy)
+            if (m_activeEnemies.Count < m_maxSpawnCount) //there is room for more enemies to spawn
+                if (m_waveDelayCountdown <= 0 && m_spawnRateCountdown <= 0) //check countdowns
                 {
-                    //other spawn functions
-                    m_internalRateCountdown = m_spawnRate; //reset countdown
-                    m_activeEnemies.Add(newEnemy); //save to list
-                    newEnemy.deathCallback = RemoveEnemyFromActiveList;
-                    m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
+                    for (int i = 0; i < m_batchSpawn; i++) //attempt to spawn a batch of enemies
+                    {
+                        Enemy newEnemy = m_currentWave.AttemptSpawnEnemy(transform.position);
+                        if (newEnemy)
+                        {
+                            //other spawn functions
+                            m_spawnRateCountdown = m_spawnRate; //reset countdown
+                            m_activeEnemies.Add(newEnemy); //save to list
+                            newEnemy.deathCallback = RemoveEnemyFromActiveList;
+                            m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
+                        }
+                        if (m_activeEnemies.Count >= m_maxSpawnCount && !m_canBatchOverflow) break;
+                    }
+
+                    if (m_activeEnemies.Count == 0) //there are no enemies have been spawned and there are no more living, move on to the next wave
+                    {
+                        m_waveIndex++;
+                        m_waveDelayCountdown = m_waveDelay;
+                    }
                 }
-                else if(m_activeEnemies.Count == 0) //there are no enemies left to spawn and there are no more living, so move on;
-                {
-                    m_waveIndex++;
-                    m_internalGapCountdown = m_waveDelay;
-                }
-            }
-            else if(m_internalGapCountdown > 0) m_internalGapCountdown -= Time.deltaTime; //wave gap
-            else if(m_internalRateCountdown > 0) m_internalRateCountdown -= Time.deltaTime; //spawn rate
+            if (m_waveDelayCountdown > 0) m_waveDelayCountdown -= Time.deltaTime; //wave delay
+            if (m_spawnRateCountdown > 0) m_spawnRateCountdown -= Time.deltaTime; //spawn rate
         }
         private void RemoveEnemyFromActiveList(Enemy deadGuy)
         {
-            if(m_activeEnemies.Contains(deadGuy))
+            if (m_activeEnemies.Contains(deadGuy))
                 m_activeEnemies.Remove(deadGuy);
         }
 
