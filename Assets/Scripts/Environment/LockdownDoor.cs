@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace Stirge.Environment
 {
@@ -8,11 +9,13 @@ namespace Stirge.Environment
         [SerializeField]
         private bool m_locked;
         private Collider m_col;
+        private NavMeshObstacle m_navCutout;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             m_col = GetComponent<Collider>();
             m_mdlAnim = GetComponentInChildren<Animator>();
+            m_navCutout = GetComponent<NavMeshObstacle>();
 
             ToggleLockedDoor(m_locked ? 1 : 0);
         }
@@ -33,6 +36,7 @@ namespace Stirge.Environment
             };
 
             m_col.enabled = m_locked ? true : false;
+            m_navCutout.enabled = m_col.enabled;
             m_mdlAnim.SetTrigger(m_locked ? "Lock" : "Unlock");
             return m_locked;
         }
