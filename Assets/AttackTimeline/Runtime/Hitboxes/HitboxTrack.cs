@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -13,6 +12,7 @@ namespace Stirge.AttackTimeline
     [Serializable]
     [TrackClipType(typeof(HitboxClip))]
     [TrackBindingType(typeof(GameObject))]
+    [TrackColor(0.6901960784313725f, 0.0431372549019608f, 0.4117647058823529f)] //b00b69
     public class HitboxTrack : TrackAsset
     {
         HitboxMixerBehaviour m_HitboxMixer;

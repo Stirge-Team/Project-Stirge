@@ -17,7 +17,7 @@ namespace Stirge.AttackTimeline
 
         private List<Collider> m_savedColliders = new();
 
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerStay(Collider other)
         {
             //if the checked object's layer is NOT in the layer mask, do nothing
             if (!(((1 << other.gameObject.layer) & m_data.Mask.value) != 0)) return;
@@ -29,13 +29,6 @@ namespace Stirge.AttackTimeline
 
             // do OnHit Shtuff
             //m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>, );
-
-
-        }
-
-        private void OnDisable()
-        {
-            //m_savedColliders = new();
         }
 
         public void CreateHitbox(HitboxData data)

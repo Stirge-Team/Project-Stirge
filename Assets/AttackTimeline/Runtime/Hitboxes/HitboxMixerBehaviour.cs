@@ -1,7 +1,5 @@
-using Timeline.Samples;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Windows;
 
 namespace Stirge.AttackTimeline
 {
@@ -9,7 +7,7 @@ namespace Stirge.AttackTimeline
     {
         private GameObject m_boundObject;
 
-        bool m_shouldInitialize = true;
+        //bool m_shouldInitialize = true;
         bool m_boundObjectInitialStateIsActive = false;
 
         public static ScriptPlayable<HitboxMixerBehaviour> Create(PlayableGraph graph, int inputCount)
@@ -38,7 +36,7 @@ namespace Stirge.AttackTimeline
 
                     var input = playable.GetInput(i);
 
-                    InitializeData(input);
+                    //InitializeData(input);
 
                     break;
                 }
@@ -49,25 +47,25 @@ namespace Stirge.AttackTimeline
              //playable as PlayableAsset
         }
 
-        void InitializeData(Playable input)
-        {
-            if (m_shouldInitialize && Application.isPlaying)
-            {
-                HitboxBehaviour hitboxBehaviour = GetHitboxBehaviour(input);
-                HitboxData hitboxData = hitboxBehaviour.HitboxData;
+        //void InitializeData(Playable input)
+        //{
+        //    if (m_shouldInitialize && Application.isPlaying)
+        //    {
+        //        HitboxBehaviour hitboxBehaviour = GetHitboxBehaviour(input);
+        //        HitboxData hitboxData = hitboxBehaviour.HitboxData;
+        //
+        //        HitboxCollider collider = m_boundObject.GetComponent<HitboxCollider>();
+        //        collider.Data = hitboxData;
+        //
+        //        m_shouldInitialize = false;
+        //    }
+        //}
 
-                HitboxCollider collider = m_boundObject.GetComponent<HitboxCollider>();
-                collider.Data = hitboxData;
-
-                m_shouldInitialize = false;
-            }
-        }
-
-        static HitboxBehaviour GetHitboxBehaviour(Playable playable)
-        {
-            ScriptPlayable<HitboxBehaviour> hitboxInput = (ScriptPlayable<HitboxBehaviour>)playable;
-            return hitboxInput.GetBehaviour();
-        }
+        //static HitboxBehaviour GetHitboxBehaviour(Playable playable)
+        //{
+        //    ScriptPlayable<HitboxBehaviour> hitboxInput = (ScriptPlayable<HitboxBehaviour>)playable;
+        //    return hitboxInput.GetBehaviour();
+        //}
 
         public override void OnPlayableDestroy(Playable playable)
         {
