@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using System.ComponentModel;
-using Timeline.Samples;
 
 #endif
 using UnityEngine;
