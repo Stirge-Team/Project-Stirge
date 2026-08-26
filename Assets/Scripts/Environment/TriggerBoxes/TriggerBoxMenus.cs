@@ -35,5 +35,11 @@ namespace Stirge
         {
             CreateBoxRoot<EventTriggerBox>();
         }
+        
+        [MenuItem(m_triggerBoxObjectMenuRoot + "ReTrigger Box")]
+        static void CreateReTriggerBox()
+        {
+            CreateBoxRoot<ReTriggerBox>();
+        }
     }
 }

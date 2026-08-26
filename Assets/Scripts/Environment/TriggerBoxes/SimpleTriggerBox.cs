@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
@@ -11,13 +12,15 @@ namespace Stirge.Environment
         private Collider[] m_collider;
         public Collider[] Triggers { get { return m_collider; } }
         private List<GameObject> m_colliderPreviews;
+        [Header("Trigger Settings")]
         [SerializeField, Tooltip("Forces any attached collider components to become trigger boxes. Keep this as true unless you have a specific collider setup configured.")]
         private bool m_forceTrigger = true;
         private enum TriggerType
         {
             SingleUse,
             NoRepeatObjects,
-            Repeatable
+            Repeatable,
+            Off
         };
         [System.Serializable]
         private struct TriggerActivator
@@ -39,6 +42,7 @@ namespace Stirge.Environment
                         if (PreviousCollider(collider)) return;
                         _collisionCallback(collider);
                         break;
+                    case TriggerType.Off: return;
                 }
                 _collisionCallback(collider);
                 m_triggered = true;
@@ -51,6 +55,11 @@ namespace Stirge.Environment
                     m_collidedObjects.Add(collider.transform);
                     return false;
                 }
+            }
+            public void Reenable()
+            {
+                if(!m_triggered && m_repeatable != TriggerType.Off) Debug.Log($"{this} trigger not hit yet. If this being called multiple times, please check your calls and trigger placement in scene");
+                m_triggered = false;
             }
         }
         [SerializeField]
@@ -123,6 +132,22 @@ namespace Stirge.Environment
         protected virtual void ExitFunc(Collider collider)
         {
             Debug.Log($"{collider.name} has exited {name} collider.");
+        }
+        [Flags]
+        public enum SelectTriggerEvent
+        {
+            Entry = 1,
+            Stay = 2,
+            Exit = 4
+        }
+        public void ReenableTriggers(SelectTriggerEvent triggers = (SelectTriggerEvent)7)
+        {
+            if(triggers.HasFlag(SelectTriggerEvent.Entry))
+                m_EntryTrigger.Reenable();
+            if(triggers.HasFlag(SelectTriggerEvent.Stay))
+                m_StayTrigger.Reenable();
+            if(triggers.HasFlag(SelectTriggerEvent.Exit))
+                m_ExitTrigger.Reenable();
         }
         #region Previews
         /*

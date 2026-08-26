@@ -5,6 +5,7 @@ namespace Stirge.Environment
 {
     public class EventTriggerBox : SimpleTriggerBox
     {
+        [Header("Events")]
         [SerializeField]
         private UnityEvent<Collider> m_enterEvent;
         [SerializeField]
