@@ -30,7 +30,7 @@ namespace Stirge.Combat
         public class Wave
         {
             [SerializeField] //x,y are the center point, z,w are the bounds. i see *no* issue with this
-            private Vector4 m_spawnArea;
+            private Vector4 m_spawnArea = Vector4.one;
             public Vector4 SpawnArea { get { return m_spawnArea; } set { } }
             [SerializeField]
             private float m_startDelay = 1f;
@@ -57,13 +57,16 @@ namespace Stirge.Combat
             }
             public Enemy[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
             {
-                if (m_delayComplete && m_spawnCountdownComplete && !_outOfSpawns && spawner._activeEnemies.Count < m_maxSpawnCount) //check countdowns
+                if (m_delayComplete && m_spawnCountdownComplete && !_outOfSpawns && spawner._activeEnemies.Count() < m_maxSpawnCount) //check countdowns
                 {
                     Enemy[] batch = new Enemy[m_batchSpawn];
                     for (int x = 0; x < m_batchSpawn; x++) //spawn the batch amount
                     {
+                        if(spawner._activeEnemies.Count() + x >= m_maxSpawnCount && !m_canBatchOverflow) break;
+                        
                         if (m_enemyList[m_spawnIndex]._spawnsAvalible) //check for any avalible spawns
                         {
+
                             //spawning position code
                             float rndXBound = Random.Range(-m_spawnArea.z / 2, m_spawnArea.z / 2);
                             float rndZBound = Random.Range(-m_spawnArea.w / 2, m_spawnArea.w / 2);
@@ -74,7 +77,9 @@ namespace Stirge.Combat
                             batch[x] = m_enemyList[m_spawnIndex].SpawnEnemy(position); //instance the enemy and save
                             m_spawnRateCountdown = m_spawnRate; //reset countdown
                             if (!m_enemyList[m_spawnIndex]._spawnsAvalible) m_spawnIndex++; //increase the spawn index if all the avalible enemies of that type have spawned.
+
                         }
+                        
                     }
                     return batch;
                 }
@@ -158,7 +163,7 @@ namespace Stirge.Combat
 
         void OnDrawGizmos()
         {
-            foreach (var wave in m_waves)
+            if(m_waves != null) foreach (var wave in m_waves)
             {
                 Gizmos.color = new Color(0.5f, 0.5f, 0.5f, m_gizmoAlpha);
                 Gizmos.DrawCube(transform.position + new Vector3(wave.SpawnArea.x, 0, wave.SpawnArea.y), new(wave.SpawnArea.z, 1, wave.SpawnArea.w));
