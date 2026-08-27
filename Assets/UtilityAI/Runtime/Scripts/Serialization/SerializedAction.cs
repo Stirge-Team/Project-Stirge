@@ -7,7 +7,7 @@ using UnityEngine.Timeline;
 namespace Stirge.UtilityAI
 {
     [CreateAssetMenu(menuName = "Utility AI/Serialized Action", fileName = "New Serialized Action", order = 449)]
-    public class SerializedAction : ScriptableObject, IScalable
+    public class SerializedAction : ScriptableObject
     {
         [SerializeField, Range(0, 5f)] private float m_scoreScaling = 1f;
         [SerializeField] private string m_displayName;
@@ -17,13 +17,7 @@ namespace Stirge.UtilityAI
         [SerializeField, Min(0)] private float m_range = 1f;
         [SerializeField] private SerializedStatus_Base[] m_statuses = new SerializedStatus_Base[0];
         [SerializeField] private SerializedCondition[] m_conditions = new SerializedCondition[0];
-
-        public float ScoreScaling => m_scoreScaling;
-
-        public void SetScoreScaling(float newScaling)
-        {
-            m_scoreScaling = newScaling;
-        }
+        [SerializeField] private SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
         public Action CreateRuntimeAction()
         {
@@ -41,7 +35,14 @@ namespace Stirge.UtilityAI
                 conditions[i] = m_conditions[i].CreateRuntimeCondition();
             }
 
-            return Action.Create(m_scoreScaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions);
+            int scoringMethodCount = m_scoringMethods.Length;
+            ScoringMethod[] scoringMethods = new ScoringMethod[scoringMethodCount];
+            for (int i = 0; i < scoringMethodCount; i++)
+            {
+                scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod();
+            }
+
+            return Action.Create(m_scoreScaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions, scoringMethods);
         }
     }
 }

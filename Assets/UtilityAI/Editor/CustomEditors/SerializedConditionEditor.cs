@@ -125,13 +125,19 @@ namespace Stirge.UtilityAI.CustomEditors
             bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
             bool firstCanBeNull = m_firstObject.type != null && (!m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null);
             bool secondCanBeNull = m_secondObject.type != null && (!m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null);
+
+            Type firstEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_secondObject.type);
+            Type secondEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_firstObject.type);
+
             switch (operation)
             {
                 case Operation.Equal:
                 case Operation.NotEqual:
                     if ((!bothNumeric && m_firstObject.type != m_secondObject.type) || // if neither object is a number and the types do not match
                         (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
-                        (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull)) // if second is null and first is not a class
+                        (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull) || // if second is null and first is not a class
+                        // Both types implement IEquatable<OtherType>
+                        !(m_firstObject.type.GetInterfaces().Contains(firstEquatableInterfaceType) && m_secondObject.type.GetInterfaces().Contains(secondEquatableInterfaceType)))
                     {
                         EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
                         isValid = false;

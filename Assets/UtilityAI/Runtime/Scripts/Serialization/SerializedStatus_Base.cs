@@ -18,24 +18,29 @@ namespace Stirge.UtilityAI
         Conditional
     }
 
-    public abstract class SerializedStatus_Base : ScriptableObject, IScalable
+    public abstract class SerializedStatus_Base : ScriptableObject
     {
         [Header("Base Status Properties")]
-        [SerializeField, Range(0f, 5f)] private float m_scoreScaling = 1f;
-        [SerializeField] private StatusStackType m_stackType;
-        [SerializeField] private StatusDurationType m_durationType;
-        [SerializeField] private string m_displayName;
-        [SerializeField, Min(1)] private int m_maxStacks;
-        [SerializeField] private SerializedCondition[] m_conditions;
-
-        public float ScoreScaling => m_scoreScaling;
-
-        public void SetScoreScaling(float newScaling)
-        {
-            m_scoreScaling = newScaling;
-        }
+        [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;
+        [SerializeField] protected StatusStackType m_stackType;
+        [SerializeField] protected StatusDurationType m_durationType;
+        [SerializeField] protected string m_displayName;
+        [SerializeField, Min(1)] protected int m_maxStacks;
+        [SerializeField] protected SerializedCondition[] m_conditions;
+        [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods;
 
         public abstract Type statusType { get; }
+
+        protected ICondition[] CreateRuntimeConditions()
+        {
+            int conditionCount = m_conditions.Length;
+            ICondition[] conditions = new Condition[conditionCount];
+            for (int i = 0; i < conditionCount; i++)
+            {
+                conditions[i] = m_conditions[i].CreateRuntimeCondition();
+            }
+            return conditions;
+        }
 
         public abstract Status CreateRuntimeStatus();
     }

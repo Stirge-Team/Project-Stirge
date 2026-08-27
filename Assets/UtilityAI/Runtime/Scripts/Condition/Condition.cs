@@ -1,3 +1,4 @@
+using Stirge.AI;
 using Stirge.Combat;
 using Stirge.Tools;
 using System;
@@ -15,7 +16,7 @@ namespace Stirge.UtilityAI
         GreaterThanOrEqual,
     }
 
-    public class Condition
+    public class Condition : ICondition
     {
         private Operation m_operation;
         private object m_firstObject;
@@ -26,6 +27,19 @@ namespace Stirge.UtilityAI
 
         private bool m_firstIsNumeric;
         private bool m_secondIsNumeric;
+
+        public void Init(Operation operation, object firstObject, object secondObject, Type firstType, Type secondType)
+        {
+            m_operation = operation;
+            m_firstObject = firstObject;
+            m_secondObject = secondObject;
+
+            m_firstType = firstType;
+            m_secondType = secondType;
+
+            m_firstIsNumeric = StirgeTypeHelper.IsNumericType(m_firstType);
+            m_secondIsNumeric = StirgeTypeHelper.IsNumericType(m_secondType);
+        }
 
         public bool Evaluate()
         {
@@ -59,21 +73,10 @@ namespace Stirge.UtilityAI
             return false;
         }
 
-        public static Condition Create(Operation operation, object firstObject, object secondObject)
+        public static Condition Create(Operation operation, object firstObject, object secondObject, Type firstType, Type secondType)
         {
-            Condition condition = new()
-            {
-                m_operation = operation,
-                m_firstObject = firstObject,
-                m_secondObject = secondObject,
-
-                m_firstType = firstObject.GetType(),
-                m_secondType = secondObject.GetType()
-            };
-
-            condition.m_firstIsNumeric = StirgeTypeHelper.IsNumericType(condition.m_firstType);
-            condition.m_secondIsNumeric = StirgeTypeHelper.IsNumericType(condition.m_secondType);
-
+            Condition condition = new();
+            condition.Init(operation, firstObject, secondObject, firstType, secondType);
             return condition;
         }
     }

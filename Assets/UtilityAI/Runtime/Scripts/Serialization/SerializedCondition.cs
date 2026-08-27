@@ -15,7 +15,7 @@ namespace Stirge.UtilityAI
 
         [SerializeField] private bool m_isValid;
 
-        public ICondition CreateRuntimeCondition()
+        public ICondition CreateRuntimeCondition(bool useGenericCondition = true)
         {
             if (!m_isValid)
             {
@@ -29,12 +29,21 @@ namespace Stirge.UtilityAI
             Type firstType = firstIsConstant ? m_firstConstantObject.GetType() : m_firstReferenceObject.GetType();
             Type secondType = secondIsConstant ? m_secondConstantObject.GetType() : m_secondReferenceObject.GetType();
 
-            Type genericConditionType = typeof(GenericCondition<,>).MakeGenericType(firstType, secondType);
+            object firstObject = firstIsConstant ? m_firstConstantObject : m_firstReferenceObject;
+            object secondObject = secondIsConstant ? m_secondConstantObject : m_secondReferenceObject;
 
-            ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
-            newCondition.Init(m_operation, firstIsConstant ? m_firstConstantObject : m_firstReferenceObject,
-                                           secondIsConstant ? m_secondConstantObject : m_secondReferenceObject);
-            return newCondition;
+            if (useGenericCondition)
+            {
+                Type genericConditionType = typeof(GenericCondition<,>).MakeGenericType(firstType, secondType);
+                ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
+                newCondition.Init(m_operation, firstObject, secondObject, firstType, secondType);
+                return newCondition;
+            }
+            else
+            {
+                ICondition newCondition = Condition.Create(m_operation, firstObject, secondObject, firstType, secondType);
+                return newCondition;
+            }
         }
     }
 }

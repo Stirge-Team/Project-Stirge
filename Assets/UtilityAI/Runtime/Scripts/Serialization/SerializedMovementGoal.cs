@@ -1,9 +1,10 @@
-using Stirge.Serialization;
 using System;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
+    using Serialization;
+
     public abstract class SerializedMovementGoal<TMovementGoal> : SerializedMovementGoal_Base where TMovementGoal : MovementGoal, INotSetupable, new()
     {
         public override Type movementGoalType => typeof(TMovementGoal);

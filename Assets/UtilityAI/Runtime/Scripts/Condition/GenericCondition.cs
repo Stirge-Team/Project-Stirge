@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
-    public class GenericCondition<T1, T2> : ICondition
+    public class GenericCondition<T1, T2> : ICondition where T1 : IEquatable<T2> where T2 : IEquatable<T1>
     {
         public static Type FirstType => typeof(T1);
         public static Type SecondType => typeof(T2);
@@ -16,7 +16,7 @@ namespace Stirge.UtilityAI
         private T1 m_firstObject;
         private T2 m_secondObject;
 
-        public void Init(Operation operation, object firstObject, object secondObject)
+        public void Init(Operation operation, object firstObject, object secondObject, Type firstType, Type secondType)
         {
             m_operation = operation;
             m_firstObject = (T1)firstObject;
