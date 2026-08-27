@@ -10,7 +10,7 @@ namespace Stirge.UtilityAI
         {
             m_constantValue = null;
             m_constantValue = null;
-            m_valueType = null;
+            m_type = null;
             m_isConstantValue = false;
 
             m_changed = false;
@@ -18,12 +18,12 @@ namespace Stirge.UtilityAI
         
         private object m_constantValue;
         private Object m_referenceValue;
-        private Type m_valueType;
+        private Type m_type;
         private bool m_isConstantValue;
 
         private bool m_changed;
 
-        public bool isNull => m_isConstantValue ? m_constantValue == null : m_referenceValue == null;
+        public bool IsNull => m_isConstantValue ? m_constantValue == null : m_referenceValue == null;
         public object constantValue
         {
             get => m_constantValue;
@@ -50,14 +50,14 @@ namespace Stirge.UtilityAI
                 }
             }
         }
-        public Type valueType
+        public Type type
         {
-            get => m_valueType;
+            get => m_type;
             set
             {
-                if (m_valueType != value)
+                if (m_type != value)
                 {
-                    m_valueType = value;
+                    m_type = value;
                     m_changed = true;
                 }
             }
@@ -71,7 +71,7 @@ namespace Stirge.UtilityAI
                 if (m_isConstantValue != value)
                 {
                     m_isConstantValue = value;
-                    m_valueType = null;
+                    m_type = null;
                     m_changed = true;
                 }
             }

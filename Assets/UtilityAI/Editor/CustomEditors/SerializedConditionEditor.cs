@@ -76,11 +76,6 @@ namespace Stirge.UtilityAI.CustomEditors
                 s_middleStyleInitialised = true;
                 s_middleStyle = new(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
             }
-            
-            if (GUILayout.Button("Re-Initialise"))
-            {
-                OnEnable();
-            }
 
             EGL.Separator();
             EditorGUI.BeginChangeCheck();
@@ -93,11 +88,11 @@ namespace Stirge.UtilityAI.CustomEditors
 
             // Draw field for first object
             EGL.LabelField(s_firstObjectLabel, EditorStyles.boldLabel);
-            DrawObject(m_firstObject);
+            DrawObject(ref m_firstObject);
 
             // Draw field for second object
             EGL.LabelField(s_secondObjectLabel, EditorStyles.boldLabel);
-            DrawObject(m_secondObject);
+            DrawObject(ref m_secondObject);
 
             // Check for changes
             ObjectChangeCheck(m_firstConstantProperty, m_firstReferenceProperty, m_firstObject);
@@ -127,14 +122,16 @@ namespace Stirge.UtilityAI.CustomEditors
 
             // Display validity message
             bool isValid = true;
-            bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.valueType) && StirgeTypeHelper.IsNumericType(m_secondObject.valueType);
+            bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
+            bool firstCanBeNull = m_firstObject.type != null && (!m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null);
+            bool secondCanBeNull = m_secondObject.type != null && (!m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null);
             switch (operation)
             {
                 case Operation.Equal:
                 case Operation.NotEqual:
-                    if (!bothNumeric && m_firstObject.valueType != m_secondObject.valueType &&
-                        (m_firstObject.isNull && !m_secondObject.isNull && !m_secondObject.valueType.IsClass ||
-                        m_secondObject.isNull && !m_firstObject.isNull && !m_firstObject.valueType.IsClass))
+                    if ((!bothNumeric && m_firstObject.type != m_secondObject.type) || // if neither object is a number and the types do not match
+                        (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
+                        (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull)) // if second is null and first is not a class
                     {
                         EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
                         isValid = false;
@@ -155,6 +152,14 @@ namespace Stirge.UtilityAI.CustomEditors
                 m_isValidProperty.boolValue = isValid;
             }
 
+            EGL.Separator();
+
+            // Controls
+            if (GUILayout.Button("Re-Initialise"))
+            {
+                OnEnable();
+            }
+
             // Apply changes
             if (EditorGUI.EndChangeCheck())
             {
@@ -168,18 +173,24 @@ namespace Stirge.UtilityAI.CustomEditors
             if (obj.constantValue != null)
             {
                 obj.isConstantValue = true;
-                obj.valueType = obj.constantValue.GetType();
+                obj.type = obj.constantValue.GetType();
             }
             else if (obj.referenceValue != null)
             {
                 obj.isConstantValue = false;
-                obj.valueType = obj.referenceValue.GetType();
+                obj.type = obj.referenceValue.GetType();
             }
             return obj;
         }
 
-        private void DrawObject(SerializedConditionObject obj)
+        /// <summary>
+        /// Returns if the Clear Data button was pressed
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        private void DrawObject(ref SerializedConditionObject obj)
         {
+            EGL.BeginHorizontal();
             // Is Constant Value toggle
             obj.isConstantValue = EGL.Toggle(new GUIContent("Constant Value"), obj.isConstantValue);
 
@@ -191,14 +202,16 @@ namespace Stirge.UtilityAI.CustomEditors
                 {
                     SelectType(obj);
                 }
-                if (obj.valueType != null)
+                EGL.EndHorizontal();
+                if (obj.type != null)
                 {
                     // ensure constantValue is never null going into the Switch block
                     obj.constantValue ??= string.Empty;
 
-                    GUIContent label = new(obj.valueType.Name + " Value");
+                    GUIContent label = new(obj.type.Name + " Value");
 
-                    switch (obj.valueType.Name)
+                    // Draw property field dependent on selected Type
+                    switch (obj.type.Name)
                     {
                         case nameof(UInt16):
                         case nameof(UInt32):
@@ -320,14 +333,14 @@ namespace Stirge.UtilityAI.CustomEditors
                             break;
                         default:
                             // check if type is an Enum type
-                            if (obj.valueType.IsEnum)
+                            if (obj.type.IsEnum)
                             {
                                 // Ensure value contains an enum value. If the cast returns null, create a default value
                                 Enum enumValue = (Enum)obj.constantValue;
-                                enumValue ??= Activator.CreateInstance(obj.valueType) as Enum;
+                                enumValue ??= Activator.CreateInstance(obj.type) as Enum;
 
                                 // check if Enum type is Flags type
-                                if (obj.valueType.GetCustomAttributes(typeof(FlagsAttribute), false).Any())
+                                if (obj.type.GetCustomAttributes(typeof(FlagsAttribute), false).Any())
                                 {
                                     obj.constantValue = EGL.EnumFlagsField(label, enumValue);
                                 }
@@ -349,11 +362,24 @@ namespace Stirge.UtilityAI.CustomEditors
             // if set to Reference value
             else
             {
-                string labelText = obj.valueType != null ? obj.valueType.Name : "Object";
+                EGL.EndHorizontal();
+
+                string labelText = obj.type != null ? obj.type.Name : "Object";
                 obj.referenceValue = EGL.ObjectField(new GUIContent(labelText + " Value"), obj.referenceValue, typeof(Object), false);
                 if (obj.referenceValue != null)
                 {
-                    obj.valueType = obj.referenceValue.GetType();
+                    obj.type = obj.referenceValue.GetType();
+                }
+            }
+
+            // Add button to clear data
+            // do not add the button if the obj is a constant value and the type has not been selected yet
+            if (!obj.isConstantValue && obj.type != null)
+            {
+                if (GUILayout.Button("Clear Data"))
+                {
+                    bool isConstantValue = obj.isConstantValue; // maintain value type
+                    obj = new() { changed = true, isConstantValue = isConstantValue };
                 }
             }
         }
@@ -401,7 +427,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 string uiName = TypeHelper.GetDisplayName(type);
                 genericMenu.AddItem(new GUIContent(uiName), false, () =>
                 {
-                    obj.valueType = type;
+                    obj.type = type;
                 });
             }
 

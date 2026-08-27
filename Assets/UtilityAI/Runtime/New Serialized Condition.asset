@@ -12,20 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d9ebb405b8b8d48ac7b4463018e275, type: 3}
   m_Name: New Serialized Condition
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedCondition
-  m_operation: 0
+  m_operation: 1
   m_firstConstantObject:
-    rid: 5677887281625826138
+    rid: -2
   m_secondConstantObject:
-    rid: 5677887281625826139
+    rid: 5677887456369705109
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
-  m_isValid: 1
+  m_isValid: 0
   references:
     version: 2
     RefIds:
-    - rid: 5677887281625826138
-      type: {class: Int32, ns: System, asm: mscorlib}
-      data: 
-    - rid: 5677887281625826139
-      type: {class: Int32, ns: System, asm: mscorlib}
-      data: 
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 5677887456369705109
+      type: {class: Color, ns: UnityEngine, asm: UnityEngine.CoreModule}
+      data:
+        r: 0.9811321
+        g: 0.39337844
+        b: 0.39337844
+        a: 0
