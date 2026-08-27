@@ -47,26 +47,6 @@ namespace Stirge.AttackTimeline
              //playable as PlayableAsset
         }
 
-        //void InitializeData(Playable input)
-        //{
-        //    if (m_shouldInitialize && Application.isPlaying)
-        //    {
-        //        HitboxBehaviour hitboxBehaviour = GetHitboxBehaviour(input);
-        //        HitboxData hitboxData = hitboxBehaviour.HitboxData;
-        //
-        //        HitboxCollider collider = m_boundObject.GetComponent<HitboxCollider>();
-        //        collider.Data = hitboxData;
-        //
-        //        m_shouldInitialize = false;
-        //    }
-        //}
-
-        //static HitboxBehaviour GetHitboxBehaviour(Playable playable)
-        //{
-        //    ScriptPlayable<HitboxBehaviour> hitboxInput = (ScriptPlayable<HitboxBehaviour>)playable;
-        //    return hitboxInput.GetBehaviour();
-        //}
-
         public override void OnPlayableDestroy(Playable playable)
         {
             if (m_boundObject == null)

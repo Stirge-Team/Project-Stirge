@@ -5,8 +5,11 @@ namespace Stirge.AttackTimeline
 {
     using Combat;
 
+    [RequireComponent(typeof(Collider))]
     public class HitboxCollider : MonoBehaviour
     {
+        [SerializeField] private CombatEntity m_owner;
+
         private HitboxData m_data = new();
 
         public HitboxData Data
@@ -27,8 +30,8 @@ namespace Stirge.AttackTimeline
             //add 
             m_savedColliders.Add(other);
 
-            // do OnHit Shtuff
-            //m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>, );
+            // do OnHit Shtuff - 
+            m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>(), m_owner);
         }
 
         public void CreateHitbox(HitboxData data)
