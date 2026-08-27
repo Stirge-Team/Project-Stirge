@@ -9,32 +9,32 @@ namespace Stirge.UtilityAI
     {
         public override Type statusType => typeof(TStatus);
         
-        protected sealed override Status _CreateRuntimeStatus()
+        public sealed override Status CreateRuntimeStatus()
         {
             return Status.Create<TStatus>();
         }
     }
     public abstract class SerializedStatus<TStatus, TArg> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg>, new()
     {
-        [Header(nameof(statusType) + "Properties")]
+        [Header("Status Properties")]
         [SerializeField, NameOverriden(0)] private TArg m_arg;
 
         public override Type statusType => typeof(TStatus);
 
-        protected sealed override Status _CreateRuntimeStatus()
+        public sealed override Status CreateRuntimeStatus()
         {
             return Status.Create<TStatus, TArg>(m_arg);
         }
     }
     public abstract class SerializedStatus<TStatus, TArg0, TArg1> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg0, TArg1>, new()
     {
-        [Header(nameof(statusType) + "Properties")]
+        [Header("Status Properties")]
         [SerializeField, NameOverriden(0)] private TArg0 m_arg0;
         [SerializeField, NameOverriden(1)] private TArg1 m_arg1;
 
         public override Type statusType => typeof(TStatus);
 
-        protected sealed override Status _CreateRuntimeStatus()
+        public sealed override Status CreateRuntimeStatus()
         {
             return Status.Create<TStatus, TArg0, TArg1>(m_arg0, m_arg1);
         }
@@ -42,14 +42,14 @@ namespace Stirge.UtilityAI
 
     public abstract class SerializedStatus<TStatus, TArg0, TArg1, TArg2> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg0, TArg1, TArg2>, new()
     {
-        [Header(nameof(statusType) + "Properties")]
+        [Header("Status Properties")]
         [SerializeField, NameOverriden(0)] private TArg0 m_arg0;
         [SerializeField, NameOverriden(1)] private TArg1 m_arg1;
         [SerializeField, NameOverriden(2)] private TArg2 m_arg2;
 
         public override Type statusType => typeof(TStatus);
 
-        protected sealed override Status _CreateRuntimeStatus()
+        public sealed override Status CreateRuntimeStatus()
         {
             return Status.Create<TStatus, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2);
         }
@@ -57,7 +57,7 @@ namespace Stirge.UtilityAI
 
     public abstract class SerializedStatus<TStatus, TArg0, TArg1, TArg2, TArg3> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
     {
-        [Header(nameof(statusType) + "Properties")]
+        [Header("Status Properties")]
         [SerializeField, NameOverriden(0)] private TArg0 m_arg0;
         [SerializeField, NameOverriden(1)] private TArg1 m_arg1;
         [SerializeField, NameOverriden(2)] private TArg2 m_arg2;
@@ -65,7 +65,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Type statusType => typeof(TStatus);
 
-        protected sealed override Status _CreateRuntimeStatus()
+        public sealed override Status CreateRuntimeStatus()
         {
             return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3);
         }
@@ -73,7 +73,7 @@ namespace Stirge.UtilityAI
 
     public abstract class SerializedStatus<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
     {
-        [Header(nameof(statusType) + "Properties")]
+        [Header("Status Properties")]
         [SerializeField, NameOverriden(0)] private TArg0 m_arg0;
         [SerializeField, NameOverriden(1)] private TArg1 m_arg1;
         [SerializeField, NameOverriden(2)] private TArg2 m_arg2;
@@ -82,7 +82,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Type statusType => typeof(TStatus);
 
-        protected sealed override Status _CreateRuntimeStatus()
+        public sealed override Status CreateRuntimeStatus()
         {
             return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4);
         }

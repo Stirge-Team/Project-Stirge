@@ -23,14 +23,14 @@ namespace Stirge.UtilityAI.Statuses
             m_duration = duration;
         }
 
-        public override bool Apply(CombatEntity user, CombatEntity target)
+        public override bool OnApply(CombatEntity user, CombatEntity target)
         {
             m_elapsedTime = 0f;
             target.ModifyDamage(m_type, m_modifier);
             return false;
         }
 
-        public override bool Resolve(CombatEntity target)
+        public override bool Update(CombatEntity target)
         {
             m_elapsedTime += Time.deltaTime;
             if (m_elapsedTime > m_duration)
@@ -39,12 +39,12 @@ namespace Stirge.UtilityAI.Statuses
             return false;
         }
 
-        public override void Clear(CombatEntity target)
+        public override void OnClear(CombatEntity target)
         {
             target.ModifyDamage(m_type, -m_modifier);
         }
 
-        public override float Evaluate(CombatEntity user, CombatEntity target)
+        protected override float EvaluateInternal(CombatEntity user, CombatEntity target)
         {
             return m_modifier * m_duration;
         }

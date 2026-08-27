@@ -1,6 +1,5 @@
 using Stirge.Combat;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
@@ -8,6 +7,7 @@ namespace Stirge.UtilityAI
     public class UtiilityEnemy : CombatEntity
     {
         [SerializeField] private SerializedAction[] m_serializedActions;
+        [SerializeField] private SerializedMovementGoal_Base[] m_movementGoals;
         [SerializeField] private CombatEntity m_target;
 
         private Action[] m_actions;
@@ -49,12 +49,12 @@ namespace Stirge.UtilityAI
             // if matching status exists
             if (indexOfExistingStatus != -1)
             {
-                switch (status.data.stackType)
+                switch (status.stackType)
                 {
                     case StatusStackType.Stackable:
                         Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
                         int existingStacks = existingStackableStatus.currentStackCount;
-                        int maxStacks = existingStackableStatus.data.maxStacks;
+                        int maxStacks = existingStackableStatus.maxStacks;
                         if (existingStacks < maxStacks)
                         {
                             // add new stacks
@@ -72,7 +72,7 @@ namespace Stirge.UtilityAI
                 }
             }
             m_inflictedStatuses.Add(status);
-            status.Apply(user, this);
+            status.OnApply(user, this);
         }
 
         /// <summary>

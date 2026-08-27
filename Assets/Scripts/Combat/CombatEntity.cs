@@ -91,7 +91,7 @@ namespace Stirge.Combat
         public virtual void InflictStatus(Status status, CombatEntity user)
         {
             // inflict the Status
-            status.Apply(user, this);
+            status.OnApply(user, this);
         }
 
         private void UpdateStatuses(float deltaTime)
@@ -100,9 +100,9 @@ namespace Stirge.Combat
             int index = 0;
             foreach (Status status in m_inflictedStatuses)
             {
-                if (status.Resolve(this))
+                if (status.Update(this))
                 {
-                    status.Clear(this);
+                    status.OnClear(this);
                     toRemove.Add(index);
                 }
                 index++;

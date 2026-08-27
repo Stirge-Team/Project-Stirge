@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f765fb2bce3648f419dacaf5ae085c40, type: 3}
+  m_Name: New Serialized Damage Buff
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Statuses.SerializedDamageBuff
+  m_scoreScaling: 1
+  m_stackType: 0
+  m_durationType: 0
+  m_displayName: 
+  m_maxStacks: 0
+  m_conditions: []
+  m_arg0: 0
+  m_arg1: 0
+  m_arg2: 0

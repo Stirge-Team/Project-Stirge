@@ -7,7 +7,7 @@ namespace Stirge.UtilityAI
 {
     public class Action
     {
-        private float m_scaling = 1f;
+        private float m_scoreScaling = 1f;
         private string m_displayName;
         private ActionType m_actionType;
         private TimelineAsset m_timeline;
@@ -31,7 +31,7 @@ namespace Stirge.UtilityAI
             }
             statusScore /= count;
 
-            return (actionScore + statusScore) * m_scaling;
+            return (actionScore + statusScore) * m_scoreScaling;
         }
 
         public void Perform(CombatEntity user, CombatEntity target)
@@ -43,7 +43,7 @@ namespace Stirge.UtilityAI
         {
             Action action = new()
             {
-                m_scaling = scaling,
+                m_scoreScaling = scaling,
                 m_displayName = displayName,
                 m_actionType = actionType,
                 m_timeline = timeline,

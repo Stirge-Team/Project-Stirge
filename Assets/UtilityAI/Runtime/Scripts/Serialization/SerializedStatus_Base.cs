@@ -1,6 +1,6 @@
 using Stirge.Combat;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
@@ -18,18 +18,25 @@ namespace Stirge.UtilityAI
         Conditional
     }
 
-    public abstract class SerializedStatus_Base : ScriptableObject
+    public abstract class SerializedStatus_Base : ScriptableObject, IScalable
     {
-        [SerializeField] protected SerializedStatusData m_statusData;
+        [Header("Base Status Properties")]
+        [SerializeField, Range(0f, 5f)] private float m_scoreScaling = 1f;
+        [SerializeField] private StatusStackType m_stackType;
+        [SerializeField] private StatusDurationType m_durationType;
+        [SerializeField] private string m_displayName;
+        [SerializeField, Min(1)] private int m_maxStacks;
+        [SerializeField] private SerializedCondition[] m_conditions;
+
+        public float ScoreScaling => m_scoreScaling;
+
+        public void SetScoreScaling(float newScaling)
+        {
+            m_scoreScaling = newScaling;
+        }
 
         public abstract Type statusType { get; }
 
-        public Status CreateRuntimeStatus()
-        {
-            Status status = _CreateRuntimeStatus();
-            status.Init(m_statusData.CreateRuntimeStatusData());
-            return status;
-        }
-        protected abstract Status _CreateRuntimeStatus();
+        public abstract Status CreateRuntimeStatus();
     }
 }

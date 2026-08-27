@@ -4,7 +4,7 @@ using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Serialized Condition", order = 450)]
     public class SerializedCondition : ScriptableObject
     {
         [SerializeField] private Operation m_operation;
