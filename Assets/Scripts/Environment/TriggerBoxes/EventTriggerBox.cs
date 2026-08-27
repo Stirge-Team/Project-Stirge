@@ -3,6 +3,9 @@ using UnityEngine.Events;
 
 namespace Stirge.Environment
 {
+    /// <summary>
+    /// Triggers attached unity events when entered, stayed in or exited
+    /// </summary>
     public class EventTriggerBox : SimpleTriggerBox
     {
         [Header("Events")]

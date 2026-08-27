@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace Stirge.Environment
 {
+    /// <summary>
+    /// Reenables selected trigger boxes when entered
+    /// </summary>
     public class ReTriggerBox : SimpleTriggerBox
     {
         [System.Serializable]

@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Stirge.Environment
 {
+    /// <summary>
+    /// The base of all trigger box classes - not used itself
+    /// </summary>
     [RequireComponent(typeof(Collider))]
     public class SimpleTriggerBox : MonoBehaviour
     {
@@ -12,9 +15,16 @@ namespace Stirge.Environment
         private Collider[] m_collider;
         public Collider[] Triggers { get { return m_collider; } }
         private List<GameObject> m_colliderPreviews;
+        [Flags]
+        protected enum ForceTriggerMethod
+        {
+            None = 0, //forces no colliders to be triggers
+            BaseObject = 1, //force triggers on the base object
+            ChildObjects = 2 //force triggers on child objects
+        }
         [Header("Trigger Settings")]
         [SerializeField, Tooltip("Forces any attached collider components to become trigger boxes. Keep this as true unless you have a specific collider setup configured.")]
-        private bool m_forceTrigger = true;
+        private ForceTriggerMethod m_forceTrigger = (ForceTriggerMethod)1;
         private enum TriggerType
         {
             SingleUse,
@@ -58,7 +68,7 @@ namespace Stirge.Environment
             }
             public void Reenable()
             {
-                if(!m_triggered && m_repeatable != TriggerType.Off) Debug.Log($"{this} trigger not hit yet. If this being called multiple times, please check your calls and trigger placement in scene");
+                if (!m_triggered && m_repeatable != TriggerType.Off) Debug.Log($"{this} trigger not hit yet. If this being called multiple times, please check your calls and trigger placement in scene");
                 m_triggered = false;
             }
         }
@@ -85,18 +95,22 @@ namespace Stirge.Environment
         private void SetupForGizmos(bool enableForce = false)
         {
             CollectTriggers();
-            if (m_forceTrigger && enableForce) ForceTriggers();
+            if (m_forceTrigger > 0 || enableForce) ForceTriggers();
         }
         private void CollectTriggers()
         {
-            var tmp = GetComponents<Collider>();
-            if (tmp.Length < 1)
+            var colliderList = new List<Collider>();
+
+            if (m_forceTrigger.HasFlag(ForceTriggerMethod.BaseObject))
             {
-                Debug.LogError("There are no colliders attached to this object. Somehow.");
-                enabled = false;
-                return;
+                colliderList.AddRange(GetComponents<Collider>());
             }
-            m_collider = tmp;
+            if(m_forceTrigger.HasFlag(ForceTriggerMethod.ChildObjects))
+            {
+                colliderList.AddRange(GetComponentsInChildren<Collider>());
+            }
+
+            m_collider = colliderList.ToArray();
         }
         private void ForceTriggers()
         {
@@ -142,11 +156,11 @@ namespace Stirge.Environment
         }
         public void ReenableTriggers(SelectTriggerEvent triggers = (SelectTriggerEvent)7)
         {
-            if(triggers.HasFlag(SelectTriggerEvent.Entry))
+            if (triggers.HasFlag(SelectTriggerEvent.Entry))
                 m_EntryTrigger.Reenable();
-            if(triggers.HasFlag(SelectTriggerEvent.Stay))
+            if (triggers.HasFlag(SelectTriggerEvent.Stay))
                 m_StayTrigger.Reenable();
-            if(triggers.HasFlag(SelectTriggerEvent.Exit))
+            if (triggers.HasFlag(SelectTriggerEvent.Exit))
                 m_ExitTrigger.Reenable();
         }
         #region Previews
@@ -216,21 +230,5 @@ namespace Stirge.Environment
             //Gizmos.DrawCube(Triggers[0].bounds.center, Triggers[0].bounds.size);
         }
         #endregion
-        private Vector3 Vector3Mult(Vector3 lhs, Vector3 rhs)
-        {
-            return new Vector3(
-                lhs.x * rhs.x,
-                lhs.y * rhs.y,
-                lhs.z * rhs.z
-            );
-        }
-        private Vector3 Vector3Div(Vector3 lhs, Vector3 rhs)
-        {
-            return new Vector3(
-                lhs.x / rhs.x,
-                lhs.y / rhs.y,
-                lhs.z / rhs.z
-            );
-        }
     }
 }

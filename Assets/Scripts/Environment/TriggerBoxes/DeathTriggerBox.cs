@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace Stirge.Environment
 {
+    /// <summary>
+    /// Any objects with the "EntityHealth" component that enter this trigger box will be killed!
+    /// </summary>
     public class DeathTriggerBox : SimpleTriggerBox
     {
         [Space]
