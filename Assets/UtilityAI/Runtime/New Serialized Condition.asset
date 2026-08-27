@@ -16,7 +16,7 @@ MonoBehaviour:
   m_firstConstantObject:
     rid: -2
   m_secondConstantObject:
-    rid: 5677887456369705109
+    rid: 5677887456369705461
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
   m_isValid: 0
@@ -25,7 +25,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 5677887456369705109
+    - rid: 5677887456369705461
       type: {class: Color, ns: UnityEngine, asm: UnityEngine.CoreModule}
       data:
         r: 0.9811321

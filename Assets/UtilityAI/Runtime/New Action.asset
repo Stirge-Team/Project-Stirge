@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 997f0d9f84c5e5a46a243b8678d7d979, type: 3}
   m_Name: New Action
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Action
-  m_scaling: 1
+  m_scoreScaling: 1
   m_displayName: fart
   m_actionType: 0
   m_timeline: {fileID: 11400000, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
@@ -21,3 +21,4 @@ MonoBehaviour:
   m_statuses:
   - {fileID: 0}
   m_conditions: []
+  m_scoringMethods: []
