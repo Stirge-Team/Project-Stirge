@@ -18,7 +18,46 @@ MonoBehaviour:
   m_timeline: {fileID: 11400000, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
   m_damage: 1
   m_range: 1
-  m_statuses:
-  - {fileID: 0}
-  m_conditions: []
-  m_scoringMethods: []
+  m_statuses: []
+  m_conditions:
+  - {fileID: 3102674422227925341}
+  m_scoringMethods:
+  - {fileID: 8257853361154681440}
+--- !u!114 &3102674422227925341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d9ebb405b8b8d48ac7b4463018e275, type: 3}
+  m_Name: poop
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedCondition
+  m_operation: 0
+  m_firstConstantObject:
+    rid: -2
+  m_secondConstantObject:
+    rid: -2
+  m_firstReferenceObject: {fileID: 0}
+  m_secondReferenceObject: {fileID: 0}
+  m_isValid: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+--- !u!114 &8257853361154681440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee5b8413fdf5d234ab8385ee83234b6a, type: 3}
+  m_Name: DamageScoringMethod
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.ScoringMethods.SerializedDamageScoringMethod
+  m_scoreScaling: 0

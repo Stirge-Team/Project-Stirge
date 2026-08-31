@@ -1,4 +1,6 @@
 using Stirge.Combat;
+using Stirge.Serialization;
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -63,6 +65,7 @@ namespace Stirge.UtilityAI
             user.UseAction(m_timeline);
         }
 
+        #region Create
         public static Action Create(float scaling, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
         {
             Action action = new()
@@ -78,7 +81,21 @@ namespace Stirge.UtilityAI
                 m_scoringMethods = scoringMethods
             };
 
+            foreach (Status status in action.m_statuses)
+            {
+                status.Setup(action);
+            }
+            foreach (ICondition condition in conditions)
+            {
+                condition.Setup(action);
+            }
+            foreach (ScoringMethod scoringMethod in scoringMethods)
+            {
+                scoringMethod.Setup(action);
+            }
+
             return action;
         }
+        #endregion
     }
 }

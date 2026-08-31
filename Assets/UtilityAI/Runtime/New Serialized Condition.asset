@@ -14,21 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedCondition
   m_operation: 1
   m_firstConstantObject:
-    rid: -2
+    rid: 5677887549442884050
   m_secondConstantObject:
-    rid: 5677887456369705461
+    rid: 5677887549442884051
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
-  m_isValid: 0
+  m_isValid: 1
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 5677887456369705461
-      type: {class: Color, ns: UnityEngine, asm: UnityEngine.CoreModule}
-      data:
-        r: 0.9811321
-        g: 0.39337844
-        b: 0.39337844
-        a: 0
+    - rid: 5677887549442884050
+      type: {class: Int32, ns: System, asm: mscorlib}
+      data: 
+    - rid: 5677887549442884051
+      type: {class: Double, ns: System, asm: mscorlib}
+      data: 

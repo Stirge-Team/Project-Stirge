@@ -27,12 +27,12 @@ namespace Stirge.UtilityAI.CustomEditors
         #endregion
 
         #region Property Names
-        private const string OperationPropertyName = "m_operation";
-        private const string FirstConstantPropertyName = "m_firstConstantObject";
-        private const string SecondConstantPropertyName = "m_secondConstantObject";
-        private const string FirstReferencePropertyName = "m_firstReferenceObject";
-        private const string SecondReferencePropertyName = "m_secondReferenceObject";
-        private const string IsValidPropertyName = "m_isValid";
+        private const string s_operationPropertyName = "m_operation";
+        private const string s_firstConstantPropertyName = "m_firstConstantObject";
+        private const string s_secondConstantPropertyName = "m_secondConstantObject";
+        private const string s_firstReferencePropertyName = "m_firstReferenceObject";
+        private const string s_secondReferencePropertyName = "m_secondReferenceObject";
+        private const string s_isValidPropertyName = "m_isValid";
         #endregion
 
         #region Labels
@@ -57,12 +57,12 @@ namespace Stirge.UtilityAI.CustomEditors
 
         private void OnEnable()
         {
-            m_operationProperty = serializedObject.FindProperty(OperationPropertyName);
-            m_firstConstantProperty = serializedObject.FindProperty(FirstConstantPropertyName);
-            m_secondConstantProperty = serializedObject.FindProperty(SecondConstantPropertyName);
-            m_firstReferenceProperty = serializedObject.FindProperty(FirstReferencePropertyName);
-            m_secondReferenceProperty = serializedObject.FindProperty(SecondReferencePropertyName);
-            m_isValidProperty = serializedObject.FindProperty(IsValidPropertyName);
+            m_operationProperty = serializedObject.FindProperty(s_operationPropertyName);
+            m_firstConstantProperty = serializedObject.FindProperty(s_firstConstantPropertyName);
+            m_secondConstantProperty = serializedObject.FindProperty(s_secondConstantPropertyName);
+            m_firstReferenceProperty = serializedObject.FindProperty(s_firstReferencePropertyName);
+            m_secondReferenceProperty = serializedObject.FindProperty(s_secondReferencePropertyName);
+            m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
 
             // init objects
             m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty);
@@ -101,10 +101,6 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.Space();
 
             // Draw preview
-            EGL.LabelField("Preview", s_middleStyle);
-            EGL.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            DrawObjectPreview(m_firstObject);
             Operation operation = (Operation)m_operationProperty.intValue;
             string operationString = operation switch
             {
@@ -116,40 +112,55 @@ namespace Stirge.UtilityAI.CustomEditors
                 Operation.GreaterThanOrEqual => ">=",
                 _ => "?",
             };
-            EGL.LabelField(operationString, s_middleStyle);
+
+            EGL.LabelField("Preview", s_middleStyle);
+            EGL.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            DrawObjectPreview(m_firstObject);
+            EGL.LabelField(operationString, s_middleStyle, GUILayout.MaxWidth(80f));
             DrawObjectPreview(m_secondObject);
             EGL.EndHorizontal();
 
             // Display validity message
             bool isValid = true;
-            bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
-            bool firstCanBeNull = m_firstObject.type != null && (!m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null);
-            bool secondCanBeNull = m_secondObject.type != null && (!m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null);
-
-            Type firstEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_secondObject.type);
-            Type secondEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_firstObject.type);
-
-            switch (operation)
+            if (m_firstObject.type == null || m_secondObject.type == null)
             {
-                case Operation.Equal:
-                case Operation.NotEqual:
-                    if ((!bothNumeric && m_firstObject.type != m_secondObject.type) || // if neither object is a number and the types do not match
-                        (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
-                        (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull) || // if second is null and first is not a class
-                        // Both types implement IEquatable<OtherType>
-                        !(m_firstObject.type.GetInterfaces().Contains(firstEquatableInterfaceType) && m_secondObject.type.GetInterfaces().Contains(secondEquatableInterfaceType)))
-                    {
-                        EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
-                        isValid = false;
-                    }
-                    break;
-                default:
-                    if (!bothNumeric)
-                    {
-                        EGL.HelpBox("Condition is invalid as these types are not Comparable.", MessageType.Error);
-                        isValid = false;
-                    }
-                    break;
+                isValid = false;
+                EGL.HelpBox("Please select values for this Condition.", MessageType.Warning);
+            }
+            else
+            {
+                bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
+                bool firstCanBeNull = !m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null;
+                bool secondCanBeNull = !m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null;
+
+                Type firstEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_secondObject.type);
+                Type secondEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_firstObject.type);
+
+                switch (operation)
+                {
+                    case Operation.Equal:
+                    case Operation.NotEqual:
+                        if (bothNumeric) // if both are numeric, it's cool
+                            break;
+                        if ((m_firstObject.type != m_secondObject.type) || // if the types do not match
+                            (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
+                            (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull) || // if second is null and first is not a class
+                                                                                                   // Both types implement IEquatable<OtherType>
+                            !(m_firstObject.type.GetInterfaces().Contains(firstEquatableInterfaceType) && m_secondObject.type.GetInterfaces().Contains(secondEquatableInterfaceType)))
+                        {
+                            EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
+                            isValid = false;
+                        }
+                        break;
+                    default:
+                        if (!bothNumeric)
+                        {
+                            EGL.HelpBox("Condition is invalid as these types are not Comparable.", MessageType.Error);
+                            isValid = false;
+                        }
+                        break;
+                }
             }
 
             // Apply is valid
@@ -198,7 +209,7 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             EGL.BeginHorizontal();
             // Is Constant Value toggle
-            obj.isConstantValue = EGL.Toggle(new GUIContent("Constant Value"), obj.isConstantValue);
+            obj.isConstantValue = EGL.Toggle(new GUIContent("Is Constant Value?"), obj.isConstantValue);
 
             // if set to Constant value
             if (obj.isConstantValue)
@@ -325,17 +336,52 @@ namespace Stirge.UtilityAI.CustomEditors
                             Color colorValue;
                             if (obj.constantValue is Vector2 vector2ToColorValue)
                             {
-                                colorValue = new(vector2ToColorValue.x, vector2ToColorValue.y, 0);
+                                colorValue = new(vector2ToColorValue.x, vector2ToColorValue.y, 0, 1);
                             }
                             else if (obj.constantValue is Vector3 vector3ToColorValue)
                             {
-                                colorValue = new(vector3ToColorValue.x, vector3ToColorValue.y, vector3ToColorValue.z);
+                                colorValue = new(vector3ToColorValue.x, vector3ToColorValue.y, vector3ToColorValue.z, 1);
                             }
                             else
                             {
-                                TryCast(obj.constantValue, out colorValue);
+                                if (!TryCast(obj.constantValue, out colorValue))
+                                {
+                                    colorValue = new(0, 0, 0, 1);
+                                }
                             }
                             obj.constantValue = EGL.ColorField(label, colorValue);
+                            break;
+                        case nameof(Byte):
+                            byte byteValue;
+                            if (obj.constantValue is sbyte sByteToByteValue)
+                            {
+                                byteValue = (byte)sByteToByteValue;
+                            }
+                            else
+                            {
+                                if (!TryCast(obj.constantValue, out byteValue))
+                                {
+                                    byteValue = new();
+                                }
+                            }
+                            TryCast(EGL.IntField(label, byteValue), out byteValue);
+                            obj.constantValue = byteValue;
+                            break;
+                        case nameof(SByte):
+                            sbyte sByteValue;
+                            if (obj.constantValue is byte byteToSByteValue)
+                            {
+                                sByteValue = (sbyte)byteToSByteValue;
+                            }
+                            else
+                            {
+                                if (!TryCast(obj.constantValue, out sByteValue))
+                                {
+                                    sByteValue = new();
+                                }
+                            }
+                            TryCast(EGL.IntField(label, sByteValue), out sByteValue);
+                            obj.constantValue = sByteValue;
                             break;
                         default:
                             // check if type is an Enum type
@@ -368,6 +414,10 @@ namespace Stirge.UtilityAI.CustomEditors
             // if set to Reference value
             else
             {
+                EditorGUI.BeginDisabledGroup(true);
+                EGL.TextField(obj.type != null ? obj.type.Name : "null", GUILayout.MaxWidth(180f));
+                EditorGUI.EndDisabledGroup();
+                
                 EGL.EndHorizontal();
 
                 string labelText = obj.type != null ? obj.type.Name : "Object";

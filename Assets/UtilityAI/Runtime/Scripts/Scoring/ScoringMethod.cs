@@ -8,6 +8,12 @@ namespace Stirge.UtilityAI
     public abstract class ScoringMethod
     {
         protected float m_scoreScaling;
+        protected Action m_action;
+
+        public void Setup(Action action)
+        {
+            m_action = action;
+        }
 
         public float Evaluate(CombatEntity user, CombatEntity target)
         {

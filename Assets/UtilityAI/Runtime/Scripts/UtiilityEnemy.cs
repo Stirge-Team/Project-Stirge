@@ -44,7 +44,7 @@ namespace Stirge.UtilityAI
             // Timothy Cain video on Status Effects: https://www.youtube.com/watch?v=SH35RmM1BFM&t=9s
             // if inflicted with Statuses of same type, get references
             
-            Type statusType = status.statusType;
+            Type statusType = status.GetType();
             int indexOfExistingStatus = GetIndexOfStatus(statusType);
             // if matching status exists
             if (indexOfExistingStatus != -1)
@@ -82,7 +82,7 @@ namespace Stirge.UtilityAI
         /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
         public int GetIndexOfStatus(Type statusType)
         {
-            return m_inflictedStatuses.FindIndex(status => status.statusType == statusType);
+            return m_inflictedStatuses.FindIndex(status => status.GetType() == statusType);
         }
 
         /// <summary>

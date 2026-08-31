@@ -1,13 +1,16 @@
 using UnityEngine;
+using System;
 
 namespace Stirge.UtilityAI
 {
+    using Combat;
     using Serialization;
-    using Stirge.Combat;
-    using System;
 
     public abstract class Status
     {
+        // references
+        protected Action m_action;
+        
         // fields
         protected float m_scoreScaling;
         protected StatusStackType m_stackType;
@@ -34,6 +37,11 @@ namespace Stirge.UtilityAI
         }
 
         public abstract Type statusType { get; }
+
+        public void Setup(Action action)
+        {
+            m_action = action;
+        }
 
         public float Evaluate(CombatEntity user, CombatEntity target)
         {
