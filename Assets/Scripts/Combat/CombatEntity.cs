@@ -105,7 +105,7 @@ namespace Stirge.Combat
             else
                 status.OnInflict(hitboxTransform, this, attackingEntity);   
         }
-        public void InflictTimedStatus(TimedStatus status, Transform hitboxTransform, CombatEntity attackingEntity)
+        public void InflictTimedStatus(TimedStatus status, Transform hitboxTransform, CombatEntity attackingEntity = null)
         {
             // add to list to be updated
             switch (status.GetType().Name)
