@@ -13,7 +13,6 @@ namespace Stirge.Enemy
         [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
         [SerializeField] private EnemyMotor m_motor;
-        public Agent Agent => m_agent;
 
         [Header("Combat States")]
         [SerializeField] private State m_stunState;
@@ -24,7 +23,6 @@ namespace Stirge.Enemy
         [HideInInspector] public EnemySpawner spawner = null;
 
         protected bool m_hasAttackToken = false;
-        public bool AttackToken => m_hasAttackToken;
 
         protected Transform m_targetTransform;
         public Transform TargetTransform => m_targetTransform;
@@ -49,6 +47,14 @@ namespace Stirge.Enemy
                     spawner.ReportDeath(this);
                 Destroy(gameObject);
                 return;
+            }
+
+            if (TargetTransform != null) //if there is a target
+            {
+                if (AttackTokenDispenser.instance != null)
+                    AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+                else
+                    m_hasAttackToken = true;
             }
 
             m_agent.Update(deltaTime);

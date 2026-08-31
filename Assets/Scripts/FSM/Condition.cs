@@ -18,7 +18,6 @@ namespace Stirge.AI
         public static readonly System.Type[] ConditionTypes =
         {
             typeof(AirJuggleCondition),
-            typeof(ArrivedAtDestinationCondition),
             typeof(ArrivedAtTargetCondition),
             typeof(AttackingCondition),
             typeof(DistanceCondition),
@@ -27,7 +26,6 @@ namespace Stirge.AI
             typeof(OffGroundCondition),
             typeof(StunnedCondition),
             typeof(TargetInAttackRadiusCondition),
-            typeof(HasAttackTokenCondition),
         };
     }
 }
