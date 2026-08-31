@@ -13,7 +13,7 @@ namespace Stirge.Environment
     public class DeathTriggerBox : SimpleTriggerBox
     {
         [Space]
-        [SerializeField, Tooltip("Even if an object does not has an entity health component, any colliding object should still be destoryed.")]
+        [SerializeField, Tooltip("Even if an object does not has an entity health component, any colliding object should still be destroyed.")]
         private bool m_destroyAnyway = false;
         protected override void EnterFunc(Collider collider)
         {
