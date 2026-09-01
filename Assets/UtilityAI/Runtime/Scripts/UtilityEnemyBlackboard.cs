@@ -1,17 +1,15 @@
 using UnityEngine;
 
-namespace Stirge.InfiniteAxis
+namespace Stirge.UtilityAI
 {
     using GenericBlackboard;
 
-    public class EnemyBlackboard : GenericBlackboard<UtilityEnemy>
+    public class UtilityEnemyBlackboard
     {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private new static void Setup()
+        private static void Setup()
         {
             GenericBlackboard<UtilityEnemy>.Setup();
         }
-
-        public EnemyBlackboard(UtilityEnemy target) : base(target) { }
     }
 }

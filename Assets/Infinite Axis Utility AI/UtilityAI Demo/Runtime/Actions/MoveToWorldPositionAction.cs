@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Core.Actions
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Stirge.Serialization;
 
     public class MoveToWorldPositionAction : Action, ISetupable<Vector3, BlackboardPropertyName>

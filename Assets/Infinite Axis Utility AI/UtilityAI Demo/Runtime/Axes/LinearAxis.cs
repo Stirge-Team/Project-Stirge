@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Core.Axes
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Stirge.Serialization;
 
     public class LinearAxis : Axis, ISetupable<float, float, float, BlackboardPropertyName>

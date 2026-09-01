@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Builders
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Core;
     using Stirge.Serialization;
 

@@ -9,6 +9,7 @@ using Object = UnityEngine.Object;
 namespace Stirge.InfiniteAxis.CustomEditors
 {
     using EditorTools;
+    using GenericBlackboard.EditorTools;
     using Stirge.Serialization;
     using Serialization;
 

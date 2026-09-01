@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.CustomEditors
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Stirge.InfiniteAxis.Serialization;
     using System;
     using Tools;
@@ -33,16 +33,19 @@ namespace Stirge.InfiniteAxis.CustomEditors
             SerializedActor actorData = (SerializedActor)m_property.serializedObject.context;
             Type targetType = actorData.targetType;
             Type blackboardType = typeof(GenericBlackboard<>).MakeGenericType(targetType);
-            var tempBlackboard = (GenericBlackboard_Base)Activator.CreateInstance(blackboardType);
+            dynamic tempBlackboard = Activator.CreateInstance(blackboardType);
 
-            for (int i = 0, count = tempBlackboard.GetCachedPropertyInfosArray.Length; i < count; i++)
+            PropertyInfo[] propertyInfos = tempBlackboard.CachedPropertyInfosArray;
+
+            for (int i = 0, count = propertyInfos.Length; i < count; i++)
             {
-                PropertyInfo propertyInfo = tempBlackboard.GetCachedPropertyInfosArray[i];
+                PropertyInfo propertyInfo = propertyInfos[i];
                 string name = propertyInfo.Name;
                 genericMenu.AddItem(new GUIContent(name + $" : {propertyInfo.PropertyType.Name}"), false, () =>
                 {
                     FindPropertyRelative("m_propertyName").stringValue = name;
                     FindPropertyRelative("m_hash").intValue = BlackboardPropertyName.GetHashCode(name);
+                    FindPropertyRelative("m_type").boxedValue = propertyInfo.PropertyType; // I think this works
 
                     m_property.serializedObject.ApplyModifiedProperties();
                     AssetDatabase.SaveAssets();

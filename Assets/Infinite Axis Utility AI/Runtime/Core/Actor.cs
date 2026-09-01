@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Stirge.InfiniteAxis.Core
 {
-    using Blackboard;
+    using GenericBlackboard;
 
     [System.Serializable]
     public sealed class Actor

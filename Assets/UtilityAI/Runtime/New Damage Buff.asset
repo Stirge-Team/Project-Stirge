@@ -10,16 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f765fb2bce3648f419dacaf5ae085c40, type: 3}
-  m_Name: New Serialized Damage Buff
+  m_Name: New Damage Buff
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Statuses.SerializedDamageBuff
   m_scoreScaling: 1
-  m_stackType: 0
+  m_stackType: 2
   m_durationType: 0
-  m_displayName: 
-  m_maxStacks: 0
-  m_conditions:
-  - {fileID: 11400000, guid: d306d2a96dd1a114ab93b6ec57fb1719, type: 2}
+  m_displayName: 20% Damage Increase
+  m_maxStacks: 1
+  m_conditions: []
   m_scoringMethods: []
   m_arg0: 0
-  m_arg1: 0
-  m_arg2: 0
+  m_arg1: 1.2
+  m_arg2: 3

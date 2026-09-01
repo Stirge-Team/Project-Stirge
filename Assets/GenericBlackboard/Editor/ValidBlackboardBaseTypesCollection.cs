@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Stirge.InfiniteAxis.EditorTools
+namespace Stirge.GenericBlackboard.EditorTools
 {
     [InitializeOnLoad]
     public static class ValidBlackboardBaseTypesCollection

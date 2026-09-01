@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Serialization.SerializedAxes
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Core.Axes;
     using Stirge.Serialization;
 

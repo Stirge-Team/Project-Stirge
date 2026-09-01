@@ -1,6 +1,10 @@
 using NUnit.Framework.Internal;
+using Stirge.Serialization;
+using Stirge.UtilityAI.EditorTools;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,36 +13,37 @@ using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
-    using EditorTools;
-    using Serialization;
-    using System.Text.RegularExpressions;
-
-    [CustomEditor(typeof(SerializedAction))]
-    public class SerializedActionEditor : Editor
+    [CustomEditor(typeof(SerializedStatus_Base), true)]
+    public class SerializedStatusEditor : Editor
     {
-        #region Property Names
-        private const string s_scoreScalingPropertyName = "m_scoreScaling";
-        private const string s_displayNamePropertyName = "m_displayName";
-        private const string s_actionTypePropertyName = "m_actionType";
-        private const string s_timelineAssetPropertyName = "m_timeline";
-        private const string s_damagePropertyName = "m_damage";
-        private const string s_rangePropertyName = "m_range";
-        private const string s_statusesPropertyName = "m_statuses";
-        private const string s_conditionsPropertyName = "m_conditions";
-        private const string s_scoringMethodsPropertyName = "m_scoringMethods";
-        #endregion
+        private static string s_scoreScalingPropertyName = "m_scoreScaling";
+        private static string s_stackTypePropertyName = "m_stackType";
+        private static string s_durationTypePropertyName = "m_durationType";
+        private static string s_displayNamePropertyName = "m_displayName";
+        private static string s_maxStacksPropertyName = "m_maxStacks";
+        private static string s_conditionsPropertyName = "m_conditions";
+        private static string s_scoringMethodsPropertyName = "m_scoringMethods";
 
-        #region Serialized Properties
+        private static readonly string[] s_basePropertyNames = new string[]
+        {
+            s_scoreScalingPropertyName,
+            s_stackTypePropertyName,
+            s_durationTypePropertyName,
+            s_displayNamePropertyName,
+            s_maxStacksPropertyName,
+            s_conditionsPropertyName,
+            s_scoringMethodsPropertyName
+        };
+
         private SerializedProperty m_scoreScalingProperty;
+        private SerializedProperty m_stackTypeProperty;
+        private SerializedProperty m_durationTypeProperty;
         private SerializedProperty m_displayNameProperty;
-        private SerializedProperty m_actionTypeProperty;
-        private SerializedProperty m_timelineAssetProperty;
-        private SerializedProperty m_damageProperty;
-        private SerializedProperty m_rangeProperty;
-        private SerializedProperty m_statusesProperty;
+        private SerializedProperty m_maxStacksProperty;
         private SerializedProperty m_conditionsProperty;
         private SerializedProperty m_scoringMethodsProperty;
-        #endregion
+
+        private Type m_targetType;
 
         private static readonly Dictionary<Object, Editor> s_conditionEditors = new();
         private static readonly Dictionary<Object, Editor> s_scoringMethodEditors = new();
@@ -49,14 +54,14 @@ namespace Stirge.UtilityAI.CustomEditors
         private void OnEnable()
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
+            m_stackTypeProperty = serializedObject.FindProperty(s_stackTypePropertyName);
+            m_durationTypeProperty = serializedObject.FindProperty(s_durationTypePropertyName);
             m_displayNameProperty = serializedObject.FindProperty(s_displayNamePropertyName);
-            m_actionTypeProperty = serializedObject.FindProperty(s_actionTypePropertyName);
-            m_timelineAssetProperty = serializedObject.FindProperty(s_timelineAssetPropertyName);
-            m_damageProperty = serializedObject.FindProperty(s_damagePropertyName);
-            m_rangeProperty = serializedObject.FindProperty(s_rangePropertyName);
-            m_statusesProperty = serializedObject.FindProperty(s_statusesPropertyName);
+            m_maxStacksProperty = serializedObject.FindProperty(s_maxStacksPropertyName);
             m_conditionsProperty = serializedObject.FindProperty(s_conditionsPropertyName);
             m_scoringMethodsProperty = serializedObject.FindProperty(s_scoringMethodsPropertyName);
+
+            m_targetType = target.GetType();
         }
 
         public override void OnInspectorGUI()
@@ -67,14 +72,13 @@ namespace Stirge.UtilityAI.CustomEditors
                 EGL.PropertyField(serializedObject.FindProperty("m_Script"));
             }
 
-            // Draw the normal properties
+            // Draw base properties
+            EGL.LabelField("Base Properties", EditorStyles.boldLabel);
             EGL.PropertyField(m_scoreScalingProperty);
+            EGL.PropertyField(m_stackTypeProperty);
+            EGL.PropertyField(m_durationTypeProperty);
             EGL.PropertyField(m_displayNameProperty);
-            EGL.PropertyField(m_actionTypeProperty);
-            EGL.PropertyField(m_timelineAssetProperty);
-            EGL.PropertyField(m_damageProperty);
-            EGL.PropertyField(m_rangeProperty);
-            EGL.PropertyField(m_statusesProperty);
+            EGL.PropertyField(m_maxStacksProperty);
 
             // Conditions property editor
             EGL.BeginHorizontal();
@@ -180,9 +184,38 @@ namespace Stirge.UtilityAI.CustomEditors
                 if (GUILayout.Button("Add Scoring Method"))
                 {
                     AddScoringMethod();
+                    AssetDatabase.SaveAssets();
                 }
 
                 EGL.EndVertical();
+            }
+
+            EGL.Space();
+
+            // Draw any Additional properties
+            string typeName = GetUIName(m_targetType);
+            EGL.LabelField(new GUIContent(typeName + " Properties"), EditorStyles.boldLabel);
+
+            // Move to the first visible property
+            EditorGUI.BeginChangeCheck();
+            SerializedProperty prop = serializedObject.GetIterator();
+            if (prop.NextVisible(true))
+            {
+                do
+                {
+                    // Skip the script reference and the properties we have already drawn
+                    if (prop.name == "m_Script" || s_basePropertyNames.Contains(prop.name))
+                        continue;
+
+                    // This draws everything else
+                    EGL.PropertyField(prop, true);
+                }
+                while (prop.NextVisible(false)); // Use 'false' to avoid drawing child elements of complex structs/arrays twice
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+
             }
         }
 

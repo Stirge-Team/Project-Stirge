@@ -4,7 +4,7 @@ namespace Stirge.InfiniteAxis.Core
 {
     using Enemy;
     using Stirge.Serialization;
-    using Stirge.InfiniteAxis.Blackboard;
+    using Stirge.GenericBlackboard;
 
     public abstract class Action
     {

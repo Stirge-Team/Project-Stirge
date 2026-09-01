@@ -189,13 +189,18 @@ namespace Stirge.UtilityAI.CustomEditors
             SerializedConditionObject obj = new() { constantValue = constantProperty.managedReferenceValue, referenceValue = referenceProperty.objectReferenceValue };
             if (obj.constantValue != null)
             {
-                obj.isConstantValue = true;
+                obj.valueType = ConditionValueType.Constant;
                 obj.type = obj.constantValue.GetType();
             }
             else if (obj.referenceValue != null)
             {
-                obj.isConstantValue = false;
+                obj.valueType = ConditionValueType.Reference;
                 obj.type = obj.referenceValue.GetType();
+            }
+            else
+            {
+                obj.valueType = ConditionValueType.Property;
+                //obj.type
             }
             return obj;
         }
@@ -209,10 +214,10 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             EGL.BeginHorizontal();
             // Is Constant Value toggle
-            obj.isConstantValue = EGL.Toggle(new GUIContent("Is Constant Value?"), obj.isConstantValue);
+            obj.valueType = EGL.Toggle(new GUIContent("Is Constant Value?"), obj.valueType);
 
             // if set to Constant value
-            if (obj.isConstantValue)
+            if (obj.valueType)
             {
                 // Type field
                 if (GUILayout.Button("Select Type"))
@@ -430,12 +435,12 @@ namespace Stirge.UtilityAI.CustomEditors
 
             // Add button to clear data
             // do not add the button if the obj is a constant value and the type has not been selected yet
-            if (!obj.isConstantValue && obj.type != null)
+            if (!obj.valueType && obj.type != null)
             {
                 if (GUILayout.Button("Clear Data"))
                 {
-                    bool isConstantValue = obj.isConstantValue; // maintain value type
-                    obj = new() { changed = true, isConstantValue = isConstantValue };
+                    bool isConstantValue = obj.valueType; // maintain value type
+                    obj = new() { changed = true, valueType = isConstantValue };
                 }
             }
         }
@@ -445,7 +450,7 @@ namespace Stirge.UtilityAI.CustomEditors
             if (obj.changed)
             {
                 obj.changed = false;
-                if (obj.isConstantValue)
+                if (obj.valueType)
                 {
                     constantProperty.managedReferenceValue = obj.constantValue;
                     referenceProperty.objectReferenceValue = null;
@@ -461,7 +466,7 @@ namespace Stirge.UtilityAI.CustomEditors
         private void DrawObjectPreview(SerializedConditionObject obj)
         {
             EditorGUI.BeginDisabledGroup(true);
-            if (obj.isConstantValue)
+            if (obj.valueType)
             {
                 EGL.TextField(obj.constantValue != null ? obj.constantValue.ToString() : "null", GUILayout.ExpandWidth(true));
             }

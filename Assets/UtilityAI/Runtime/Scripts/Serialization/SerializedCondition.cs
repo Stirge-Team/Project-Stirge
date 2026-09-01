@@ -1,10 +1,18 @@
+using Stirge.GenericBlackboard;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI
 {
-    [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Serialized Condition", order = 450)]
+    public enum ConditionValueType
+    {
+        Constant = 0,
+        Reference = 1,
+        Property = 2
+    }
+
+    [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Condition", order = 450)]
     public class SerializedCondition : ScriptableObject
     {
         [SerializeField] private Operation m_operation;
@@ -12,10 +20,12 @@ namespace Stirge.UtilityAI
         [SerializeReference] private object m_secondConstantObject;
         [SerializeField] private Object m_firstReferenceObject;
         [SerializeField] private Object m_secondReferenceObject;
+        [SerializeField] private BlackboardPropertyName m_firstPropertyName;
+        [SerializeField] private BlackboardPropertyName m_secondPropertyName;
 
         [SerializeField] private bool m_isValid;
 
-        public ICondition CreateRuntimeCondition(bool useGenericCondition = true)
+        public ICondition CreateRuntimeCondition()
         {
             if (!m_isValid)
             {
@@ -23,14 +33,57 @@ namespace Stirge.UtilityAI
                 return null;
             }
 
-            bool firstIsConstant = m_firstConstantObject != null;
-            bool secondIsConstant = m_secondConstantObject != null;
+            object firstObject = null;
+            BlackboardPropertyName firstPropertyName = default;
+            ConditionValueType firstValueType;
+            if (m_firstConstantObject != null)
+            {
+                firstObject = m_firstConstantObject;
+                firstValueType = ConditionValueType.Constant;
+            }
+            else if (m_firstReferenceObject != null)
+            {
+                firstObject = m_firstReferenceObject;
+                firstValueType = ConditionValueType.Reference;
+            }
+            else
+            {
+                firstPropertyName = m_firstPropertyName;
+                firstValueType = ConditionValueType.Property;
+            }
 
-            Type firstType = firstIsConstant ? m_firstConstantObject.GetType() : m_firstReferenceObject.GetType();
-            Type secondType = secondIsConstant ? m_secondConstantObject.GetType() : m_secondReferenceObject.GetType();
+            object secondObject = null;
+            BlackboardPropertyName secondPropertyName = default;
+            ConditionValueType secondValueType;
+            if (m_secondConstantObject != null)
+            {
+                secondObject = m_secondConstantObject;
+                secondValueType = ConditionValueType.Constant;
+            }
+            else if (m_secondReferenceObject != null)
+            {
+                secondObject = m_secondReferenceObject;
+                secondValueType = ConditionValueType.Reference;
+            }
+            else
+            {
+                secondPropertyName = m_secondPropertyName;
+                secondValueType = ConditionValueType.Property;
+            }
 
-            object firstObject = firstIsConstant ? m_firstConstantObject : m_firstReferenceObject;
-            object secondObject = secondIsConstant ? m_secondConstantObject : m_secondReferenceObject;
+            Type firstType = firstValueType switch
+            {
+                ConditionValueType.Constant | ConditionValueType.Reference => firstObject.GetType(),
+                ConditionValueType.Property => firstPropertyName.Type,
+                _ => null
+            };
+
+            Type secondType = secondValueType switch
+            {
+                ConditionValueType.Constant | ConditionValueType.Reference => secondObject.GetType(),
+                ConditionValueType.Property => secondPropertyName.Type,
+                _ => null
+            };
 
             if (useGenericCondition)
             {

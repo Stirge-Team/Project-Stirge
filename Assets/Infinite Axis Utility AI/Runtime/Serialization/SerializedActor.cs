@@ -3,7 +3,7 @@ using System;
 
 namespace Stirge.InfiniteAxis.Serialization
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Builders;
     using Core;
 

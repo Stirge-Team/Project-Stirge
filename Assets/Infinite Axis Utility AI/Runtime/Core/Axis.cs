@@ -2,7 +2,7 @@ using System;
 
 namespace Stirge.InfiniteAxis.Core
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Stirge.Serialization;
 
     public abstract class Axis

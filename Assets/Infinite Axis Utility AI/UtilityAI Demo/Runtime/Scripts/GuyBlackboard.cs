@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Demo
 {
-    using Blackboard;
+    using GenericBlackboard;
 
     public class GuyBlackboard : GenericBlackboard<Guy>
     {

@@ -20,7 +20,6 @@ namespace Stirge.UtilityAI
 
     public abstract class SerializedStatus_Base : ScriptableObject
     {
-        [Header("Base Status Properties")]
         [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;
         [SerializeField] protected StatusStackType m_stackType;
         [SerializeField] protected StatusDurationType m_durationType;

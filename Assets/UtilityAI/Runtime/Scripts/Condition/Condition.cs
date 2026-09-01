@@ -1,24 +1,20 @@
 using Stirge.AI;
 using Stirge.Combat;
+using Stirge.GenericBlackboard;
 using Stirge.Tools;
 using System;
 using UnityEngine;
 
+/*
 namespace Stirge.UtilityAI
 {
-    public enum Operation
-    {
-        Equal,
-        NotEqual,
-        LessThan,
-        GreaterThan,
-        LessThanOrEqual,
-        GreaterThanOrEqual,
-    }
-
     public class Condition : ICondition
     {
+        private Action m_action;
+        
         private Operation m_operation;
+
+        private ICondition.ObjectType m_objectType;
         private object m_firstObject;
         private object m_secondObject;
 
@@ -39,6 +35,15 @@ namespace Stirge.UtilityAI
 
             m_firstIsNumeric = StirgeTypeHelper.IsNumericType(m_firstType);
             m_secondIsNumeric = StirgeTypeHelper.IsNumericType(m_secondType);
+        }
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, Type objType)
+        {
+            m_operation = operation;
+        }
+
+        public void Setup(Action action)
+        {
+            m_action = action;
         }
 
         public bool Evaluate()
@@ -79,5 +84,18 @@ namespace Stirge.UtilityAI
             condition.Init(operation, firstObject, secondObject, firstType, secondType);
             return condition;
         }
+        public static Condition Create(Operation operation, object obj, BlackboardPropertyName secondPropertyName, Type objType)
+        {
+            Condition condition = new();
+            condition.Init(operation, obj, secondPropertyName, objType);
+            return condition;
+        }
+        public static Condition Create(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName)
+        {
+            Condition condition = new();
+            condition.Init(operation, firstPropertyName, secondPropertyName);
+            return condition;
+        }
     }
 }
+*/

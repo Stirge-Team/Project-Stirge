@@ -1,21 +1,26 @@
 using System;
 using UnityEngine;
 
-namespace Stirge.InfiniteAxis.Blackboard
+namespace Stirge.GenericBlackboard
 {
     [Serializable]
-    public struct BlackboardPropertyName
+    public struct BlackboardPropertyName : IEquatable<BlackboardPropertyName>
     {
         [SerializeField] private string m_propertyName;
         [SerializeField] private int m_hash;
+        [SerializeField] private Type m_type;
 
         public string Name => m_propertyName;
         public int Hash => m_hash;
+        public Type Type => m_type;
 
-        public BlackboardPropertyName(string name)
+        public bool IsNull => m_type == null;
+
+        public BlackboardPropertyName(string name, Type type)
         {
             m_propertyName = name;
             m_hash = GetHashCode(name);
+            m_type = type;
         }
 
         public override bool Equals(object obj)
@@ -26,7 +31,7 @@ namespace Stirge.InfiniteAxis.Blackboard
         {
             return other.Hash == Hash;
         }
-        public override string ToString()
+        public override readonly string ToString()
         {
             return m_propertyName;
         }

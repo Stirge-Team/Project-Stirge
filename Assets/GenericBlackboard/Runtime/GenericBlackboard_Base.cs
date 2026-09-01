@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.InfiniteAxis.Blackboard
+namespace Stirge.GenericBlackboard
 {
     using System;
     using System.Reflection;

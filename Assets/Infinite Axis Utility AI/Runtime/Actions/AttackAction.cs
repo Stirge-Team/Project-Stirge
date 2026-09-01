@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Actions
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Core;
     using Combat;
     using Combat.Attacks;

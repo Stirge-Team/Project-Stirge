@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.InfiniteAxis.Serialization
 {
-    using Blackboard;
+    using GenericBlackboard;
     using Core;
 
     public abstract class SerializedActor_Base : ScriptableObject

@@ -4,13 +4,25 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
-    public class GenericCondition<T1, T2> : ICondition where T1 : IEquatable<T2> where T2 : IEquatable<T1>
+    public enum Operation
+    {
+        Equal,
+        NotEqual,
+        LessThan,
+        GreaterThan,
+        LessThanOrEqual,
+        GreaterThanOrEqual,
+    }
+
+    public class GenericCondition<T1, T2> where T1 : IEquatable<T2> where T2 : IEquatable<T1>
     {
         public static Type FirstType => typeof(T1);
         public static Type SecondType => typeof(T2);
 
         public static bool Equatable = FirstType == SecondType || Comparable;
         public static bool Comparable = StirgeTypeHelper.IsNumericType(FirstType) && StirgeTypeHelper.IsNumericType(SecondType);
+
+        private Action m_action;
 
         private Operation m_operation;
         private T1 m_firstObject;
@@ -21,6 +33,11 @@ namespace Stirge.UtilityAI
             m_operation = operation;
             m_firstObject = (T1)firstObject;
             m_secondObject = (T2)secondObject;
+        }
+
+        public void Setup(Action action)
+        {
+            m_action = action;
         }
 
         public bool Evaluate()

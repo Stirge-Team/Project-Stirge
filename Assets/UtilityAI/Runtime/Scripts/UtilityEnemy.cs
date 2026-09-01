@@ -4,13 +4,14 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
-    public class UtiilityEnemy : CombatEntity
+    public class UtilityEnemy : CombatEntity
     {
         [SerializeField] private SerializedAction[] m_serializedActions;
-        [SerializeField] private SerializedMovementGoal_Base[] m_movementGoals;
+        [SerializeField] private SerializedMovementGoal_Base[] m_serializedMovementGoals;
         [SerializeField] private CombatEntity m_target;
 
         private Action[] m_actions;
+        private MovementGoal[] m_movementGoals;
 
         // Stats
         private float m_baseDamage = 1f;
@@ -19,11 +20,18 @@ namespace Stirge.UtilityAI
         {
             Time.fixedDeltaTime = 0.333f;
 
-            int count = m_serializedActions.Length;
-            m_actions = new Action[count];
-            for (int i = 0; i < count; i++)
+            int actionCount = m_serializedActions.Length;
+            m_actions = new Action[actionCount];
+            for (int i = 0; i < actionCount; i++)
             {
                 m_actions[i] = m_serializedActions[i].CreateRuntimeAction();
+            }
+
+            int movementGoalCount = m_serializedMovementGoals.Length;
+            m_movementGoals = new MovementGoal[movementGoalCount];
+            for (int i = 0; i < movementGoalCount; i++)
+            {
+                m_movementGoals[i] = m_serializedMovementGoals[i].CreateRuntimeMovementGoal();
             }
         }
 

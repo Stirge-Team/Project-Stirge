@@ -1,3 +1,4 @@
+using Stirge.GenericBlackboard;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -9,21 +10,36 @@ namespace Stirge.UtilityAI
         public SerializedConditionObject()
         {
             m_constantValue = null;
-            m_constantValue = null;
+            m_referenceValue = null;
+            m_propertyValue = default;
             m_type = null;
-            m_isConstantValue = false;
+            m_valueType = ConditionValueType.Constant;
 
             m_changed = false;
         }
         
         private object m_constantValue;
         private Object m_referenceValue;
+        private BlackboardPropertyName m_propertyValue;
+
         private Type m_type;
-        private bool m_isConstantValue;
+        private ConditionValueType m_valueType;
 
         private bool m_changed;
 
-        public bool IsNull => m_isConstantValue ? m_constantValue == null : m_referenceValue == null;
+        public bool IsNull
+        {
+            get
+            {
+                return m_valueType switch
+                {
+                    ConditionValueType.Constant => m_constantValue == null,
+                    ConditionValueType.Reference => m_referenceValue == null,
+                    ConditionValueType.Property => m_propertyValueIsNull,
+                    _ => true,
+                };
+            }
+        }
         public object constantValue
         {
             get => m_constantValue;
@@ -32,6 +48,8 @@ namespace Stirge.UtilityAI
                 if (m_constantValue != value)
                 {
                     m_referenceValue = null;
+                    m_propertyValueIsNull = true;
+
                     m_constantValue = value;
                     m_changed = true;
                 }
@@ -45,7 +63,25 @@ namespace Stirge.UtilityAI
                 if (m_referenceValue != value)
                 {
                     m_constantValue = null;
+                    m_propertyValueIsNull = true;
+
                     m_referenceValue = value;
+                    m_changed = true;
+                }
+            }
+        }
+        public BlackboardPropertyName propertyValue
+        {
+            get => m_propertyValue;
+            set
+            {
+                if (!m_propertyValue.Equals(value))
+                {
+                    m_constantValue = null;
+                    m_referenceValue = null;
+
+                    m_propertyValue = value;
+                    m_propertyValueIsNull = false;
                     m_changed = true;
                 }
             }
@@ -63,14 +99,14 @@ namespace Stirge.UtilityAI
             }
         }
 
-        public bool isConstantValue
+        public ConditionValueType valueType
         {
-            get => m_isConstantValue;
+            get => m_valueType;
             set
             {
-                if (m_isConstantValue != value)
+                if (m_valueType != value)
                 {
-                    m_isConstantValue = value;
+                    m_valueType = value;
                     m_type = null;
                     m_changed = true;
                 }
