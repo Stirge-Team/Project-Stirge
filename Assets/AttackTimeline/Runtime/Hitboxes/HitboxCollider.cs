@@ -31,7 +31,11 @@ namespace Stirge.AttackTimeline
             m_savedColliders.Add(other);
 
             // do OnHit Shtuff - 
-            m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>(), m_owner);
+            //m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>(), m_owner);
+
+            Hittable test = other.GetComponent<Hittable>();
+
+            test.OnHit(m_data, m_owner);
         }
 
         public void CreateHitbox(HitboxData data)
