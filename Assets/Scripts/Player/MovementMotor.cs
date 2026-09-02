@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Stirge.Player
 {
@@ -184,6 +185,27 @@ namespace Stirge.Player
                 transform.rotation = newRotation;
                 //Stop the transform from looking at the ground
                 transform.Rotate(-transform.rotation.x, 0, 0);
+            }
+        }
+        public bool StartJumpApexCheck(float startingY, float desiredHeight, float hangTime)
+        {
+            var routine = StartCoroutine(JumpApexCheck(startingY, desiredHeight, hangTime));
+            return routine == null ? false : true;
+        }
+        private IEnumerator JumpApexCheck(float startingY, float desiredHeight, float hangTime)
+        {
+            Debug.Log("Beginning apex check");
+            while (true)
+            {
+                yield return new WaitForEndOfFrame();
+                if (transform.position.y - startingY >= desiredHeight * 0.9f)
+                {
+                    m_rb.useGravity = false;
+                    ResetVelocity(false, true, false);
+                    yield return new WaitForSeconds(hangTime);
+                    m_rb.useGravity = true;
+                    break;
+                }
             }
         }
     }
