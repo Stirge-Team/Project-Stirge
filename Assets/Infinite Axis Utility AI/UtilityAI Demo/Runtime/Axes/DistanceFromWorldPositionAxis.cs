@@ -25,11 +25,13 @@ namespace Stirge.InfiniteAxis.Core.Axes
         
         public override float ComputeScore()
         {
+            /*
             if (Blackboard.TryGetClassValue(m_transformPropertyName, out Transform t))
             {
                 float score = Scoring.GetNormalisedScore(Vector3.Distance(t.position, m_worldPosition), m_lowerBounds, m_upperBounds);
                 return m_inverted ? 1f - score : score;
             }
+            */
             return 0;
         }
     }

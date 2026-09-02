@@ -16,6 +16,8 @@ namespace Stirge.UtilityAI
         // Stats
         private float m_baseDamage = 1f;
 
+        public float baseDamage => m_baseDamage;
+
         private void Start()
         {
             Time.fixedDeltaTime = 0.333f;

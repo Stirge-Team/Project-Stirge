@@ -23,10 +23,12 @@ namespace Stirge.InfiniteAxis.Demo.Axes
 
         public override float ComputeScore()
         {
+            /*
             if (Blackboard.TryGetStructValue(m_floatPropertyName, out float value))
             {
                 return m_a * value * value + m_b * value + m_c;
             }
+            */
             return 0;
         }
     }

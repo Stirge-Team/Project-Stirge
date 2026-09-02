@@ -18,7 +18,7 @@ namespace Stirge.InfiniteAxis.Core.Actions
         
         protected override void OnBegin()
         {
-            Blackboard.SetStructValue(m_targetPositionProperty, m_worldPosition);
+            //Blackboard.SetStructValue(m_targetPositionProperty, m_worldPosition);
         }
     }
 }

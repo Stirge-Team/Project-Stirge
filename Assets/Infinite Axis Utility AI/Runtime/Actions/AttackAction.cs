@@ -25,7 +25,7 @@ namespace Stirge.InfiniteAxis.Actions
         
         protected override void OnInitialise()
         {
-            Blackboard.TryGetClassValue(m_combatEntityPropertyName, out m_combatEntity);
+            //GenericBlackboard<UtilityEnemy>.TryGetClassValue(m_combatEntityPropertyName, out m_combatEntity);
             m_attackData = m_serializedAttackData.CreateAttackData();
         }
 

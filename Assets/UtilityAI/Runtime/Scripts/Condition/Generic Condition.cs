@@ -1,3 +1,4 @@
+using Stirge.GenericBlackboard;
 using Stirge.Tools;
 using System;
 using UnityEngine;
@@ -14,8 +15,15 @@ namespace Stirge.UtilityAI
         GreaterThanOrEqual,
     }
 
-    public class GenericCondition<T1, T2> where T1 : IEquatable<T2> where T2 : IEquatable<T1>
+    public class Condition<T1, T2> : ICondition where T1 : IEquatable<T2> where T2 : IEquatable<T1>
     {
+        private enum ConditionType
+        {
+            BothObject = 0,
+            HalfNHalf = 1, // in a half n half, the first object is always the object, and the second object is always the property
+            BothProperty = 2
+        }
+
         public static Type FirstType => typeof(T1);
         public static Type SecondType => typeof(T2);
 
@@ -24,15 +32,28 @@ namespace Stirge.UtilityAI
 
         private Action m_action;
 
+        private ConditionType m_type;
+
         private Operation m_operation;
         private T1 m_firstObject;
         private T2 m_secondObject;
+        private BlackboardPropertyName m_firstPropertyName;
+        private BlackboardPropertyName m_secondPropertyName;
 
         public void Init(Operation operation, object firstObject, object secondObject, Type firstType, Type secondType)
         {
             m_operation = operation;
             m_firstObject = (T1)firstObject;
             m_secondObject = (T2)secondObject;
+            m_type = ConditionType.BothObject;
+        }
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, Type objType)
+        {
+            m_operation = operation;
+        }
+        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName)
+        {
+            throw new NotImplementedException();
         }
 
         public void Setup(Action action)
@@ -74,6 +95,26 @@ namespace Stirge.UtilityAI
                 Operation.GreaterThanOrEqual => firstValue >= secondValue || Mathf.Approximately(firstValue, secondValue),
                 _ => false,
             };
+        }
+
+        object ICondition.GetFirstObject()
+        {
+            throw new NotImplementedException();
+        }
+
+        object ICondition.GetSecondObject()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ICondition.TryGetFirst<T>(out T value)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool ICondition.TryGetSecond<T>(out T value)
+        {
+            throw new NotImplementedException();
         }
 
         private static void LogNotEquatableError()

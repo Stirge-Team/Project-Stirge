@@ -7,6 +7,6 @@ namespace Stirge.InfiniteAxis.Serialization
 
     public abstract class SerializedActor_Base : ScriptableObject
     {
-        public abstract Actor CreateActor(GenericBlackboard_Base enemy);
+        public abstract Actor CreateActor();
     }
 }

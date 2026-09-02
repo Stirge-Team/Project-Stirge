@@ -19,7 +19,6 @@ namespace Stirge.InfiniteAxis
     public class UtilityEnemy : MonoBehaviour
     {
         [SerializeReference, HideInInspector] private Actor m_actor;
-        private EnemyBlackboard m_blackboard;
 
         [Header("Components")]
         [SerializeField] private SerializedActor m_actorData;
@@ -300,12 +299,10 @@ namespace Stirge.InfiniteAxis
 
         public void InitialiseAIComponents()
         {
-            m_blackboard = new(this);
-            m_actor = m_actorData.CreateActor(m_blackboard);
+            m_actor = m_actorData.CreateActor();
         }
         public void ClearAIComponents()
         {
-            m_blackboard = null;
             m_actor = null;
         }
 

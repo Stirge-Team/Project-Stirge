@@ -19,7 +19,7 @@ namespace Stirge.InfiniteAxis.Demo.Actions
         
         protected override void OnInitialise()
         {
-            Blackboard.TryGetClassValue(m_guyPropertyName, out m_guy);
+            //Blackboard.TryGetClassValue(m_guyPropertyName, out m_guy);
         }
 
         protected override void OnBegin()

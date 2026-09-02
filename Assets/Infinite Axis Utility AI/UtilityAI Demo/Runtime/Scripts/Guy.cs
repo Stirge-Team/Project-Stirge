@@ -9,7 +9,6 @@ namespace Stirge.InfiniteAxis.Demo
 
     public class Guy : MonoBehaviour
     {
-        private GuyBlackboard m_blackboard;
         private Actor m_actor;
 
         [SerializeField] private SerializedActor m_actorData;
@@ -116,8 +115,7 @@ namespace Stirge.InfiniteAxis.Demo
             m_interactionTrigger.radius = m_interactionRadius;
             m_interactionTrigger.isTrigger = true;
 
-            m_blackboard = new(this);
-            m_actor = m_actorData.CreateActor(m_blackboard);
+            m_actor = m_actorData.CreateActor();
         }
 
         private void Update()

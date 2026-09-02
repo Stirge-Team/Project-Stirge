@@ -10,11 +10,11 @@ namespace Stirge.GenericBlackboard
         [SerializeField] private int m_hash;
         [SerializeField] private Type m_type;
 
-        public string Name => m_propertyName;
-        public int Hash => m_hash;
-        public Type Type => m_type;
+        public readonly string Name => m_propertyName;
+        public readonly int Hash => m_hash;
+        public readonly Type Type => m_type;
 
-        public bool IsNull => m_type == null;
+        public readonly bool IsNull => m_type == null;
 
         public BlackboardPropertyName(string name, Type type)
         {
@@ -23,21 +23,21 @@ namespace Stirge.GenericBlackboard
             m_type = type;
         }
 
-        public override bool Equals(object obj)
+        public override readonly bool Equals(object obj)
         {
             return obj is BlackboardPropertyName other && Equals(other);
         }
-        public bool Equals(BlackboardPropertyName other)
+        public readonly bool Equals(BlackboardPropertyName other)
         {
-            return other.Hash == Hash;
+            return other.m_hash == m_hash && other.m_type == m_type;
         }
         public override readonly string ToString()
         {
             return m_propertyName;
         }
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
-            return Hash;
+            return m_hash;
         }
 
         public static int GetHashCode(string name)

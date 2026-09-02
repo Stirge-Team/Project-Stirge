@@ -5,13 +5,6 @@ using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI
 {
-    public enum ConditionValueType
-    {
-        Constant = 0,
-        Reference = 1,
-        Property = 2
-    }
-
     [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Condition", order = 450)]
     public class SerializedCondition : ScriptableObject
     {
@@ -34,69 +27,75 @@ namespace Stirge.UtilityAI
             }
 
             object firstObject = null;
-            BlackboardPropertyName firstPropertyName = default;
-            ConditionValueType firstValueType;
+            bool firstIsProperty;
             if (m_firstConstantObject != null)
             {
                 firstObject = m_firstConstantObject;
-                firstValueType = ConditionValueType.Constant;
+                firstIsProperty = false;
             }
             else if (m_firstReferenceObject != null)
             {
                 firstObject = m_firstReferenceObject;
-                firstValueType = ConditionValueType.Reference;
+                firstIsProperty = false;
             }
             else
             {
-                firstPropertyName = m_firstPropertyName;
-                firstValueType = ConditionValueType.Property;
+                firstIsProperty = true;
             }
 
             object secondObject = null;
-            BlackboardPropertyName secondPropertyName = default;
-            ConditionValueType secondValueType;
+            bool secondIsProperty;
             if (m_secondConstantObject != null)
             {
                 secondObject = m_secondConstantObject;
-                secondValueType = ConditionValueType.Constant;
+                secondIsProperty = false;
             }
             else if (m_secondReferenceObject != null)
             {
                 secondObject = m_secondReferenceObject;
-                secondValueType = ConditionValueType.Reference;
+                secondIsProperty = false;
             }
             else
             {
-                secondPropertyName = m_secondPropertyName;
-                secondValueType = ConditionValueType.Property;
+                secondIsProperty = true;
             }
 
-            Type firstType = firstValueType switch
-            {
-                ConditionValueType.Constant | ConditionValueType.Reference => firstObject.GetType(),
-                ConditionValueType.Property => firstPropertyName.Type,
-                _ => null
-            };
+            Type firstType = firstIsProperty ? m_firstPropertyName.Type : firstObject.GetType();
+            Type secondType = secondIsProperty ? m_secondPropertyName.Type : secondObject.GetType();
 
-            Type secondType = secondValueType switch
-            {
-                ConditionValueType.Constant | ConditionValueType.Reference => secondObject.GetType(),
-                ConditionValueType.Property => secondPropertyName.Type,
-                _ => null
-            };
+            Type genericConditionType = typeof(Condition<,>).MakeGenericType(firstType, secondType);
+            ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
 
-            if (useGenericCondition)
+            // If both are same
+            if (firstIsProperty == secondIsProperty)
             {
-                Type genericConditionType = typeof(GenericCondition<,>).MakeGenericType(firstType, secondType);
-                ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
-                newCondition.Init(m_operation, firstObject, secondObject, firstType, secondType);
-                return newCondition;
+                // if both property types
+                if (firstIsProperty)
+                {
+                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName);
+                }
+                // if both object types
+                else
+                {
+                    newCondition.Init(m_operation, firstObject, secondObject, firstType, secondType);
+                }
             }
+            // if one property and one object
             else
             {
-                ICondition newCondition = Condition.Create(m_operation, firstObject, secondObject, firstType, secondType);
-                return newCondition;
+                // if first is property
+                if (firstIsProperty)
+                {
+                    newCondition.Init(m_operation, secondObject, m_firstPropertyName, secondType);
+                }
+                // if second is property
+                else
+                {
+                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, firstType);
+                }
             }
+            
+            return newCondition;
         }
     }
 }

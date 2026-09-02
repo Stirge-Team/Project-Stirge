@@ -7,10 +7,7 @@ namespace Stirge.InfiniteAxis.Core
 
     public abstract class Axis
     {
-        private GenericBlackboard_Base m_blackboard;
-
         public string name { get; set; }
-        public GenericBlackboard_Base Blackboard => m_blackboard;
 
         public abstract float ComputeScore();
 
@@ -19,11 +16,6 @@ namespace Stirge.InfiniteAxis.Core
         public void Initialise()
         {
             OnInitialise();
-        }
-
-        public void SetBlackboard(GenericBlackboard_Base blackboard)
-        {
-            m_blackboard = blackboard;
         }
 
         #region Initialisers

@@ -24,13 +24,13 @@ namespace Stirge.InfiniteAxis.Builders
             new object[1], new object[2], new object[3], new object[4], new object[5]
         };
 
-        public Actor Build(GenericBlackboard_Base blackboard)
+        public Actor Build()
         {
             Axis[] axes = MakeAxes();
             Action[] actions = MakeActions();
             int[][] actionAxisBindings = MakeActionAxisBindings();
 
-            Actor actor = Actor.Create(blackboard, axes, actions, actionAxisBindings);
+            Actor actor = Actor.Create(axes, actions, actionAxisBindings);
 
             return actor;
         }

@@ -19,10 +19,10 @@ namespace Stirge.InfiniteAxis.Serialization
 
         public Type targetType => Type.GetType(m_targetTypeAssemblyQualifiedName);
 
-        public override Actor CreateActor(GenericBlackboard_Base blackboard)
+        public override Actor CreateActor()
         {
             Deserialize();
-            Actor actor = m_builder.Build(blackboard);
+            Actor actor = m_builder.Build();
 
             return actor;
         }

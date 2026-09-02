@@ -25,8 +25,8 @@ namespace Stirge.InfiniteAxis.Demo.Actions
         
         protected override void OnInitialise()
         {
-            Blackboard.TryGetClassValue(m_transformPropertyName, out m_transform);
-            Blackboard.TryGetClassValue(m_spawnerPropertyName, out m_spawner);
+            //Blackboard.TryGetClassValue(m_transformPropertyName, out m_transform);
+            //Blackboard.TryGetClassValue(m_spawnerPropertyName, out m_spawner);
         }
 
         protected override void OnBegin()
@@ -38,7 +38,7 @@ namespace Stirge.InfiniteAxis.Demo.Actions
         {
             // get closest resource
             DemoResource newTarget = m_spawner.GetClosestFood(m_transform.position);
-            Blackboard.SetClassValue(m_targetPropertyName, newTarget);
+            //Blackboard.SetClassValue(m_targetPropertyName, newTarget);
         }
 
         protected override void OnEnd()

@@ -23,11 +23,13 @@ namespace Stirge.InfiniteAxis.Core.Axes
         
         public override float ComputeScore()
         {
+            /*
             if (Blackboard.TryGetStructValue(m_propertyName, out float value))
             {
                 float score = Scoring.GetNormalisedScore(Mathf.Abs(value), m_lowerBound, m_upperBound);
                 return m_inverted ? 1 - score : score;
             }
+            */
             return 0;
         }
     }

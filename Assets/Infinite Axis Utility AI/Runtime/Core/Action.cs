@@ -8,10 +8,7 @@ namespace Stirge.InfiniteAxis.Core
 
     public abstract class Action
     {
-        private GenericBlackboard_Base m_blackboard;
-
         public string name { get; set; }
-        public GenericBlackboard_Base Blackboard => m_blackboard;
         
         protected virtual void OnInitialise() { }
 
@@ -39,11 +36,6 @@ namespace Stirge.InfiniteAxis.Core
         public void End()
         {
             OnEnd();
-        }
-
-        public void SetBlackboard(GenericBlackboard_Base blackboard)
-        {
-            m_blackboard = blackboard;
         }
 
         #region Initialisers

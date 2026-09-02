@@ -18,10 +18,12 @@ namespace Stirge.InfiniteAxis.Core.Axes
         
         public override float ComputeScore()
         {
+            /*
             if (Blackboard.TryGetStructValue(m_boolPropertyName, out bool value))
             {
                 return value != m_inverted ? 1f : 0f;
             }
+            */
             return 0f;
         }
     }

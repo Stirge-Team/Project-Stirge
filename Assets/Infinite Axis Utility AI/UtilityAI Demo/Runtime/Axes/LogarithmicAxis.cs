@@ -25,6 +25,7 @@ namespace Stirge.InfiniteAxis.Demo.Axes
         
         public override float ComputeScore()
         {
+            /*
             if (Blackboard.TryGetStructValue(m_floatPropertyName, out float value))
             {
                 float score = m_a * Mathf.Log(value - m_h, m_b) + m_k;
@@ -32,6 +33,7 @@ namespace Stirge.InfiniteAxis.Demo.Axes
                     return 0;
                 return score;
             }
+            */
             return 0;
         }
     }

@@ -33,7 +33,7 @@ namespace Stirge.UtilityAI
         protected ICondition[] CreateRuntimeConditions()
         {
             int conditionCount = m_conditions.Length;
-            ICondition[] conditions = new Condition[conditionCount];
+            ICondition[] conditions = new ICondition[conditionCount];
             for (int i = 0; i < conditionCount; i++)
             {
                 conditions[i] = m_conditions[i].CreateRuntimeCondition();

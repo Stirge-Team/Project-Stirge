@@ -8,14 +8,10 @@ namespace Stirge.GenericBlackboard
 {
     public static class GenericBlackboard<TBase> where TBase : MonoBehaviour
     {
-        private static readonly BindingFlags s_propertyFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-        public static readonly PropertyInfo[] CachedPropertyInfosArray = typeof(TBase).GetProperties(s_propertyFlags);
-
-        private static readonly Dictionary<Type, IBlackboardTable<TBase>> s_tables = new();
-        private static readonly Dictionary<BlackboardPropertyName, ValueIndex> s_properties = new();
-
-        public static void Setup()
+        static GenericBlackboard()
         {
+            CachedPropertyInfosArray = typeof(TBase).GetProperties(s_propertyFlags);
+
             // Check each PropertyInfo in the cache and organise them into this dictionary by Type
             // Check all of them to ensure we create a new entry in the dictionary for every unique Type
             Dictionary<Type, PropertyInfo[]> propertyInfosByType = new();
@@ -52,6 +48,12 @@ namespace Stirge.GenericBlackboard
                 }
             }
         }
+        
+        private static readonly BindingFlags s_propertyFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+        public static readonly PropertyInfo[] CachedPropertyInfosArray;
+
+        private static readonly Dictionary<Type, IBlackboardTable<TBase>> s_tables = new();
+        private static readonly Dictionary<BlackboardPropertyName, ValueIndex> s_properties = new();
 
         #region Get
         public static bool TryGetStructValue<TValue>(TBase target, BlackboardPropertyName propertyName, out TValue value) where TValue : struct
@@ -160,7 +162,7 @@ namespace Stirge.GenericBlackboard
         /// '<see cref="ValueIndex.table"/>' is a reference to the <see cref="IBlackboardTable{TBase}"/> the property is in.<br/>
         /// '<see cref="ValueIndex.index"/>' is the index the property resides at in the table.
         /// </summary>
-        protected readonly struct ValueIndex
+        private readonly struct ValueIndex
         {
             public readonly IBlackboardTable<TBase> table;
             public readonly int index;

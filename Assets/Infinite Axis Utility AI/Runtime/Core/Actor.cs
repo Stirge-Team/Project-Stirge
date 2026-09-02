@@ -4,15 +4,11 @@ using System.Linq;
 
 namespace Stirge.InfiniteAxis.Core
 {
-    using GenericBlackboard;
-
     [System.Serializable]
     public sealed class Actor
     {
         private Axis[] m_axes;
         private Action[] m_actions;
-
-        private GenericBlackboard_Base m_blackboard;
 
         private float[] m_axisScores;
         private float[] m_actionScores;
@@ -25,26 +21,16 @@ namespace Stirge.InfiniteAxis.Core
         private int m_currentActionIndex;
 
         public Actor() { }
-        public static Actor Create(GenericBlackboard_Base blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        public static Actor Create(Axis[] axes, Action[] actions, int[][] actionAxisBindings)
         {
             Actor actor = new()
             {
-                m_blackboard = blackboard,
                 m_axes = axes,
                 m_actions = actions,
                 m_actionAxisBindings = actionAxisBindings,
                 m_axisScores = new float[axes.Length],
                 m_actionScores = new float[actions.Length],
             };
-
-            for (int i = 0; i < actor.m_axes.Length; i++)
-            {
-                actor.m_axes[i].SetBlackboard(blackboard);
-            }
-            for (int i = 0; i < actor.m_actions.Length; i++)
-            {
-                actor.m_actions[i].SetBlackboard(blackboard);
-            }
 
             return actor;
         }

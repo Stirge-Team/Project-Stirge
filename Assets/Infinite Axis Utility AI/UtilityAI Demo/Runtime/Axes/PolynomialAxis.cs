@@ -23,6 +23,7 @@ namespace Stirge.InfiniteAxis.Demo.Axes
         
         public override float ComputeScore()
         {
+            /*
             if (Blackboard.TryGetStructValue(m_floatPropertyName, out float value))
             {
                 // ensure the number of parameters is correct for the polynomial type
@@ -41,6 +42,7 @@ namespace Stirge.InfiniteAxis.Demo.Axes
 
                 return score;
             }
+            */
             return 0;
         }
     }

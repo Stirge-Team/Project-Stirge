@@ -1,38 +1,58 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+
 using EGL = UnityEditor.EditorGUILayout;
 using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
-    using NUnit.Framework.Internal;
-    using System.Collections.Generic;
+    using Stirge.Combat;
+    using Stirge.GenericBlackboard;
+    using System.Text.RegularExpressions;
     using Tools;
+
+    public enum ConditionValueType
+    {
+        Constant = 0,
+        Reference = 1,
+        Property = 2
+    }
 
     [CustomEditor(typeof(SerializedCondition))]
     public class SerializedConditionEditor : Editor
     {
+        #region Static Setup
         static SerializedConditionEditor()
         {
             ConstantTypes.UnionWith(StirgeTypeHelper.NumericTypes);
         }
-        
-        #region Valid Type Collections
         public static readonly HashSet<Type> ConstantTypes = new HashSet<Type>
         {
             typeof(Boolean), typeof(String), typeof(Vector2), typeof(Vector3), typeof(Color)
         };
         #endregion
 
-        #region Property Names
+        #region Properties
         private const string s_operationPropertyName = "m_operation";
         private const string s_firstConstantPropertyName = "m_firstConstantObject";
         private const string s_secondConstantPropertyName = "m_secondConstantObject";
         private const string s_firstReferencePropertyName = "m_firstReferenceObject";
         private const string s_secondReferencePropertyName = "m_secondReferenceObject";
+        private const string s_firstPropertyPropertyName = "m_firstPropertyName";
+        private const string s_secondPropertyPropertyName = "m_secondPropertyName";
         private const string s_isValidPropertyName = "m_isValid";
+
+        private SerializedProperty m_operationProperty;
+        private SerializedProperty m_firstConstantProperty;
+        private SerializedProperty m_secondConstantProperty;
+        private SerializedProperty m_firstReferenceProperty;
+        private SerializedProperty m_secondReferenceProperty;
+        private SerializedProperty m_firstPropertyNameProperty;
+        private SerializedProperty m_secondPropertyNameProperty;
+        private SerializedProperty m_isValidProperty;
         #endregion
 
         #region Labels
@@ -41,15 +61,6 @@ namespace Stirge.UtilityAI.CustomEditors
 
         private static GUIStyle s_middleStyle;
         private static bool s_middleStyleInitialised = false;
-        #endregion
-         
-        #region Properties
-        private SerializedProperty m_operationProperty;
-        private SerializedProperty m_firstConstantProperty;
-        private SerializedProperty m_secondConstantProperty;
-        private SerializedProperty m_firstReferenceProperty;
-        private SerializedProperty m_secondReferenceProperty;
-        private SerializedProperty m_isValidProperty;
         #endregion
 
         private SerializedConditionObject m_firstObject;
@@ -62,11 +73,13 @@ namespace Stirge.UtilityAI.CustomEditors
             m_secondConstantProperty = serializedObject.FindProperty(s_secondConstantPropertyName);
             m_firstReferenceProperty = serializedObject.FindProperty(s_firstReferencePropertyName);
             m_secondReferenceProperty = serializedObject.FindProperty(s_secondReferencePropertyName);
+            m_firstPropertyNameProperty = serializedObject.FindProperty(s_firstPropertyPropertyName);
+            m_secondPropertyNameProperty = serializedObject.FindProperty(s_secondPropertyPropertyName);
             m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
 
             // init objects
-            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty);
-            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty);
+            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty);
+            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty);
         }
 
         public override void OnInspectorGUI()
@@ -175,18 +188,26 @@ namespace Stirge.UtilityAI.CustomEditors
             if (GUILayout.Button("Re-Initialise"))
             {
                 OnEnable();
+                serializedObject.ApplyModifiedProperties();
             }
 
             // Apply changes
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
+                AssetDatabase.SaveAssets();
             }
         }
 
-        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty)
+        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty)
         {
-            SerializedConditionObject obj = new() { constantValue = constantProperty.managedReferenceValue, referenceValue = referenceProperty.objectReferenceValue };
+            SerializedConditionObject obj = new()
+            {
+                constantValue = constantProperty.managedReferenceValue,
+                referenceValue = referenceProperty.objectReferenceValue,
+                propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue
+            };
+
             if (obj.constantValue != null)
             {
                 obj.valueType = ConditionValueType.Constant;
@@ -197,11 +218,12 @@ namespace Stirge.UtilityAI.CustomEditors
                 obj.valueType = ConditionValueType.Reference;
                 obj.type = obj.referenceValue.GetType();
             }
-            else
+            else if (!obj.propertyValue.IsNull)
             {
                 obj.valueType = ConditionValueType.Property;
-                //obj.type
+                obj.type = obj.propertyValue.Type;
             }
+
             return obj;
         }
 
@@ -214,233 +236,241 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             EGL.BeginHorizontal();
             // Is Constant Value toggle
-            obj.valueType = EGL.Toggle(new GUIContent("Is Constant Value?"), obj.valueType);
+            obj.valueType = (ConditionValueType)EGL.EnumPopup(new GUIContent("Value Type"), obj.valueType);
 
             // if set to Constant value
-            if (obj.valueType)
+            switch (obj.valueType)
             {
-                // Type field
-                if (GUILayout.Button("Select Type"))
-                {
-                    SelectType(obj);
-                }
-                EGL.EndHorizontal();
-                if (obj.type != null)
-                {
-                    // ensure constantValue is never null going into the Switch block
-                    obj.constantValue ??= string.Empty;
-
-                    GUIContent label = new(obj.type.Name + " Value");
-
-                    // Draw property field dependent on selected Type
-                    switch (obj.type.Name)
+                case ConditionValueType.Constant:
+                    // Type field
+                    if (GUILayout.Button("Select Type"))
                     {
-                        case nameof(UInt16):
-                        case nameof(UInt32):
-                        case nameof(Int32):
-                        case nameof(Int16):
-                            int int32Value;
-                            if (obj.constantValue is string int32StringValue)
-                            {
-                                if (!int.TryParse(int32StringValue, out int32Value))
-                                {
-                                    int32Value = 0;
-                                }
-                            }
-                            else
-                            {
-                                TryCast(obj.constantValue, out int32Value);
-                            }
-                            obj.constantValue = EGL.IntField(label, int32Value);
-                            break;
-                        case nameof(UInt64):
-                        case nameof(Int64):
-                            long longValue;
-                            if (obj.constantValue is string longStringValue)
-                            {
-                                if (!long.TryParse(longStringValue, out longValue))
-                                {
-                                    longValue = 0;
-                                }
-                            }
-                            else
-                            {
-                                TryCast(obj.constantValue, out longValue);
-                            }
-                            obj.constantValue = EGL.LongField(label, longValue);
-                            break;
-                        case nameof(Single):
-                            float floatValue;
-                            if (obj.constantValue is string floatStringValue)
-                            {
-                                if (!float.TryParse(floatStringValue, out floatValue))
-                                {
-                                    floatValue = 0;
-                                }
-                            }
-                            else
-                            {
-                                TryCast(obj.constantValue, out floatValue);
-                            }
-                            obj.constantValue = EGL.FloatField(label, floatValue);
-                            break;
-                        case nameof(Decimal):
-                        case nameof(Double):
-                            double doubleValue;
-                            if (obj.constantValue is string doubleStringValue)
-                            {
-                                if (!double.TryParse(doubleStringValue, out doubleValue))
-                                {
-                                    doubleValue = 0f;
-                                }
-                            }
-                            else
-                            {
-                                TryCast(obj.constantValue, out doubleValue);
-                            }
-                            obj.constantValue = EGL.DoubleField(label, doubleValue);
-                            break;
-                        case nameof(Boolean):
-                            TryCast(obj.constantValue, out bool boolValue);
-                            obj.constantValue = EGL.Toggle(label, boolValue);
-                            break;
-                        case nameof(String):
-                            string stringValue = obj.constantValue.ToString();
-                            if (stringValue == null)
-                            {
-                                if (!TryCast(obj.constantValue, out stringValue))
-                                    stringValue = string.Empty;
-                            }
-                            obj.constantValue = EGL.TextField(label, stringValue);
-                            break;
-                        case nameof(Vector2):
-                            Vector2 vector2Value;
-                            if (obj.constantValue is Vector3 vector2To3Value)
-                            {
-                                vector2Value = vector2To3Value;
-                            }
-                            else
-                            {
-                                TryCast(obj.constantValue, out vector2Value);
-                            }
-                            obj.constantValue = EGL.Vector2Field(label, vector2Value);
-                            break;
-                        case nameof(Vector3):
-                            Vector3 vector3Value;
-                            if (obj.constantValue is Vector2 vector3To2Value)
-                            {
-                                vector3Value = vector3To2Value;
-                            }
-                            else
-                            {
-                                TryCast(obj.constantValue, out vector3Value);
-                            }
-                            obj.constantValue = EGL.Vector3Field(label, vector3Value);
-                            break;
-                        case nameof(Color):
-                            Color colorValue;
-                            if (obj.constantValue is Vector2 vector2ToColorValue)
-                            {
-                                colorValue = new(vector2ToColorValue.x, vector2ToColorValue.y, 0, 1);
-                            }
-                            else if (obj.constantValue is Vector3 vector3ToColorValue)
-                            {
-                                colorValue = new(vector3ToColorValue.x, vector3ToColorValue.y, vector3ToColorValue.z, 1);
-                            }
-                            else
-                            {
-                                if (!TryCast(obj.constantValue, out colorValue))
-                                {
-                                    colorValue = new(0, 0, 0, 1);
-                                }
-                            }
-                            obj.constantValue = EGL.ColorField(label, colorValue);
-                            break;
-                        case nameof(Byte):
-                            byte byteValue;
-                            if (obj.constantValue is sbyte sByteToByteValue)
-                            {
-                                byteValue = (byte)sByteToByteValue;
-                            }
-                            else
-                            {
-                                if (!TryCast(obj.constantValue, out byteValue))
-                                {
-                                    byteValue = new();
-                                }
-                            }
-                            TryCast(EGL.IntField(label, byteValue), out byteValue);
-                            obj.constantValue = byteValue;
-                            break;
-                        case nameof(SByte):
-                            sbyte sByteValue;
-                            if (obj.constantValue is byte byteToSByteValue)
-                            {
-                                sByteValue = (sbyte)byteToSByteValue;
-                            }
-                            else
-                            {
-                                if (!TryCast(obj.constantValue, out sByteValue))
-                                {
-                                    sByteValue = new();
-                                }
-                            }
-                            TryCast(EGL.IntField(label, sByteValue), out sByteValue);
-                            obj.constantValue = sByteValue;
-                            break;
-                        default:
-                            // check if type is an Enum type
-                            if (obj.type.IsEnum)
-                            {
-                                // Ensure value contains an enum value. If the cast returns null, create a default value
-                                Enum enumValue = (Enum)obj.constantValue;
-                                enumValue ??= Activator.CreateInstance(obj.type) as Enum;
+                        SelectConstantType(obj);
+                    }
+                    EGL.EndHorizontal();
+                    if (obj.type != null)
+                    {
+                        // ensure constantValue is never null going into the Switch block
+                        obj.constantValue ??= string.Empty;
 
-                                // check if Enum type is Flags type
-                                if (obj.type.GetCustomAttributes(typeof(FlagsAttribute), false).Any())
+                        GUIContent label = new(obj.type.Name + " Value");
+
+                        // Draw property field dependent on selected Type
+                        switch (obj.type.Name)
+                        {
+                            case nameof(UInt16):
+                            case nameof(UInt32):
+                            case nameof(Int32):
+                            case nameof(Int16):
+                                int int32Value;
+                                if (obj.constantValue is string int32StringValue)
                                 {
-                                    obj.constantValue = EGL.EnumFlagsField(label, enumValue);
+                                    if (!int.TryParse(int32StringValue, out int32Value))
+                                    {
+                                        int32Value = 0;
+                                    }
                                 }
-                                // if standard Enum
                                 else
                                 {
-                                    obj.constantValue = EGL.EnumPopup(label, enumValue);
+                                    TryCast(obj.constantValue, out int32Value);
                                 }
-                            }
-                            // If type is not valid somehow
-                            else
-                            {
-                                EGL.HelpBox("Provided type is NOT valid for a Constant value.", MessageType.Warning);
-                            }
-                            break;
-                    }
-                }
-            }
-            // if set to Reference value
-            else
-            {
-                EditorGUI.BeginDisabledGroup(true);
-                EGL.TextField(obj.type != null ? obj.type.Name : "null", GUILayout.MaxWidth(180f));
-                EditorGUI.EndDisabledGroup();
-                
-                EGL.EndHorizontal();
+                                obj.constantValue = EGL.IntField(label, int32Value);
+                                break;
+                            case nameof(UInt64):
+                            case nameof(Int64):
+                                long longValue;
+                                if (obj.constantValue is string longStringValue)
+                                {
+                                    if (!long.TryParse(longStringValue, out longValue))
+                                    {
+                                        longValue = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    TryCast(obj.constantValue, out longValue);
+                                }
+                                obj.constantValue = EGL.LongField(label, longValue);
+                                break;
+                            case nameof(Single):
+                                float floatValue;
+                                if (obj.constantValue is string floatStringValue)
+                                {
+                                    if (!float.TryParse(floatStringValue, out floatValue))
+                                    {
+                                        floatValue = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    TryCast(obj.constantValue, out floatValue);
+                                }
+                                obj.constantValue = EGL.FloatField(label, floatValue);
+                                break;
+                            case nameof(Decimal):
+                            case nameof(Double):
+                                double doubleValue;
+                                if (obj.constantValue is string doubleStringValue)
+                                {
+                                    if (!double.TryParse(doubleStringValue, out doubleValue))
+                                    {
+                                        doubleValue = 0f;
+                                    }
+                                }
+                                else
+                                {
+                                    TryCast(obj.constantValue, out doubleValue);
+                                }
+                                obj.constantValue = EGL.DoubleField(label, doubleValue);
+                                break;
+                            case nameof(Boolean):
+                                TryCast(obj.constantValue, out bool boolValue);
+                                obj.constantValue = EGL.Toggle(label, boolValue);
+                                break;
+                            case nameof(String):
+                                string stringValue = obj.constantValue.ToString();
+                                if (stringValue == null)
+                                {
+                                    if (!TryCast(obj.constantValue, out stringValue))
+                                        stringValue = string.Empty;
+                                }
+                                obj.constantValue = EGL.TextField(label, stringValue);
+                                break;
+                            case nameof(Vector2):
+                                Vector2 vector2Value;
+                                if (obj.constantValue is Vector3 vector2To3Value)
+                                {
+                                    vector2Value = vector2To3Value;
+                                }
+                                else
+                                {
+                                    TryCast(obj.constantValue, out vector2Value);
+                                }
+                                obj.constantValue = EGL.Vector2Field(label, vector2Value);
+                                break;
+                            case nameof(Vector3):
+                                Vector3 vector3Value;
+                                if (obj.constantValue is Vector2 vector3To2Value)
+                                {
+                                    vector3Value = vector3To2Value;
+                                }
+                                else
+                                {
+                                    TryCast(obj.constantValue, out vector3Value);
+                                }
+                                obj.constantValue = EGL.Vector3Field(label, vector3Value);
+                                break;
+                            case nameof(Color):
+                                Color colorValue;
+                                if (obj.constantValue is Vector2 vector2ToColorValue)
+                                {
+                                    colorValue = new(vector2ToColorValue.x, vector2ToColorValue.y, 0, 1);
+                                }
+                                else if (obj.constantValue is Vector3 vector3ToColorValue)
+                                {
+                                    colorValue = new(vector3ToColorValue.x, vector3ToColorValue.y, vector3ToColorValue.z, 1);
+                                }
+                                else
+                                {
+                                    if (!TryCast(obj.constantValue, out colorValue))
+                                    {
+                                        colorValue = new(0, 0, 0, 1);
+                                    }
+                                }
+                                obj.constantValue = EGL.ColorField(label, colorValue);
+                                break;
+                            case nameof(Byte):
+                                byte byteValue;
+                                if (obj.constantValue is sbyte sByteToByteValue)
+                                {
+                                    byteValue = (byte)sByteToByteValue;
+                                }
+                                else
+                                {
+                                    if (!TryCast(obj.constantValue, out byteValue))
+                                    {
+                                        byteValue = new();
+                                    }
+                                }
+                                TryCast(EGL.IntField(label, byteValue), out byteValue);
+                                obj.constantValue = byteValue;
+                                break;
+                            case nameof(SByte):
+                                sbyte sByteValue;
+                                if (obj.constantValue is byte byteToSByteValue)
+                                {
+                                    sByteValue = (sbyte)byteToSByteValue;
+                                }
+                                else
+                                {
+                                    if (!TryCast(obj.constantValue, out sByteValue))
+                                    {
+                                        sByteValue = new();
+                                    }
+                                }
+                                TryCast(EGL.IntField(label, sByteValue), out sByteValue);
+                                obj.constantValue = sByteValue;
+                                break;
+                            default:
+                                // check if type is an Enum type
+                                if (obj.type.IsEnum)
+                                {
+                                    // Ensure value contains an enum value. If the cast returns null, create a default value
+                                    Enum enumValue = (Enum)obj.constantValue;
+                                    enumValue ??= Activator.CreateInstance(obj.type) as Enum;
 
-                string labelText = obj.type != null ? obj.type.Name : "Object";
-                obj.referenceValue = EGL.ObjectField(new GUIContent(labelText + " Value"), obj.referenceValue, typeof(Object), false);
-                if (obj.referenceValue != null)
-                {
-                    obj.type = obj.referenceValue.GetType();
-                }
+                                    // check if Enum type is Flags type
+                                    if (obj.type.GetCustomAttributes(typeof(FlagsAttribute), false).Any())
+                                    {
+                                        obj.constantValue = EGL.EnumFlagsField(label, enumValue);
+                                    }
+                                    // if standard Enum
+                                    else
+                                    {
+                                        obj.constantValue = EGL.EnumPopup(label, enumValue);
+                                    }
+                                }
+                                // If type is not valid somehow
+                                else
+                                {
+                                    EGL.HelpBox("Provided type is NOT valid for a Constant value.", MessageType.Warning);
+                                }
+                                break;
+                        }
+                    }
+                    break;
+                case ConditionValueType.Reference:
+                    EditorGUI.BeginDisabledGroup(true);
+                    EGL.TextField(obj.type != null ? obj.type.Name : "null", GUILayout.MaxWidth(180f));
+                    EditorGUI.EndDisabledGroup();
+
+                    EGL.EndHorizontal();
+
+                    string labelText = obj.type != null ? obj.type.Name : "Object";
+                    obj.referenceValue = EGL.ObjectField(new GUIContent(labelText + " Value"), obj.referenceValue, typeof(Object), false);
+                    if (obj.referenceValue != null)
+                    {
+                        obj.type = obj.referenceValue.GetType();
+                    }
+                    break;
+                case ConditionValueType.Property:
+                    // Type field
+                    if (GUILayout.Button("Select Type"))
+                    {
+                        SelectPropertyType(obj);
+                    }
+                    EGL.EndHorizontal();
+                    break;
             }
 
             // Add button to clear data
             // do not add the button if the obj is a constant value and the type has not been selected yet
-            if (!obj.valueType && obj.type != null)
+            if (obj.valueType != ConditionValueType.Constant && obj.type != null)
             {
                 if (GUILayout.Button("Clear Data"))
                 {
-                    bool isConstantValue = obj.valueType; // maintain value type
-                    obj = new() { changed = true, valueType = isConstantValue };
+                    ConditionValueType valueType = obj.valueType; // maintain value type
+                    obj = new() { changed = true, valueType = valueType };
                 }
             }
         }
@@ -450,15 +480,18 @@ namespace Stirge.UtilityAI.CustomEditors
             if (obj.changed)
             {
                 obj.changed = false;
-                if (obj.valueType)
+                switch (obj.valueType)
                 {
-                    constantProperty.managedReferenceValue = obj.constantValue;
-                    referenceProperty.objectReferenceValue = null;
-                }
-                else
-                {
-                    referenceProperty.objectReferenceValue = obj.referenceValue;
-                    constantProperty.managedReferenceValue = null;
+                    case ConditionValueType.Constant:
+                        constantProperty.managedReferenceValue = obj.constantValue;
+                        referenceProperty.objectReferenceValue = null;
+                        break;
+                    case ConditionValueType.Reference:
+                        referenceProperty.objectReferenceValue = obj.referenceValue;
+                        constantProperty.managedReferenceValue = null;
+                        break;
+                    case ConditionValueType.Property:
+                        break;
                 }
             }
         }
@@ -466,18 +499,21 @@ namespace Stirge.UtilityAI.CustomEditors
         private void DrawObjectPreview(SerializedConditionObject obj)
         {
             EditorGUI.BeginDisabledGroup(true);
-            if (obj.valueType)
+            switch (obj.valueType)
             {
-                EGL.TextField(obj.constantValue != null ? obj.constantValue.ToString() : "null", GUILayout.ExpandWidth(true));
-            }
-            else
-            {
-                EGL.ObjectField(obj.referenceValue, typeof(Object), false, GUILayout.ExpandWidth(true));
+                case ConditionValueType.Constant:
+                    EGL.TextField(obj.constantValue != null ? obj.constantValue.ToString() : "null", GUILayout.ExpandWidth(true));
+                    break;
+                case ConditionValueType.Reference:
+                    EGL.ObjectField(obj.referenceValue, typeof(Object), false, GUILayout.ExpandWidth(true));
+                    break;
+                case ConditionValueType.Property:
+                    break;
             }
             EditorGUI.EndDisabledGroup();
         }
 
-        private void SelectType(SerializedConditionObject obj)
+        private void SelectConstantType(SerializedConditionObject obj)
         {
             var genericMenu = new GenericMenu();
             IReadOnlyList<Type> validTypes = ConstantTypes.ToList();
@@ -485,7 +521,24 @@ namespace Stirge.UtilityAI.CustomEditors
             for (int i = 0, count = validTypes.Count; i < count; i++)
             {
                 Type type = validTypes[i];
-                string uiName = TypeHelper.GetDisplayName(type);
+                string uiName = GetUIName(type);
+                genericMenu.AddItem(new GUIContent(uiName), false, () =>
+                {
+                    obj.type = type;
+                });
+            }
+
+            genericMenu.ShowAsContext();
+        }
+
+        private void SelectPropertyType(SerializedConditionObject obj)
+        {
+            var genericMenu = new GenericMenu();
+            IReadOnlyList<Type> usedTypes = GenericBlackboardTypesCollection<CombatEntity>.UsedTypes;
+            for (int i = 0, count = usedTypes.Count; i < count; i++)
+            {
+                Type type = usedTypes[i];
+                string uiName = GetUIName(type);
                 genericMenu.AddItem(new GUIContent(uiName), false, () =>
                 {
                     obj.type = type;
@@ -507,6 +560,14 @@ namespace Stirge.UtilityAI.CustomEditors
                 value = default;
                 return false;
             }
+        }
+
+        public static string GetUIName(Type type)
+        {
+            string typeName = type.Name;
+            if (typeName[..10] == "Serialized")
+                return Regex.Replace(type.Name[10..], "(\\B[A-Z])", " $1");
+            return Regex.Replace(type.Name, "(\\B[A-Z])", " $1");
         }
     }
 }

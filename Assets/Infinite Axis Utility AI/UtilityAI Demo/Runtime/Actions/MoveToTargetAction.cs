@@ -23,16 +23,18 @@ namespace Stirge.InfiniteAxis.Demo.Actions
         
         protected override void OnInitialise()
         {
-            Blackboard.TryGetClassValue(m_navMeshAgentPropertyName, out m_agent);
+            //Blackboard.TryGetClassValue(m_navMeshAgentPropertyName, out m_agent);
         }
 
         protected override void OnBegin()
         {
+            /*
             if (Blackboard.TryGetClassValue(m_targetPropertyName, out m_target))
             {
                 m_agent.isStopped = false;
                 m_agent.SetDestination(m_target.transform.position);
             }
+            */
         }
 
         protected override void OnUpdate()
