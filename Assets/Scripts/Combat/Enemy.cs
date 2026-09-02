@@ -18,11 +18,10 @@ namespace Stirge.Enemy
         [SerializeField] private State m_airStunState;
         [SerializeField] private State m_knockbackState;
         [SerializeField] private State m_airJuggle;
-
-        [HideInInspector] public EnemySpawner spawner = null;
-
         protected bool m_hasAttackToken = false;
         public bool AttackToken => m_hasAttackToken;
+        public delegate void EnemyParamDelegate(Enemy enemy);
+        public EnemyParamDelegate deathCallback;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -37,8 +36,8 @@ namespace Stirge.Enemy
             // check if enemy is dead this frame
             if (m_health._isDead)
             {
-                if (spawner != null)
-                    spawner.ReportDeath(this);
+                if (deathCallback != null)
+                    deathCallback(this);
                 Destroy(gameObject);
                 return;
             }
