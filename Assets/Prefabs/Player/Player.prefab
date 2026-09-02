@@ -1788,7 +1788,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 9116489254625549190}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticle
+          m_MethodName: PlayParticleWraper
           m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1804,7 +1804,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 9116489254625549190}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticle
+          m_MethodName: PlayParticleWraper
           m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1820,7 +1820,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 9116489254625549190}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticle
+          m_MethodName: PlayParticleWraper
           m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1836,7 +1836,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 9116489254625549190}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticle
+          m_MethodName: PlayParticleWraper
           m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1852,7 +1852,7 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 9116489254625549190}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticle
+          m_MethodName: PlayParticleWraper
           m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
