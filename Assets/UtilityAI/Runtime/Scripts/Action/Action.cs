@@ -9,6 +9,9 @@ namespace Stirge.UtilityAI
 {
     public class Action
     {
+        // references
+        private UtilityEnemy m_target;
+        
         // fields
         private float m_scoreScaling = 1f;
         private string m_displayName;
@@ -21,6 +24,7 @@ namespace Stirge.UtilityAI
         private ScoringMethod[] m_scoringMethods;
 
         // properties
+        public UtilityEnemy Target => m_target;
         public string displayName => m_displayName;
         public ActionType actionType => m_actionType;
         public TimelineAsset timeline => m_timeline;
@@ -66,10 +70,11 @@ namespace Stirge.UtilityAI
         }
 
         #region Create
-        public static Action Create(float scaling, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
+        public static Action Create(UtilityEnemy target, float scaling, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
         {
             Action action = new()
             {
+                m_target = target,
                 m_scoreScaling = scaling,
                 m_displayName = displayName,
                 m_actionType = actionType,

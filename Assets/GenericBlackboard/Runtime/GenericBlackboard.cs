@@ -44,7 +44,7 @@ namespace Stirge.GenericBlackboard
                 for (int i = 0, count = propertyInfos.Length; i < count; i++)
                 {
                     PropertyInfo info = propertyInfos[i];
-                    s_properties.Add(new BlackboardPropertyName(info.Name, propertyType), new ValueIndex(table, i));
+                    s_properties.Add(new BlackboardPropertyName(info.Name), new ValueIndex(table, i));
                 }
             }
         }

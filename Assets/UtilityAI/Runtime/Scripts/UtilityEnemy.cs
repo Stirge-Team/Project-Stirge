@@ -26,7 +26,7 @@ namespace Stirge.UtilityAI
             m_actions = new Action[actionCount];
             for (int i = 0; i < actionCount; i++)
             {
-                m_actions[i] = m_serializedActions[i].CreateRuntimeAction();
+                m_actions[i] = m_serializedActions[i].CreateRuntimeAction(this);
             }
 
             int movementGoalCount = m_serializedMovementGoals.Length;

@@ -15,6 +15,8 @@ namespace Stirge.UtilityAI
         [SerializeField] private Object m_secondReferenceObject;
         [SerializeField] private BlackboardPropertyName m_firstPropertyName;
         [SerializeField] private BlackboardPropertyName m_secondPropertyName;
+        [SerializeField] private string m_firstTypeAssemblyQualifiedName;
+        [SerializeField] private string m_secondTypeAssemblyQualifiedName;
 
         [SerializeField] private bool m_isValid;
 
@@ -60,8 +62,8 @@ namespace Stirge.UtilityAI
                 secondIsProperty = true;
             }
 
-            Type firstType = firstIsProperty ? m_firstPropertyName.Type : firstObject.GetType();
-            Type secondType = secondIsProperty ? m_secondPropertyName.Type : secondObject.GetType();
+            Type firstType = Type.GetType(m_firstTypeAssemblyQualifiedName);
+            Type secondType = Type.GetType(m_secondTypeAssemblyQualifiedName);
 
             Type genericConditionType = typeof(Condition<,>).MakeGenericType(firstType, secondType);
             ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
@@ -72,7 +74,7 @@ namespace Stirge.UtilityAI
                 // if both property types
                 if (firstIsProperty)
                 {
-                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName);
+                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, firstType, secondType);
                 }
                 // if both object types
                 else
@@ -86,12 +88,12 @@ namespace Stirge.UtilityAI
                 // if first is property
                 if (firstIsProperty)
                 {
-                    newCondition.Init(m_operation, secondObject, m_firstPropertyName, secondType);
+                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, firstType, secondType);
                 }
                 // if second is property
                 else
                 {
-                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, firstType);
+                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, firstType, secondType);
                 }
             }
             

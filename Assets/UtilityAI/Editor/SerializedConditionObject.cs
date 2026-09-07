@@ -23,6 +23,7 @@ namespace Stirge.UtilityAI.CustomEditors
         private BlackboardPropertyName m_propertyValue;
 
         private Type m_type;
+        private string m_typeAssemblyQualifiedName;
         private ConditionValueType m_valueType;
 
         private bool m_changed;
@@ -99,12 +100,31 @@ namespace Stirge.UtilityAI.CustomEditors
         }
         public Type type
         {
-            get => m_type;
+            get
+            {
+                if (m_type == null && !string.IsNullOrEmpty(m_typeAssemblyQualifiedName))
+                {
+                    m_type = Type.GetType(m_typeAssemblyQualifiedName);
+                }
+                return m_type;
+            }
             set
             {
                 if (m_type != value)
                 {
                     m_type = value;
+                    m_changed = true;
+                }
+            }
+        }
+        public string TypeAssemblyQualifiedName
+        {
+            get => m_typeAssemblyQualifiedName;
+            set
+            {
+                if (m_typeAssemblyQualifiedName != value)
+                {
+                    m_typeAssemblyQualifiedName = value;
                     m_changed = true;
                 }
             }
@@ -137,7 +157,9 @@ namespace Stirge.UtilityAI.CustomEditors
                             constantValue = null;
                             referenceValue = null;
 
-                            m_type = !propertyValue.IsNull ? propertyValue.Type : null;
+                            // cannot get type from BlackboardPropertyName so just set the value to null if necessary
+                            // User must set type value manually
+                            if (propertyValue.IsNull) m_type = null;
                             break;
                     }
 

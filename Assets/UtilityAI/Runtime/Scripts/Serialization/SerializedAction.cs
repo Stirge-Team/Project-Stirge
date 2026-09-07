@@ -19,7 +19,7 @@ namespace Stirge.UtilityAI
         [SerializeField] private SerializedCondition[] m_conditions = new SerializedCondition[0];
         [SerializeField] private SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
-        public Action CreateRuntimeAction()
+        public Action CreateRuntimeAction(UtilityEnemy target)
         {
             int statusCount = m_statuses.Length;
             Status[] statuses = new Status[statusCount];
@@ -42,7 +42,7 @@ namespace Stirge.UtilityAI
                 scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod();
             }
 
-            return Action.Create(m_scoreScaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions, scoringMethods);
+            return Action.Create(target, m_scoreScaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions, scoringMethods);
         }
     }
 }

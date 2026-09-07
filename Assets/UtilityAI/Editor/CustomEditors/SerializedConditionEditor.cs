@@ -11,6 +11,7 @@ namespace Stirge.UtilityAI.CustomEditors
 {
     using Stirge.Combat;
     using Stirge.GenericBlackboard;
+    using System.Reflection;
     using System.Text.RegularExpressions;
     using Tools;
 
@@ -43,6 +44,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_secondReferencePropertyName = "m_secondReferenceObject";
         private const string s_firstPropertyPropertyName = "m_firstPropertyName";
         private const string s_secondPropertyPropertyName = "m_secondPropertyName";
+        private const string s_firstTypePropertyName = "m_firstTypeAssemblyQualifiedName";
+        private const string s_secondTypePropertyName = "m_secondTypeAssemblyQualifiedName";
         private const string s_isValidPropertyName = "m_isValid";
 
         private SerializedProperty m_operationProperty;
@@ -52,6 +55,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private SerializedProperty m_secondReferenceProperty;
         private SerializedProperty m_firstPropertyNameProperty;
         private SerializedProperty m_secondPropertyNameProperty;
+        private SerializedProperty m_firstTypeProperty;
+        private SerializedProperty m_secondTypeProperty;
         private SerializedProperty m_isValidProperty;
         #endregion
 
@@ -75,11 +80,13 @@ namespace Stirge.UtilityAI.CustomEditors
             m_secondReferenceProperty = serializedObject.FindProperty(s_secondReferencePropertyName);
             m_firstPropertyNameProperty = serializedObject.FindProperty(s_firstPropertyPropertyName);
             m_secondPropertyNameProperty = serializedObject.FindProperty(s_secondPropertyPropertyName);
+            m_firstTypeProperty = serializedObject.FindProperty(s_firstTypePropertyName);
+            m_secondTypeProperty = serializedObject.FindProperty(s_secondTypePropertyName);
             m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
 
             // init objects
-            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty);
-            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty);
+            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstTypeProperty);
+            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty, m_secondTypeProperty);
         }
 
         public override void OnInspectorGUI()
@@ -108,79 +115,12 @@ namespace Stirge.UtilityAI.CustomEditors
             DrawObject(ref m_secondObject);
 
             // Check for changes
-            ObjectChangeCheck(m_firstConstantProperty, m_firstReferenceProperty, m_firstObject);
-            ObjectChangeCheck(m_secondConstantProperty, m_secondReferenceProperty, m_secondObject);
+            ObjectChangeCheck(m_firstObject, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstTypeProperty);
+            ObjectChangeCheck(m_secondObject, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondTypeProperty);
 
             EGL.Space();
 
-            // Draw preview
-            Operation operation = (Operation)m_operationProperty.intValue;
-            string operationString = operation switch
-            {
-                Operation.Equal => "==",
-                Operation.NotEqual => "!=",
-                Operation.LessThan => "<",
-                Operation.GreaterThan => ">",
-                Operation.LessThanOrEqual => "<=",
-                Operation.GreaterThanOrEqual => ">=",
-                _ => "?",
-            };
-
-            EGL.LabelField("Preview", s_middleStyle);
-            EGL.BeginHorizontal();
-            GUILayout.FlexibleSpace();
-            DrawObjectPreview(m_firstObject);
-            EGL.LabelField(operationString, s_middleStyle, GUILayout.MaxWidth(80f));
-            DrawObjectPreview(m_secondObject);
-            EGL.EndHorizontal();
-
-            // Display validity message
-            bool isValid = true;
-            if (m_firstObject.type == null || m_secondObject.type == null)
-            {
-                isValid = false;
-                EGL.HelpBox("Please select values for this Condition.", MessageType.Warning);
-            }
-            else
-            {
-                bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
-                bool firstCanBeNull = !m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null;
-                bool secondCanBeNull = !m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null;
-
-                Type firstEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_secondObject.type);
-                Type secondEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_firstObject.type);
-
-                switch (operation)
-                {
-                    case Operation.Equal:
-                    case Operation.NotEqual:
-                        if (bothNumeric) // if both are numeric, it's cool
-                            break;
-                        if ((m_firstObject.type != m_secondObject.type) || // if the types do not match
-                            (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
-                            (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull) || // if second is null and first is not a class
-                                                                                                   // Both types implement IEquatable<OtherType>
-                            !(m_firstObject.type.GetInterfaces().Contains(firstEquatableInterfaceType) && m_secondObject.type.GetInterfaces().Contains(secondEquatableInterfaceType)))
-                        {
-                            EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
-                            isValid = false;
-                        }
-                        break;
-                    default:
-                        if (!bothNumeric)
-                        {
-                            EGL.HelpBox("Condition is invalid as these types are not Comparable.", MessageType.Error);
-                            isValid = false;
-                        }
-                        break;
-                }
-            }
-
-            // Apply is valid
-            if (isValid != m_isValidProperty.boolValue)
-            {
-                m_isValidProperty.boolValue = isValid;
-            }
+            DrawPreview();           
 
             EGL.Separator();
 
@@ -199,30 +139,31 @@ namespace Stirge.UtilityAI.CustomEditors
             }
         }
 
-        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty)
+        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty typeProperty)
         {
             SerializedConditionObject obj = new()
             {
                 constantValue = constantProperty.managedReferenceValue,
                 referenceValue = referenceProperty.objectReferenceValue,
-                propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue
+                propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue,
             };
 
             if (obj.constantValue != null)
             {
                 obj.valueType = ConditionValueType.Constant;
-                obj.type = obj.constantValue.GetType();
             }
             else if (obj.referenceValue != null)
             {
                 obj.valueType = ConditionValueType.Reference;
-                obj.type = obj.referenceValue.GetType();
             }
             else if (!obj.propertyValue.IsNull)
             {
                 obj.valueType = ConditionValueType.Property;
-                obj.type = obj.propertyValue.Type;
             }
+
+            obj.TypeAssemblyQualifiedName = typeProperty.stringValue;
+            obj.type = Type.GetType(obj.TypeAssemblyQualifiedName);
+            obj.changed = false;
 
             return obj;
         }
@@ -454,12 +395,16 @@ namespace Stirge.UtilityAI.CustomEditors
                     }
                     break;
                 case ConditionValueType.Property:
-                    // Type field
-                    if (GUILayout.Button("Select Type"))
+                    // Property field
+                    if (GUILayout.Button("Select Property"))
                     {
-                        SelectPropertyType(obj);
+                        SelectProperty<CombatEntity>(obj);
                     }
                     EGL.EndHorizontal();
+                    if (!obj.propertyValue.IsNull)
+                    {
+                        EGL.TextField(obj.propertyValue.Name + " : " + GetUIName(obj.type));
+                    }
                     break;
             }
 
@@ -475,7 +420,7 @@ namespace Stirge.UtilityAI.CustomEditors
             }
         }
 
-        private void ObjectChangeCheck(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedConditionObject obj)
+        private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty typeProperty)
         {
             if (obj.changed)
             {
@@ -485,14 +430,97 @@ namespace Stirge.UtilityAI.CustomEditors
                     case ConditionValueType.Constant:
                         constantProperty.managedReferenceValue = obj.constantValue;
                         referenceProperty.objectReferenceValue = null;
+                        propertyNameProperty.boxedValue = new BlackboardPropertyName();
                         break;
                     case ConditionValueType.Reference:
                         referenceProperty.objectReferenceValue = obj.referenceValue;
                         constantProperty.managedReferenceValue = null;
+                        propertyNameProperty.boxedValue = new BlackboardPropertyName();
                         break;
                     case ConditionValueType.Property:
+                        propertyNameProperty.boxedValue = obj.propertyValue;
+                        constantProperty.managedReferenceValue = null;
+                        referenceProperty.objectReferenceValue = null;
                         break;
                 }
+                typeProperty.stringValue = obj.TypeAssemblyQualifiedName;
+            }
+        }
+
+        #region Preview
+        /// <summary>
+        /// Returns if the Condition is valid.
+        /// </summary>
+        /// <returns></returns>
+        private void DrawPreview()
+        {
+            // Draw preview
+            Operation operation = (Operation)m_operationProperty.intValue;
+            string operationString = operation switch
+            {
+                Operation.Equal => "==",
+                Operation.NotEqual => "!=",
+                Operation.LessThan => "<",
+                Operation.GreaterThan => ">",
+                Operation.LessThanOrEqual => "<=",
+                Operation.GreaterThanOrEqual => ">=",
+                _ => "?",
+            };
+
+            EGL.LabelField("Preview", s_middleStyle);
+            EGL.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            DrawObjectPreview(m_firstObject);
+            EGL.LabelField(operationString, s_middleStyle, GUILayout.MaxWidth(80f));
+            DrawObjectPreview(m_secondObject);
+            EGL.EndHorizontal();
+
+            // Display validity message
+            bool isValid = true;
+            if (m_firstObject.type == null || m_secondObject.type == null)
+            {
+                isValid = false;
+                EGL.HelpBox("Please select values for this Condition.", MessageType.Warning);
+            }
+            else
+            {
+                bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
+                bool firstCanBeNull = !m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null;
+                bool secondCanBeNull = !m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null;
+
+                Type firstEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_secondObject.type);
+                Type secondEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_firstObject.type);
+
+                switch (operation)
+                {
+                    case Operation.Equal:
+                    case Operation.NotEqual:
+                        if (bothNumeric) // if both are numeric, it's cool
+                            break;
+                        if ((m_firstObject.type != m_secondObject.type) || // if the types do not match
+                            (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
+                            (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull) || // if second is null and first is not a class
+                                                                                                   // Both types implement IEquatable<OtherType>
+                            !(m_firstObject.type.GetInterfaces().Contains(firstEquatableInterfaceType) && m_secondObject.type.GetInterfaces().Contains(secondEquatableInterfaceType)))
+                        {
+                            EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
+                            isValid = false;
+                        }
+                        break;
+                    default:
+                        if (!bothNumeric)
+                        {
+                            EGL.HelpBox("Condition is invalid as these types are not Comparable.", MessageType.Error);
+                            isValid = false;
+                        }
+                        break;
+                }
+            }
+
+            // Apply is valid
+            if (isValid != m_isValidProperty.boolValue)
+            {
+                m_isValidProperty.boolValue = isValid;
             }
         }
 
@@ -508,10 +536,12 @@ namespace Stirge.UtilityAI.CustomEditors
                     EGL.ObjectField(obj.referenceValue, typeof(Object), false, GUILayout.ExpandWidth(true));
                     break;
                 case ConditionValueType.Property:
+                    EGL.TextField(!obj.propertyValue.IsNull ? obj.propertyValue.Name : "null", GUILayout.ExpandWidth(true));
                     break;
             }
             EditorGUI.EndDisabledGroup();
         }
+        #endregion
 
         private void SelectConstantType(SerializedConditionObject obj)
         {
@@ -531,16 +561,19 @@ namespace Stirge.UtilityAI.CustomEditors
             genericMenu.ShowAsContext();
         }
 
-        private void SelectPropertyType(SerializedConditionObject obj)
+        private void SelectProperty<TBase>(SerializedConditionObject obj) where TBase : MonoBehaviour
         {
             var genericMenu = new GenericMenu();
-            IReadOnlyList<Type> usedTypes = GenericBlackboardTypesCollection<CombatEntity>.UsedTypes;
-            for (int i = 0, count = usedTypes.Count; i < count; i++)
+            IReadOnlyList<PropertyInfo> propertyInfos = GenericBlackboard<TBase>.CachedPropertyInfosArray;
+            for (int i = 0, count = propertyInfos.Count; i < count; i++)
             {
-                Type type = usedTypes[i];
-                string uiName = GetUIName(type);
-                genericMenu.AddItem(new GUIContent(uiName), false, () =>
+                PropertyInfo propertyInfo = propertyInfos[i];
+                string name = propertyInfo.Name;
+                Type type = propertyInfo.PropertyType;
+                string typeName = GetUIName(type);
+                genericMenu.AddItem(new GUIContent(name + " : " + typeName), false, () =>
                 {
+                    obj.propertyValue = new(propertyInfo.Name);
                     obj.type = type;
                 });
             }
@@ -565,7 +598,7 @@ namespace Stirge.UtilityAI.CustomEditors
         public static string GetUIName(Type type)
         {
             string typeName = type.Name;
-            if (typeName[..10] == "Serialized")
+            if (typeName.Length >= 10 && typeName[..10] == "Serialized")
                 return Regex.Replace(type.Name[10..], "(\\B[A-Z])", " $1");
             return Regex.Replace(type.Name, "(\\B[A-Z])", " $1");
         }

@@ -1,3 +1,4 @@
+using Stirge.Combat;
 using Stirge.GenericBlackboard;
 using Stirge.Tools;
 using System;
@@ -20,8 +21,9 @@ namespace Stirge.UtilityAI
         private enum ConditionType
         {
             BothObject = 0,
-            HalfNHalf = 1, // in a half n half, the first object is always the object, and the second object is always the property
-            BothProperty = 2
+            HalfFirstObj = 1,
+            HalfSecondObj = 2,
+            BothProperty = 3
         }
 
         public static Type FirstType => typeof(T1);
@@ -47,13 +49,26 @@ namespace Stirge.UtilityAI
             m_secondObject = (T2)secondObject;
             m_type = ConditionType.BothObject;
         }
-        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, Type objType)
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, Type firstType, Type secondType)
         {
             m_operation = operation;
+            m_firstObject = (T1)obj;
+            m_secondPropertyName = propertyName;
+            m_type = ConditionType.HalfFirstObj;
         }
-        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName)
+        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, Type firstType, Type secondType)
         {
-            throw new NotImplementedException();
+            m_operation = operation;
+            m_firstPropertyName = propertyName;
+            m_secondObject = (T2)obj;
+            m_type = ConditionType.HalfSecondObj;
+        }
+        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, Type firstType, Type secondType)
+        {
+            m_operation = operation;
+            m_firstPropertyName = firstPropertyName;
+            m_secondPropertyName = secondPropertyName;
+            m_type = ConditionType.BothProperty;
         }
 
         public void Setup(Action action)
@@ -97,24 +112,73 @@ namespace Stirge.UtilityAI
             };
         }
 
-        object ICondition.GetFirstObject()
+        public object GetFirstObject()
         {
-            throw new NotImplementedException();
+            switch (m_type)
+            {
+                case ConditionType.BothObject:
+                case ConditionType.HalfFirstObj:
+                    return m_firstObject;
+                case ConditionType.HalfSecondObj:
+                case ConditionType.BothProperty:
+                    GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, FirstType, m_firstPropertyName, out var value);
+                    return value;
+                default:
+                    return null;
+            }
+        }
+        public object GetSecondObject()
+        {
+            switch (m_type)
+            {
+                case ConditionType.BothObject:
+                case ConditionType.HalfSecondObj:
+                    return m_secondObject;
+                case ConditionType.HalfFirstObj:
+                case ConditionType.BothProperty:
+                    GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, SecondType, m_secondPropertyName, out var value);
+                    return value;
+                default:
+                    return null;
+            }
         }
 
-        object ICondition.GetSecondObject()
+        public bool TryGetFirstObject<T>(out T value)
         {
-            throw new NotImplementedException();
+            if (GetFirstObject() is T objValue)
+            {
+                value = objValue;
+                return true;
+            }
+            value = default;
+            return false;
+        }
+        public bool TryGetSecondObject<T>(out T value)
+        {
+            if (GetSecondObject() is T objValue)
+            {
+                value = objValue;
+                return true;
+            }
+            value = default;
+            return false;
         }
 
-        bool ICondition.TryGetFirst<T>(out T value)
+        public T1 GetFirstValue()
         {
-            throw new NotImplementedException();
+            if (TryGetFirstObject(out T1 value))
+            {
+                return value;
+            }
+            return default;
         }
-
-        bool ICondition.TryGetSecond<T>(out T value)
+        public T2 GetSecondValue()
         {
-            throw new NotImplementedException();
+            if (TryGetSecondObject(out T2 value))
+            {
+                return value;
+            }
+            return default;
         }
 
         private static void LogNotEquatableError()
