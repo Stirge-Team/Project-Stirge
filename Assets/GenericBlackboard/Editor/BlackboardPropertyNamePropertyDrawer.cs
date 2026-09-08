@@ -2,11 +2,9 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace Stirge.InfiniteAxis.CustomEditors
+namespace Stirge.GenericBlackboard.CustomEditors
 {
-    using GenericBlackboard;
-    using Stirge.GenericBlackboard.EditorTools;
-    using Stirge.InfiniteAxis.Serialization;
+    using EditorTools;
     using System;
     using Tools;
 
@@ -20,7 +18,6 @@ namespace Stirge.InfiniteAxis.CustomEditors
             EditorGUI.BeginProperty(m_position, label, m_property);
 
             DrawPropertyField("m_propertyName", label);
-
 
             using (new EditorGUI.DisabledScope(true))
             {
@@ -70,7 +67,10 @@ namespace Stirge.InfiniteAxis.CustomEditors
             // call this blackboard's static constructor to initialise values
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(blackboardType.TypeHandle);
 
-            // get the CachedPropertyInfosArray from the generic blackboard
+            // get the CachedPropertyInfosArray from the GenericBlackboard
+            // GetFields() returns an array of all the Fields of a class. GenericBlackboard only has one field, the CachedPropertyInfosArray, thus index 0.
+            // GetValue(null) returns the value of that field. The parameter is the instance to get the value from. Because GenericBlackboard
+            // is a static class, there are no instances of the class, thus we pass 'null'.
             PropertyInfo[] propertyInfos = blackboardType.GetFields()[0].GetValue(null) as PropertyInfo[]; // just trust me
 
             for (int i = 0, count = propertyInfos.Length; i < count; i++)
@@ -81,7 +81,6 @@ namespace Stirge.InfiniteAxis.CustomEditors
                 {
                     FindPropertyRelative("m_propertyName").stringValue = name;
                     FindPropertyRelative("m_hash").intValue = BlackboardPropertyName.GetHashCode(name);
-                    FindPropertyRelative("m_type").boxedValue = propertyInfo.PropertyType; // I think this works
 
                     m_property.serializedObject.ApplyModifiedProperties();
                     AssetDatabase.SaveAssets();

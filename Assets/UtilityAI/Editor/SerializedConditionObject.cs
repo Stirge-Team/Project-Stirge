@@ -23,10 +23,28 @@ namespace Stirge.UtilityAI.CustomEditors
         private BlackboardPropertyName m_propertyValue;
 
         private Type m_type;
-        private string m_typeAssemblyQualifiedName;
         private ConditionValueType m_valueType;
 
         private bool m_changed;
+
+        public void Init(string typeAssemblyQualifiedName)
+        {
+            if (m_constantValue != null)
+            {
+                m_valueType = ConditionValueType.Constant;
+            }
+            else if (m_referenceValue != null)
+            {
+                m_valueType = ConditionValueType.Reference;
+            }
+            else if (!m_propertyValue.IsNull)
+            {
+                m_valueType = ConditionValueType.Property;
+            }
+
+            m_type = Type.GetType(typeAssemblyQualifiedName);
+            m_changed = false;
+        }
 
         public bool IsNull
         {
@@ -100,31 +118,12 @@ namespace Stirge.UtilityAI.CustomEditors
         }
         public Type type
         {
-            get
-            {
-                if (m_type == null && !string.IsNullOrEmpty(m_typeAssemblyQualifiedName))
-                {
-                    m_type = Type.GetType(m_typeAssemblyQualifiedName);
-                }
-                return m_type;
-            }
+            get => m_type;
             set
             {
                 if (m_type != value)
                 {
                     m_type = value;
-                    m_changed = true;
-                }
-            }
-        }
-        public string TypeAssemblyQualifiedName
-        {
-            get => m_typeAssemblyQualifiedName;
-            set
-            {
-                if (m_typeAssemblyQualifiedName != value)
-                {
-                    m_typeAssemblyQualifiedName = value;
                     m_changed = true;
                 }
             }
@@ -139,29 +138,9 @@ namespace Stirge.UtilityAI.CustomEditors
                 {
                     m_valueType = value;
 
-                    switch (value)
-                    {
-                        case ConditionValueType.Constant:
-                            referenceValue = null;
-                            propertyValue = default;
-
-                            m_type = constantValue != null ? constantValue.GetType() : null;
-                            break;
-                        case ConditionValueType.Reference:
-                            constantValue = null;
-                            propertyValue = default;
-
-                            m_type = referenceValue != null ? referenceValue.GetType() : null;
-                            break;
-                        case ConditionValueType.Property:
-                            constantValue = null;
-                            referenceValue = null;
-
-                            // cannot get type from BlackboardPropertyName so just set the value to null if necessary
-                            // User must set type value manually
-                            if (propertyValue.IsNull) m_type = null;
-                            break;
-                    }
+                    m_constantValue = null;
+                    m_referenceValue = null;
+                    m_propertyValue = default;
 
                     m_changed = true;
                 }

@@ -25,6 +25,8 @@ MonoBehaviour:
   m_secondPropertyName:
     m_propertyName: 
     m_hash: 0
+  m_firstTypeAssemblyQualifiedName: 
+  m_secondTypeAssemblyQualifiedName: 
   m_isValid: 0
   references:
     version: 2

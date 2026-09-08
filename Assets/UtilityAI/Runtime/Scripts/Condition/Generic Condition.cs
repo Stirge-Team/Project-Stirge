@@ -1,11 +1,12 @@
-using Stirge.Combat;
-using Stirge.GenericBlackboard;
-using Stirge.Tools;
 using System;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
+    using Combat;
+    using GenericBlackboard;
+    using Tools;
+
     public enum Operation
     {
         Equal,
@@ -16,7 +17,7 @@ namespace Stirge.UtilityAI
         GreaterThanOrEqual,
     }
 
-    public class Condition<T1, T2> : ICondition where T1 : IEquatable<T2> where T2 : IEquatable<T1>
+    public class Condition<T1, T2> : ICondition // where T1 : IEquatable<T2> where T2 : IEquatable<T1>
     {
         private enum ConditionType
         {
@@ -29,7 +30,7 @@ namespace Stirge.UtilityAI
         public static Type FirstType => typeof(T1);
         public static Type SecondType => typeof(T2);
 
-        public static bool Equatable = FirstType == SecondType || Comparable;
+        public static bool Equatable = (FirstType == SecondType) || Comparable;
         public static bool Comparable = StirgeTypeHelper.IsNumericType(FirstType) && StirgeTypeHelper.IsNumericType(SecondType);
 
         private Action m_action;
@@ -42,6 +43,44 @@ namespace Stirge.UtilityAI
         private BlackboardPropertyName m_firstPropertyName;
         private BlackboardPropertyName m_secondPropertyName;
 
+        public object FirstObject
+        {
+            get
+            {
+                switch (m_type)
+                {
+                    case ConditionType.BothObject:
+                    case ConditionType.HalfFirstObj:
+                        return m_firstObject;
+                    case ConditionType.HalfSecondObj:
+                    case ConditionType.BothProperty:
+                        GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, FirstType, m_firstPropertyName, out var value);
+                        return value;
+                    default:
+                        return null;
+                }
+            }
+        }
+        public object SecondObject
+        {
+            get
+            {
+                switch (m_type)
+                {
+                    case ConditionType.BothObject:
+                    case ConditionType.HalfSecondObj:
+                        return m_secondObject;
+                    case ConditionType.HalfFirstObj:
+                    case ConditionType.BothProperty:
+                        GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, SecondType, m_secondPropertyName, out var value);
+                        return value;
+                    default:
+                        return null;
+                }
+            }
+        }
+
+        #region Init
         public void Init(Operation operation, object firstObject, object secondObject, Type firstType, Type secondType)
         {
             m_operation = operation;
@@ -70,6 +109,7 @@ namespace Stirge.UtilityAI
             m_secondPropertyName = secondPropertyName;
             m_type = ConditionType.BothProperty;
         }
+        #endregion
 
         public void Setup(Action action)
         {
@@ -92,7 +132,7 @@ namespace Stirge.UtilityAI
                 {
                     Operation.Equal => m_firstObject.Equals(m_secondObject),
                     Operation.NotEqual => !m_firstObject.Equals(m_secondObject),
-                    _ => LogNotComparableError(),
+                    _ => LogNotComparableError(), // if operation is not Equals or NotEquals, then its trying to compare
                 };
             }
 
@@ -110,75 +150,6 @@ namespace Stirge.UtilityAI
                 Operation.GreaterThanOrEqual => firstValue >= secondValue || Mathf.Approximately(firstValue, secondValue),
                 _ => false,
             };
-        }
-
-        public object GetFirstObject()
-        {
-            switch (m_type)
-            {
-                case ConditionType.BothObject:
-                case ConditionType.HalfFirstObj:
-                    return m_firstObject;
-                case ConditionType.HalfSecondObj:
-                case ConditionType.BothProperty:
-                    GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, FirstType, m_firstPropertyName, out var value);
-                    return value;
-                default:
-                    return null;
-            }
-        }
-        public object GetSecondObject()
-        {
-            switch (m_type)
-            {
-                case ConditionType.BothObject:
-                case ConditionType.HalfSecondObj:
-                    return m_secondObject;
-                case ConditionType.HalfFirstObj:
-                case ConditionType.BothProperty:
-                    GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, SecondType, m_secondPropertyName, out var value);
-                    return value;
-                default:
-                    return null;
-            }
-        }
-
-        public bool TryGetFirstObject<T>(out T value)
-        {
-            if (GetFirstObject() is T objValue)
-            {
-                value = objValue;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-        public bool TryGetSecondObject<T>(out T value)
-        {
-            if (GetSecondObject() is T objValue)
-            {
-                value = objValue;
-                return true;
-            }
-            value = default;
-            return false;
-        }
-
-        public T1 GetFirstValue()
-        {
-            if (TryGetFirstObject(out T1 value))
-            {
-                return value;
-            }
-            return default;
-        }
-        public T2 GetSecondValue()
-        {
-            if (TryGetSecondObject(out T2 value))
-            {
-                return value;
-            }
-            return default;
         }
 
         private static void LogNotEquatableError()

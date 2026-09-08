@@ -148,22 +148,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue,
             };
 
-            if (obj.constantValue != null)
-            {
-                obj.valueType = ConditionValueType.Constant;
-            }
-            else if (obj.referenceValue != null)
-            {
-                obj.valueType = ConditionValueType.Reference;
-            }
-            else if (!obj.propertyValue.IsNull)
-            {
-                obj.valueType = ConditionValueType.Property;
-            }
-
-            obj.TypeAssemblyQualifiedName = typeProperty.stringValue;
-            obj.type = Type.GetType(obj.TypeAssemblyQualifiedName);
-            obj.changed = false;
+            obj.Init(typeProperty.stringValue);
 
             return obj;
         }
@@ -176,7 +161,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private void DrawObject(ref SerializedConditionObject obj)
         {
             EGL.BeginHorizontal();
-            // Is Constant Value toggle
+
+            // ValueType enum field
             obj.valueType = (ConditionValueType)EGL.EnumPopup(new GUIContent("Value Type"), obj.valueType);
 
             // if set to Constant value
@@ -188,7 +174,7 @@ namespace Stirge.UtilityAI.CustomEditors
                     {
                         SelectConstantType(obj);
                     }
-                    EGL.EndHorizontal();
+            EGL.EndHorizontal();
                     if (obj.type != null)
                     {
                         // ensure constantValue is never null going into the Switch block
@@ -382,10 +368,10 @@ namespace Stirge.UtilityAI.CustomEditors
                     break;
                 case ConditionValueType.Reference:
                     EditorGUI.BeginDisabledGroup(true);
-                    EGL.TextField(obj.type != null ? obj.type.Name : "null", GUILayout.MaxWidth(180f));
+                    EGL.TextField(obj.type != null ? obj.type.Name : "null", GUILayout.MaxWidth(140f));
                     EditorGUI.EndDisabledGroup();
 
-                    EGL.EndHorizontal();
+            EGL.EndHorizontal();
 
                     string labelText = obj.type != null ? obj.type.Name : "Object";
                     obj.referenceValue = EGL.ObjectField(new GUIContent(labelText + " Value"), obj.referenceValue, typeof(Object), false);
@@ -400,14 +386,13 @@ namespace Stirge.UtilityAI.CustomEditors
                     {
                         SelectProperty<CombatEntity>(obj);
                     }
-                    EGL.EndHorizontal();
-                    if (!obj.propertyValue.IsNull)
-                    {
-                        EGL.TextField(obj.propertyValue.Name + " : " + GetUIName(obj.type));
-                    }
+            EGL.EndHorizontal();
+
+                    EGL.TextField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type));
                     break;
             }
 
+            /*
             // Add button to clear data
             // do not add the button if the obj is a constant value and the type has not been selected yet
             if (obj.valueType != ConditionValueType.Constant && obj.type != null)
@@ -418,6 +403,7 @@ namespace Stirge.UtilityAI.CustomEditors
                     obj = new() { changed = true, valueType = valueType };
                 }
             }
+            */
         }
 
         private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty typeProperty)
@@ -443,7 +429,7 @@ namespace Stirge.UtilityAI.CustomEditors
                         referenceProperty.objectReferenceValue = null;
                         break;
                 }
-                typeProperty.stringValue = obj.TypeAssemblyQualifiedName;
+                typeProperty.stringValue = obj.type?.AssemblyQualifiedName;
             }
         }
 
@@ -598,7 +584,7 @@ namespace Stirge.UtilityAI.CustomEditors
         public static string GetUIName(Type type)
         {
             string typeName = type.Name;
-            if (typeName.Length >= 10 && typeName[..10] == "Serialized")
+            if (typeName.Length >= 11 && typeName[..10] == "Serialized")
                 return Regex.Replace(type.Name[10..], "(\\B[A-Z])", " $1");
             return Regex.Replace(type.Name, "(\\B[A-Z])", " $1");
         }
