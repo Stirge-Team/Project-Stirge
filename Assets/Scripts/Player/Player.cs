@@ -4,8 +4,9 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
+    using Stirge.Combat.Attacks;
     using UnityEngine.InputSystem;
-    
+
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
     public class Player : CombatEntity
@@ -37,6 +38,42 @@ namespace Stirge.Player
                 {
                     m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
+        }
+        struct targetAngleData
+        {
+            public Transform transform;
+            public float angle;
+            public targetAngleData(Transform obj, float a)
+            {
+                transform = obj;
+                angle = a;
+            }
+        }
+
+        public override void UseAttack(AttackData attackData)
+        {
+
+            //Check for nearby enemies - range value to be pulled from the attack data later on.
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, 5f, Vector3.zero);
+
+            if (hits.Length > 0)
+            {
+                //only check against a given angle infront of the player (90 degress currently) - the player whipping around might be annoying
+                targetAngleData currentSelection = new(null, Mathf.PI / 2);
+                foreach (var hit in hits)
+                {
+                    //use the attack data to determine the range to check, maybe
+                    //check angle against player forward
+                    Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
+
+                    float angleFromPlayer = Vector3.Angle(directionFromPlayer, transform.forward);
+                    Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
+                    if (Mathf.Abs(currentSelection.angle) > Mathf.Abs(angleFromPlayer)) currentSelection = new(hit.transform, angleFromPlayer);
+                }
+                //hard rotate the player towards valid target if found
+                transform.LookAt(currentSelection.transform); //stupid ngl
+            }
+            base.UseAttack(attackData);
         }
         #endregion
 
