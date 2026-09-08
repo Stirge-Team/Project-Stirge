@@ -5,6 +5,7 @@ namespace Stirge.Player
     using Combat;
     using Input;
     using Stirge.Combat.Attacks;
+    using Stirge.Tools;
     using UnityEngine.InputSystem;
 
     [RequireComponent(typeof(PlayerMovement))]
@@ -14,6 +15,7 @@ namespace Stirge.Player
         [Header("Player Properties")]
         [SerializeField] private PlayerMovement m_movement;
         [SerializeField] private PlayerInputProcessing m_input;
+        [SerializeField] private LayerMask m_attackSnappingMask;
 
         #region UnityEvents
         protected override void AwakeThis()
@@ -39,39 +41,37 @@ namespace Stirge.Player
                     m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
         }
-        struct targetAngleData
-        {
-            public Transform transform;
-            public float angle;
-            public targetAngleData(Transform obj, float a)
-            {
-                transform = obj;
-                angle = a;
-            }
-        }
 
         public override void UseAttack(AttackData attackData)
         {
 
             //Check for nearby enemies - range value to be pulled from the attack data later on.
-            RaycastHit[] hits = Physics.SphereCastAll(transform.position, 5f, Vector3.zero);
+            RaycastHit[] hits = Physics.SphereCastAll(transform.position, 2f, transform.forward, 2f, m_attackSnappingMask);
 
             if (hits.Length > 0)
             {
                 //only check against a given angle infront of the player (90 degress currently) - the player whipping around might be annoying
-                targetAngleData currentSelection = new(null, Mathf.PI / 2);
+                Transform recordHolder = null;
+                float recordAngle = 90;
                 foreach (var hit in hits)
                 {
-                    //use the attack data to determine the range to check, maybe
-                    //check angle against player forward
-                    Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
+                    if (AbsoluteParent.GetAbsoluteParent(hit.transform).GetComponent<CombatEntity>() && hit.transform != transform) //change to hittable later
+                    {
+                        //use the attack data to determine the range to check, maybe
+                        //check angle against player forward
+                        Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
 
-                    float angleFromPlayer = Vector3.Angle(directionFromPlayer, transform.forward);
-                    Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
-                    if (Mathf.Abs(currentSelection.angle) > Mathf.Abs(angleFromPlayer)) currentSelection = new(hit.transform, angleFromPlayer);
+                        float angleFromPlayer = Vector3.Angle(directionFromPlayer, transform.forward);
+                        Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
+                        if (Mathf.Abs(recordAngle) > Mathf.Abs(angleFromPlayer))
+                        {
+                            recordHolder = hit.transform;
+                            recordAngle = angleFromPlayer;
+                        }
+                    }
                 }
                 //hard rotate the player towards valid target if found
-                transform.LookAt(currentSelection.transform); //stupid ngl
+                if(recordHolder) transform.LookAt(new Vector3(recordHolder.position.x, transform.position.y, recordHolder.position.z)); //stupid ngl
             }
             base.UseAttack(attackData);
         }
