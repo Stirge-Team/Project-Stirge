@@ -42,8 +42,10 @@ namespace Stirge.UtilityAI
         private T2 m_secondObject;
         private BlackboardPropertyName m_firstPropertyName;
         private BlackboardPropertyName m_secondPropertyName;
+        private bool m_firstIsStruct;
+        private bool m_secondIsSruct;
 
-        public object FirstObject
+        private T1 FirstObject
         {
             get
             {
@@ -55,13 +57,13 @@ namespace Stirge.UtilityAI
                     case ConditionType.HalfSecondObj:
                     case ConditionType.BothProperty:
                         GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, FirstType, m_firstPropertyName, out var value);
-                        return value;
+                        return (T1)value;
                     default:
-                        return null;
+                        return default;
                 }
             }
         }
-        public object SecondObject
+        private T2 SecondObject
         {
             get
             {
@@ -72,42 +74,53 @@ namespace Stirge.UtilityAI
                         return m_secondObject;
                     case ConditionType.HalfFirstObj:
                     case ConditionType.BothProperty:
-                        GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, SecondType, m_secondPropertyName, out var value);
+                        if (m_secondIsSruct)
+                            GenericBlackboard<CombatEntity>.TryGetStructValue(m_action.Target, m_secondPropertyName, out T2 value);
+                        else
+                            GenericBlackboard<CombatEntity>.TryGetObjectValue(m_action.Target, SecondType, m_secondPropertyName, out var value);
                         return value;
                     default:
-                        return null;
+                        return default;
                 }
             }
         }
 
         #region Init
-        public void Init(Operation operation, object firstObject, object secondObject, Type firstType, Type secondType)
+        public void Init(Operation operation, object firstObject, object secondObject, bool firstIsStruct, bool secondIsStruct)
         {
             m_operation = operation;
             m_firstObject = (T1)firstObject;
             m_secondObject = (T2)secondObject;
             m_type = ConditionType.BothObject;
+            m_firstIsStruct = firstIsStruct;
+            m_secondIsSruct = secondIsStruct;
         }
-        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, Type firstType, Type secondType)
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, bool firstIsStruct, bool secondIsStruct)
         {
             m_operation = operation;
             m_firstObject = (T1)obj;
             m_secondPropertyName = propertyName;
             m_type = ConditionType.HalfFirstObj;
+            m_firstIsStruct = firstIsStruct;
+            m_secondIsSruct = secondIsStruct;
         }
-        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, Type firstType, Type secondType)
+        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, bool firstIsStruct, bool secondIsStruct)
         {
             m_operation = operation;
             m_firstPropertyName = propertyName;
             m_secondObject = (T2)obj;
             m_type = ConditionType.HalfSecondObj;
+            m_firstIsStruct = firstIsStruct;
+            m_secondIsSruct = secondIsStruct;
         }
-        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, Type firstType, Type secondType)
+        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, bool firstIsStruct, bool secondIsStruct)
         {
             m_operation = operation;
             m_firstPropertyName = firstPropertyName;
             m_secondPropertyName = secondPropertyName;
             m_type = ConditionType.BothProperty;
+            m_firstIsStruct = firstIsStruct;
+            m_secondIsSruct = secondIsStruct;
         }
         #endregion
 
@@ -116,7 +129,7 @@ namespace Stirge.UtilityAI
             m_action = action;
         }
 
-        public bool Evaluate()
+        public bool Evaluate(CombatEntity user, CombatEntity target)
         {
             // if not comparable
             if (!Comparable)

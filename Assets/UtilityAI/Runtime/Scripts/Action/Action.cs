@@ -36,7 +36,7 @@ namespace Stirge.UtilityAI
 
         public float Evaluate(CombatEntity user, CombatEntity target)
         {
-            if (!Enumerable.All(m_conditions, condition => condition.Evaluate()))
+            if (!Enumerable.All(m_conditions, condition => condition.Evaluate(user, target)))
                 return 0f;
 
             float baseScore = 0f;

@@ -65,6 +65,9 @@ namespace Stirge.UtilityAI
             Type firstType = Type.GetType(m_firstTypeAssemblyQualifiedName);
             Type secondType = Type.GetType(m_secondTypeAssemblyQualifiedName);
 
+            bool firstIsStruct = !firstType.IsClass;
+            bool secondIsStruct = !secondType.IsClass;
+
             Type genericConditionType = typeof(Condition<,>).MakeGenericType(firstType, secondType);
             ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
 
@@ -74,12 +77,12 @@ namespace Stirge.UtilityAI
                 // if both property types
                 if (firstIsProperty)
                 {
-                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, firstType, secondType);
+                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, firstIsStruct, secondIsStruct);
                 }
                 // if both object types
                 else
                 {
-                    newCondition.Init(m_operation, firstObject, secondObject, firstType, secondType);
+                    newCondition.Init(m_operation, firstObject, secondObject, firstIsStruct, secondIsStruct);
                 }
             }
             // if one property and one object
@@ -88,12 +91,12 @@ namespace Stirge.UtilityAI
                 // if first is property
                 if (firstIsProperty)
                 {
-                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, firstType, secondType);
+                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, firstIsStruct, secondIsStruct);
                 }
                 // if second is property
                 else
                 {
-                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, firstType, secondType);
+                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, firstIsStruct, secondIsStruct);
                 }
             }
             
