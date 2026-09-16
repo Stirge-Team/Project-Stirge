@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Stun
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
   m_behaviours:
-  - rid: 858787297446330441
   - rid: 858787297446330562
   m_transitions:
   - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
@@ -25,9 +24,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 858787297446330441
-      type: {class: StunBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
-      data: 
     - rid: 858787297446330562
       type: {class: PhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
       data:

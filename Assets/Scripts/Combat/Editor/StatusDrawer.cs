@@ -3,75 +3,67 @@ using UnityEngine;
 
 namespace Stirge.Combat
 {
+    using Tools;
+
     [CustomPropertyDrawer(typeof(Status), true)]
-    public class StatusDrawer : PropertyDrawer
+    public class StatusDrawer : EasyPropertyDrawer
     {
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        protected override void DrawGUI(GUIContent label)
         {
-            int totalLines = 0;
-            
-            void DrawPropertyField(string propertyName)
-            {
-                SerializedProperty propToDraw = property.FindPropertyRelative(propertyName);
-                Rect propRect = GetNewRect();
-                EditorGUI.PropertyField(propRect, propToDraw);
-
-                if (propToDraw.propertyType == SerializedPropertyType.Float)
-                {
-                    if (propToDraw.floatValue < 0)
-                        propToDraw.floatValue = 0;
-                }
-            }
-
-            Rect GetNewRect()
-            {
-                totalLines++;
-                return new Rect(position.min.x + EditorGUI.indentLevel * 15f, position.min.y + EditorGUIUtility.singleLineHeight * (totalLines - 1), position.size.x - EditorGUI.indentLevel * 15f, EditorGUIUtility.singleLineHeight);
-            }
-
-            string typeName = property.managedReferenceFullTypename;
-            if (typeName.Length < 30)
-                label.text = "Empty, pls delete";
+            if (m_property != null)
+                label.text = m_property.managedReferenceValue.GetType().Name;
             else
-                label.text = typeName[30..];
+                label.text = "Empty, pls remove";
 
-            EditorGUI.BeginProperty(position, label, property);
-            Rect foldoutRect = GetNewRect();
-            property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);
-            property.isExpanded = true;
-            if (property.isExpanded)
+            string typeName = label.text;
+
+            EditorGUI.BeginProperty(m_position, label, m_property);
+            DrawLabelHeader(label);
+            m_property.isExpanded = true; // Fixes display bug in Frame Data Viewer
+            if (m_property.isExpanded)
             {
-                switch (label.text)
+                if (m_property.managedReferenceValue is TimedStatus)
+                    DrawPropertyField("m_length");
+
+                switch (typeName)
                 {
                     case nameof(AirJuggle):
                         DrawPropertyField("m_strength");
-                        DrawPropertyField("m_airStallLength");
-                        DrawPropertyField("m_stunLength");
+                        DrawPropertyField("m_stallLength");
+                        DrawPropertyField("m_ignoreGrounded");
                         break;
                     case nameof(Knockback):
                         DrawPropertyField("m_strength");
                         DrawPropertyField("m_height");
-                        DrawPropertyField("m_stunLength");
+                        DrawPropertyField("m_ignoreGrounded");
                         break;
-                    case nameof(Stun):
-                        DrawPropertyField("m_stunLength");
+                    case nameof(HitStopStatus):
+                        DrawPropertyField("m_duration");
+                        DrawPropertyField("m_scale");
+                        break;
+                    case nameof(ScreenShakeEffect):
+                        DrawPropertyField("m_preset");
+                        break;
+                    case nameof(ParticleEffectOnHit):
+                        DrawPropertyField("m_particleReference");
                         break;
                 }
             }
             EditorGUI.EndProperty();
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        protected override int GetHeight(GUIContent label)
         {
-            int totalLines = 1; // for foldout
+            int totalLines = 1; // for foldout/label
 
-            if (property.isExpanded)
+            if (m_property.isExpanded)
             {
-                string typeName = property.managedReferenceFullTypename;
-                if (typeName.Length < 30)
-                    typeName = string.Empty;
-                else
-                    typeName = typeName[30..];
+                SetLabelTextToTypeName(label);
+
+                string typeName = label.text;
+
+                if (m_property.managedReferenceValue is TimedStatus)
+                    totalLines++;
 
                 switch (typeName)
                 {
@@ -79,13 +71,18 @@ namespace Stirge.Combat
                     case nameof(Knockback):
                         totalLines += 3;
                         break;
+                    case nameof(HitStopStatus):
+                        totalLines += 2;
+                        break;
                     case nameof(Stun):
+                    case nameof(ScreenShakeEffect):
+                    case nameof(ParticleEffectOnHit):
                         totalLines++;
                         break;
                 }
             }
 
-            return EditorGUIUtility.singleLineHeight * totalLines + EditorGUIUtility.standardVerticalSpacing * (totalLines - 1);
+            return totalLines;
         }
     }
 }

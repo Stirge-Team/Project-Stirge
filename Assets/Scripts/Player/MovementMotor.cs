@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Stirge.Player
 {
@@ -15,6 +17,13 @@ namespace Stirge.Player
         public float _horizontalSpeed => _horizontalVelocity.sqrMagnitude;
         public Vector3 _horizontalDirection => _horizontalVelocity.normalized;
         public float _verticalVelocity => m_rb.linearVelocity.y; // {get; private set;}
+        private IEnumerator m_flipEnabled;
+        public enum SetMotorAction
+        {
+            NoChange,
+            Off,
+            On,
+        }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Awake()
@@ -36,18 +45,32 @@ namespace Stirge.Player
         ///<summary>
         ///Returns true if the active state was changed to the value
         ///</summary>
-        public bool SetActive(bool value, bool updateKinematic = false)
+        public bool SetActive(bool value, bool updateKinematic = false, float time = 0)
         {
             bool didChange = false;
             if (enabled != value)
             {
                 enabled = value;
                 didChange = true;
+                if (time > 0)
+                {
+                    m_flipEnabled = FlipEnabled(time);
+                    StartCoroutine(m_flipEnabled);
+                }
+                else if (time < 0)
+                {
+                    StopCoroutine(m_flipEnabled);
+                }
             }
 
             if (updateKinematic)
                 m_rb.isKinematic = !enabled;
             return didChange;
+        }
+        private IEnumerator FlipEnabled(float time)
+        {
+            yield return new WaitForSeconds(time);
+            enabled = !enabled;
         }
 
         public void ApplyForce(
@@ -132,11 +155,27 @@ namespace Stirge.Player
                 SetVelocity(resetVelo);
             }
         }
-
-        public void HaltHorizontalVelocity(bool setMotor = false)
+        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange, float flipTime = 0)
         {
             ResetVelocity(true, false, true);
-            SetActive(setMotor);
+            switch (setMotor)
+            {
+                case SetMotorAction.Off:
+                    SetActive(false, false, flipTime);
+                    break;
+                case SetMotorAction.On:
+                    SetActive(true);
+                    break;
+            }
+        }
+        public void HaltHorizontalVelocity(SetMotorAction setMotor = SetMotorAction.NoChange)
+        {
+            HaltHorizontalVelocity(setMotor, 0);
+        }
+        public void HaltHorizontalVelocity(bool setTo = false)
+        {
+            ResetVelocity(true, false, true);
+            SetActive(setTo);
         }
 
         public void RotateTo(Quaternion newRotation)
@@ -146,6 +185,27 @@ namespace Stirge.Player
                 transform.rotation = newRotation;
                 //Stop the transform from looking at the ground
                 transform.Rotate(-transform.rotation.x, 0, 0);
+            }
+        }
+        public bool StartJumpApexCheck(float startingY, float desiredHeight, float hangTime)
+        {
+            var routine = StartCoroutine(JumpApexCheck(startingY, desiredHeight, hangTime));
+            return routine == null ? false : true;
+        }
+        private IEnumerator JumpApexCheck(float startingY, float desiredHeight, float hangTime)
+        {
+            Debug.Log("Beginning apex check");
+            while (true)
+            {
+                yield return new WaitForEndOfFrame();
+                if (transform.position.y - startingY >= desiredHeight * 0.9f)
+                {
+                    m_rb.useGravity = false;
+                    ResetVelocity(false, true, false);
+                    yield return new WaitForSeconds(hangTime);
+                    m_rb.useGravity = true;
+                    break;
+                }
             }
         }
     }

@@ -13,37 +13,63 @@ MonoBehaviour:
   m_Name: TestLauncher
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 2, z: -0.75}
+  - m_position: {x: 0, y: 2, z: -1.23}
     m_rotation: {x: 0, y: 0, z: 0}
     m_scale: {x: 2, y: 1, z: 1}
-    m_startFrame: 6
-    m_endFrame: 15
+    m_startFrame: 13
+    m_endFrame: 24
     m_groupID: 1
     m_hitboxShape: 2
     m_hitboxType: 0
     m_hitboxParent: 000001000
     m_onHitEvent:
       m_eventType: 0
-      m_eventID: 
+      m_eventID: TestLauncherOnHit0
       m_shouldEndOnCancel: 0
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
       m_damage: 1
       m_statuses:
-      - rid: 1848161946245791841
-  m_eventData: []
+      - rid: 2001017013982199898
+      - rid: 2974341731308797952
+      - rid: 2974341731308797953
+      - rid: 2974341731308797954
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: TestLauncherEvent0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 0
+    m_endFrame: 0
+  - m_eventType: 0
+    m_eventID: TestLauncherEvent1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 27
+    m_endFrame: 30
   m_nextComboInput:
-    m_nextComboAttack: 
+    m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 0
     m_comboInputTimeStart: 0
     m_comboInputTimeEnd: 0
   references:
     version: 2
     RefIds:
-    - rid: 1848161946245791841
+    - rid: 2001017013982199898
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
-        m_strength: 8
-        m_airStallLength: 1
-        m_stunLength: 2
+        m_strength: 5
+        m_stallLength: 3
+        m_ignoreGrounded: 0
+    - rid: 2974341731308797952
+      type: {class: ParticleEffectOnHit, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_particleReference: {fileID: 4375904562942587282, guid: 758c63b4931df6c96b37f505b4cb4060, type: 3}
+    - rid: 2974341731308797953
+      type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_preset: {fileID: 11400000, guid: 8cccd7890c005af838944180740ec357, type: 2}
+    - rid: 2974341731308797954
+      type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_duration: 0.2
+        m_scale: 0

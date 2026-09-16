@@ -6,6 +6,8 @@ namespace Stirge.Camera
     //stupid cinemachine handles states weird so im doing it myself    
     public class CameraStateManager : MonoBehaviour
     {
+        private static bool s_debug = false;
+        
         public static CameraStateManager Instance {get; private set;}
         public static CinemachineStateDrivenCamera Camera {get; private set;}
         public Animator CamAnim {get; private set;}
@@ -25,7 +27,7 @@ namespace Stirge.Camera
 
         public void ChangeCameraState(string newState)
         {
-            Debug.Log($"Changing to {newState}...");
+            if (s_debug) Debug.Log($"Changing to {newState}...");
             CamAnim.SetTrigger(newState);
             State = newState;
         }

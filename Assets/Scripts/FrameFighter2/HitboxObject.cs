@@ -16,12 +16,13 @@ namespace FrameFighter2.Hitbox
         private Vector3 m_scale;
         private Vector3 m_rotation;
         private OnHitEffect m_onHitEffect;
+        private CombatEntity m_thisCombatEntity;
         public int EndFrame => m_endFrame;
 
         FrameDataManager m_manager;
         private Collider[] m_colliders; //colliders of object and all children
 
-        public void Initialize(FrameDataManager manager, int groupID, string onHit, int endFrame, HitboxShapes shape, Vector3 scale, Vector3 rotation, OnHitEffect onHitEffect)
+        public void Initialize(FrameDataManager manager, int groupID, string onHit, int endFrame, HitboxShapes shape, Vector3 scale, Vector3 rotation, OnHitEffect onHitEffect, CombatEntity thisCombatEntity)
         {
             m_groupID = groupID;
             m_manager = manager;
@@ -31,6 +32,7 @@ namespace FrameFighter2.Hitbox
             m_scale = scale;
             m_rotation = rotation;
             m_onHitEffect = onHitEffect;
+            m_thisCombatEntity = thisCombatEntity;
         }
 
         // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -111,6 +113,22 @@ namespace FrameFighter2.Hitbox
 
                 if (m_manager.CheckHit(m_groupID, hitCollider))
                 {
+                    //Checking if the call is coming from inside the house - Jackson
+                    Transform parent = hitColliderScript.transform;
+                    for(int x = 0; x < 10; x ++)
+                    {
+                        if(parent.parent == null)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            parent = parent.parent;
+                        }
+                    }
+                    if(parent.GetComponentInChildren<HitboxObject>() == this) continue;
+                    //end - please remove if self hit detection is being added formally
+
                     //invoke hitbox onhit event
                     m_manager.InvokeEvent(m_onHit);
 
@@ -118,10 +136,10 @@ namespace FrameFighter2.Hitbox
                     hitColliderScript.Invoke();
 
                     //get the enemy and inflict the attached effect
-                    Enemy enemy = hitCollider.GetComponentInParent<Enemy>();
-                    if (enemy != null)
+                    CombatEntity targetEntity = hitCollider.GetComponentInParent<CombatEntity>();
+                    if (targetEntity != null)
                     {
-                        m_onHitEffect.OnHit(enemy);
+                        m_onHitEffect.OnHit(hitCollider.transform, targetEntity, m_thisCombatEntity);
                     }
                 }
             }

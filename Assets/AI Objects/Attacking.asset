@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
+  m_Name: Attacking
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
+  m_behaviours:
+  - rid: 5206302000990388283
+  - rid: 5281897754630029402
+  - rid: 5281898140894232640
+  m_transitions:
+  - m_targetState: {fileID: 11400000, guid: 009ea5589c1bb8640a40f551de3f9ffe, type: 2}
+    m_conditions:
+    - rid: 5281898140894232639
+  m_timedTransitionState: {fileID: 0}
+  m_timedTransitionDelay: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 5206302000990388283
+      type: {class: AttackingBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_attackData: {fileID: 11400000, guid: 5b5f2c20e33e94c4da6b9a3a9ba39424, type: 2}
+    - rid: 5281897754630029402
+      type: {class: UpdateLookSpeedBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_newDegreesDelta: 360
+    - rid: 5281898140894232639
+      type: {class: AttackingCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 1
+    - rid: 5281898140894232640
+      type: {class: EnterPhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_newMode: 2
+        m_returnToOldModeOnExit: 1

@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
-using Stirge.Management;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Stirge.UI
 {
+    using Stirge.Combat;
+
     public class HealthDisplay : MonoBehaviour
     {
         [Serializable]

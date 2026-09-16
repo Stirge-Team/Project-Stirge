@@ -13,30 +13,61 @@ MonoBehaviour:
   m_Name: TestString1
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Data.CharacterAnimationData
   m_hitboxData:
-  - m_position: {x: 0, y: 2, z: 0}
+  - m_position: {x: 0, y: 3, z: 0.15}
     m_rotation: {x: 0, y: 0, z: 0}
-    m_scale: {x: 1, y: 4, z: 1}
+    m_scale: {x: 1, y: 6, z: 1}
     m_startFrame: 12
     m_endFrame: 20
-    m_groupID: 0
+    m_groupID: 1
     m_hitboxShape: 0
     m_hitboxType: 2
     m_hitboxParent: 0000020000
     m_onHitEvent:
       m_eventType: 0
-      m_eventID: 
+      m_eventID: TestString1OnHit0
       m_shouldEndOnCancel: 0
       m_startFrame: 0
       m_endFrame: 0
     m_onHitEffect:
       m_damage: 1
-      m_statuses: []
-  m_eventData: []
+      m_statuses:
+      - rid: 2001016855599513791
+      - rid: 2315525991129940042
+      - rid: 2315525991129940043
+      - rid: 2315525991129940101
+  m_eventData:
+  - m_eventType: 0
+    m_eventID: TestString1Event0
+    m_shouldEndOnCancel: 0
+    m_startFrame: 5
+    m_endFrame: 7
+  - m_eventType: 0
+    m_eventID: TestString1Event1
+    m_shouldEndOnCancel: 0
+    m_startFrame: 45
+    m_endFrame: 46
   m_nextComboInput:
-    m_nextComboAttack: TestString2
-    m_comboAttackInput: 8
-    m_comboInputTimeStart: 20
-    m_comboInputTimeEnd: 45
+    m_nextComboAttack: {fileID: 11400000, guid: fb9c64fa5bc7d584aa9e85a46d81bfff, type: 2}
+    m_comboAttackInput: 1
+    m_comboInputTimeStart: 23
+    m_comboInputTimeEnd: 54
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 2001016855599513791
+      type: {class: Stun, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_length: 0.5
+    - rid: 2315525991129940042
+      type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_preset: {fileID: 11400000, guid: 084f58eb643fc80f0b21a6ffaf227ea1, type: 2}
+    - rid: 2315525991129940043
+      type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_duration: 0.2
+        m_scale: 0
+    - rid: 2315525991129940101
+      type: {class: ParticleEffectOnHit, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_particleReference: {fileID: 4375904562942587282, guid: 758c63b4931df6c96b37f505b4cb4060, type: 3}

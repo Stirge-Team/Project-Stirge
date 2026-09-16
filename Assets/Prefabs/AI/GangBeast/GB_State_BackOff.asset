@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0b2a7ee192e82c4d8c1984c26d1cd3b, type: 3}
+  m_Name: GB_State_BackOff
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AI.State
+  m_behaviours:
+  - rid: 6072857323652776008
+  - rid: 6072857323652776005
+  - rid: 8303261352949710964
+  m_transitions:
+  - m_targetState: {fileID: 11400000, guid: bb07202ab9e66e4788a8723f7f792160, type: 2}
+    m_conditions:
+    - rid: 8303261352949710992
+  m_timedTransitionState: {fileID: 11400000, guid: bb07202ab9e66e4788a8723f7f792160, type: 2}
+  m_timedTransitionDelay: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: 6072857323652776005
+      type: {class: MoveAwayFromTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_speed: 0
+    - rid: 6072857323652776008
+      type: {class: UpdateTargetBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data: 
+    - rid: 8303261352949710964
+      type: {class: PhysicsBehaviour, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_maintainPriorMode: 0
+        m_enterMode: 0
+        m_exitMode: 0
+    - rid: 8303261352949710992
+      type: {class: ArrivedAtDestinationCondition, ns: Stirge.AI, asm: Assembly-CSharp}
+      data:
+        m_invertValue: 0

@@ -1,18 +1,20 @@
-using FrameFighter2.Data;
-using FrameFighter2.Hitbox;
 using Stirge.Input;
+using Stirge.Combat;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using static FrameFighter2.Data.CharacterAnimationData;
 
 namespace FrameFighter2.Manager
 {
+    using Data;
+    using Hitbox;
+    using static Data.CharacterAnimationData;
+
     [RequireComponent(typeof(Animator))]
     public class FrameDataManager : MonoBehaviour
     {
-
+        #region Character Animation Event
         [System.Serializable]
         public class CharacterAnimationEvent
         {
@@ -38,13 +40,6 @@ namespace FrameFighter2.Manager
                 m_event = new UnityEvent[i];
             }
         }
-
-        [HideInInspector][SerializeField] private List<CharacterAnimationEvent> m_animationEvents = new(0);
-        public List<CharacterAnimationEvent> AnimEvents => m_animationEvents;
-
-        private Dictionary<string, UnityEvent[]> m_eventLookup;
-
-        
 
         public CharacterAnimationEvent FindOrCreateEvent(string lookUp, int eventCount = 1)
         {
@@ -77,6 +72,12 @@ namespace FrameFighter2.Manager
             return null;
         }
 
+        [HideInInspector][SerializeField] private List<CharacterAnimationEvent> m_animationEvents = new(0);
+        public List<CharacterAnimationEvent> AnimEvents => m_animationEvents;
+
+        private Dictionary<string, UnityEvent[]> m_eventLookup;
+        #endregion
+
         [HideInInspector][SerializeField] private List<CharacterAnimationData> m_characterAnimData = new(0); //set this to hide in inspector later
 
         public List<CharacterAnimationData> AnimData => m_characterAnimData;
@@ -102,10 +103,15 @@ namespace FrameFighter2.Manager
 
         private List<ComboInput> m_activeComboListers = new();
 
+        private bool m_wasInTransition;
+        private AnimatorTransitionInfo m_lastTransition;
+        private int m_transitionLastFrame;
+
         private void Awake()
         {
 
             m_anim = GetComponent<Animator>();
+            if(m_anim.runtimeAnimatorController == null) enabled = false; //do not bother running the update function if there is not controller to reference
             m_eventLookup = new Dictionary<string, UnityEvent[]>();
 
             foreach (var e in m_animationEvents)
@@ -124,6 +130,15 @@ namespace FrameFighter2.Manager
             //check if the animation has changed
             if(state.fullPathHash != m_currentStateHash)
             {
+                //calculate skipped frame(s) before animation switch is completed (only if switched animation is transitioned into)
+                if (m_wasInTransition && m_currentData != null)
+                {
+                    for (int i = m_lastFrame + 1; i < m_transitionLastFrame + 1; i++)
+                    {
+                        CheckFrameEvents(i);
+                    }
+                }
+
                 //change current state hash
                 m_currentStateHash = state.fullPathHash;
                 //get currently playing clip
@@ -133,8 +148,15 @@ namespace FrameFighter2.Manager
                 {
                     if (m_currentClip == m_clipList[i])
                     {
-                        m_currentData = m_characterAnimData[i];
-                        break;
+                        try
+                        {
+                            m_currentData = m_characterAnimData[i];
+                            break;
+                        }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                            Debug.LogWarning($"{e.Message}\n{m_anim.name} does not have CharacterAnimationData at index '{i}'.", this);
+                        }
                     }
                 }
 
@@ -145,9 +167,11 @@ namespace FrameFighter2.Manager
                 ComboListenerCancel();
                 //reset hitboxes
                 DestroyAllHitboxes();
+                //reset player combo listeners
+                PlayerInputProcessing.Instance.ClearComboBinding();
                 //reset other variables
                 m_lastLoopCount = 0;
-                m_lastFrame = -1;
+                m_lastFrame = Mathf.FloorToInt((state.normalizedTime % 1f) * m_currentClip.frameRate * m_currentClip.length) - 1; // TODO: SET THIS TO STARTING FRAME OF TRANSITIONING ANIMATIONS
             }
 
             if (m_currentData == null || m_currentClip == null) return;
@@ -164,13 +188,24 @@ namespace FrameFighter2.Manager
             m_progress = state.normalizedTime % 1f;
             m_frame = Mathf.FloorToInt(m_progress * m_currentClip.frameRate * m_currentClip.length);
 
-            if (m_frame != m_lastFrame)
+            for (int i = m_lastFrame + 1; i < m_frame + 1; i++)
             {
-                m_lastFrame = m_frame;
+                m_lastFrame = i;
 
-                CheckFrameEvents(m_frame);
+                CheckFrameEvents(i);
             }
 
+
+            //calculate important frame information for when a transition starts
+            if (m_anim.IsInTransition(0) && !m_wasInTransition)
+            {
+                m_lastTransition = m_anim.GetAnimatorTransitionInfo(0);
+                //calculates what the last frame of the animation will be before it fully transitions
+                m_transitionLastFrame = Mathf.FloorToInt(((m_progress - (((m_lastTransition.normalizedTime % 1) * m_lastTransition.duration) / m_currentClip.length)) * m_currentClip.frameRate * m_currentClip.length) + (m_currentClip.frameRate * m_lastTransition.duration));
+                //NOTE: not 100% sure if this equation is set up properly. Check with other people later.
+            }
+
+            m_wasInTransition = m_anim.IsInTransition(0);
         }
         /// <summary>
         /// goes through all data attached and invokes corresponding data
@@ -242,26 +277,30 @@ namespace FrameFighter2.Manager
             }
 
             //check combo input event (halen)
-            if (m_currentData.NextComboInput.NextComboAttack != "" && m_currentData.NextComboInput.ComboInputTimeStart == frame)
+            if (m_currentData.NextComboInput.NextComboAttack != null && m_currentData.NextComboInput.ComboInputTimeStart == frame)
             {
-                //clear the last lot of combos - this is a safety check and should'nt be clearing anything.
+                //clear the last lot of combos - this is a safety check and shouldn't be clearing anything.
                 PlayerInputProcessing.Instance.ClearComboBinding();
                 m_activeComboListers.Clear();
 
                 Debug.Log($"Start combo input checking for animation {m_currentData.name} from frame {m_currentData.NextComboInput.ComboInputTimeStart} to frame {m_currentData.NextComboInput.ComboInputTimeEnd}.");
 
                 //create and add the combo binding
-                Dictionary<AttackInput, string> comboBind = new();
-                comboBind.Add(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack);
-                PlayerInputProcessing.Instance.SetComboBinding(comboBind);
+                // Halen: I have updated this line to work with the new Serialization method I'm using for Attack Data.
+                // SerializedAttackData.CreateAttackData() will create a new Instance based on the data stored in the Serialized object.
+                // To make this more performant, we would need to create a way of creating the AttackData instance on Start
+                // instead of here and storing it separately, or creating it in Editor whenever a change is made or something similar
+                PlayerInputProcessing.Instance.AddComboBinding(new AttackBinding(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack));
 
                 m_activeComboListers.Add(m_currentData.NextComboInput);
             }
-            else if(m_currentData.NextComboInput.NextComboAttack == "")
+            /*
+            else if(m_currentData.NextComboInput.NextComboAttack == null)
             {
                 //Remove any lingering combo data if this attack has none
                 PlayerInputProcessing.Instance.ClearComboBinding();
             }
+            */
 
             for (int i = 0; i < m_activeComboListers.Count; i++)
             {
@@ -304,7 +343,7 @@ namespace FrameFighter2.Manager
                     break;
             }
 
-            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect);
+            hitboxObject.Initialize(this, data.GroupID, data.OnHitEvent.EventID, (int)data.EndFrame, data.HitboxShape, data.Scale, data.Rotation, data.OnHitEffect, m_anim.GetComponentInParent<CombatEntity>());
             m_activeHitboxes.Add(hitboxObject);
         }
         /// <summary>

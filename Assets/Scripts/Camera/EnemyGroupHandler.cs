@@ -7,6 +7,7 @@ namespace Stirge.Camera
 {
     public class EnemyGroupHandler : MonoBehaviour
     {
+        private static bool s_debug = false;
         [SerializeField]
         private float m_range = 10f;
         [SerializeField]
@@ -51,7 +52,7 @@ namespace Stirge.Camera
             //if the current state is the combat state and the only target is the origin point
             if (m_groupScript.Targets.Count <= 1 && CameraStateManager.Instance.State == "Combat" && m_groupScript.Targets[0].Object == m_rangeOrigin)
             {
-                Debug.Log("Only the origin remains. Returning to the explore camera & clearing all targets");
+                if (s_debug) Debug.Log("Only the origin remains. Returning to the explore camera & clearing all targets");
                 //exit the combat state
                 CameraStateManager.Instance.ChangeCameraState("Explore");
                 //and clear the targets
@@ -63,7 +64,7 @@ namespace Stirge.Camera
                 //update the camera state to this one from the explore state
                 if (CameraStateManager.Instance.State == "Explore")
                 {
-                    Debug.Log("Combat targets found, switching to combat state");
+                    if (s_debug) Debug.Log("Combat targets found, switching to combat state");
                     CameraStateManager.Instance.ChangeCameraState("Combat");
                     //and add the origin to the list
                     AttemptAddMember(m_rangeOrigin, 1f, 1);
@@ -90,7 +91,7 @@ namespace Stirge.Camera
                     return;
             }
             
-            Debug.Log($"Adding {newMember.name} to the group of targets.");
+            if (s_debug) Debug.Log($"Adding {newMember.name} to the group of targets.");
 
             m_groupScript.AddMember(newMember, weight, radius);
         }

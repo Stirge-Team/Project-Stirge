@@ -3,6 +3,7 @@ using UnityEngine;
 namespace Stirge.Combat
 {
     using Enemy;
+    using FrameFighter2.Hitbox;
 
     [System.Serializable]
     public class OnHitEffect
@@ -10,14 +11,17 @@ namespace Stirge.Combat
         [SerializeField] private int m_damage;
         [SerializeReference] private Status[] m_statuses = new Status[0];
 
-        public void OnHit(Enemy enemy)
+        public void OnHit(Transform HitBoxTransform, CombatEntity targetEntity, CombatEntity attackingEntity)
         {
-            enemy.TakeDamage(m_damage);
-            if (!enemy.IsDead())
+            targetEntity.TakeDamage(m_damage);
+            if (!targetEntity.Health._isDead)
             {
                 foreach (Status status in m_statuses)
                 {
-                    status.Inflict(enemy);
+                    if (status is TimedStatus)
+                        targetEntity.InflictTimedStatus(status as TimedStatus, HitBoxTransform, attackingEntity);
+                    else
+                        targetEntity.InflictStatus(status, HitBoxTransform, attackingEntity);
                 }
             }
         }

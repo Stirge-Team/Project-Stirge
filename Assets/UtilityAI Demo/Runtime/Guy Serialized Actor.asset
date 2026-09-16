@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8259018750470553645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1d6242d37bd394b846746bdd969642, type: 3}
+  m_Name: DoNothingAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedDoNothingAction
+--- !u!114 &-4635635425369476639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a1d6242d37bd394b846746bdd969642, type: 3}
+  m_Name: DoNothingAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActions.SerializedDoNothingAction
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4547cd043d9f954b813020dd43f5062, type: 3}
+  m_Name: Guy Serialized Actor
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Serialization.SerializedActor
+  m_targetTypeAssemblyQualifiedName: Stirge.UtilityAI.Demo.Guy, Assembly-CSharp,
+    Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_serializedActions:
+  - {fileID: -4635635425369476639}
+  - {fileID: 8310664760860050912}
+  - {fileID: 903139730124349294}
+  - {fileID: 6363914236258471196}
+  - {fileID: 3591031933584557880}
+  - {fileID: 3122403396900165628}
+  m_serializedAxes:
+  - {fileID: 4793897732448439494}
+  m_axisIndices:
+  - m_axes: 
+  - m_axes: 
+  - m_axes: 
+  - m_axes: 
+  - m_axes: 
+  - m_axes: 
+--- !u!114 &903139730124349294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a320bd2f95d1db44967fb0d0a16dfb2, type: 3}
+  m_Name: SetFoodTargetAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Actions.SerializedSetFoodTargetAction
+  m_Arg0:
+    m_propertyName: Transform
+    m_hash: 704
+  m_Arg1:
+    m_propertyName: resourceSpawner
+    m_hash: 390
+  m_Arg2:
+    m_propertyName: targetResource
+    m_hash: 799
+--- !u!114 &3122403396900165628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c11f743d0a22642a9bafe01dc3a55a, type: 3}
+  m_Name: MoveToTargetAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Actions.SerializedMoveToTargetAction
+  m_Arg0:
+    m_propertyName: navMeshAgent
+    m_hash: 731
+  m_Arg1:
+    m_propertyName: targetResource
+    m_hash: 799
+--- !u!114 &3591031933584557880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a49b765e3eb33384ba32ca2f11a762bb, type: 3}
+  m_Name: EatFoodAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Actions.SerializedEatFoodAction
+  m_Arg:
+    m_propertyName: This
+    m_hash: 1276
+--- !u!114 &4793897732448439494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cbd5dc4c47fa2c45b2cbc8188ad66ba, type: 3}
+  m_Name: LogarithmicAxis
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Axes.SerializedLogarithmicAxis
+  m_arg0: 1
+  m_arg1: 10
+  m_arg2: 0
+  m_arg3: 0
+  m_arg4:
+    m_propertyName: 
+    m_hash: 0
+--- !u!114 &6363914236258471196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cb09248a873dbc4b981ccf62270d923, type: 3}
+  m_Name: DepositLogAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Actions.SerializedDepositLogAction
+  m_Arg:
+    m_propertyName: This
+    m_hash: 1276
+--- !u!114 &8310664760860050912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca894cab414b6694aa263e17fff791c1, type: 3}
+  m_Name: SetLogTargetAction
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Demo.Actions.SerializedSetLogTargetAction
+  m_Arg0:
+    m_propertyName: Transform
+    m_hash: 704
+  m_Arg1:
+    m_propertyName: resourceSpawner
+    m_hash: 390
+  m_Arg2:
+    m_propertyName: targetResource
+    m_hash: 799

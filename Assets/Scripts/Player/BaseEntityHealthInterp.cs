@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Stirge.Management
+namespace Stirge.Combat
 {
     [RequireComponent(typeof(EntityHealth))]
     public class BaseEntityHealthInterp : MonoBehaviour
@@ -67,7 +67,7 @@ namespace Stirge.Management
         }
         public void ButtonUpdateMax(float amount)
         {
-            ModifiyMaximumHealth(amount, EntityHealth.MaxHealthChangeBehaviour.MatchIncreases);
+            ModifiyMaximumHealth(amount, EntityHealth.MaxHealthChangeBehaviour.EquivalentAny);
         }
     }
 }

@@ -1,0 +1,192 @@
+using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Stirge.UtilityAI.Core
+{
+    using Blackboard;
+
+    [System.Serializable]
+    public sealed class Actor
+    {
+        private Axis[] m_axes;
+        private Action[] m_actions;
+
+        private GenericBlackboard_Base m_blackboard;
+
+        private float[] m_axisScores;
+        private float[] m_actionScores;
+
+        /// <summary>
+        /// <see cref="m_actionAxisBindings"/>[x] contains an array of indicies pointing to the Axes in m_axes which are bound to the Action at m_actions[x].
+        /// </summary>
+        private int[][] m_actionAxisBindings;
+
+        private int m_currentActionIndex;
+
+        public Actor() { }
+        public static Actor Create(GenericBlackboard_Base blackboard, Axis[] axes, Action[] actions, int[][] actionAxisBindings)
+        {
+            Actor actor = new()
+            {
+                m_blackboard = blackboard,
+                m_axes = axes,
+                m_actions = actions,
+                m_actionAxisBindings = actionAxisBindings,
+                m_axisScores = new float[axes.Length],
+                m_actionScores = new float[actions.Length],
+            };
+
+            for (int i = 0; i < actor.m_axes.Length; i++)
+            {
+                actor.m_axes[i].SetBlackboard(blackboard);
+            }
+            for (int i = 0; i < actor.m_actions.Length; i++)
+            {
+                actor.m_actions[i].SetBlackboard(blackboard);
+            }
+
+            return actor;
+        }
+
+        public void Start()
+        {
+            InitialiseAxes();
+            InitialiseActions();
+            UpdateAxisScores();
+            UpdateActionScores();
+            m_currentActionIndex = FindBestActionIndex();
+            m_actions[m_currentActionIndex].Begin();
+        }
+
+        public void Update()
+        {
+            UpdateAxisScores();
+            UpdateActionScores();
+            SwitchAction(FindBestActionIndex());
+            m_actions[m_currentActionIndex].Update();
+        }
+
+        private void InitialiseAxes()
+        {
+            for (int i = 0; i < m_axes.Length; i++)
+            {
+                m_axes[i].Initialise();
+            }
+        }
+
+        private void InitialiseActions()
+        {
+            for (int i = 0; i < m_actions.Length; i++)
+            {
+                m_actions[i].Initialise();
+            }
+        }
+
+        private void UpdateAxisScores()
+        {
+            for (int i = 0; i < m_axisScores.Length; i++)
+            {
+                m_axisScores[i] = m_axes[i].ComputeScore();
+            }
+        }
+        
+        private void UpdateActionScores()
+        {
+            for (int i = 0; i < m_actionScores.Length; i++)
+            {
+                m_actionScores[i] = DetermineActionScore(i);
+            }
+        }
+
+        private float DetermineActionScore(int actionIndex)
+        {
+            // Get the indices of the Axes bound to this Action
+            int[] scoreIndices = m_actionAxisBindings[actionIndex];
+
+            // Get the product of the scores of each Axis
+            float product = 1f;
+            int count;
+            for (count = 0; count < scoreIndices.Length; count++)
+            {
+                product *= m_axisScores[scoreIndices[count]];
+            }
+
+            // Since all values are 0-1, adding more axes drags score lower, unfairly penalising complex actions
+            // Instead return geometric mean, which fairly balances the axes regardless of count
+            // and ensures that if any Axis has a score of 0, the final score will also be 0
+            if (count <= 1)
+                return product;
+            else
+                return Mathf.Pow(product, 1f / scoreIndices.Length);
+        }
+
+        private int FindBestActionIndex()
+        {
+            int bestActionIndex = 0;
+            float bestActionScore = m_actionScores[bestActionIndex];
+
+            for (int i = 1; i < m_actionScores.Length; i++)
+            {
+                float actionScore = m_actionScores[i];
+                if (actionScore > bestActionScore)
+                {
+                    bestActionIndex = i;
+                    bestActionScore = actionScore;
+                }
+            }
+
+            return bestActionIndex;
+        }
+
+        private void SwitchAction(int newActionIndex)
+        {
+            if (m_currentActionIndex == newActionIndex)
+                return;
+
+            m_actions[m_currentActionIndex].End();
+            m_currentActionIndex = newActionIndex;
+            m_actions[m_currentActionIndex].Begin();
+        }
+
+        public static void GetDebugInfo(Actor actor, ref string[] output)
+        {
+            int indentLevel = 0;
+            List<string> data = new();
+
+            string GetIndent() => indentLevel == 0 ? string.Empty : string.Concat(Enumerable.Repeat("\t", indentLevel));
+            void Add(string value) => data.Add(GetIndent() + value);
+
+            Axis[] axes = actor.m_axes;
+            Action[] actions = actor.m_actions;
+            float[] axisScores = actor.m_axisScores;
+            float[] actionScores = actor.m_actionScores;
+            int[][] actionAxisBindings = actor.m_actionAxisBindings;
+            int currentActionIndex = actor.m_currentActionIndex;
+
+            Add($"Current Action: {actions[currentActionIndex].name}");
+            Add("Actions:");
+
+            indentLevel++;
+            for (int i = 0, actionCount = actions.Length; i < actionCount; i++)
+            {
+                Action action = actions[i];
+                Add($"'{action.name}' : {actionScores[i]}");
+                Add("Axes:");
+
+                int[] axisScoreIndices = actionAxisBindings[i];
+                indentLevel++;
+                for (int j = 0, axisCount = axisScoreIndices.Length; j < axisCount; j++)
+                {
+                    int axisIndex = axisScoreIndices[j];
+                    Axis axis = axes[axisIndex];
+                    Add($"'{axis.name}' : {axisScores[axisIndex]}");
+                }
+                indentLevel--;
+            }
+            //indentLevel--;
+
+            output = data.ToArray();
+        }
+    }
+}
