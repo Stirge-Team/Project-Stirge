@@ -18,6 +18,7 @@ namespace Stirge.UtilityAI.CustomEditors
     {
         #region Property Names
         private const string s_scoreScalingPropertyName = "m_scoreScaling";
+        private const string s_durationPropertyName = "m_duration";
         private const string s_displayNamePropertyName = "m_displayName";
         private const string s_actionTypePropertyName = "m_actionType";
         private const string s_timelineAssetPropertyName = "m_timeline";
@@ -30,6 +31,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
         #region Serialized Properties
         private SerializedProperty m_scoreScalingProperty;
+        private SerializedProperty m_durationProperty;
         private SerializedProperty m_displayNameProperty;
         private SerializedProperty m_actionTypeProperty;
         private SerializedProperty m_timelineAssetProperty;
@@ -43,12 +45,13 @@ namespace Stirge.UtilityAI.CustomEditors
         private static readonly Dictionary<Object, Editor> s_conditionEditors = new();
         private static readonly Dictionary<Object, Editor> s_scoringMethodEditors = new();
 
-        private static bool s_conditionsFoldout = false;
-        private static bool s_scoringMethodsFoldout = false;
+        private static bool s_conditionsFoldout;
+        private static bool s_scoringMethodsFoldout;
 
         private void OnEnable()
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
+            m_durationProperty = serializedObject.FindProperty(s_durationPropertyName);
             m_displayNameProperty = serializedObject.FindProperty(s_displayNamePropertyName);
             m_actionTypeProperty = serializedObject.FindProperty(s_actionTypePropertyName);
             m_timelineAssetProperty = serializedObject.FindProperty(s_timelineAssetPropertyName);
@@ -69,6 +72,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
             // Draw the normal properties
             EGL.PropertyField(m_scoreScalingProperty);
+            EGL.PropertyField(m_durationProperty);
             EGL.PropertyField(m_displayNameProperty);
             EGL.PropertyField(m_actionTypeProperty);
             EGL.PropertyField(m_timelineAssetProperty);

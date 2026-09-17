@@ -1,8 +1,8 @@
-using Stirge.Combat;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.Statuses
 {
+    using Combat;
     using Serialization;
     using System;
 

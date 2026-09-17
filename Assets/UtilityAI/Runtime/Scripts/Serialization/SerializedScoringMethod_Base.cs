@@ -5,7 +5,7 @@ namespace Stirge.UtilityAI
 {
     public abstract class SerializedScoringMethod_Base : ScriptableObject
     {
-        [SerializeField] protected float m_scoreScaling;
+        [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;
 
         public abstract Type scoringMethodType { get; }
 

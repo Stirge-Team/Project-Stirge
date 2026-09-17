@@ -1,19 +1,19 @@
-using Stirge.Combat;
-using Stirge.Serialization;
-using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Timeline;
 
 namespace Stirge.UtilityAI
 {
+    using Combat;
+
     public class Action
     {
         // references
-        private UtilityEnemy m_target;
+        private UtilityEnemy m_enemy;
         
         // fields
         private float m_scoreScaling = 1f;
+        private float m_duration;
         private string m_displayName;
         private ActionType m_actionType;
         private TimelineAsset m_timeline;
@@ -24,7 +24,9 @@ namespace Stirge.UtilityAI
         private ScoringMethod[] m_scoringMethods;
 
         // properties
-        public UtilityEnemy Target => m_target;
+        public UtilityEnemy Enemy => m_enemy;
+
+        public float duration => m_duration;
         public string displayName => m_displayName;
         public ActionType actionType => m_actionType;
         public TimelineAsset timeline => m_timeline;
@@ -70,12 +72,13 @@ namespace Stirge.UtilityAI
         }
 
         #region Create
-        public static Action Create(UtilityEnemy target, float scaling, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
+        public static Action Create(UtilityEnemy target, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
         {
             Action action = new()
             {
-                m_target = target,
+                m_enemy = target,
                 m_scoreScaling = scaling,
+                m_duration = duration,
                 m_displayName = displayName,
                 m_actionType = actionType,
                 m_timeline = timeline,

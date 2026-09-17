@@ -1,10 +1,11 @@
-using Stirge.GenericBlackboard;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI
 {
+    using GenericBlackboard;
+
     [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Condition", order = 450)]
     public class SerializedCondition : ScriptableObject
     {
@@ -15,6 +16,8 @@ namespace Stirge.UtilityAI
         [SerializeField] private Object m_secondReferenceObject;
         [SerializeField] private BlackboardPropertyName m_firstPropertyName;
         [SerializeField] private BlackboardPropertyName m_secondPropertyName;
+        [SerializeField] private bool m_firstPropertyTargetIsUser;
+        [SerializeField] private bool m_secondPropertyTargetIsUser;
         [SerializeField] private string m_firstTypeAssemblyQualifiedName;
         [SerializeField] private string m_secondTypeAssemblyQualifiedName;
 
@@ -65,39 +68,31 @@ namespace Stirge.UtilityAI
             Type firstType = Type.GetType(m_firstTypeAssemblyQualifiedName);
             Type secondType = Type.GetType(m_secondTypeAssemblyQualifiedName);
 
-            bool firstIsStruct = !firstType.IsClass;
-            bool secondIsStruct = !secondType.IsClass;
+            Type conditionType = (firstType.IsClass, secondType.IsClass) switch
+            {
+                (true, true) => typeof(BothClassGenericCondition<,>),
+                (true, false) => typeof(ClassStructGenericCondition<,>),
+                (false, true) => typeof(StructClassGenericCondition<,>),
+                (false, false) => typeof(BothStructGenericCondition<,>)
+            };
 
-            Type genericConditionType = typeof(Condition<,>).MakeGenericType(firstType, secondType);
+            Type genericConditionType = conditionType.MakeGenericType(firstType, secondType);
             ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
 
-            // If both are same
-            if (firstIsProperty == secondIsProperty)
+            switch (firstIsProperty, secondIsProperty)
             {
-                // if both property types
-                if (firstIsProperty)
-                {
-                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, firstIsStruct, secondIsStruct);
-                }
-                // if both object types
-                else
-                {
-                    newCondition.Init(m_operation, firstObject, secondObject, firstIsStruct, secondIsStruct);
-                }
-            }
-            // if one property and one object
-            else
-            {
-                // if first is property
-                if (firstIsProperty)
-                {
-                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, firstIsStruct, secondIsStruct);
-                }
-                // if second is property
-                else
-                {
-                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, firstIsStruct, secondIsStruct);
-                }
+                case (true, true):
+                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, m_firstPropertyTargetIsUser, m_secondPropertyTargetIsUser);
+                    break;
+                case (true, false):
+                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, m_firstPropertyTargetIsUser);
+                    break;
+                case (false, true):
+                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, m_secondPropertyTargetIsUser);
+                    break;
+                case (false, false):
+                    newCondition.Init(m_operation, firstObject, secondObject);
+                    break;
             }
             
             return newCondition;

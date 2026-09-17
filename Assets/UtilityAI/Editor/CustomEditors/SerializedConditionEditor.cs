@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,10 +11,8 @@ using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
-    using Stirge.Combat;
-    using Stirge.GenericBlackboard;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
+    using Combat;
+    using GenericBlackboard;
     using Tools;
 
     public enum ConditionValueType
@@ -44,6 +44,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_secondReferencePropertyName = "m_secondReferenceObject";
         private const string s_firstPropertyPropertyName = "m_firstPropertyName";
         private const string s_secondPropertyPropertyName = "m_secondPropertyName";
+        private const string s_firstPropertyTargetIsUserPropertyName = "m_firstPropertyTargetIsUser";
+        private const string s_secondPropertyTargetIsUserPropertyName = "m_secondPropertyTargetIsUser";
         private const string s_firstTypePropertyName = "m_firstTypeAssemblyQualifiedName";
         private const string s_secondTypePropertyName = "m_secondTypeAssemblyQualifiedName";
         private const string s_isValidPropertyName = "m_isValid";
@@ -55,6 +57,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private SerializedProperty m_secondReferenceProperty;
         private SerializedProperty m_firstPropertyNameProperty;
         private SerializedProperty m_secondPropertyNameProperty;
+        private SerializedProperty m_firstPropertyTargetIsUserProperty;
+        private SerializedProperty m_secondPropertyTargetIsUserProperty;
         private SerializedProperty m_firstTypeProperty;
         private SerializedProperty m_secondTypeProperty;
         private SerializedProperty m_isValidProperty;
@@ -80,13 +84,15 @@ namespace Stirge.UtilityAI.CustomEditors
             m_secondReferenceProperty = serializedObject.FindProperty(s_secondReferencePropertyName);
             m_firstPropertyNameProperty = serializedObject.FindProperty(s_firstPropertyPropertyName);
             m_secondPropertyNameProperty = serializedObject.FindProperty(s_secondPropertyPropertyName);
+            m_firstPropertyTargetIsUserProperty = serializedObject.FindProperty(s_firstPropertyTargetIsUserPropertyName);
+            m_secondPropertyTargetIsUserProperty = serializedObject.FindProperty(s_secondPropertyTargetIsUserPropertyName);
             m_firstTypeProperty = serializedObject.FindProperty(s_firstTypePropertyName);
             m_secondTypeProperty = serializedObject.FindProperty(s_secondTypePropertyName);
             m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
 
             // init objects
-            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstTypeProperty);
-            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty, m_secondTypeProperty);
+            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetIsUserProperty, m_firstTypeProperty);
+            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetIsUserProperty, m_secondTypeProperty);
         }
 
         public override void OnInspectorGUI()
@@ -115,8 +121,8 @@ namespace Stirge.UtilityAI.CustomEditors
             DrawObject(ref m_secondObject);
 
             // Check for changes
-            ObjectChangeCheck(m_firstObject, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstTypeProperty);
-            ObjectChangeCheck(m_secondObject, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondTypeProperty);
+            ObjectChangeCheck(m_firstObject, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetIsUserProperty, m_firstTypeProperty);
+            ObjectChangeCheck(m_secondObject, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetIsUserProperty, m_secondTypeProperty);
 
             EGL.Space();
 
@@ -139,7 +145,7 @@ namespace Stirge.UtilityAI.CustomEditors
             }
         }
 
-        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty typeProperty)
+        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetIsUserProperty, SerializedProperty typeProperty)
         {
             SerializedConditionObject obj = new()
             {
@@ -148,7 +154,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue,
             };
 
-            obj.Init(typeProperty.stringValue);
+            obj.Init(propertyTargetIsUserProperty.boolValue, typeProperty.stringValue);
 
             return obj;
         }
@@ -389,6 +395,11 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.EndHorizontal();
 
                     EGL.TextField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type));
+
+                    int selectedIndex = obj.propertyTargetIsUser ? 0 : 1;
+                    selectedIndex = EGL.Popup(new GUIContent("Property Target", "Where the property value should be retrieved from."),
+                        selectedIndex, new GUIContent[] { new("User"), new("Target") });
+                    obj.propertyTargetIsUser = selectedIndex == 0;
                     break;
             }
 
@@ -406,7 +417,7 @@ namespace Stirge.UtilityAI.CustomEditors
             */
         }
 
-        private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty typeProperty)
+        private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetIsUserProperty, SerializedProperty typeProperty)
         {
             if (obj.changed)
             {
@@ -427,6 +438,7 @@ namespace Stirge.UtilityAI.CustomEditors
                         propertyNameProperty.boxedValue = obj.propertyValue;
                         constantProperty.managedReferenceValue = null;
                         referenceProperty.objectReferenceValue = null;
+                        propertyTargetIsUserProperty.boolValue = obj.propertyTargetIsUser;
                         break;
                 }
                 typeProperty.stringValue = obj.type?.AssemblyQualifiedName;

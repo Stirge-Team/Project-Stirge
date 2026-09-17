@@ -1,4 +1,3 @@
-using Stirge.Serialization;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.ScoringMethods

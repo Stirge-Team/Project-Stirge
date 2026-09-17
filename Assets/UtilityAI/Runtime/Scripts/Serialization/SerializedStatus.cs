@@ -11,7 +11,7 @@ namespace Stirge.UtilityAI
         
         public sealed override Status CreateRuntimeStatus()
         {
-            return Status.Create<TStatus>(m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions());
+            return Status.Create<TStatus>(m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions(), CreateRuntimeScoringMethods());
         }
     }
     public abstract class SerializedStatus<TStatus, TArg> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg>, new()
@@ -22,7 +22,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Status CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg>(m_arg, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions());
+            return Status.Create<TStatus, TArg>(m_arg, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions(), CreateRuntimeScoringMethods());
         }
     }
     public abstract class SerializedStatus<TStatus, TArg0, TArg1> : SerializedStatus_Base where TStatus : Status, ISetupable<TArg0, TArg1>, new()
@@ -34,7 +34,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Status CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1>(m_arg0, m_arg1, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions());
+            return Status.Create<TStatus, TArg0, TArg1>(m_arg0, m_arg1, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions(), CreateRuntimeScoringMethods());
         }
     }
 
@@ -48,7 +48,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Status CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions());
+            return Status.Create<TStatus, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions(), CreateRuntimeScoringMethods());
         }
     }
 
@@ -63,7 +63,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Status CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions());
+            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions(), CreateRuntimeScoringMethods());
         }
     }
 
@@ -79,7 +79,7 @@ namespace Stirge.UtilityAI
 
         public sealed override Status CreateRuntimeStatus()
         {
-            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions());
+            return Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling, m_stackType, m_durationType, m_displayName, m_maxStacks, CreateRuntimeConditions(), CreateRuntimeScoringMethods());
         }
     }
 }

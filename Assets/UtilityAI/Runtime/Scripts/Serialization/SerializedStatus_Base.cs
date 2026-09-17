@@ -1,6 +1,4 @@
-using Stirge.Combat;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
@@ -24,7 +22,7 @@ namespace Stirge.UtilityAI
         [SerializeField] protected StatusStackType m_stackType;
         [SerializeField] protected StatusDurationType m_durationType;
         [SerializeField] protected string m_displayName;
-        [SerializeField, Min(1)] protected int m_maxStacks;
+        [SerializeField, Range(1, 30)] protected int m_maxStacks;
         [SerializeField] protected SerializedCondition[] m_conditions;
         [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods;
 
@@ -39,6 +37,16 @@ namespace Stirge.UtilityAI
                 conditions[i] = m_conditions[i].CreateRuntimeCondition();
             }
             return conditions;
+        }
+        protected ScoringMethod[] CreateRuntimeScoringMethods()
+        {
+            int scoringMethodCount = m_scoringMethods.Length;
+            ScoringMethod[] scoringMethods = new ScoringMethod[scoringMethodCount];
+            for (int i = 0; i < scoringMethodCount; i++)
+            {
+                scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod();
+            }
+            return scoringMethods;
         }
 
         public abstract Status CreateRuntimeStatus();

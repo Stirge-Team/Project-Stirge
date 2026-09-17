@@ -13,33 +13,24 @@ namespace Stirge.UtilityAI.CustomEditors
     using Serialization;
     using EditorTools;
 
-    [CustomEditor(typeof(SerializedStatus_Base), true)]
-    public class SerializedStatusEditor : Editor
+    [CustomEditor(typeof(SerializedMovementGoal_Base), true)]
+    public class SerializedMovementGoalEditor : Editor
     {
-        private static string s_scoreScalingPropertyName = "m_scoreScaling";
-        private static string s_stackTypePropertyName = "m_stackType";
-        private static string s_durationTypePropertyName = "m_durationType";
-        private static string s_displayNamePropertyName = "m_displayName";
-        private static string s_maxStacksPropertyName = "m_maxStacks";
-        private static string s_conditionsPropertyName = "m_conditions";
-        private static string s_scoringMethodsPropertyName = "m_scoringMethods";
+        private const string s_scoreScalingPropertyName = "m_scoreScaling";
+        private const string s_durationPropertyName = "m_duration";
+        private const string s_conditionsPropertyName = "m_conditions";
+        private const string s_scoringMethodsPropertyName = "m_scoringMethods";
 
         private static readonly string[] s_basePropertyNames = new string[]
         {
             s_scoreScalingPropertyName,
-            s_stackTypePropertyName,
-            s_durationTypePropertyName,
-            s_displayNamePropertyName,
-            s_maxStacksPropertyName,
+            s_durationPropertyName,
             s_conditionsPropertyName,
             s_scoringMethodsPropertyName
         };
 
         private SerializedProperty m_scoreScalingProperty;
-        private SerializedProperty m_stackTypeProperty;
-        private SerializedProperty m_durationTypeProperty;
-        private SerializedProperty m_displayNameProperty;
-        private SerializedProperty m_maxStacksProperty;
+        private SerializedProperty m_durationProperty;
         private SerializedProperty m_conditionsProperty;
         private SerializedProperty m_scoringMethodsProperty;
 
@@ -54,10 +45,7 @@ namespace Stirge.UtilityAI.CustomEditors
         private void OnEnable()
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
-            m_stackTypeProperty = serializedObject.FindProperty(s_stackTypePropertyName);
-            m_durationTypeProperty = serializedObject.FindProperty(s_durationTypePropertyName);
-            m_displayNameProperty = serializedObject.FindProperty(s_displayNamePropertyName);
-            m_maxStacksProperty = serializedObject.FindProperty(s_maxStacksPropertyName);
+            m_durationProperty = serializedObject.FindProperty(s_durationPropertyName);
             m_conditionsProperty = serializedObject.FindProperty(s_conditionsPropertyName);
             m_scoringMethodsProperty = serializedObject.FindProperty(s_scoringMethodsPropertyName);
 
@@ -75,10 +63,7 @@ namespace Stirge.UtilityAI.CustomEditors
             // Draw base properties
             EGL.LabelField("Base Properties", EditorStyles.boldLabel);
             EGL.PropertyField(m_scoreScalingProperty);
-            EGL.PropertyField(m_stackTypeProperty);
-            EGL.PropertyField(m_durationTypeProperty);
-            EGL.PropertyField(m_displayNameProperty);
-            EGL.PropertyField(m_maxStacksProperty);
+            EGL.PropertyField(m_durationProperty);
 
             // Conditions property editor
             EGL.BeginHorizontal();

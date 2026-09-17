@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 997f0d9f84c5e5a46a243b8678d7d979, type: 3}
+  m_Name: Test Action
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedAction
+  m_scoreScaling: 1
+  m_duration: 0
+  m_displayName: 
+  m_actionType: 0
+  m_timeline: {fileID: 0}
+  m_damage: 1
+  m_range: 1
+  m_statuses: []
+  m_conditions: []
+  m_scoringMethods: []
