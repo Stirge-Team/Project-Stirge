@@ -13,6 +13,11 @@ namespace Stirge.AttackTimeline
 
         public OnHitEffect OnHitEffect => m_onHitEffect;
         public LayerMask Mask => m_mask;
+
+        //No need to be accessed outside of scripts
+        [HideInInspector] public Vector3 HitboxWorldPosition;
+
+        [HideInInspector] public Vector3 HitboxVelocityVector;
     }
 
 
