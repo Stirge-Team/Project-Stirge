@@ -12,6 +12,9 @@ namespace Stirge.AttackTimeline
 
         private HitboxData m_data = new();
 
+        private Vector3 m_lastPos;
+        private Vector3 m_velocityVector;
+
         public HitboxData Data
         {
             get { return m_data; }
@@ -27,23 +30,53 @@ namespace Stirge.AttackTimeline
 
             //prevent repeat collisions
             if (m_savedColliders.Contains(other)) return;
-            //add 
+            //add collider to list of collided objects 
             m_savedColliders.Add(other);
 
-            // do OnHit Shtuff - 
-            //m_data.OnHitEffect.OnHit(other.GetComponent<CombatEntity>(), m_owner);
+            // do OnHit Shtuff
+            Hittable hittableObject = other.GetComponent<Hittable>();
 
-            Hittable test = other.GetComponent<Hittable>();
+            m_data.HitboxWorldPosition = transform.position;
+            m_data.HitboxVelocityVector = m_velocityVector;
+            if (hittableObject) hittableObject.OnHit(m_data, m_owner);
+        }
 
-            test.OnHit(m_data, m_owner);
+        private void Update()
+        {
+            m_velocityVector = (transform.position - m_lastPos).normalized;
+
+            m_lastPos = transform.position;
+        }
+
+        private void OnEnable()
+        {
+            m_lastPos = transform.position;
+            m_velocityVector = Vector3.zero;
         }
 
         public void CreateHitbox(HitboxData data)
         {
+            //reset collided objects
             m_savedColliders = new();
-
+            //set hitbox data
             m_data = data;
+            //reset vectors
+            m_lastPos = transform.position;
+            m_velocityVector = Vector3.zero;
         }
+
+#if UNITY_EDITOR
+
+        private void OnDrawGizmos()
+        {
+            if (Application.isPlaying)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(transform.position, transform.position + m_velocityVector);
+                Gizmos.DrawSphere(transform.position + m_velocityVector, .05f);
+            }
+        }
+#endif
     }
 }
 

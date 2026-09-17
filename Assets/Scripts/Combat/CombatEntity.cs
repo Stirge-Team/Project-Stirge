@@ -7,6 +7,7 @@ namespace Stirge.Combat
 {
     using UtilityAI;
     using System;
+    using Stirge.AttackTimeline;
 
     public enum ModifierType
     {
@@ -14,7 +15,7 @@ namespace Stirge.Combat
         Multiplicative
     }
     
-    public abstract class CombatEntity : MonoBehaviour
+    public abstract class CombatEntity : Hittable
     {
         private static bool s_debug = true;
 
@@ -180,6 +181,12 @@ namespace Stirge.Combat
             m_damageModifierType = type;
             m_damageModifier = modifier;
         }
+        /// <inheritdoc/>
+        public override void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)
+        {
+            hitboxData.OnHitEffect.OnHit(this, attackingEntity);
+        }
+
         #endregion
 
         /* Attack Node Logic (OLD)
