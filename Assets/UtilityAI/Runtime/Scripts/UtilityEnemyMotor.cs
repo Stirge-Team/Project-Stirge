@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace Stirge.UtilityAI
 {
     public enum MotorMovementState
@@ -20,7 +24,7 @@ namespace Stirge.UtilityAI
         
         [Header("Components")]
         [SerializeField] private Rigidbody m_rb;
-        [SerializeField] private CapsuleCollider m_collider;
+        [SerializeField] private CapsuleCollider m_col;
         [SerializeField] private NavMeshAgent m_nav;
 
         [Header("Movement Fields")]
@@ -51,13 +55,15 @@ namespace Stirge.UtilityAI
 
         // properties
         public new Transform transform => m_transform;
+        public Rigidbody Rigidbody => m_rb;
+        public NavMeshAgent NavMeshAgent => m_nav;
         public float topSpeed => m_topSpeed;
         public float angularSpeed => m_angularSpeed;
         public bool headingIsTargetPosition => m_headingIsTargetPosition;
 
         // runtime properties
         public Vector3 currentVelocity => m_currentVelocity;
-        public Vector3 feetPosition => m_rb.position + m_collider.center - Vector3.down * m_collider.height / 2f;
+        public Vector3 feetPosition => m_rb.position + m_col.center + (Vector3.down * m_col.height);
 
         #region Unity Events
         private void Start()
@@ -77,7 +83,7 @@ namespace Stirge.UtilityAI
             m_nav.angularSpeed = m_angularSpeed;
             
             if (Application.isPlaying)
-                SetMovementState(MotorMovementState.Force);
+                SetMovementState(MotorMovementState.Velocity);
         }
 
         private void Update()
@@ -95,6 +101,8 @@ namespace Stirge.UtilityAI
 
             switch (m_movementState)
             {
+                case MotorMovementState.Force:
+                    break;
                 case MotorMovementState.Velocity:
                     UpdateVelocity();
                     UpdateHeading();
@@ -139,13 +147,13 @@ namespace Stirge.UtilityAI
         #region Physics
         public bool PerformIsGroundedCheck()
         {
-            if (!m_collider)
+            if (!m_col)
                 return false;
 
             // check the area under the Enemy to check for objects on Layers marked in m_walkableLayers
-            int hitCount = Physics.BoxCastNonAlloc(m_rb.position + m_collider.center,
-                new Vector3(m_groundCheckRadius, m_groundCheckDistance, m_groundCheckRadius),
-                Vector3.down, m_groundedCheckHits, transform.rotation, m_collider.height / 2f,
+            int hitCount = Physics.BoxCastNonAlloc(m_rb.position + m_col.center,
+                new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius),
+                Vector3.down, m_groundedCheckHits, transform.rotation, m_groundCheckDistance,
                 m_walkableLayers, QueryTriggerInteraction.Ignore);
 
             // if no hits, not grounded
@@ -361,5 +369,25 @@ namespace Stirge.UtilityAI
                 SetMovementState(MotorMovementState.Velocity);
         }
         #endregion
+
+#if UNITY_EDITOR
+        #region Debug
+        private void OnDrawGizmos()
+        {
+            Matrix4x4 orig = Handles.matrix;
+
+            Handles.color = Color.magenta;
+            Handles.DrawWireCube(feetPosition, Vector3.one / 4f);
+
+
+            Handles.color = Color.blue;
+            Handles.DrawWireCube(m_rb.position + m_col.center, new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius));
+            Handles.DrawWireCube(m_rb.position + m_col.center + (Vector3.down * m_groundCheckDistance), new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius));
+
+            Handles.matrix = transform.localToWorldMatrix;
+            Handles.matrix = orig;
+        }
+        #endregion
     }
+#endif
 }

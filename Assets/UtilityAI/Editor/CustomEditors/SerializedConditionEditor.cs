@@ -141,7 +141,6 @@ namespace Stirge.UtilityAI.CustomEditors
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                AssetDatabase.SaveAssets();
             }
         }
 

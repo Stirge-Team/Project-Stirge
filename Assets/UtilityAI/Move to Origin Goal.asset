@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e79ba209f35f0294e855647e204adc9b, type: 3}
   m_Name: Move to Origin Goal
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedMoveToWorldPositionGoal
-  m_scoreScaling: 0
-  m_duration: 0
+  m_scoreScaling: 1
+  m_duration: 1
+  m_displayName: Test Movement Goal
   m_conditions: []
   m_scoringMethods: []
   m_arg: {x: 0, y: 0, z: 0}

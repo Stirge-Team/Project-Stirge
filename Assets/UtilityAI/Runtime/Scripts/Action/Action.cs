@@ -66,7 +66,7 @@ namespace Stirge.UtilityAI
             return (baseScore + statusScore) * m_scoreScaling;
         }
 
-        public void Perform(CombatEntity user, CombatEntity target)
+        public void Perform(UtilityEnemy user, CombatEntity target)
         {
             user.UseAction(m_timeline);
         }

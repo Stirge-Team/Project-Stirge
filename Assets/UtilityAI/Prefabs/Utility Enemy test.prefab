@@ -236,12 +236,10 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 65
-  m_serializedActions:
-  - {fileID: 0}
-  m_serializedMovementGoals:
-  - {fileID: 11400000, guid: 5ff964d0438d57647b35bcb051416dde, type: 2}
+  m_motor: {fileID: 867691287701123348}
+  m_serializedActions: []
+  m_serializedMovementGoals: []
   m_target: {fileID: 0}
-  Target: {fileID: 0}
 --- !u!320 &1876474870715131292
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -328,7 +326,7 @@ GameObject:
   - component: {fileID: 5849699730566252498}
   - component: {fileID: 5136537218243640662}
   m_Layer: 3
-  m_Name: Agent
+  m_Name: Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -366,7 +364,7 @@ MonoBehaviour:
   m_transform: {fileID: 8488527449091659221}
   m_enemy: {fileID: -5993207503619758613}
   m_rb: {fileID: 2112035333763823347}
-  m_collider: {fileID: 6907372072597947992}
+  m_col: {fileID: 6907372072597947992}
   m_nav: {fileID: 616382525492106720}
   m_topSpeed: 15
   m_acceleration: 3

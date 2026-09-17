@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI
+namespace Stirge.UtilityAI.MovementGoals
 {
     using Combat;
     using Serialization;
@@ -17,6 +17,12 @@ namespace Stirge.UtilityAI
         protected override float EvaluateInternal(CombatEntity user, CombatEntity target)
         {
             return Mathf.Min(3f, Vector3.Distance(user.GetPosition(), m_worldPosition));
+        }
+
+        public override void Perform(UtilityEnemy user, CombatEntity target)
+        {
+            if (user.NavMeshAgent.destination != m_worldPosition)
+                user.NavMeshAgent.SetDestination(m_worldPosition);
         }
     }
 }

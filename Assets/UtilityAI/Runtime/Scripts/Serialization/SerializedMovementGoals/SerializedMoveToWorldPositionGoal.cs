@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Stirge.UtilityAI
+namespace Stirge.UtilityAI.MovementGoals
 {
     using Serialization;
 

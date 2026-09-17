@@ -70,6 +70,8 @@ namespace Stirge.UtilityAI.CustomEditors
                 EGL.PropertyField(serializedObject.FindProperty("m_Script"));
             }
 
+            EditorGUI.BeginChangeCheck();
+
             // Draw the normal properties
             EGL.PropertyField(m_scoreScalingProperty);
             EGL.PropertyField(m_durationProperty);
@@ -79,6 +81,11 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.PropertyField(m_damageProperty);
             EGL.PropertyField(m_rangeProperty);
             EGL.PropertyField(m_statusesProperty);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
 
             // Conditions property editor
             EGL.BeginHorizontal();

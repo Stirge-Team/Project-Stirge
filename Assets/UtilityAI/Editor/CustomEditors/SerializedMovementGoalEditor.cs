@@ -18,6 +18,7 @@ namespace Stirge.UtilityAI.CustomEditors
     {
         private const string s_scoreScalingPropertyName = "m_scoreScaling";
         private const string s_durationPropertyName = "m_duration";
+        private const string s_displayNamePropertyName = "m_displayName";
         private const string s_conditionsPropertyName = "m_conditions";
         private const string s_scoringMethodsPropertyName = "m_scoringMethods";
 
@@ -25,12 +26,14 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             s_scoreScalingPropertyName,
             s_durationPropertyName,
+            s_displayNamePropertyName,
             s_conditionsPropertyName,
             s_scoringMethodsPropertyName
         };
 
         private SerializedProperty m_scoreScalingProperty;
         private SerializedProperty m_durationProperty;
+        private SerializedProperty m_displayNameProperty;
         private SerializedProperty m_conditionsProperty;
         private SerializedProperty m_scoringMethodsProperty;
 
@@ -46,6 +49,7 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
             m_durationProperty = serializedObject.FindProperty(s_durationPropertyName);
+            m_displayNameProperty = serializedObject.FindProperty(s_displayNamePropertyName);
             m_conditionsProperty = serializedObject.FindProperty(s_conditionsPropertyName);
             m_scoringMethodsProperty = serializedObject.FindProperty(s_scoringMethodsPropertyName);
 
@@ -60,10 +64,18 @@ namespace Stirge.UtilityAI.CustomEditors
                 EGL.PropertyField(serializedObject.FindProperty("m_Script"));
             }
 
+            EditorGUI.BeginChangeCheck();
+
             // Draw base properties
             EGL.LabelField("Base Properties", EditorStyles.boldLabel);
             EGL.PropertyField(m_scoreScalingProperty);
             EGL.PropertyField(m_durationProperty);
+            EGL.PropertyField(m_displayNameProperty);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
 
             // Conditions property editor
             EGL.BeginHorizontal();
@@ -169,7 +181,6 @@ namespace Stirge.UtilityAI.CustomEditors
                 if (GUILayout.Button("Add Scoring Method"))
                 {
                     AddScoringMethod();
-                    AssetDatabase.SaveAssets();
                 }
 
                 EGL.EndVertical();
@@ -200,7 +211,6 @@ namespace Stirge.UtilityAI.CustomEditors
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-                AssetDatabase.SaveAssets();
             }
         }
 
