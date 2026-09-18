@@ -1,6 +1,4 @@
-using Stirge.Combat;
 using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Timeline;
 
@@ -10,6 +8,7 @@ namespace Stirge.UtilityAI
     public class SerializedAction : ScriptableObject
     {
         [SerializeField, Range(0, 5f)] private float m_scoreScaling = 1f;
+        [SerializeField] private float m_duration;
         [SerializeField] private string m_displayName;
         [SerializeField] private ActionType m_actionType;
         [SerializeField] private TimelineAsset m_timeline;
@@ -42,7 +41,7 @@ namespace Stirge.UtilityAI
                 scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod();
             }
 
-            return Action.Create(target, m_scoreScaling, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions, scoringMethods);
+            return Action.Create(target, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions, scoringMethods);
         }
     }
 }

@@ -1,6 +1,3 @@
-using NUnit.Framework.Internal;
-using Stirge.Serialization;
-using Stirge.UtilityAI.EditorTools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +10,9 @@ using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
+    using Serialization;
+    using EditorTools;
+
     [CustomEditor(typeof(SerializedStatus_Base), true)]
     public class SerializedStatusEditor : Editor
     {
@@ -48,8 +48,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private static readonly Dictionary<Object, Editor> s_conditionEditors = new();
         private static readonly Dictionary<Object, Editor> s_scoringMethodEditors = new();
 
-        private static bool s_conditionsFoldout = false;
-        private static bool s_scoringMethodsFoldout = false;
+        private static bool s_conditionsFoldout;
+        private static bool s_scoringMethodsFoldout;
 
         private void OnEnable()
         {
@@ -72,6 +72,8 @@ namespace Stirge.UtilityAI.CustomEditors
                 EGL.PropertyField(serializedObject.FindProperty("m_Script"));
             }
 
+            EditorGUI.BeginChangeCheck();
+
             // Draw base properties
             EGL.LabelField("Base Properties", EditorStyles.boldLabel);
             EGL.PropertyField(m_scoreScalingProperty);
@@ -79,6 +81,11 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.PropertyField(m_durationTypeProperty);
             EGL.PropertyField(m_displayNameProperty);
             EGL.PropertyField(m_maxStacksProperty);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
 
             // Conditions property editor
             EGL.BeginHorizontal();
@@ -184,7 +191,6 @@ namespace Stirge.UtilityAI.CustomEditors
                 if (GUILayout.Button("Add Scoring Method"))
                 {
                     AddScoringMethod();
-                    AssetDatabase.SaveAssets();
                 }
 
                 EGL.EndVertical();
@@ -215,7 +221,6 @@ namespace Stirge.UtilityAI.CustomEditors
             if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
-
             }
         }
 

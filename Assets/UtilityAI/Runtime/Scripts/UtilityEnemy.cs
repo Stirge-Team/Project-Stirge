@@ -1,11 +1,22 @@
-using Stirge.Combat;
 using System;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
+    using Combat;
+    using UnityEngine.AI;
+
     public class UtilityEnemy : CombatEntity
     {
+        [Header("Enemy Properties")]
+        [SerializeField] private UtilityEnemyMotor m_motor;
+
+        public new Transform transform => m_motor.transform;
+        public UtilityEnemyMotor Motor => m_motor;
+        public Rigidbody Rigidbody => m_motor.Rigidbody;
+        public NavMeshAgent NavMeshAgent => m_motor.NavMeshAgent;
+        
+        [Header("Utility Properties")]
         [SerializeField] private SerializedAction[] m_serializedActions;
         [SerializeField] private SerializedMovementGoal_Base[] m_serializedMovementGoals;
         [SerializeField] private CombatEntity m_target;
@@ -13,14 +24,14 @@ namespace Stirge.UtilityAI
         private Action[] m_actions;
         private MovementGoal[] m_movementGoals;
 
-        // Stats
-        private float m_baseDamage = 1f;
+        private float m_actionTimer;
+        private float m_movementGoalTimer;
 
-        public float baseDamage => m_baseDamage;
+        public CombatEntity Target => m_target;
 
         private void Start()
         {
-            Time.fixedDeltaTime = 0.333f;
+            //Time.fixedDeltaTime = 0.333f;
 
             int actionCount = m_serializedActions.Length;
             m_actions = new Action[actionCount];
@@ -39,12 +50,72 @@ namespace Stirge.UtilityAI
 
         private void FixedUpdate()
         {
-            foreach (var action in m_actions)
+            if (m_actionTimer <= 0f)
             {
-                Debug.Log(action.Evaluate(this, m_target));
+                Action newAction;
+                foreach (var action in m_actions)
+                {
+                    Debug.Log($"{action.displayName}: {action.Evaluate(this, m_target)}");
+                }
+            }
+            else
+            {
+                m_actionTimer -= Time.fixedDeltaTime;
+            }
+
+            if (m_movementGoalTimer <= 0f)
+            {
+                MovementGoal newMovementGoal;
+                foreach (var movementGoal in m_movementGoals)
+                {
+                    Debug.Log($"{movementGoal.displayName}: {movementGoal.Evaluate(this, m_target)}");
+                }
+            }
+            else
+            {
+                m_movementGoalTimer -= Time.fixedDeltaTime;
             }
         }
 
+        #region Transformation
+        public override Vector3 GetPosition()
+        {
+            return m_motor.transform.position;
+        }
+        public override void SetPosition(Vector3 newPosition)
+        {
+            m_motor.SetPosition(newPosition);
+        }
+        public override Quaternion GetRotation()
+        {
+            return m_motor.transform.rotation;
+        }
+        public override void SetRotation(Quaternion newRotation)
+        {
+            m_motor.SetRotation(newRotation);
+        }
+        public override void SetRotation(Vector3 eulerRotation)
+        {
+            m_motor.SetRotation(Quaternion.Euler(eulerRotation));
+        }
+        public override Vector3 GetForward()
+        {
+            return m_motor.transform.forward;
+        }
+        #endregion
+
+        #region Physics
+        public override bool IsGrounded()
+        {
+            return Physics.Raycast(m_motor.transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
+        }
+        public override void MovePosition(Vector3 newPosition)
+        {
+            m_motor.SetPosition(newPosition);
+        }
+        #endregion
+
+        #region Status
         public override void InflictStatus(Status status, CombatEntity user)
         {
             // NOTE: This needs to be changed. Statuses should be able to support:
@@ -104,5 +175,6 @@ namespace Stirge.UtilityAI
         {
             return m_inflictedStatuses.FindAll(status => status.statusType == statusType).Count;
         }
+        #endregion
     }
 }

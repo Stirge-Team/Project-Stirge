@@ -1,10 +1,11 @@
-using Stirge.GenericBlackboard;
 using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
+    using GenericBlackboard;
+
     public class SerializedConditionObject
     {
         public SerializedConditionObject()
@@ -21,13 +22,14 @@ namespace Stirge.UtilityAI.CustomEditors
         private object m_constantValue;
         private Object m_referenceValue;
         private BlackboardPropertyName m_propertyValue;
+        private bool m_propertyTargetIsUser;
 
         private Type m_type;
         private ConditionValueType m_valueType;
 
         private bool m_changed;
 
-        public void Init(string typeAssemblyQualifiedName)
+        public void Init(bool propertyTargetIsUser, string typeAssemblyQualifiedName)
         {
             if (m_constantValue != null)
             {
@@ -42,6 +44,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 m_valueType = ConditionValueType.Property;
             }
 
+            m_propertyTargetIsUser = propertyTargetIsUser;
             m_type = Type.GetType(typeAssemblyQualifiedName);
             m_changed = false;
         }
@@ -116,6 +119,18 @@ namespace Stirge.UtilityAI.CustomEditors
                 }
             }
         }
+        public bool propertyTargetIsUser
+        {
+            get => m_propertyTargetIsUser;
+            set
+            {
+                if (m_propertyTargetIsUser != value)
+                {
+                    m_propertyTargetIsUser = value;
+                    m_changed = true;
+                }
+            }
+        }
         public Type type
         {
             get => m_type;
@@ -137,11 +152,6 @@ namespace Stirge.UtilityAI.CustomEditors
                 if (m_valueType != value)
                 {
                     m_valueType = value;
-
-                    m_constantValue = null;
-                    m_referenceValue = null;
-                    m_propertyValue = default;
-
                     m_changed = true;
                 }
             }

@@ -1,55 +1,84 @@
-using Stirge.Combat;
-using Stirge.Serialization;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
-    public abstract class MovementGoal : ScriptableObject
-    {
-        [SerializeField, Range(0f, 5f)] private float m_scoreScaling = 1f;
-        [Tooltip("The length of time this Goal will be performed for until the Enemy attempts to re-evaluate its Movement Goals.")]
-        [SerializeField, Min(0f)] private float m_duration;
+    using Combat;
+    using Serialization;
+    using System.Linq;
 
-        public float Evaluate(CombatEntity user)
+    public abstract class MovementGoal
+    {
+        protected Action m_action;
+
+        protected float m_scoreScaling = 1f;
+        protected float m_duration;
+        protected string m_displayName;
+        protected ICondition[] m_conditions;
+        protected ScoringMethod[] m_scoringMethods;
+
+        public float duration => m_duration;
+        public string displayName => m_displayName;
+
+        public float Evaluate(CombatEntity user, CombatEntity target)
         {
-            float baseScore = EvaluateInternal(user);
+            float baseScore = (EvaluateInternal(user, target) + m_scoringMethods.Sum(s => s.Evaluate(user, target))) / (m_scoringMethods.Length + 1);
             return baseScore * m_scoreScaling;
         }
-        protected abstract float EvaluateInternal(CombatEntity user);
+        protected abstract float EvaluateInternal(CombatEntity user, CombatEntity target);
+
+        public abstract void Perform(UtilityEnemy user, CombatEntity target);
+
+        public void Setup(Action action)
+        {
+            m_action = action;
+        }
 
         #region Setup
-        public static TMovementGoal Create<TMovementGoal>() where TMovementGoal : MovementGoal, INotSetupable, new()
+        private static TMovementGoal CreateInternal<TMovementGoal>(float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, new()
         {
-            var movementGoal = new TMovementGoal();
+            var movementGoal = new TMovementGoal()
+            {
+                m_scoreScaling = scoreScaling,
+                m_duration = duration,
+                m_displayName = displayName,
+                m_conditions = conditions,
+                m_scoringMethods = scoringMethods
+            };
             return movementGoal;
         }
-        public static TMovementGoal Create<TMovementGoal, TArg>(TArg arg) where TMovementGoal : MovementGoal, ISetupable<TArg>, new()
+
+        public static TMovementGoal Create<TMovementGoal>(float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, INotSetupable, new()
         {
-            var movementGoal = new TMovementGoal();
+            var movementGoal = CreateInternal<TMovementGoal>(scoreScaling, duration, displayName, conditions, scoringMethods);
+            return movementGoal;
+        }
+        public static TMovementGoal Create<TMovementGoal, TArg>(TArg arg, float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, ISetupable<TArg>, new()
+        {
+            var movementGoal = CreateInternal<TMovementGoal>(scoreScaling, duration, displayName, conditions, scoringMethods);
             movementGoal.Setup(arg);
             return movementGoal;
         }
-        public static TMovementGoal Create<TMovementGoal, TArg0, Targ0>(TArg0 arg0, Targ0 arg1) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ0>, new()
+        public static TMovementGoal Create<TMovementGoal, TArg0, Targ0>(TArg0 arg0, Targ0 arg1, float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ0>, new()
         {
-            var movementGoal = new TMovementGoal();
+            var movementGoal = CreateInternal<TMovementGoal>(scoreScaling, duration, displayName, conditions, scoringMethods);
             movementGoal.Setup(arg0, arg1);
             return movementGoal;
         }
-        public static TMovementGoal Create<TMovementGoal, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ1, Targ2>, new()
+        public static TMovementGoal Create<TMovementGoal, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2, float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ1, Targ2>, new()
         {
-            var movementGoal = new TMovementGoal();
+            var movementGoal = CreateInternal<TMovementGoal>(scoreScaling, duration, displayName, conditions, scoringMethods);
             movementGoal.Setup(arg0, arg1, arg2);
             return movementGoal;
         }
-        public static TMovementGoal Create<TMovementGoal, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
+        public static TMovementGoal Create<TMovementGoal, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
         {
-            var movementGoal = new TMovementGoal();
+            var movementGoal = CreateInternal<TMovementGoal>(scoreScaling, duration, displayName, conditions, scoringMethods);
             movementGoal.Setup(arg0, arg1, arg2, arg3);
             return movementGoal;
         }
-        public static TMovementGoal Create<TMovementGoal, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
+        public static TMovementGoal Create<TMovementGoal, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4, float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
         {
-            var movementGoal = new TMovementGoal();
+            var movementGoal = CreateInternal<TMovementGoal>(scoreScaling, duration, displayName, conditions, scoringMethods);
             movementGoal.Setup(arg0, arg1, arg2, arg3, arg4);
             return movementGoal;
         }
