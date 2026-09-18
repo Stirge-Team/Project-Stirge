@@ -41,14 +41,14 @@ namespace Stirge.Combat
         private void SpawnEnemy()
         {
             Enemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation != null ? m_spawnLocation.position : transform.position, Quaternion.identity); //spawn the enemy either at the spawn location or here
-            spawnedEnemy.spawner = this;
+            spawnedEnemy.deathCallback = ReportDeath;
             spawnedEnemy.name = m_enemyPrefab.name;
             m_spawnedEnemies.Add(spawnedEnemy);
         }
         private void SpawnEnemy(Vector3 spawnPosition)
         {
             Enemy spawnedEnemy = Instantiate(m_enemyPrefab, spawnPosition, Quaternion.identity);
-            spawnedEnemy.spawner = this;
+            spawnedEnemy.deathCallback = ReportDeath;
             spawnedEnemy.name = m_enemyPrefab.name;
             m_spawnedEnemies.Add(spawnedEnemy);
         }

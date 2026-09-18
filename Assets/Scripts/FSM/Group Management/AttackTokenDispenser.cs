@@ -104,6 +104,7 @@ namespace Stirge.Combat
             //if this entry is to be our first, enable the update function
             if (m_entrantList.Count == 0) enabled = true;
             m_entrantList.Add(new(entrant, scoreMethod));
+            entrant.deathCallback += RemoveEntryFromList;
 
             //check if we've reached the limit on entries to draw immediatly.
             if (m_drawOnLimitReached && m_entrantList.Count == m_entryLimit) DrawRaffle();
@@ -117,9 +118,9 @@ namespace Stirge.Combat
         /// <returns>TRUE if the given entrant is already in the raffle.</returns>
         public bool HaveIEnteredAlready(Enemy.Enemy entrant)
         {
-            foreach(var entry in m_entrantList) //check the list
+            foreach (var entry in m_entrantList) //check the list
             {
-                if(entry.Entrant == entrant) //return true if they are already in
+                if (entry.Entrant == entrant) //return true if they are already in
                     return true;
             }
             return false; //otherwise return false.
@@ -135,7 +136,7 @@ namespace Stirge.Combat
         /// </returns>
         public bool HaveIEnteredAlready(Enemy.Enemy entrant, ScoringMethod scoreMethod)
         {
-            if(HaveIEnteredAlready(entrant)) //return true if already entered
+            if (HaveIEnteredAlready(entrant)) //return true if already entered
             {
                 return true;
             }
@@ -228,13 +229,24 @@ namespace Stirge.Combat
                     break;
             }
 
-            if(m_comparisionMethod < 0) //THE BIG BAD ERROR. IF YOU GET TO THIS YOU DONE FUCKED UP!
+            if (m_comparisionMethod < 0) //THE BIG BAD ERROR. IF YOU GET TO THIS YOU DONE FUCKED UP!
             {
                 Debug.LogError("Invalid comparision method set! Reseting to default", this);
                 m_comparisionMethod = m_defaultComparisionMethod;
             }
 
             return m_comparisionMethod;
+        }
+        public void RemoveEntryFromList(Enemy.Enemy enterant)
+        {
+            for (int i = 0; i < m_entrantList.Count; i++)
+                if (m_entrantList[i].Entrant == enterant)
+                {
+                    m_entrantList.RemoveAt(i);
+                    Debug.Log($"{enterant} has been removed from the raffle");
+                    return;
+                }
+            return;
         }
     }
 }

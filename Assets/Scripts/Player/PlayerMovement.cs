@@ -43,8 +43,8 @@ namespace Stirge.Player
         private stateVariables m_aerialSettings;
 
         //Selector for the settings
-        public stateVariables CurrentStateSettings =>
-            IsGrounded ? m_groundSettings : m_aerialSettings;
+        public stateVariables _currentStateSettings { get { return IsGrounded ? m_groundSettings : m_aerialSettings; } }
+        #endregion
 
         [Header("Jump Settings")]
         [SerializeField, Tooltip("The desired height you'd like the player to reach.")]
@@ -109,33 +109,15 @@ namespace Stirge.Player
             //When we idle with a locked on target
             if (m_lockOnTarget != null && attemptedMoveDirection.sqrMagnitude <= 0)
             {
-                var lockOnLookAt = Quaternion.LookRotation(
-                    m_lockOnTarget.position - transform.position
-                );
-                lockOnLookAt = Quaternion.Euler(
-                    0,
-                    lockOnLookAt.eulerAngles.y,
-                    lockOnLookAt.eulerAngles.z
-                );
-                m_motor.RotateTo(
-                    Quaternion.RotateTowards(
-                        transform.rotation,
-                        lockOnLookAt,
-                        CurrentStateSettings._rotationSpeed * Time.deltaTime
-                    )
-                );
+                var lockOnLookAt = Quaternion.LookRotation(m_lockOnTarget.position - transform.position);
+                lockOnLookAt = Quaternion.Euler(0, lockOnLookAt.eulerAngles.y, lockOnLookAt.eulerAngles.z);
+                m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, lockOnLookAt, _currentStateSettings._rotationSpeed * Time.deltaTime));
             }
             //Only when the player applies any directional inputs...
             else if (attemptedMoveDirection.sqrMagnitude > 0)
             {
                 //Interperlate the rotations between the current player rotation and the given input direction
-                m_motor.RotateTo(
-                    Quaternion.RotateTowards(
-                        transform.rotation,
-                        Quaternion.LookRotation(attemptedMoveDirection),
-                        CurrentStateSettings._rotationSpeed * Time.deltaTime
-                    )
-                );
+                m_motor.RotateTo(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), _currentStateSettings._rotationSpeed * Time.deltaTime));
             }
 
             Debug.DrawRay(transform.position, m_motor._horizontalVelocity, Color.blue);
@@ -149,22 +131,22 @@ namespace Stirge.Player
             //If the player's current horizontal velocity is less then the speed limit, then the player can be moved
             //OR if the player's input is in the opposite direction of the player's current direction
             if (
-                m_motor._horizontalSpeed < CurrentStateSettings._maximumHorizontalSpeed
+                m_motor._horizontalSpeed < _currentStateSettings._maximumHorizontalSpeed
                 || Vector3.Angle(m_motor._horizontalDirection, attemptedMoveDirection) > 90.0f
             )
             {
                 //Apply the force to the player
                 m_motor.ApplyForce(
-                    CurrentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude)
+                    _currentStateSettings._inputStrength.Evaluate(m_inputDirection.sqrMagnitude)
                         * m_inputDirection.sqrMagnitude
                         * transform.forward
-                        * CurrentStateSettings._horizontalAcceleration
+                        * _currentStateSettings._horizontalAcceleration
                         * Time.deltaTime
                 );
             }
 
             //do some decceleration - the clamped value helps when getting the movement down to zero
-            m_motor.ApplyForce(m_motor._horizontalDirection * -CurrentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
+            m_motor.ApplyForce(m_motor._horizontalDirection * -_currentStateSettings._friction * Mathf.Clamp01(m_motor._horizontalSpeed) * Time.deltaTime, ForceMode.Force, true);
 
             //Clamping the players fall speed
             m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
@@ -273,13 +255,13 @@ namespace Stirge.Player
             Gizmos.color = Color.blue;
             Gizmos.DrawWireSphere(
                 transform.position,
-                CurrentStateSettings._maximumHorizontalSpeed
+                _currentStateSettings._maximumHorizontalSpeed
             );
 
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(
                 transform.position,
-                (CurrentStateSettings._horizontalAcceleration - CurrentStateSettings._friction)
+                (_currentStateSettings._horizontalAcceleration - _currentStateSettings._friction)
             );
 
             Gizmos.color = Color.purple;
