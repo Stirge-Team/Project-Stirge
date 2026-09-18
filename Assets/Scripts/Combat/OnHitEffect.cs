@@ -9,7 +9,7 @@ namespace Stirge.Combat
     public class OnHitEffect
     {
         [SerializeField] private int m_damage;
-        [SerializeReference] private Status[] m_statuses = new Status[0];
+        [SerializeField] private Status[] m_statuses = new Status[0];
 
         public void OnHit(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
