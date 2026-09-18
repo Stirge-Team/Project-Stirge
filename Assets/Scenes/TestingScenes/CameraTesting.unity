@@ -1471,6 +1471,7 @@ GameObject:
   - component: {fileID: 361566838}
   - component: {fileID: 361566837}
   - component: {fileID: 361566839}
+  - component: {fileID: 361566840}
   m_Layer: 0
   m_Name: playerDummy
   m_TagString: Untagged
@@ -1563,13 +1564,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3040a3c408b4d250bbf6683908f1acc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strige.Player.PlayerMovement
-  m_horizontalGroundedAccel: 100
-  m_horizontalAerialAccel: 1
-  m_maxHorizontalVelocity: 10
-  m_rotationSpeed: 20
-  m_jumpForce: 1000
-  m_coyoteTime: 0
+  m_groundSettings:
+    _horizontalAcceleration: 0
+    _maximumHorizontalSpeed: 0
+    _rotationSpeed: 0
+    _friction: 0
+    _inputStrength:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  m_aerialSettings:
+    _horizontalAcceleration: 0
+    _maximumHorizontalSpeed: 0
+    _rotationSpeed: 0
+    _friction: 0
+    _inputStrength:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  m_jumpHeight: 5
   m_groundCheckDistance: 2
+  m_coyoteTime: 0
+  m_landingSound: {fileID: 0}
+  m_fallSpeedCap: 0
+  m_fallTimeSpeedMultiplier: 0
 --- !u!136 &361566837
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1650,6 +1672,18 @@ MonoBehaviour:
   m_DefaultActionMap: 
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &361566840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 361566831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a90ae4b04dc02aa49f84500bc72a0b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.MovementMotor
 --- !u!1 &373304664
 GameObject:
   m_ObjectHideFlags: 0
@@ -4672,16 +4706,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88f2d6ecf0468ff589b2f4c8f214412a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Strige.Camera.TrackingCamera
-  m_cameraMovementSpeed: 7
-  m_cameraRotationSpeed: 60
-  m_relativePosition: {x: 5, y: 2}
-  m_cameraPivotSpeed: 4
-  m_pivotGapStrength: 1
-  m_cameraMoveWait: 3
-  m_cameraAutoPivotSpeed: 0.3
-  m_groupDistanceScaling: 0.2
-  m_combatRangeCutoff: 5
-  m_clumpBias: 0.5
+  m_exploreSettings:
+    _movementSpeed: 0
+    _rotationSpeed: 0
+    _relativePosition: {x: 0, y: 0}
+    _pivotSpeed: 0
+    _pivotGapStrength: 0
+    _inputSensitivity: 0
   m_primaryTarget: {fileID: 361566835}
   m_secondaryTargets:
   - {fileID: 374375065}
@@ -4689,7 +4720,28 @@ MonoBehaviour:
   - {fileID: 1130178122}
   - {fileID: 1851388560}
   - {fileID: 1325523712}
-  m_inputSensitivity: 5
+  m_combatSettings:
+    _movementSpeed: 0
+    _rotationSpeed: 0
+    _relativePosition: {x: 0, y: 0}
+    _pivotSpeed: 0
+    _pivotGapStrength: 0
+    _inputSensitivity: 0
+  m_groupDistanceScaling: 0.2
+  m_combatRangeCutoff: 5
+  m_clumpBias: 0.5
+  m_lockOnSettings:
+    _movementSpeed: 0
+    _rotationSpeed: 0
+    _relativePosition: {x: 0, y: 0}
+    _pivotSpeed: 0
+    _pivotGapStrength: 0
+    _inputSensitivity: 0
+  m_toggleLockOn: 1
+  m_usePrimaryForward: 0
+  m_lockOnRange: 10
+  m_lockOnDisengauge: 0
+  m_lockOnIncludeTargetsOutOfRange: 0
 --- !u!114 &1118215392
 MonoBehaviour:
   m_ObjectHideFlags: 0

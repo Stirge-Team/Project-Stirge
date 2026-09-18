@@ -111,7 +111,7 @@ namespace Stirge.Player
         public void BeginGoToPosition(Vector3 newPosition)
         {
             Vector3 direction = (newPosition - transform.position).normalized;
-            m_movement.Motor.ApplyForce(direction * m_movement.CurrentStateSettings._horizontalAcceleration);
+            m_movement.Motor.ApplyForce(direction * m_movement._currentStateSettings._horizontalAcceleration);
         }
         public void StopGoToPosition()
         {

@@ -1431,6 +1431,7 @@ MonoBehaviour:
   m_jumpHeight: 4
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
+  m_landingSound: {fileID: 0}
   m_fallSpeedCap: 1000
   m_fallTimeSpeedMultiplier: 2.2
 --- !u!114 &60138664

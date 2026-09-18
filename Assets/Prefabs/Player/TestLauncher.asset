@@ -32,6 +32,9 @@ MonoBehaviour:
       m_damage: 1
       m_statuses:
       - rid: 2001017013982199898
+      - rid: -2
+      - rid: 2974341731308797953
+      - rid: 2974341731308797954
   m_eventData:
   - m_eventType: 0
     m_eventID: TestLauncherEvent0
@@ -51,9 +54,20 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 2001017013982199898
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_strength: 5
         m_stallLength: 3
         m_ignoreGrounded: 0
+    - rid: 2974341731308797953
+      type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_preset: {fileID: 11400000, guid: 8cccd7890c005af838944180740ec357, type: 2}
+    - rid: 2974341731308797954
+      type: {class: HitStopStatus, ns: Stirge.Combat, asm: Assembly-CSharp}
+      data:
+        m_duration: 0.2
+        m_scale: 0

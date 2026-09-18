@@ -421,10 +421,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
-  m_playerAnimator: {fileID: 506505504}
+  m_player: {fileID: 0}
   m_inputBufferTime: 0.2
-  m_sequenceDisplay: {fileID: 0}
-  m_usedAttackDisplay: {fileID: 0}
 --- !u!1001 &593077810
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -821,8 +819,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd060d3806dad3a4594af1e26ae7dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
+  m_spawnOnStart: 0
   m_enemyPrefab: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
-  m_targetEnemyCount: 3
+  m_targetSpawnCount: 0
   m_spawnLocation: {fileID: 682709210}
 --- !u!4 &1284260309
 Transform:
@@ -997,9 +996,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.AttackBindingDefinition
   m_inputManager: {fileID: 506505509}
+  m_bindingType: 0
   m_defaultBindings:
   - attackInput: 1
-    attackName: Example1
+    m_serializedAttackData: {fileID: 0}
 --- !u!4 &1420625773
 Transform:
   m_ObjectHideFlags: 0
