@@ -62,7 +62,7 @@ namespace Stirge.AI
 
         private bool DetermineIfShouldAirStall(Agent agent)
         {
-            return agent.GetVelocity().y < 0;
+            return agent.Enemy.Motor.currentVelocity.y < 0;
         }
     }
 }

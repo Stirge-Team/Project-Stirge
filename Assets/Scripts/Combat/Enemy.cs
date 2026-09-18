@@ -1,27 +1,34 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Timeline;
 
 namespace Stirge.Enemy
 {
-    using System.Collections;
     using AI;
     using Combat;
-    using Stirge.Combat.Attacks;
+    using Stirge.Combat.OldStatus;
 
     public class Enemy : CombatEntity
     {
         [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
-        public Agent Agent => m_agent;
+        [SerializeField] private EnemyMotor m_motor;
 
         [Header("Combat States")]
         [SerializeField] private State m_stunState;
         [SerializeField] private State m_airStunState;
         [SerializeField] private State m_knockbackState;
         [SerializeField] private State m_airJuggle;
+
+        [HideInInspector] public EnemySpawner spawner = null;
+
         protected bool m_hasAttackToken = false;
-        public bool AttackToken => m_hasAttackToken;
-        public delegate void EnemyParamDelegate(Enemy enemy);
-        public EnemyParamDelegate deathCallback;
+
+        protected Transform m_targetTransform;
+        public Transform TargetTransform => m_targetTransform;
+
+        // properties
+        public EnemyMotor Motor => m_motor;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -36,19 +43,23 @@ namespace Stirge.Enemy
             // check if enemy is dead this frame
             if (m_health._isDead)
             {
-                if (deathCallback != null)
-                    deathCallback(this);
+                if (spawner != null)
+                    spawner.ReportDeath(this);
                 Destroy(gameObject);
                 return;
+            }
+
+            if (TargetTransform != null) //if there is a target
+            {
+                if (AttackTokenDispenser.instance != null)
+                    AttackTokenDispenser.instance.EnterAttackRaffle(this, new ScoringMethods.DistanceScore(transform, TargetTransform)); //enter the raffle
+                else
+                    m_hasAttackToken = true;
             }
 
             m_agent.Update(deltaTime);
         }
 
-        private void FixedUpdate()
-        {
-            m_agent.FixedUpdate();
-        }
         protected virtual void OnEnable()
         {
             m_agent.OnEnable();
@@ -58,10 +69,10 @@ namespace Stirge.Enemy
             m_agent.OnDisable();
         }
 
-        public override void UseAttack(AttackData attackData)
+        public override void UseAction(TimelineAsset attackTimeline)
         {
             if (m_hasAttackToken) //fail if no attack token
-                base.UseAttack(attackData);
+                base.UseAction(attackTimeline);
         }
         #endregion
 
@@ -90,61 +101,29 @@ namespace Stirge.Enemy
         #endregion
 
         #region Transformation
-        public override void ApplyRootMotion()
+        public override Vector3 GetPosition()
         {
-            m_agent.ApplyRootMotion();
+            return m_motor.transform.position;
         }
-
-        protected override Vector3 GetPosition()
+        public override void SetPosition(Vector3 newPosition)
         {
-            return m_agent.Transform.position;
+            m_motor.SetPosition(newPosition);
         }
-        protected override void SetPosition(Vector3 newPosition)
+        public override Quaternion GetRotation()
         {
-            m_agent.SetPosition(newPosition);
+            return m_motor.transform.rotation;
         }
-        protected override Quaternion GetRotation()
+        public override void SetRotation(Quaternion newRotation)
         {
-            return m_agent.Transform.rotation;
+            m_motor.SetRotation(newRotation);
         }
-        protected override void SetRotation(Quaternion newRotation)
+        public override void SetRotation(Vector3 eulerRotation)
         {
-            m_agent.SetRotation(newRotation);
-        }
-        protected override void SetRotation(Vector3 eulerRotation)
-        {
-            m_agent.SetRotation(Quaternion.Euler(eulerRotation));
+            m_motor.SetRotation(Quaternion.Euler(eulerRotation));
         }
         public override Vector3 GetForward()
         {
-            return m_agent.Transform.forward;
-        }
-        #endregion
-
-        #region Navigation
-        protected override void BeginGoToPosition(Vector3 newPosition)
-        {
-            m_agent.TargetPosition = newPosition;
-            m_agent.SetPhysicsMode(PhysicsMode.NavMesh);
-            m_agent.CalculatePath();
-        }
-        protected override void StopGoToPosition()
-        {
-            m_agent.TargetPosition = null;
-            m_agent.ClearPath();
-        }
-
-        protected override float GetMovementSpeed()
-        {
-            return m_agent.NavMeshAgent.speed;
-        }
-        protected override void SetMovementSpeed(float speed)
-        {
-            m_agent.NavMeshAgent.speed = speed;
-        }
-        protected override void ResetMovementSpeed()
-        {
-            m_agent.SetDefaultNavSpeed();
+            return m_motor.transform.forward;
         }
         #endregion
 
@@ -153,9 +132,9 @@ namespace Stirge.Enemy
         {
             return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
         }
-        public override void ApplyPhysicsToTransform()
+        public override void MovePosition(Vector3 newPosition)
         {
-            m_agent.ApplyPhysicsToTransform();
+            m_motor.SetPosition(newPosition);
         }
         #endregion
 
@@ -176,17 +155,19 @@ namespace Stirge.Enemy
             else
                 m_agent.EnterState(m_airStunState);
 
-            m_anim.Play("hitstun");
+            //m_anim.Play("hitstun");
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
             if (IsGrounded() || ignoreGrounded)
             {
                 if (stunLength > 0f)
-                    InflictTimedStatus(new Stun(stunLength), null);
+                { 
+                    //InflictStatus(new Stun(stunLength), null);
+                }
                 m_agent.EnterState(m_knockbackState);
                 m_agent.ApplyKnockback(strength, direction, height);
-                m_anim.Play("hitstun");
+                //m_anim.Play("hitstun");
             }
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
@@ -194,10 +175,12 @@ namespace Stirge.Enemy
             if (IsGrounded() || ignoreGrounded)
             {
                 if (stunLength > 0f)
-                    InflictTimedStatus(new Stun(stunLength), null);
+                {
+                    //InflictTimedStatus(new Stun(stunLength), null);
+                }
                 m_agent.EnterState(m_airJuggle);
                 m_agent.ApplyKnockback(strength, direction);
-                m_anim.Play("hitstun");
+                //m_anim.Play("hitstun");
             }
         }
         #endregion

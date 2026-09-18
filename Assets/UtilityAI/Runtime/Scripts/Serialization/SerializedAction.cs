@@ -1,0 +1,47 @@
+using System;
+using UnityEngine;
+using UnityEngine.Timeline;
+
+namespace Stirge.UtilityAI
+{
+    [CreateAssetMenu(menuName = "Utility AI/Serialized Action", fileName = "New Serialized Action", order = 449)]
+    public class SerializedAction : ScriptableObject
+    {
+        [SerializeField, Range(0, 5f)] private float m_scoreScaling = 1f;
+        [SerializeField] private float m_duration;
+        [SerializeField] private string m_displayName;
+        [SerializeField] private ActionType m_actionType;
+        [SerializeField] private TimelineAsset m_timeline;
+        [SerializeField, Min(0)] private float m_damage = 1f;
+        [SerializeField, Min(0)] private float m_range = 1f;
+        [SerializeField] private SerializedStatus_Base[] m_statuses = new SerializedStatus_Base[0];
+        [SerializeField] private SerializedCondition[] m_conditions = new SerializedCondition[0];
+        [SerializeField] private SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
+
+        public Action CreateRuntimeAction(UtilityEnemy target)
+        {
+            int statusCount = m_statuses.Length;
+            Status[] statuses = new Status[statusCount];
+            for (int i = 0; i < statusCount; i++)
+            {
+                statuses[i] = m_statuses[i].CreateRuntimeStatus();
+            }
+
+            int conditionCount = m_conditions.Length;
+            ICondition[] conditions = new ICondition[conditionCount];
+            for (int i = 0; i < conditionCount; i++)
+            {
+                conditions[i] = m_conditions[i].CreateRuntimeCondition();
+            }
+
+            int scoringMethodCount = m_scoringMethods.Length;
+            ScoringMethod[] scoringMethods = new ScoringMethod[scoringMethodCount];
+            for (int i = 0; i < scoringMethodCount; i++)
+            {
+                scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod();
+            }
+
+            return Action.Create(target, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, statuses, conditions, scoringMethods);
+        }
+    }
+}

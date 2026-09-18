@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/AttackTimeline/Runtime/AnimationStateTrack/AnimationStateTrackTesting/NavMesh-Floor.asset.meta
+guid: cccb043a3a711d049b3a45d05a65424d
+========
+guid: 5b2377355eb2a59539eecc5d3fd7ed76
+>>>>>>>> main:Assets/Scenes/TestingScenes/WaveSystem/WaveSystem/NavMesh-Plane.asset.meta
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 23800000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

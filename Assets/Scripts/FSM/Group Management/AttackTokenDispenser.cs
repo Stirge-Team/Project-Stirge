@@ -104,7 +104,7 @@ namespace Stirge.Combat
             //if this entry is to be our first, enable the update function
             if (m_entrantList.Count == 0) enabled = true;
             m_entrantList.Add(new(entrant, scoreMethod));
-            entrant.deathCallback += RemoveEntryFromList;
+            //entrant.deathCallback += RemoveEntryFromList;
 
             //check if we've reached the limit on entries to draw immediatly.
             if (m_drawOnLimitReached && m_entrantList.Count == m_entryLimit) DrawRaffle();
