@@ -44,7 +44,6 @@ namespace Stirge.Player
 
         //Selector for the settings
         public stateVariables _currentStateSettings { get { return IsGrounded ? m_groundSettings : m_aerialSettings; } }
-        #endregion
 
         [Header("Jump Settings")]
         [SerializeField, Tooltip("The desired height you'd like the player to reach.")]

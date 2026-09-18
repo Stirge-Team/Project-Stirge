@@ -61,3 +61,4 @@ MonoBehaviour:
       data:
         m_strength: 15
         m_height: 1
+        m_ignoreGrounded: 0
