@@ -64,7 +64,6 @@ namespace Stirge.Combat
         protected MovementProperties aerialMovementProperties => m_aerialMovementProperties;
         protected LayerMask walkableLayers => m_walkableLayers;
         protected MotorMovementState defaultMovementState => m_defaultMovementState;
-        protected MotorMovementState movementState => m_movementState;
         protected Transform lookTarget => m_lookTarget;
         protected float horizontalTopSpeed => CurrentMovementProperties.HorizontalTopSpeed;
         protected float acceleration => CurrentMovementProperties.Acceleration;
@@ -75,6 +74,7 @@ namespace Stirge.Combat
 
         // public properties
         public MovementProperties CurrentMovementProperties => m_isGrounded ? m_groundedMovementProperties : m_aerialMovementProperties;
+        public MotorMovementState MovementState => m_movementState;
         public bool IsGrounded => m_isGrounded;
         public float AirTime => m_airTime;
         public Vector3 FeetPosition => m_rb.position + m_feetOffset;
@@ -82,9 +82,7 @@ namespace Stirge.Combat
         #region Unity Events
         private void Awake()
         {
-            Vector3 feetOffset = m_rb.position;
-            feetOffset.y -= m_col.bounds.extents.y;
-            m_feetOffset = feetOffset;
+            m_feetOffset = new(0f, -m_col.bounds.extents.y, 0f);
 
             OnAwake();
         }
@@ -387,17 +385,12 @@ namespace Stirge.Combat
         {
             Matrix4x4 orig = Handles.matrix;
 
-            Handles.color = Color.magenta;
-            Handles.DrawWireCube(FeetPosition, Vector3.one / 4f);
-
             Handles.color = Color.blue;
             Handles.DrawWireCube(m_rb.position, new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius));
             Handles.DrawWireCube(m_rb.position + (Vector3.down * m_groundCheckDistance), new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius));
 
             Handles.color = Color.green;
-            Vector3 feetOffset = m_rb.position;
-            feetOffset.y -= m_col.bounds.extents.y;
-            m_feetOffset = feetOffset;
+            m_feetOffset = new(0f, -m_col.bounds.extents.y, 0f);
             Handles.DrawWireCube(FeetPosition, Vector3.one / 5f);
 
             Handles.matrix = transform.localToWorldMatrix;

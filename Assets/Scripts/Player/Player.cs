@@ -71,11 +71,6 @@ namespace Stirge.Player
         {
             m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
         }
-
-        public override bool IsGrounded()
-        {
-            return m_movement.IsGrounded;
-        }
         #endregion
 
         #region Transformation

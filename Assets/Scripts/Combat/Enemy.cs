@@ -146,7 +146,7 @@ namespace Stirge.Enemy
             m_isStunned = true;
 
             // different State for when Grounded
-            if (IsGrounded())
+            if (Motor.IsGrounded)
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);
@@ -155,7 +155,7 @@ namespace Stirge.Enemy
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
-            if (IsGrounded() || ignoreGrounded)
+            if (Motor.IsGrounded || ignoreGrounded)
             {
                 if (stunLength > 0f)
                 { 
@@ -168,7 +168,7 @@ namespace Stirge.Enemy
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
         {
-            if (IsGrounded() || ignoreGrounded)
+            if (Motor.IsGrounded || ignoreGrounded)
             {
                 if (stunLength > 0f)
                 {

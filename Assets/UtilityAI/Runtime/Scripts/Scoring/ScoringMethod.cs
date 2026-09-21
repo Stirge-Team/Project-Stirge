@@ -8,19 +8,13 @@ namespace Stirge.UtilityAI
     public abstract class ScoringMethod
     {
         protected float m_scoreScaling;
-        protected Action m_action;
 
-        public void Setup(Action action)
-        {
-            m_action = action;
-        }
-
-        public float Evaluate(CombatEntity user, CombatEntity target)
+        public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
             float score = EvaluateInternal(user, target);
             return score * m_scoreScaling;
         }
-        protected abstract float EvaluateInternal(CombatEntity user, CombatEntity target);
+        protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
 
         #region Setup
         public static TScoringMethod Create<TScoringMethod>(float scoreScaling) where TScoringMethod : ScoringMethod, INotSetupable, new()

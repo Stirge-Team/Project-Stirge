@@ -8,8 +8,6 @@ namespace Stirge.UtilityAI
 
     public abstract class MovementGoal
     {
-        protected Action m_action;
-
         protected float m_scoreScaling = 1f;
         protected float m_duration;
         protected string m_displayName;
@@ -19,19 +17,16 @@ namespace Stirge.UtilityAI
         public float duration => m_duration;
         public string displayName => m_displayName;
 
-        public float Evaluate(CombatEntity user, CombatEntity target)
+        public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
             float baseScore = (EvaluateInternal(user, target) + m_scoringMethods.Sum(s => s.Evaluate(user, target))) / (m_scoringMethods.Length + 1);
             return baseScore * m_scoreScaling;
         }
-        protected abstract float EvaluateInternal(CombatEntity user, CombatEntity target);
+        protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
 
         public abstract void Perform(UtilityEnemy user, CombatEntity target);
 
-        public void Setup(Action action)
-        {
-            m_action = action;
-        }
+        public abstract void Reset();
 
         #region Setup
         private static TMovementGoal CreateInternal<TMovementGoal>(float scoreScaling, float duration, string displayName, ICondition[] conditions, ScoringMethod[] scoringMethods) where TMovementGoal : MovementGoal, new()

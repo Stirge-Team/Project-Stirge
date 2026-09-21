@@ -73,7 +73,6 @@ namespace Stirge.Combat
         #endregion
 
         #region Physics
-        public virtual bool IsGrounded() { throw new System.NotImplementedException(); }
         /// <summary>
         /// Move to position with respect to Physics.
         /// </summary>
@@ -108,7 +107,9 @@ namespace Stirge.Combat
             int index = 0;
             foreach (Status status in m_inflictedStatuses)
             {
-                if (status.Update(this))
+                status.Update(this);
+
+                if (status.ShouldThisClear(this))
                 {
                     status.OnClear(this);
                     toRemove.Add(index);
@@ -117,7 +118,7 @@ namespace Stirge.Combat
             }
 
             // remove backwards to avoid indicies from changing before removal
-            for (int count = toRemove.Count, i = count - 1; i >= 0; i--)
+            for (int i = toRemove.Count - 1; i >= 0; i--)
             {
                 m_inflictedStatuses.RemoveAt(toRemove[i]);
             }
@@ -150,7 +151,7 @@ namespace Stirge.Combat
         }
 
         /// <summary>
-        /// This should be added as a callback to <see cref="m_director.stopped"/>.
+        /// This should be added as a callback to m_director.stopped./>.
         /// </summary>
         /// <param name="director"></param>
         public void OnActionEnd(PlayableDirector director)
@@ -189,10 +190,14 @@ namespace Stirge.Combat
             }
         }
 
-        public void ModifyDamage(ModifierType type, float modifier)
+        public void SetDamageModifier(ModifierType type, float modifier)
         {
             m_damageModifierType = type;
-            m_damageModifier = modifier;
+            m_damageModifier += modifier;
+        }
+        public void ResetDamgeModifier(float modifier)
+        {
+            m_damageModifier -= modifier;
         }
         /// <inheritdoc/>
         public override void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)

@@ -7,10 +7,22 @@ namespace Stirge.UtilityAI
     using Serialization;
     using System.Linq;
 
+    public enum StatusStackType
+    {
+        Stackable,
+        Unstackable,
+        Unique,
+    }
+    public enum StatusDurationType
+    {
+        Instant,
+        Timed,
+        Conditional
+    }
+
     public abstract class Status
     {
-        // references
-        protected Action m_action;
+        private CombatEntity m_user;
         
         // fields
         protected float m_scoreScaling;
@@ -41,36 +53,33 @@ namespace Stirge.UtilityAI
 
         public abstract Type statusType { get; }
 
-        public void Setup(Action action)
-        {
-            m_action = action;
-        }
-
-        public float Evaluate(CombatEntity user, CombatEntity target)
+        public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
             float baseScore = (EvaluateInternal(user, target) + m_scoringMethods.Sum(s => s.Evaluate(user, target))) / (m_scoringMethods.Length + 1);
             return baseScore * m_scoreScaling;
         }
-        protected abstract float EvaluateInternal(CombatEntity user, CombatEntity target);
+        protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
 
         /// <summary>
         /// User is passed here so it may be saved as a reference for any effects that require the applier of the effect during Resolve or Clear.
         /// </summary>
         /// <param name="user"></param>
         /// <param name="target"></param>
-        /// <returns>If the Status should end.</returns>
+        /// <returns>If the Status should end. This should be false for any non-instant Statuses.</returns>
         public abstract bool OnApply(CombatEntity user, CombatEntity target);
         /// <summary>
         /// Update method.
         /// </summary>
         /// <param name="target"></param>
-        /// <returns>If the Status should end.</returns>
-        public abstract bool Update(CombatEntity target);
+        public virtual void Update(CombatEntity target) { }
         /// <summary>
         /// Run before removing the Status from the Statuses array.
         /// </summary>
         /// <param name="target"></param>
-        public abstract void OnClear(CombatEntity target);
+        public virtual void OnClear(CombatEntity target) { }
+
+        /// <returns>If the Status should end. You should return 'false' unless the <see cref="durationType"/> of this Status is <see cref="StatusDurationType.Conditional"/>.</returns>
+        public virtual bool ShouldThisClear(CombatEntity target) { return false; }
 
         #region Setup
         private static TStatus CreateInternal<TStatus>(float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, new()

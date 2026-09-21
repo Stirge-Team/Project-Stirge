@@ -54,6 +54,7 @@ namespace Stirge.Enemy
         public float topSpeed => m_topSpeed;
         public float angularSpeed => m_angularSpeed;
         public bool headingIsTargetPosition => m_headingIsTargetPosition;
+        public bool IsGrounded => m_isGrounded;
 
         // runtime properties
         public Vector3 currentVelocity => m_currentVelocity;

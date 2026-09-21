@@ -8,9 +8,6 @@ namespace Stirge.UtilityAI
 
     public class Action
     {
-        // references
-        private UtilityEnemy m_enemy;
-        
         // fields
         private float m_scoreScaling = 1f;
         private float m_duration;
@@ -24,8 +21,6 @@ namespace Stirge.UtilityAI
         private ScoringMethod[] m_scoringMethods;
 
         // properties
-        public UtilityEnemy Enemy => m_enemy;
-
         public float duration => m_duration;
         public string displayName => m_displayName;
         public ActionType actionType => m_actionType;
@@ -36,7 +31,7 @@ namespace Stirge.UtilityAI
         public ICondition[] conditions => m_conditions;
         public ScoringMethod[] scoringMethods => m_scoringMethods;
 
-        public float Evaluate(CombatEntity user, CombatEntity target)
+        public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
             if (!Enumerable.All(m_conditions, condition => condition.Evaluate(user, target)))
                 return 0f;
@@ -66,17 +61,16 @@ namespace Stirge.UtilityAI
             return (baseScore + statusScore) * m_scoreScaling;
         }
 
-        public void Perform(UtilityEnemy user, CombatEntity target)
+        public void Perform(CombatEntity user, CombatEntity target)
         {
             user.UseAction(m_timeline);
         }
 
         #region Create
-        public static Action Create(UtilityEnemy target, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
+        public static Action Create(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods)
         {
             Action action = new()
             {
-                m_enemy = target,
                 m_scoreScaling = scaling,
                 m_duration = duration,
                 m_displayName = displayName,
@@ -88,19 +82,6 @@ namespace Stirge.UtilityAI
                 m_conditions = conditions,
                 m_scoringMethods = scoringMethods
             };
-
-            foreach (Status status in action.m_statuses)
-            {
-                status.Setup(action);
-            }
-            foreach (ICondition condition in conditions)
-            {
-                condition.Setup(action);
-            }
-            foreach (ScoringMethod scoringMethod in scoringMethods)
-            {
-                scoringMethod.Setup(action);
-            }
 
             return action;
         }

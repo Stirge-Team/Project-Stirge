@@ -9,16 +9,11 @@ namespace Stirge.UtilityAI
     public class UtilityEnemy : CombatEntity
     {
         [Header("Utility Properties")]
-        [SerializeField] private SerializedAction[] m_serializedActions;
-        [SerializeField] private SerializedMovementGoal_Base[] m_serializedMovementGoals;
+        [SerializeField] private SerializedUtilityBrain m_serializedBrain;
         [SerializeField] private CombatEntity m_target;
 
-        // fields
-        private Action[] m_actions;
-        private MovementGoal[] m_movementGoals;
-
-        private float m_actionTimer;
-        private float m_movementGoalTimer;
+        private UtilityBrain m_brain;
+        public UtilityBrain Brain => m_brain;
 
         // properties
         public UtilityEnemyMotor EnemyMotor => (UtilityEnemyMotor)Motor;
@@ -31,48 +26,13 @@ namespace Stirge.UtilityAI
         {
             //Time.fixedDeltaTime = 0.333f;
 
-            int actionCount = m_serializedActions.Length;
-            m_actions = new Action[actionCount];
-            for (int i = 0; i < actionCount; i++)
-            {
-                m_actions[i] = m_serializedActions[i].CreateRuntimeAction(this);
-            }
-
-            int movementGoalCount = m_serializedMovementGoals.Length;
-            m_movementGoals = new MovementGoal[movementGoalCount];
-            for (int i = 0; i < movementGoalCount; i++)
-            {
-                m_movementGoals[i] = m_serializedMovementGoals[i].CreateRuntimeMovementGoal();
-            }
+            m_brain = m_serializedBrain.CreateRuntimeBrain();
+            m_brain.Start();
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            if (m_actionTimer <= 0f)
-            {
-                Action newAction;
-                foreach (var action in m_actions)
-                {
-                    Debug.Log($"{action.displayName}: {action.Evaluate(this, m_target)}");
-                }
-            }
-            else
-            {
-                m_actionTimer -= Time.fixedDeltaTime;
-            }
-
-            if (m_movementGoalTimer <= 0f)
-            {
-                MovementGoal newMovementGoal;
-                foreach (var movementGoal in m_movementGoals)
-                {
-                    Debug.Log($"{movementGoal.displayName}: {movementGoal.Evaluate(this, m_target)}");
-                }
-            }
-            else
-            {
-                m_movementGoalTimer -= Time.fixedDeltaTime;
-            }
+            m_brain.Update(this, m_target);
         }
 
         #region Transformation

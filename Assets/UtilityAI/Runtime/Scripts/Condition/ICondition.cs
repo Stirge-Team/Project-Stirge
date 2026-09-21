@@ -11,7 +11,6 @@ namespace Stirge.UtilityAI
         public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, bool propertyTargetIsUser);
         public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, bool propertyTargetIsUser);
         public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, bool firstPropertyTargetIsUser, bool secondPropertyTargetIsUser);
-        public void Setup(Action action);
-        public bool Evaluate(CombatEntity user, CombatEntity target);
+        public bool Evaluate(UtilityEnemy user, CombatEntity target);
     }
 }

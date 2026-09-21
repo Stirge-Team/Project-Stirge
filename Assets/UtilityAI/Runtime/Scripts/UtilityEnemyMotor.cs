@@ -41,21 +41,21 @@ namespace Stirge.UtilityAI
         #region Transformation
         protected override void OnSetPosition(Vector3 newPosition)
         {
-            if (movementState == MotorMovementState.Navigation)
+            if (MovementState == MotorMovementState.Navigation)
             {
                 SyncNavMeshAgentPosition();
             }
         }
         protected override void OnSetRotation()
         {
-            if (movementState == MotorMovementState.Navigation)
+            if (MovementState == MotorMovementState.Navigation)
             {
                 SyncNavMeshAgentRotation();
             }
         }
         protected override void OnSetPositionAndRotation(Vector3 newPosition, Quaternion newRotation)
         {
-            if (movementState == MotorMovementState.Navigation)
+            if (MovementState == MotorMovementState.Navigation)
             {
                 SyncNavMeshAgentPosition();
                 SyncNavMeshAgentRotation();
@@ -144,7 +144,7 @@ namespace Stirge.UtilityAI
             m_nav.Warp(syncPosition);
 
             // if agent is active, then preserve destination after the warp
-            if (movementState == MotorMovementState.Navigation)
+            if (MovementState == MotorMovementState.Navigation)
                 m_nav.SetDestination(currentDestination);
         }
         private void SyncNavMeshAgentRotation()
@@ -156,7 +156,7 @@ namespace Stirge.UtilityAI
         #region State
         protected override void OnMovementStateChanged()
         {
-            switch (movementState)
+            switch (MovementState)
             {
                 case MotorMovementState.Velocity:
                     Rigidbody.isKinematic = false;
