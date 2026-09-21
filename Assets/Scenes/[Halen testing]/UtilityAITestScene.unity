@@ -168,6 +168,11 @@ MonoBehaviour:
   m_defaultBindings:
   - m_attackInput: 1
     m_attackTimeline: {fileID: 11400000, guid: f6fd9d4d45ceacd4a92b3ede8dc8058e, type: 2}
+--- !u!4 &172828094 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6986511492139997212, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+  m_PrefabInstance: {fileID: 1937892798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &195993712
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,12 +527,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
+  m_motor: {fileID: 0}
   m_health: {fileID: 0}
   m_director: {fileID: 342028844}
-  m_groundedCheckDistance: 0.1
-  m_groundedCheckMask:
-    serializedVersion: 2
-    m_Bits: 65
   m_movement: {fileID: 342028848}
   m_input: {fileID: 342028851}
 --- !u!114 &342028848
@@ -648,6 +650,75 @@ MonoBehaviour:
   m_deathEvents:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &357766198
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 357766199}
+  - component: {fileID: 357766201}
+  - component: {fileID: 357766200}
+  m_Layer: 3
+  m_Name: Sword Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &357766199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357766198}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 172828094}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &357766200
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357766198}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &357766201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 357766198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc2753d86d1c624408a2db60db52a9ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AttackTimeline.HitboxCollider
+  m_owner: {fileID: 2050190538}
 --- !u!1 &529940222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1260,6 +1331,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -5993207503619758613, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_groundedCheckDistance
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: -5993207503619758613, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_serializedActions.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -1275,9 +1350,17 @@ PrefabInstance:
       propertyPath: 'm_serializedMovementGoals.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: b60bea14cee857f48a581f36898e21fc, type: 2}
-    - target: {fileID: 867691287701123348, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
-      propertyPath: m_groundCheckDistance
-      value: 1.32
+    - target: {fileID: 1876474870715131292, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_InitialState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1876474870715131292, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_SceneBindings.Array.data[2].value
+      value: 
+      objectReference: {fileID: 357766198}
+    - target: {fileID: 5163291894285696143, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5742239276836861200, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_Name
@@ -1289,7 +1372,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5
+      value: 6.05
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1323,9 +1406,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8488527449091659221, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6986511492139997212, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 357766199}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
 --- !u!1 &1998571760
@@ -1468,6 +1558,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2050190538 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -5993207503619758613, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+  m_PrefabInstance: {fileID: 1937892798}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f1bf89b4b30ee64a81d07694866d79b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -18,7 +18,7 @@ namespace Stirge.Player
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if(!m_movement || !m_input || !m_health)
+            if(!m_movement || !m_input || !Health)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
@@ -43,7 +43,7 @@ namespace Stirge.Player
         {
             if(m_movement.OnJump())
             {
-                m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+                Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
             }
         }
         #endregion

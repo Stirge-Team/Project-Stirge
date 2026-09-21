@@ -230,13 +230,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f1bf89b4b30ee64a81d07694866d79b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
+  m_motor: {fileID: 867691287701123348}
   m_health: {fileID: 440547860124242161}
   m_director: {fileID: 1876474870715131292}
-  m_groundedCheckDistance: 1.3
-  m_groundedCheckMask:
-    serializedVersion: 2
-    m_Bits: 65
-  m_motor: {fileID: 867691287701123348}
   m_serializedActions: []
   m_serializedMovementGoals: []
   m_target: {fileID: 0}
@@ -258,7 +254,9 @@ PlayableDirector:
   - key: {fileID: 6197333039739855809, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
     value: {fileID: 8694649445836873490}
   - key: {fileID: 2601080034313008511, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
-    value: {fileID: 0}
+    value: {fileID: 867691287701123348}
+  - key: {fileID: -6557302341939186198, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
+    value: {fileID: 5163291894285696143}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &440547860124242161
@@ -323,7 +321,7 @@ GameObject:
   - component: {fileID: 2112035333763823347}
   - component: {fileID: 6907372072597947992}
   - component: {fileID: 8694649445836873490}
-  - component: {fileID: 5849699730566252498}
+  - component: {fileID: 2573089849968826241}
   - component: {fileID: 5136537218243640662}
   m_Layer: 3
   m_Name: Transform
@@ -362,20 +360,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemyMotor
   m_transform: {fileID: 8488527449091659221}
-  m_enemy: {fileID: -5993207503619758613}
   m_rb: {fileID: 2112035333763823347}
   m_col: {fileID: 6907372072597947992}
-  m_nav: {fileID: 616382525492106720}
-  m_topSpeed: 15
-  m_acceleration: 3
+  m_defaultMovementState: 1
   m_walkableLayers:
     serializedVersion: 2
     m_Bits: 65
-  m_groundCheckDistance: 1.3
-  m_groundCheckRadius: 0.3
-  m_navStoppingDistance: 0.5
-  m_angularSpeed: 4.71
+  m_groundedMovementProperties: {fileID: 11400000, guid: 068a0da176690bd4ba709677146a0354, type: 2}
+  m_aerialMovementProperties: {fileID: 11400000, guid: 068a0da176690bd4ba709677146a0354, type: 2}
+  m_verticalTopSpeed: 10
+  m_maxFallingSpeed: 5
+  m_coyoteTime: 0
+  m_fallSpeedMultiplier: 0
+  m_groundCheckDistance: 1
+  m_groundCheckRadius: 0.5
   m_slopeLimit: 30
+  m_enemy: {fileID: -5993207503619758613}
+  m_nav: {fileID: 616382525492106720}
+  m_navStoppingDistance: 0.5
 --- !u!54 &2112035333763823347
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -423,7 +425,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 1
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!95 &8694649445836873490
@@ -448,7 +450,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5849699730566252498
+--- !u!114 &2573089849968826241
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -457,12 +459,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7468844810941201109}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 580071fdd96fbe048b8e25b177a64a5d, type: 3}
+  m_Script: {fileID: 11500000, guid: cc2753d86d1c624408a2db60db52a9ae, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Hitbox.HitboxCollider
-  m_onCollision:
-    m_PersistentCalls:
-      m_Calls: []
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.AttackTimeline.HitboxCollider
+  m_owner: {fileID: -5993207503619758613}
 --- !u!114 &5136537218243640662
 MonoBehaviour:
   m_ObjectHideFlags: 0

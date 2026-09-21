@@ -9,6 +9,7 @@ using UnityEditor.Timeline;
 
 namespace Stirge.AttackTimeline
 {
+    using Combat;
     using Tools;
 
     public class MoveBehaviour : PlayableBehaviour
@@ -16,7 +17,7 @@ namespace Stirge.AttackTimeline
         private readonly AnimationCurve3D m_translation;
         private readonly bool m_isLocal;
 
-        private EnemyMotor m_boundMotor;
+        private CombatEntityMotor m_boundMotor;
 
         private MoveState m_state = MoveState.Waiting;
         private float m_duration;
@@ -45,12 +46,7 @@ namespace Stirge.AttackTimeline
         {
             if (m_boundMotor != null)
             {
-                if (Application.isPlaying)
-                {
-                    if (m_state == MoveState.Moving)
-                        m_boundMotor.OnAttackEnd();
-                }
-                else
+                if (!Application.isPlaying)
                 {
                     m_boundMotor.transform.parent.position = m_previewInitialPosition;
                 }
@@ -69,9 +65,6 @@ namespace Stirge.AttackTimeline
 
                 if (info.effectivePlayState == PlayState.Paused && count > duration || Mathf.Approximately(time, duration))
                 {
-                    // Removed this to avoid Entity teleporting to end position if it is otherwise unreachable normally
-                    //m_boundEntity.SetPosition(m_translation.Evaluate(m_duration));
-                    m_boundMotor.OnAttackEnd();
                     m_state = MoveState.Waiting;
                 }
             }
@@ -81,7 +74,7 @@ namespace Stirge.AttackTimeline
         {
             if (m_boundMotor == null)
             {
-                m_boundMotor = playerData as EnemyMotor;
+                m_boundMotor = playerData as CombatEntityMotor;
             }
 
             if (m_boundMotor == null)
@@ -145,7 +138,6 @@ namespace Stirge.AttackTimeline
                 m_duration = (float)playable.GetDuration();
                 m_elapsedTime = 0f;
                 m_lastTargetTranslation = Vector3.zero;
-                m_boundMotor.OnAttackStart();
             }
             // Update
             else
@@ -156,11 +148,14 @@ namespace Stirge.AttackTimeline
                 if (m_elapsedTime > m_duration)
                     m_elapsedTime = m_duration;
 
+                // scales so that 0 is the start of the clip and 1 is the end of the clip
+                float t = m_elapsedTime / m_duration;
+
                 Vector3 targetTranslation;
                 if (m_isLocal)
-                    targetTranslation = m_boundMotor.transform.rotation * m_translation.Evaluate(m_elapsedTime);
+                    targetTranslation = m_boundMotor.transform.rotation * m_translation.Evaluate(t);
                 else
-                    targetTranslation = m_translation.Evaluate(m_elapsedTime);
+                    targetTranslation = m_translation.Evaluate(t);
 
                 // targetTranslation - m_lastTargetTranslation = motion for this frame
                 m_boundMotor.SetPosition(m_boundMotor.transform.position + targetTranslation - m_lastTargetTranslation);

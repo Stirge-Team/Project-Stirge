@@ -4,11 +4,11 @@ using UnityEngine.Timeline;
 
 namespace Stirge.AttackTimeline
 {
-    using Enemy;
+    using Combat;
 
     [Serializable]
     [TrackClipType(typeof(MovePlayableAsset))]
-    [TrackBindingType(typeof(EnemyMotor))]
+    [TrackBindingType(typeof(CombatEntityMotor))]
     public class MoveTrack : TrackAsset
     {
         protected override void OnCreateClip(TimelineClip clip)

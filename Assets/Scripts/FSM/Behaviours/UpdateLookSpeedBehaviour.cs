@@ -11,8 +11,8 @@ namespace Stirge.AI
         
         public override void _Enter(Agent agent)
         {
-            m_prevDegreesDelta = agent.Enemy.Motor.angularSpeed;
-            agent.Enemy.Motor.SetAngularSpeed(m_newDegreesDelta * Mathf.Deg2Rad);
+            //m_prevDegreesDelta = agent.Enemy.Motor.angularSpeed;
+            //agent.Enemy.Motor.SetAngularSpeed(m_newDegreesDelta * Mathf.Deg2Rad);
         }
 
         public override void _Update(Agent agent, float deltaTime)
@@ -22,7 +22,7 @@ namespace Stirge.AI
 
         public override void _Exit(Agent agent)
         {
-            agent.Enemy.Motor.SetAngularSpeed(m_prevDegreesDelta * Mathf.Deg2Rad);
+            //agent.Enemy.Motor.SetAngularSpeed(m_prevDegreesDelta * Mathf.Deg2Rad);
         }
     }
 }

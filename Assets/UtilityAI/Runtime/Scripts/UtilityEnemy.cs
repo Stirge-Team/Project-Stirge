@@ -8,25 +8,23 @@ namespace Stirge.UtilityAI
 
     public class UtilityEnemy : CombatEntity
     {
-        [Header("Enemy Properties")]
-        [SerializeField] private UtilityEnemyMotor m_motor;
-
-        public new Transform transform => m_motor.transform;
-        public UtilityEnemyMotor Motor => m_motor;
-        public Rigidbody Rigidbody => m_motor.Rigidbody;
-        public NavMeshAgent NavMeshAgent => m_motor.NavMeshAgent;
-        
         [Header("Utility Properties")]
         [SerializeField] private SerializedAction[] m_serializedActions;
         [SerializeField] private SerializedMovementGoal_Base[] m_serializedMovementGoals;
         [SerializeField] private CombatEntity m_target;
 
+        // fields
         private Action[] m_actions;
         private MovementGoal[] m_movementGoals;
 
         private float m_actionTimer;
         private float m_movementGoalTimer;
 
+        // properties
+        public UtilityEnemyMotor EnemyMotor => (UtilityEnemyMotor)Motor;
+        public new Transform transform => Motor.transform;
+        public Rigidbody Rigidbody => Motor.Rigidbody;
+        public NavMeshAgent NavMeshAgent => EnemyMotor.NavMeshAgent;
         public CombatEntity Target => m_target;
 
         private void Start()
@@ -80,38 +78,34 @@ namespace Stirge.UtilityAI
         #region Transformation
         public override Vector3 GetPosition()
         {
-            return m_motor.transform.position;
+            return Motor.transform.position;
         }
         public override void SetPosition(Vector3 newPosition)
         {
-            m_motor.SetPosition(newPosition);
+            Motor.SetPosition(newPosition);
         }
         public override Quaternion GetRotation()
         {
-            return m_motor.transform.rotation;
+            return Motor.transform.rotation;
         }
         public override void SetRotation(Quaternion newRotation)
         {
-            m_motor.SetRotation(newRotation);
+            Motor.SetRotation(newRotation);
         }
         public override void SetRotation(Vector3 eulerRotation)
         {
-            m_motor.SetRotation(Quaternion.Euler(eulerRotation));
+            Motor.SetRotation(Quaternion.Euler(eulerRotation));
         }
         public override Vector3 GetForward()
         {
-            return m_motor.transform.forward;
+            return Motor.transform.forward;
         }
         #endregion
 
         #region Physics
-        public override bool IsGrounded()
-        {
-            return Physics.Raycast(m_motor.transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-        }
         public override void MovePosition(Vector3 newPosition)
         {
-            m_motor.SetPosition(newPosition);
+            Motor.SetPosition(newPosition);
         }
         #endregion
 
