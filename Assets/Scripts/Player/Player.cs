@@ -6,11 +6,6 @@ namespace Stirge.Player
     using Input;
     using UnityEngine.InputSystem;
 
-    //[RequireComponent(typeof(PlayerMovement))]
-    using Management;
-    using UnityEngine.InputSystem;
-
-    [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
     [RequireComponent(typeof(EntityHealth))]
     public class Player : CombatEntity
@@ -24,7 +19,7 @@ namespace Stirge.Player
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if(!Motor || !m_input || !Health)
+            if (!Motor || !m_input || !Health)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
@@ -33,27 +28,21 @@ namespace Stirge.Player
 
         protected override void UpdateThis(float deltaTime)
         {
-            if (m_isPerformingAction)
+            if (!IsPerformingAction)
             {
-                Motor.enabled = false;
-            }
-            else
-            {
-                Motor.enabled = true;
-            }
+                Vector3 attemptedMoveDirection = (new Vector3(m_camTransform.forward.x, 0, m_camTransform.forward.z) * m_inputDirection.y +
+                                                  new Vector3(m_camTransform.right.x, 0, m_camTransform.right.z) * m_inputDirection.x).normalized;
+                //TODO player rotation and lock on stuff here
+                if (attemptedMoveDirection.sqrMagnitude > 0)
+                {
+                    Motor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), Motor.CurrentMovementProperties.AngularSpeed));
+                }
 
-            Vector3 attemptedMoveDirection = (new Vector3(m_camTransform.forward.x, 0, m_camTransform.forward.z) * m_inputDirection.y +
-                                              new Vector3(m_camTransform.right.x, 0, m_camTransform.right.z) * m_inputDirection.x).normalized;
-            //TODO player rotation and lock on stuff here
-            if(attemptedMoveDirection.sqrMagnitude > 0)
-            {
-                Motor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), Motor.CurrentMovementProperties.AngularSpeed));
-            }
-
-            if(Motor.HorizontalSpeed < Motor.CurrentMovementProperties.HorizontalTopSpeed ||
-               Vector3.Angle(Motor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
-            {
-                Motor.AddForce(Motor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * Motor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                if (Motor.HorizontalSpeed < Motor.CurrentMovementProperties.HorizontalTopSpeed ||
+                   Vector3.Angle(Motor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
+                {
+                    Motor.AddForce(Motor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * Motor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                }
             }
 
             Motor.AddForce(Motor.HorizontalDirection * -Motor.CurrentMovementProperties.Friction * Mathf.Clamp01(Motor.HorizontalSpeed) * Time.deltaTime);
@@ -63,14 +52,10 @@ namespace Stirge.Player
         #region Inputs
         public void AttemptJump(InputAction.CallbackContext context)
         {
-            if(Motor.OnJump())
-            {
-                Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
-            }
-            if (context.performed)
-                if (m_movement.OnJump())
+            if (context.performed && !IsPerformingAction)
+                if (Motor.OnJump())
                 {
-                    m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+                    Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
         }
         public void OnMove(InputAction.CallbackContext context)
