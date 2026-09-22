@@ -14,39 +14,28 @@ namespace Stirge.Input
         [Header("Component References")]
         [SerializeField] private PlayerInputProcessing m_inputManager;
 
-        [System.Serializable]
-        private class BindingSet
-        {
-            [Header("Properties")]
-            [SerializeField] private BindingType m_bindingType;
-            public BindingType Type => m_bindingType;
-            [SerializeField] private List<AttackBinding> m_defaultBindings = new();
-            public List<AttackBinding> Defaults => m_defaultBindings;
-        }
-        [SerializeField] private BindingSet[] m_bindingSets;
+        [Header("Properties")]
+        [SerializeField] private BindingType m_bindingType;
+        [SerializeField] private List<AttackBinding> m_defaultBindings;
 
         private void Start()
         {
-            foreach (var set in m_bindingSets)
+            switch (m_bindingType)
             {
-
-                switch (set.Type)
-                {
-                    case BindingType.Grounded:
-                        m_inputManager.SetGroundedBindings(AttackBinding.ConvertToDictionary(set.Defaults));
-                        break;
-                    case BindingType.Air:
-                        m_inputManager.SetAirBindings(AttackBinding.ConvertToDictionary(set.Defaults));
-                        break;
-                }
-
-                // If there is more than one Component attached to this GameObject (Includes Transform)
-                if (gameObject.GetComponents<Component>().Length > 2)
-                    Destroy(this);
-                // If this is the ONLY Component attached to this GameObject
-                else
-                    Destroy(gameObject);
+                case BindingType.Grounded:
+                    m_inputManager.SetGroundedBindings(AttackBinding.ConvertToDictionary(m_defaultBindings));
+                    break;
+                case BindingType.Air:
+                    m_inputManager.SetAirBindings(AttackBinding.ConvertToDictionary(m_defaultBindings));
+                    break;
             }
+
+            // If there is more than one Component attached to this GameObject (Includes Transform)
+            if (gameObject.GetComponents<Component>().Length > 2)
+                Destroy(this);
+            // If this is the ONLY Component attached to this GameObject
+            else
+                Destroy(gameObject);
         }
     }
 }

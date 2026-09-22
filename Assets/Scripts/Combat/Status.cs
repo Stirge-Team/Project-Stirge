@@ -1,5 +1,4 @@
 using System;
-using FrameFighter2.Hitbox;
 using Stirge.Camera;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -12,13 +11,13 @@ namespace Stirge.Combat
         protected bool m_isCleared = false;
         public bool IsCleared => m_isCleared;
 
-        public virtual void OnInflict(Transform hitboxTransform, CombatEntity targetEntity)
+        public virtual void OnInflict(CombatEntity targetEntity)
         {
             throw new System.NotImplementedException();
         }
-        public virtual void OnInflict(Transform hitboxTransform, CombatEntity targetEntity, CombatEntity attackingEntity)
+        public virtual void OnInflict(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
-            OnInflict(hitboxTransform, targetEntity);
+            OnInflict(targetEntity);
         }
 
         public static readonly System.Type[] StatusTypes =
@@ -27,8 +26,7 @@ namespace Stirge.Combat
             typeof(Knockback),
             typeof(Stun),
             typeof(HitStopStatus),
-            typeof(ScreenShakeEffect),
-            typeof(ParticleEffectOnHit)
+            typeof(ScreenShakeEffect)
         };
     }
 
@@ -50,7 +48,7 @@ namespace Stirge.Combat
 
         protected float Length => m_length;
 
-        public override void OnInflict(Transform hitBoxTransform, CombatEntity targetEntity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
             m_timer = m_length;
         }
@@ -75,9 +73,9 @@ namespace Stirge.Combat
         public Stun(float length) : base(length) { }
         public Stun(Stun original) : base(original) { }
 
-        public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
-            base.OnInflict(hitboxTransform, targetEntity);
+            base.OnInflict(targetEntity);
             targetEntity.SetIsStunned(true, Length);
         }
 
@@ -105,7 +103,7 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_height;
         [SerializeField, Tooltip("If true, the knockback this attack applies can affect airborne enemies.")] private bool m_ignoreGrounded = false;
 
-        public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity, CombatEntity attackingEntity)
+        public override void OnInflict(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
             Vector3 dir = attackingEntity.GetForward();
             targetEntity.EnterKnockback(m_strength, dir, m_height, 0, m_ignoreGrounded);
@@ -130,7 +128,7 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_stallLength;
         [SerializeField, Tooltip("If true, the knockback this attack applies can affect airborne enemies.")] private bool m_ignoreGrounded = false;
 
-        public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
             targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0, m_ignoreGrounded);
         }
@@ -153,7 +151,7 @@ namespace Stirge.Combat
         [SerializeField, Min(0f)] private float m_duration;
         [SerializeField, Range(0f, 1f)] private float m_scale;
 
-        public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
             TimeManager.Instance.SetTimeScaleForTime(m_scale, m_duration);//wanna change function
         }
@@ -173,7 +171,7 @@ namespace Stirge.Combat
 
         [SerializeField] private CameraShakePreset m_preset;
 
-        public override void OnInflict(Transform hitboxTransform, CombatEntity targetEntity)
+        public override void OnInflict(CombatEntity targetEntity)
         {
             CameraShakeController.Instance.BeginScreenshake(m_preset);
         }

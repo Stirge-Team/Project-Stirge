@@ -4,7 +4,7 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
-    using UnityEngine.InputSystem;
+    using Management;
     
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
@@ -17,7 +17,7 @@ namespace Stirge.Player
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if (!m_movement || !m_input)
+            if(!m_movement || !m_input)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
@@ -25,25 +25,32 @@ namespace Stirge.Player
 
         protected override void UpdateThis(float deltaTime)
         {
+            if (m_isAttacking)
+            {
+                m_movement.enabled = false;
+            }
+            else
+            {
+                m_movement.enabled = true;
+            }
 
         }
         #endregion
 
         #region Inputs
-        public void AttemptJump(InputAction.CallbackContext context)
+        public void AttemptJump()
         {
-            if (context.performed)
-                if (m_movement.OnJump())
-                {
-                    m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
-                }
+            if(m_movement.OnJump())
+            {
+                m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+            }
         }
         #endregion
 
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-
+            
         }
         #endregion
 

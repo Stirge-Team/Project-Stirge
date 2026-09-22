@@ -193,7 +193,6 @@ MonoBehaviour:
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
   m_landingSound: {fileID: 11400000, guid: 06fd6c5347399e37eb457a4188b52e3a, type: 2}
-  m_hangTime: 0.2
   m_fallSpeedCap: 1000
   m_fallTimeSpeedMultiplier: 1
 --- !u!114 &5301017458216903579
@@ -800,17 +799,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.DefaultAttackBindingDefinition
   m_inputManager: {fileID: 5079235152578265304}
-  m_bindingSets:
-  - m_bindingType: 0
-    m_defaultBindings:
-    - attackInput: 2
-      m_serializedAttackData: {fileID: 11400000, guid: a3ddbe6644e81194f980daefcde3b223, type: 2}
-    - attackInput: 8
-      m_serializedAttackData: {fileID: 11400000, guid: 295d0c008452d50419091a2a4f767237, type: 2}
-  - m_bindingType: 1
-    m_defaultBindings:
-    - attackInput: 2
-      m_serializedAttackData: {fileID: 11400000, guid: c9f94bf4883a57d00a60b484e9b1d1d6, type: 2}
+  m_bindingType: 0
+  m_defaultBindings: []
 --- !u!1001 &6610752918078484151
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1886,7 +1876,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 9116489254625549190}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
           m_MethodName: PlayParticleWraper
           m_Mode: 5
@@ -1902,7 +1892,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 9116489254625549190}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
           m_MethodName: PlayParticleWraper
           m_Mode: 5
@@ -1918,7 +1908,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 9116489254625549190}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
           m_MethodName: PlayParticleWraper
           m_Mode: 5
@@ -1934,7 +1924,7 @@ MonoBehaviour:
     m_event:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 9116489254625549190}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
           m_MethodName: PlayParticleWraper
           m_Mode: 5

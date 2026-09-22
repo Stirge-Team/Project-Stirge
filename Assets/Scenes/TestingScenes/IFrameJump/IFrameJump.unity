@@ -811,7 +811,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1086059784}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: EndInvincibility
         m_Mode: 3
@@ -1164,7 +1164,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1086059784}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: EndInvincibility
         m_Mode: 3
@@ -1476,7 +1476,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1086059784}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: StartInvincibility
         m_Mode: 4
@@ -1966,17 +1966,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
   m_PrefabInstance: {fileID: 1091572014}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1086059784 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7462790499090208258, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
-  m_PrefabInstance: {fileID: 1091572014}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 492329440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
 --- !u!114 &1086059790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2288,7 +2277,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1086059784}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: StartImmortality
         m_Mode: 4
@@ -2763,7 +2752,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1086059784}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: EndInvincibility
         m_Mode: 3
@@ -3115,7 +3104,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1086059784}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Stirge.Management.EntityHealth, Assembly-CSharp
         m_MethodName: StartUnmodifiable
         m_Mode: 4

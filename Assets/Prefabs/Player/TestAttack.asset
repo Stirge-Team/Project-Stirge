@@ -63,6 +63,7 @@ MonoBehaviour:
       data:
         m_strength: 3
         m_height: 1
+        m_ignoreGrounded: 0
     - rid: 2315525968026402898
       type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
