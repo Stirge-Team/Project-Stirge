@@ -17,10 +17,8 @@ namespace Stirge.Combat
 
     public abstract class CombatEntityMotor : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private Transform m_transform;
-
         [Header("Components")]
+        [SerializeField] private Transform m_transform;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Collider m_col;
 
@@ -246,10 +244,14 @@ namespace Stirge.Combat
 
             if (!m_isGrounded)
             {
-                float fallSpeedMultiplier = m_fallSpeedMultiplier * m_airTime;
-                if (fallSpeedMultiplier == 0f)
-                    fallSpeedMultiplier = 1f;
-                m_currentVelocity += fallSpeedMultiplier * Time.fixedDeltaTime * Physics.gravity;
+                if (m_fallSpeedMultiplier == 0)
+                {
+                    m_currentVelocity += Time.fixedDeltaTime * Physics.gravity;
+                }
+                else
+                {
+                    m_currentVelocity += m_fallSpeedMultiplier * m_airTime * Time.fixedDeltaTime * Physics.gravity;
+                }
             }
 
             float verticalvelocity = m_currentVelocity.y;
@@ -386,12 +388,12 @@ namespace Stirge.Combat
             Matrix4x4 orig = Handles.matrix;
 
             Handles.color = Color.blue;
-            Handles.DrawWireCube(m_rb.position, new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius));
-            Handles.DrawWireCube(m_rb.position + (Vector3.down * m_groundCheckDistance), new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius));
+            Vector3 cubePos = (m_rb.position + m_rb.position + (Vector3.down * m_groundCheckDistance)) / 2f;
+            Handles.DrawWireCube(cubePos, new Vector3(m_groundCheckRadius, m_groundCheckDistance, m_groundCheckRadius));
 
             Handles.color = Color.green;
             m_feetOffset = new(0f, -m_col.bounds.extents.y, 0f);
-            Handles.DrawWireCube(FeetPosition, Vector3.one / 5f);
+            Handles.DrawWireCube(FeetPosition, new Vector3(m_groundCheckRadius, 0.08f, m_groundCheckRadius));
 
             Handles.matrix = transform.localToWorldMatrix;
             Handles.matrix = orig;
