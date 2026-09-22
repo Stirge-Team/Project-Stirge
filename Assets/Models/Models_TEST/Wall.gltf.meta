@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b113e39fd7b00d344b5aee58629075c2
+guid: 48949f12af560ef4587f8b47e1b89162
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -24,5 +24,20 @@ ScriptedImporter:
     skinUpdateWhenOffscreen: 1
     lightIntensityFactor: 1
     sceneObjectCreation: 2
-  assetDependencies: []
-  reportItems: []
+  assetDependencies:
+  - type: 1
+    originalUri: Assets\Models\Models_TEST\WallNew.png
+    assetPath: 
+  reportItems:
+  - type: 2
+    code: 19
+    messages: []
+  - type: 0
+    code: 43
+    messages:
+    - Couldn't load texture at Assets\Models\Models_TEST\WallNew.png
+    - 0
+  - type: 0
+    code: 45
+    messages:
+    - 0
