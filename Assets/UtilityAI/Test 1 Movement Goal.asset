@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e79ba209f35f0294e855647e204adc9b, type: 3}
-  m_Name: Move to Origin Goal
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedMoveToWorldPositionGoal
+  m_Script: {fileID: 11500000, guid: 9b0e3bb940072f04e8279b84888bcb6a, type: 3}
+  m_Name: Test 1 Movement Goal
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.MovementGoals.SerializedDebugTestMovementGoal
   m_scoreScaling: 1
-  m_duration: 1
-  m_displayName: Test Movement Goal
+  m_duration: 3
+  m_displayName: Test 1
   m_conditions: []
   m_scoringMethods: []
-  m_arg: {x: 0, y: 0, z: 0}
+  m_arg0: 1
+  m_arg1: This is Test 1

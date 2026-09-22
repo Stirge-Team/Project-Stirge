@@ -1321,10 +1321,6 @@ PrefabInstance:
       propertyPath: 'm_serializedMovementGoals.Array.data[0]'
       value: 
       objectReference: {fileID: 11400000, guid: b60bea14cee857f48a581f36898e21fc, type: 2}
-    - target: {fileID: 5163291894285696143, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5742239276836861200, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_Name
       value: Utility Enemy test
@@ -1367,10 +1363,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8488527449091659221, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

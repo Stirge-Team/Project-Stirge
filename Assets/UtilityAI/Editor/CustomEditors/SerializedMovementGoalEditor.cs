@@ -186,7 +186,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 EGL.EndVertical();
             }
 
-            EGL.Space();
+            EGL.Separator();
 
             // Draw any Additional properties
             string typeName = GetUIName(m_targetType);
