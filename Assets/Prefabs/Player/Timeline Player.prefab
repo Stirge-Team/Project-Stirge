@@ -16,6 +16,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Timeline Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].m_attackInput
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].m_attackInput
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].m_attackTimeline
+      value: 
+      objectReference: {fileID: 11400000, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].m_attackTimeline
+      value: 
+      objectReference: {fileID: 11400000, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
     - target: {fileID: 5026468824895456652, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_defaultBindings.Array.size
       value: 1
@@ -28,6 +48,34 @@ PrefabInstance:
       propertyPath: m_defaultBindings.Array.data[0].m_attackTimeline
       value: 
       objectReference: {fileID: 11400000, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionId
+      value: b7a5efb1-ce94-49c6-a903-b168263ac74b
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionName
+      value: 'Debug/Exit Mouse Lock[/Keyboard/escape]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[16].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: GetYInput
+      objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -117,6 +165,12 @@ PlayableDirector:
   - key: {fileID: 2836517628436428104, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
     value: {fileID: 2564161512617394268}
   - key: {fileID: -1902602398223457147, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: 1424619810209171277, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
+    value: {fileID: 351646950934871454}
+  - key: {fileID: 8983783573663061627, guid: 73f3cd9975204503db70ca474a885928, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: -2334714950854955191, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
     value: {fileID: 2564161512617394268}
   m_ExposedReferences:
     m_References: []
