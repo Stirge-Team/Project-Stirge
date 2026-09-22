@@ -4,16 +4,19 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.MovementGoals
 {
-    public class DebugTestMovementGoal : MovementGoal, ISetupable<float, string>
+    public class DebugTestMovementGoal : MovementGoal, ISetupable<float, string, bool>
     {
         private float m_score;
         private string m_message;
+        private bool m_useConsineInsteadOfSine;
+
         private float m_timer;
 
-        public void Setup(float score, string message)
+        public void Setup(float score, string message, bool useCosineInsteadOfSine)
         {
             m_score = score;
             m_message = message;
+            m_useConsineInsteadOfSine = useCosineInsteadOfSine;
         }
 
         public override void Perform(UtilityEnemy user, CombatEntity target)
@@ -29,7 +32,10 @@ namespace Stirge.UtilityAI.MovementGoals
 
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return m_score;
+            if (m_useConsineInsteadOfSine)
+                return m_score * Mathf.Cos(Time.time);
+            else
+                return m_score * Mathf.Sin(Time.time);
         }
     }
 }

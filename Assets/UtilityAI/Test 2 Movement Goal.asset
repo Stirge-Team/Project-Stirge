@@ -17,5 +17,6 @@ MonoBehaviour:
   m_displayName: Test 2
   m_conditions: []
   m_scoringMethods: []
-  m_arg0: 1
+  m_arg0: 4
   m_arg1: This is Test 2
+  m_arg2: 0

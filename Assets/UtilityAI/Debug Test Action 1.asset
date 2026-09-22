@@ -22,5 +22,6 @@ MonoBehaviour:
   m_statuses: []
   m_conditions: []
   m_scoringMethods: []
-  m_arg0: 1
+  m_arg0: 2.4
   m_arg1: farting 1
+  m_arg2: 0

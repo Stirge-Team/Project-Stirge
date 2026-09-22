@@ -167,5 +167,19 @@ namespace Stirge.UtilityAI
             return newBrain;
         }
         #endregion
+
+#if UNITY_EDITOR
+        public void GetBrainDebugInfo(ref BrainDebugInfo info)
+        {
+            info.actions = m_actions;
+            info.movementGoals = m_movementGoals;
+            info.actionTimer = m_actionTimer;
+            info.movementGoalTimer = m_movementGoalTimer;
+            info.actionScores = m_actionScores;
+            info.movementGoalScores = m_movementGoalScores;
+            info.currentActionIndex = m_currentActionIndex;
+            info.currentMovementGoalIndex = m_currentMovementGoalIndex;
+        }
+#endif
     }
 }
