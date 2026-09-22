@@ -1,8 +1,9 @@
-using NUnit.Framework.Internal;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 using EGL = UnityEditor.EditorGUILayout;
 using Object = UnityEngine.Object;
@@ -11,9 +12,8 @@ namespace Stirge.UtilityAI.CustomEditors
 {
     using EditorTools;
     using Serialization;
-    using System.Text.RegularExpressions;
 
-    [CustomEditor(typeof(SerializedAction))]
+    [CustomEditor(typeof(SerializedAction), true)]
     public class SerializedActionEditor : Editor
     {
         #region Property Names
@@ -27,6 +27,20 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_statusesPropertyName = "m_statuses";
         private const string s_conditionsPropertyName = "m_conditions";
         private const string s_scoringMethodsPropertyName = "m_scoringMethods";
+
+        private static readonly string[] s_basePropertyNames = new string[]
+        {
+            s_scoreScalingPropertyName,
+            s_durationPropertyName,
+            s_displayNamePropertyName,
+            s_actionTypePropertyName,
+            s_timelineAssetPropertyName,
+            s_damagePropertyName,
+            s_rangePropertyName,
+            s_statusesPropertyName,
+            s_conditionsPropertyName,
+            s_scoringMethodsPropertyName
+        };
         #endregion
 
         #region Serialized Properties
@@ -41,6 +55,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private SerializedProperty m_conditionsProperty;
         private SerializedProperty m_scoringMethodsProperty;
         #endregion
+
+        private Type m_targetType;
 
         private static readonly Dictionary<Object, Editor> s_conditionEditors = new();
         private static readonly Dictionary<Object, Editor> s_scoringMethodEditors = new();
@@ -60,6 +76,8 @@ namespace Stirge.UtilityAI.CustomEditors
             m_statusesProperty = serializedObject.FindProperty(s_statusesPropertyName);
             m_conditionsProperty = serializedObject.FindProperty(s_conditionsPropertyName);
             m_scoringMethodsProperty = serializedObject.FindProperty(s_scoringMethodsPropertyName);
+
+            m_targetType = target.GetType();
         }
 
         public override void OnInspectorGUI()
@@ -195,6 +213,36 @@ namespace Stirge.UtilityAI.CustomEditors
 
                 EGL.EndVertical();
             }
+
+            EGL.Separator();
+
+            // Draw any Additional properties, unless its the non-generic Action type which has no more properties
+            string typeName = GetUIName(m_targetType);
+            if (typeName == GetUIName(typeof(Action)))
+                return;
+
+            EGL.LabelField(new GUIContent(typeName + " Properties"), EditorStyles.boldLabel);
+
+            // Move to the first visible property
+            EditorGUI.BeginChangeCheck();
+            SerializedProperty prop = serializedObject.GetIterator();
+            if (prop.NextVisible(true))
+            {
+                do
+                {
+                    // Skip the script reference and the properties we have already drawn
+                    if (prop.name == "m_Script" || s_basePropertyNames.Contains(prop.name))
+                        continue;
+
+                    // This draws everything else
+                    EGL.PropertyField(prop, true);
+                }
+                while (prop.NextVisible(false)); // Use 'false' to avoid drawing child elements of complex structs/arrays twice
+            }
+            if (EditorGUI.EndChangeCheck())
+            {
+                serializedObject.ApplyModifiedProperties();
+            }
         }
 
         private void AddCondition()
@@ -242,7 +290,7 @@ namespace Stirge.UtilityAI.CustomEditors
         public static string GetUIName(Type type)
         {
             string typeName = type.Name;
-            if (typeName[..10] == "Serialized")
+            if (typeName.Length >= 11 && typeName[..10] == "Serialized")
                 return Regex.Replace(type.Name[10..], "(\\B[A-Z])", " $1");
             return Regex.Replace(type.Name, "(\\B[A-Z])", " $1");
         }

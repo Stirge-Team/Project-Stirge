@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -5,9 +6,8 @@ using UnityEngine.Timeline;
 
 namespace Stirge.Combat
 {
-    using UtilityAI;
-    using System;
     using AttackTimeline;
+    using UtilityAI;
 
     public enum ModifierType
     {
@@ -17,8 +17,6 @@ namespace Stirge.Combat
     
     public abstract class CombatEntity : Hittable
     {
-        private static bool s_debug = true;
-
         [Header("References")]
         [SerializeField] private CombatEntityMotor m_motor;
         [SerializeField] private EntityHealth m_health;

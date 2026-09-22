@@ -7,6 +7,10 @@ namespace Stirge.Player
     using UnityEngine.InputSystem;
 
     //[RequireComponent(typeof(PlayerMovement))]
+    using Management;
+    using UnityEngine.InputSystem;
+
+    [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
     [RequireComponent(typeof(EntityHealth))]
     public class Player : CombatEntity
@@ -57,12 +61,17 @@ namespace Stirge.Player
         #endregion
 
         #region Inputs
-        public void AttemptJump()
+        public void AttemptJump(InputAction.CallbackContext context)
         {
             if(Motor.OnJump())
             {
                 Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
             }
+            if (context.performed)
+                if (m_movement.OnJump())
+                {
+                    m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+                }
         }
         public void OnMove(InputAction.CallbackContext context)
         {
@@ -73,7 +82,7 @@ namespace Stirge.Player
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            
+
         }
         #endregion
 

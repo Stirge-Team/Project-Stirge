@@ -93,7 +93,7 @@ namespace Stirge.UtilityAI
             }
             else
             {
-                m_actionTimer -= Time.fixedDeltaTime;
+                m_actionTimer -= Time.deltaTime;
             }
         }
 
@@ -131,7 +131,7 @@ namespace Stirge.UtilityAI
                         // if running total breaches our targetScore, we've landed on our target
                         if (runningScore > targetScore)
                         {
-                            // If the new MovementGoal is different, reset it
+                            // If the new MovementGoal is different, Reset it before it begins Performing
                             if (currentMovementGoalIndex != m_currentMovementGoalIndex)
                             {
                                 m_movementGoals[currentMovementGoalIndex].Reset();
@@ -139,7 +139,7 @@ namespace Stirge.UtilityAI
                             
                             // Even if the new MovementGoal is the same as the previous, reset the duration
                             m_currentMovementGoalIndex = currentMovementGoalIndex;
-                            m_movementGoalTimer = m_movementGoals[currentMovementGoalIndex].duration;
+                            m_movementGoalTimer = m_movementGoals[m_currentMovementGoalIndex].duration;
                             break;
                         }
                     }
@@ -152,7 +152,7 @@ namespace Stirge.UtilityAI
             }
             else
             {
-                m_movementGoalTimer -= Time.fixedDeltaTime;
+                m_movementGoalTimer -= Time.deltaTime;
             }
         }
 
