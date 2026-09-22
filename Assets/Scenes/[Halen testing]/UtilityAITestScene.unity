@@ -525,7 +525,6 @@ MonoBehaviour:
   m_motor: {fileID: 0}
   m_health: {fileID: 0}
   m_director: {fileID: 342028844}
-  m_movement: {fileID: 342028848}
   m_input: {fileID: 342028851}
 --- !u!114 &342028848
 MonoBehaviour:
@@ -1327,7 +1326,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -3.563
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1335,7 +1334,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4
+      value: -1.916
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalRotation.w

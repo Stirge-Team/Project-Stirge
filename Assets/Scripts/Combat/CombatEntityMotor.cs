@@ -400,6 +400,12 @@ namespace Stirge.Combat
             m_feetOffset = new(0f, -m_col.bounds.extents.y, 0f);
             Handles.DrawWireCube(FeetPosition, new Vector3(m_groundCheckRadius, 0.08f, m_groundCheckRadius));
 
+            Handles.color = Color.magenta;
+            //Vector3 p1 = Quaternion.AngleAxis(m_slopeLimit, transform.right) * transform.forward + FeetPosition;
+            //Vector3 p2 = Quaternion.AngleAxis(m_slopeLimit, transform.right) * -transform.forward + FeetPosition;
+            //Handles.DrawLine(p1, p2);
+            Handles.DrawWireDisc(FeetPosition, Quaternion.AngleAxis(m_slopeLimit, Vector3.right) * Vector3.up, 0.75f);
+
             Handles.matrix = transform.localToWorldMatrix;
             Handles.matrix = orig;
         }
