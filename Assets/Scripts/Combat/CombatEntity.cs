@@ -7,7 +7,7 @@ namespace Stirge.Combat
 {
     using UtilityAI;
     using System;
-    using Stirge.AttackTimeline;
+    using AttackTimeline;
 
     public enum ModifierType
     {
@@ -19,29 +19,27 @@ namespace Stirge.Combat
     {
         private static bool s_debug = true;
 
-        [Header("Combat Components")]
-        [SerializeField] protected EntityHealth m_health;
-        // Director for playing Attack Timelines
+        [Header("References")]
+        [SerializeField] private CombatEntityMotor m_motor;
+        [SerializeField] private EntityHealth m_health;
         [SerializeField] private PlayableDirector m_director;
 
-        public EntityHealth Health => m_health;
-
+        // action fields
         protected bool m_isPerformingAction;
-        public bool IsPerformingAction => m_isPerformingAction;
 
-        [Header("Ground Check Properties")]
-        [SerializeField, Min(0)] protected float m_groundedCheckDistance;
-        [SerializeField] protected LayerMask m_groundedCheckMask;
-
-        // status
+        // status fields
         protected List<Status> m_inflictedStatuses = new();
         protected bool m_isStunned;
+
+        // properties
+        public CombatEntityMotor Motor => m_motor;
+        public EntityHealth Health => m_health;
+        public bool IsPerformingAction => m_isPerformingAction;
 
         #region UnityEvents
         private void Awake()
         {
             AwakeThis();
-            m_director.stopped += OnActionEnd;
         }
 
         private void Update()
@@ -50,6 +48,15 @@ namespace Stirge.Combat
             UpdateThis(deltaTime);
 
             UpdateStatuses(deltaTime);
+        }
+
+        private void OnEnable()
+        {
+            m_director.stopped += OnActionEnd;
+        }
+        private void OnDisable()
+        {
+            m_director.stopped -= OnActionEnd;
         }
 
         protected virtual void AwakeThis() { }
@@ -66,7 +73,6 @@ namespace Stirge.Combat
         #endregion
 
         #region Physics
-        public virtual bool IsGrounded() { throw new System.NotImplementedException(); }
         /// <summary>
         /// Move to position with respect to Physics.
         /// </summary>
@@ -101,7 +107,9 @@ namespace Stirge.Combat
             int index = 0;
             foreach (Status status in m_inflictedStatuses)
             {
-                if (status.Update(this))
+                status.Update(this);
+
+                if (status.ShouldThisClear(this))
                 {
                     status.OnClear(this);
                     toRemove.Add(index);
@@ -110,7 +118,7 @@ namespace Stirge.Combat
             }
 
             // remove backwards to avoid indicies from changing before removal
-            for (int count = toRemove.Count, i = count - 1; i >= 0; i--)
+            for (int i = toRemove.Count - 1; i >= 0; i--)
             {
                 m_inflictedStatuses.RemoveAt(toRemove[i]);
             }
@@ -138,12 +146,18 @@ namespace Stirge.Combat
         {
             StopPerformingAction();
             m_director.Play(attackTimeline);
+            m_motor.OnActionStart();
             m_isPerformingAction = true;
         }
 
+        /// <summary>
+        /// This should be added as a callback to m_director.stopped./>.
+        /// </summary>
+        /// <param name="director"></param>
         public void OnActionEnd(PlayableDirector director)
         {
             m_isPerformingAction = false;
+            m_motor.OnActionEnd();
         }
 
         public void StopPerformingAction()
@@ -176,10 +190,14 @@ namespace Stirge.Combat
             }
         }
 
-        public void ModifyDamage(ModifierType type, float modifier)
+        public void SetDamageModifier(ModifierType type, float modifier)
         {
             m_damageModifierType = type;
-            m_damageModifier = modifier;
+            m_damageModifier += modifier;
+        }
+        public void ResetDamgeModifier(float modifier)
+        {
+            m_damageModifier -= modifier;
         }
         /// <inheritdoc/>
         public override void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)

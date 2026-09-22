@@ -230,14 +230,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135975f7ca699134eab7d64d980cf3ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.Enemy
-  m_rb: {fileID: 2112035333763823347}
-  m_anim: {fileID: 8694649445836873490}
+  m_motor: {fileID: 0}
   m_health: {fileID: 440547860124242161}
-  m_inflictedStatuses: []
-  m_groundedCheckDistance: 1.3
-  m_groundedCheckMask:
-    serializedVersion: 2
-    m_Bits: 65
   m_director: {fileID: 1876474870715131292}
   m_agent:
     m_enemy: {fileID: 3686466421153252973}
@@ -251,15 +245,12 @@ MonoBehaviour:
     m_defualtGravityAcceleration: 9
     isOffGround: 0
     airStallLength: 0
-  m_motor: {fileID: 8638145286405384868}
+  m_enemyMotor: {fileID: 0}
   m_stunState: {fileID: 11400000, guid: fe242dd529fbea541a1891ef87c27a49, type: 2}
   m_airStunState: {fileID: 11400000, guid: 9cb1eb542f50d2c4992b39eaefe1ec30, type: 2}
   m_knockbackState: {fileID: 11400000, guid: ad02730f5802b034bbc259f707fad916, type: 2}
   m_airJuggle: {fileID: 11400000, guid: c0ee1255359da2d4caa5165757df1c05, type: 2}
   spawner: {fileID: 0}
-  references:
-    version: 2
-    RefIds: []
 --- !u!320 &1876474870715131292
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -279,6 +270,8 @@ PlayableDirector:
     value: {fileID: 8694649445836873490}
   - key: {fileID: 2601080034313008511, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
     value: {fileID: 8638145286405384868}
+  - key: {fileID: -6557302341939186198, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &440547860124242161

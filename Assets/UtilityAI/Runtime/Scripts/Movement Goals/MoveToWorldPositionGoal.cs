@@ -14,15 +14,27 @@ namespace Stirge.UtilityAI.MovementGoals
             m_worldPosition = worldPosition;
         }
 
-        protected override float EvaluateInternal(CombatEntity user, CombatEntity target)
+        protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
             return Mathf.Min(3f, Vector3.Distance(user.GetPosition(), m_worldPosition));
         }
 
         public override void Perform(UtilityEnemy user, CombatEntity target)
         {
-            if (user.NavMeshAgent.destination != m_worldPosition)
-                user.NavMeshAgent.SetDestination(m_worldPosition);
+            // switch to navigation mode
+            if (user.Motor.IsGrounded)
+            {
+                if (user.Motor.MovementState != MotorMovementState.Navigation)
+                    user.Motor.SetMovementState(MotorMovementState.Navigation);
+            
+                if (user.NavMeshAgent.destination != m_worldPosition)
+                    user.NavMeshAgent.SetDestination(m_worldPosition);
+            }
+        }
+
+        public override void Reset()
+        {
+            
         }
     }
 }

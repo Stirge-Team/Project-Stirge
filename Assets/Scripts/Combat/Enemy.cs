@@ -12,7 +12,7 @@ namespace Stirge.Enemy
     {
         [Header("Enemy Properties")]
         [SerializeField] private Agent m_agent;
-        [SerializeField] private EnemyMotor m_motor;
+        [SerializeField] private EnemyMotor m_enemyMotor;
 
         [Header("Combat States")]
         [SerializeField] private State m_stunState;
@@ -28,7 +28,7 @@ namespace Stirge.Enemy
         public Transform TargetTransform => m_targetTransform;
 
         // properties
-        public EnemyMotor Motor => m_motor;
+        public new EnemyMotor Motor => m_enemyMotor;
 
         #region Unity Events
         // PLEASE NOTE: Always call the BASE method first to avoid inconsistencies.
@@ -41,7 +41,7 @@ namespace Stirge.Enemy
         protected override void UpdateThis(float deltaTime)
         {
             // check if enemy is dead this frame
-            if (m_health._isDead)
+            if (Health._isDead)
             {
                 if (spawner != null)
                     spawner.ReportDeath(this);
@@ -103,38 +103,34 @@ namespace Stirge.Enemy
         #region Transformation
         public override Vector3 GetPosition()
         {
-            return m_motor.transform.position;
+            return Motor.transform.position;
         }
         public override void SetPosition(Vector3 newPosition)
         {
-            m_motor.SetPosition(newPosition);
+            Motor.SetPosition(newPosition);
         }
         public override Quaternion GetRotation()
         {
-            return m_motor.transform.rotation;
+            return Motor.transform.rotation;
         }
         public override void SetRotation(Quaternion newRotation)
         {
-            m_motor.SetRotation(newRotation);
+            Motor.SetRotation(newRotation);
         }
         public override void SetRotation(Vector3 eulerRotation)
         {
-            m_motor.SetRotation(Quaternion.Euler(eulerRotation));
+            Motor.SetRotation(Quaternion.Euler(eulerRotation));
         }
         public override Vector3 GetForward()
         {
-            return m_motor.transform.forward;
+            return Motor.transform.forward;
         }
         #endregion
 
         #region Physics
-        public override bool IsGrounded()
-        {
-            return Physics.Raycast(m_agent.Transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-        }
         public override void MovePosition(Vector3 newPosition)
         {
-            m_motor.SetPosition(newPosition);
+            Motor.SetPosition(newPosition);
         }
         #endregion
 
@@ -150,7 +146,7 @@ namespace Stirge.Enemy
             m_isStunned = true;
 
             // different State for when Grounded
-            if (IsGrounded())
+            if (Motor.IsGrounded)
                 m_agent.EnterState(m_stunState);
             else
                 m_agent.EnterState(m_airStunState);
@@ -159,7 +155,7 @@ namespace Stirge.Enemy
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
-            if (IsGrounded() || ignoreGrounded)
+            if (Motor.IsGrounded || ignoreGrounded)
             {
                 if (stunLength > 0f)
                 { 
@@ -172,7 +168,7 @@ namespace Stirge.Enemy
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
         {
-            if (IsGrounded() || ignoreGrounded)
+            if (Motor.IsGrounded || ignoreGrounded)
             {
                 if (stunLength > 0f)
                 {
@@ -184,15 +180,5 @@ namespace Stirge.Enemy
             }
         }
         #endregion
-
-#if UNITY_EDITOR
-        private void OnDrawGizmosSelected()
-        {
-            m_agent.OnDrawGizmos();
-
-            Gizmos.color = Color.magenta;
-            Gizmos.DrawLine(m_agent.Transform.position, m_agent.Transform.position + Vector3.down * m_groundedCheckDistance);
-        }
-#endif
     }
 }

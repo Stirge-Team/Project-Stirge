@@ -14,7 +14,7 @@ namespace Stirge.UtilityAI.ScoringMethods
             m_score = score;
         }
 
-        protected override float EvaluateInternal(CombatEntity user, CombatEntity target)
+        protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
             return m_score;
         }

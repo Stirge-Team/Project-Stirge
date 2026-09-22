@@ -7,9 +7,9 @@ namespace Stirge.UtilityAI.ScoringMethods
 
     public class DamageScoringMethod : ScoringMethod, INotSetupable
     {
-        protected override float EvaluateInternal(CombatEntity user, CombatEntity target)
+        protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return m_action.damage;
+            return user.Brain.CurrentAction.damage;
         }
     }
 }

@@ -130,7 +130,7 @@ MonoBehaviour:
   m_Version: 3
   m_AnimClip: {fileID: 0}
   m_Locked: 0
-  m_Muted: 1
+  m_Muted: 0
   m_CustomPlayableFullTypename: 
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
@@ -221,16 +221,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AttackTimeline.HitboxClip
   m_data:
     m_onHitEffect:
-      m_damage: 0
-      m_statuses: []
+      m_damage: 2
     m_mask:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 129
     HitboxWorldPosition: {x: 0.042085633, y: 1.3298751, z: 7.0745335}
     HitboxVelocityVector: {x: 0.5374895, y: 0.5333567, z: -0.6531736}
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &6152242168876675252
 MonoBehaviour:
   m_ObjectHideFlags: 1

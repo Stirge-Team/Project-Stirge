@@ -8,110 +8,64 @@ namespace Stirge.UtilityAI
 
     public class UtilityEnemy : CombatEntity
     {
-        [Header("Enemy Properties")]
-        [SerializeField] private UtilityEnemyMotor m_motor;
-
-        public new Transform transform => m_motor.transform;
-        public UtilityEnemyMotor Motor => m_motor;
-        public Rigidbody Rigidbody => m_motor.Rigidbody;
-        public NavMeshAgent NavMeshAgent => m_motor.NavMeshAgent;
-        
         [Header("Utility Properties")]
-        [SerializeField] private SerializedAction[] m_serializedActions;
-        [SerializeField] private SerializedMovementGoal_Base[] m_serializedMovementGoals;
+        [SerializeField] private SerializedUtilityBrain m_serializedBrain;
         [SerializeField] private CombatEntity m_target;
 
-        private Action[] m_actions;
-        private MovementGoal[] m_movementGoals;
+        private UtilityBrain m_brain;
+        public UtilityBrain Brain => m_brain;
 
-        private float m_actionTimer;
-        private float m_movementGoalTimer;
-
+        // properties
+        public UtilityEnemyMotor EnemyMotor => (UtilityEnemyMotor)Motor;
+        public new Transform transform => Motor.transform;
+        public Rigidbody Rigidbody => Motor.Rigidbody;
+        public NavMeshAgent NavMeshAgent => EnemyMotor.NavMeshAgent;
         public CombatEntity Target => m_target;
 
         private void Start()
         {
             //Time.fixedDeltaTime = 0.333f;
 
-            int actionCount = m_serializedActions.Length;
-            m_actions = new Action[actionCount];
-            for (int i = 0; i < actionCount; i++)
-            {
-                m_actions[i] = m_serializedActions[i].CreateRuntimeAction(this);
-            }
-
-            int movementGoalCount = m_serializedMovementGoals.Length;
-            m_movementGoals = new MovementGoal[movementGoalCount];
-            for (int i = 0; i < movementGoalCount; i++)
-            {
-                m_movementGoals[i] = m_serializedMovementGoals[i].CreateRuntimeMovementGoal();
-            }
+            m_brain = m_serializedBrain.CreateRuntimeBrain();
+            m_brain.Start();
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
-            if (m_actionTimer <= 0f)
-            {
-                Action newAction;
-                foreach (var action in m_actions)
-                {
-                    Debug.Log($"{action.displayName}: {action.Evaluate(this, m_target)}");
-                }
-            }
-            else
-            {
-                m_actionTimer -= Time.fixedDeltaTime;
-            }
-
-            if (m_movementGoalTimer <= 0f)
-            {
-                MovementGoal newMovementGoal;
-                foreach (var movementGoal in m_movementGoals)
-                {
-                    Debug.Log($"{movementGoal.displayName}: {movementGoal.Evaluate(this, m_target)}");
-                }
-            }
-            else
-            {
-                m_movementGoalTimer -= Time.fixedDeltaTime;
-            }
+            m_brain.Update(this, m_target);
         }
 
         #region Transformation
         public override Vector3 GetPosition()
         {
-            return m_motor.transform.position;
+            return Motor.transform.position;
         }
         public override void SetPosition(Vector3 newPosition)
         {
-            m_motor.SetPosition(newPosition);
+            Motor.SetPosition(newPosition);
         }
         public override Quaternion GetRotation()
         {
-            return m_motor.transform.rotation;
+            return Motor.transform.rotation;
         }
         public override void SetRotation(Quaternion newRotation)
         {
-            m_motor.SetRotation(newRotation);
+            Motor.SetRotation(newRotation);
         }
         public override void SetRotation(Vector3 eulerRotation)
         {
-            m_motor.SetRotation(Quaternion.Euler(eulerRotation));
+            Motor.SetRotation(Quaternion.Euler(eulerRotation));
         }
         public override Vector3 GetForward()
         {
-            return m_motor.transform.forward;
+            return Motor.transform.forward;
         }
         #endregion
 
         #region Physics
-        public override bool IsGrounded()
-        {
-            return Physics.Raycast(m_motor.transform.position, Vector3.down, m_groundedCheckDistance, m_groundedCheckMask);
-        }
         public override void MovePosition(Vector3 newPosition)
         {
-            m_motor.SetPosition(newPosition);
+            Motor.SetPosition(newPosition);
         }
         #endregion
 

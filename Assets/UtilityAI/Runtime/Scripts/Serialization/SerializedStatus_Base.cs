@@ -3,19 +3,6 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
-    public enum StatusStackType
-    {
-        Stackable,
-        Unstackable,
-        Unique,
-    }
-    public enum StatusDurationType
-    {
-        Instant,
-        Timed,
-        Conditional
-    }
-
     public abstract class SerializedStatus_Base : ScriptableObject
     {
         [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;

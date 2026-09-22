@@ -33,8 +33,6 @@ namespace Stirge.UtilityAI
         public static bool Equatable = (FirstType == SecondType) || Comparable;
         public static bool Comparable = StirgeTypeHelper.IsNumericType(FirstType) && StirgeTypeHelper.IsNumericType(SecondType);
 
-        private Action m_action;
-
         private Operation m_operation;
         private ConditionType m_type;
 
@@ -106,7 +104,7 @@ namespace Stirge.UtilityAI
         }
         #endregion       
 
-        public bool Evaluate(CombatEntity user, CombatEntity target)
+        public bool Evaluate(UtilityEnemy user, CombatEntity target)
         {
             // if not comparable
             if (!Comparable)
@@ -140,11 +138,6 @@ namespace Stirge.UtilityAI
                 Operation.GreaterThanOrEqual => firstValue >= secondValue || Mathf.Approximately(firstValue, secondValue),
                 _ => false,
             };
-        }
-
-        public void Setup(Action action)
-        {
-            m_action = action;
         }
 
         private static void LogNotEquatableError()

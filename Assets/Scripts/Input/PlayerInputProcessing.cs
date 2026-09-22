@@ -136,7 +136,7 @@ namespace Stirge.Input
             if (!m_player.IsPerformingAction)
             {
                 // grounded bindings
-                if (m_player.IsGrounded())
+                if (m_player.Motor.IsGrounded)
                 {
                     if (m_groundedBindings.TryGetValue(input, out attackTimeline))
                     {

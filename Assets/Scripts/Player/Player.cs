@@ -19,7 +19,7 @@ namespace Stirge.Player
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if (!m_movement || !m_input || !m_health)
+            if(!m_movement || !m_input || !Health)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
@@ -72,11 +72,6 @@ namespace Stirge.Player
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
             m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
-        }
-
-        public override bool IsGrounded()
-        {
-            return m_movement.IsGrounded;
         }
         #endregion
 

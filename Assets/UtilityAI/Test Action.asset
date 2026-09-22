@@ -16,7 +16,7 @@ MonoBehaviour:
   m_duration: 1
   m_displayName: Test Action
   m_actionType: 0
-  m_timeline: {fileID: 0}
+  m_timeline: {fileID: 11400000, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
   m_damage: 1
   m_range: 1
   m_statuses: []

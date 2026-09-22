@@ -13,7 +13,7 @@ namespace Stirge.Combat
         /// <param name="attackingEntity">combat entity that hit the object</param>
         public virtual void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)
         {
-
+            throw new System.NotImplementedException();
         }
     }
 }

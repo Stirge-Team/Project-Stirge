@@ -1,7 +1,3 @@
-#if UNITY_EDITOR
-using System.ComponentModel;
-
-#endif
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
@@ -9,7 +5,7 @@ using UnityEngine.Timeline;
 namespace Stirge.AttackTimeline
 {
 #if UNITY_EDITOR
-    [DisplayName("Hitbox Clip")]
+    [System.ComponentModel.DisplayName("Hitbox Clip")]
 #endif
     public class HitboxClip : PlayableAsset , ITimelineClipAsset
     {
