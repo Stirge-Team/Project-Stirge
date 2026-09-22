@@ -9,12 +9,96 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 369394295828842384, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_motor
+      value: 
+      objectReference: {fileID: 9209861614420571021}
+    - target: {fileID: 369394295828842384, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: PlyrMotor
+      value: 
+      objectReference: {fileID: 9209861614420571021}
+    - target: {fileID: 369394295828842384, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_director
       value: 
       objectReference: {fileID: 1586204145904131630}
+    - target: {fileID: 369394295828842384, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_movement
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_Name
       value: Timeline Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[0].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[1].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[2].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[3].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[4].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[5].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[6].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[7].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[8].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_animationEvents.Array.data[9].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].m_attackInput
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].m_attackInput
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[0].m_attackTimeline
+      value: 
+      objectReference: {fileID: 11400000, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+    - target: {fileID: 2696550745804498183, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].m_attackTimeline
+      value: 
+      objectReference: {fileID: 11400000, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
+    - target: {fileID: 3353919659384064465, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_motor
+      value: 
+      objectReference: {fileID: 9209861614420571021}
+    - target: {fileID: 3353919659384064465, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_playerMovement
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4417360331099796648, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 5026468824895456652, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_defaultBindings.Array.size
@@ -28,6 +112,38 @@ PrefabInstance:
       propertyPath: m_defaultBindings.Array.data[0].m_attackTimeline
       value: 
       objectReference: {fileID: 11400000, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionId
+      value: b7a5efb1-ce94-49c6-a903-b168263ac74b
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_ActionName
+      value: 'Debug/Exit Mouse Lock[/Keyboard/escape]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[18].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5169013462846126806}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnMove
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Stirge.Player.Player, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -68,13 +184,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2920065731834999269, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+    - {fileID: 5256876837077168771, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       insertIndex: 2
       addedObject: {fileID: 1586204145904131630}
+    - targetCorrespondingSourceObject: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9209861614420571021}
   m_SourcePrefab: {fileID: 100100000, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
 --- !u!114 &351646950934871454 stripped
 MonoBehaviour:
@@ -87,11 +208,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
+--- !u!4 &2202064621031587732 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+  m_PrefabInstance: {fileID: 4799812991401377094}
+  m_PrefabAsset: {fileID: 0}
 --- !u!95 &2564161512617394268 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 6992374104284298522, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
   m_PrefabInstance: {fileID: 4799812991401377094}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5169013462846126806 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 369394295828842384, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+  m_PrefabInstance: {fileID: 4799812991401377094}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050839656796171245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
 --- !u!1 &6050839656796171245 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
@@ -118,5 +255,74 @@ PlayableDirector:
     value: {fileID: 2564161512617394268}
   - key: {fileID: -1902602398223457147, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
     value: {fileID: 2564161512617394268}
+  - key: {fileID: 1424619810209171277, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
+    value: {fileID: 351646950934871454}
+  - key: {fileID: 8983783573663061627, guid: 73f3cd9975204503db70ca474a885928, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: -2334714950854955191, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
+    value: {fileID: 2564161512617394268}
   m_ExposedReferences:
     m_References: []
+--- !u!114 &9209861614420571021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6050839656796171245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73f4dd88a9b4d6242bfefd1f6f4745b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerMotor
+  m_transform: {fileID: 2202064621031587732}
+  m_rb: {fileID: 7438401560705065281}
+  m_col: {fileID: 6330139077499344260}
+  m_defaultMovementState: 1
+  m_walkableLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_groundedMovementProperties: {fileID: 11400000, guid: 6d25c5ef176f1993d929c3d38c71b4cf, type: 2}
+  m_aerialMovementProperties: {fileID: 11400000, guid: dbec2a8f79c4f73fc98d7619e41cc3b7, type: 2}
+  m_verticalTopSpeed: 1000
+  m_maxFallingSpeed: 1000
+  m_coyoteTime: 0.2
+  m_fallSpeedMultiplier: 1
+  m_groundCheckDistance: 1
+  m_groundCheckRadius: 0.5
+  m_slopeLimit: 45
+  m_jumpHeight: 3
+  m_inputStrengthScalar:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!136 &6330139077499344260 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 1532762708043262146, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+  m_PrefabInstance: {fileID: 4799812991401377094}
+  m_PrefabAsset: {fileID: 0}
+--- !u!54 &7438401560705065281 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 2713100686291229703, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+  m_PrefabInstance: {fileID: 4799812991401377094}
+  m_PrefabAsset: {fileID: 0}

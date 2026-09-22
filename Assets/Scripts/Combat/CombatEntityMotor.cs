@@ -69,6 +69,7 @@ namespace Stirge.Combat
         protected float friction => CurrentMovementProperties.Friction;
         protected float verticalTopSpeed => m_verticalTopSpeed;
         protected float maxFallingSpeed => m_maxFallingSpeed;
+        protected float coyoteCountdown => m_coyoteCountdown;
 
         // public properties
         public MovementProperties CurrentMovementProperties => m_isGrounded ? m_groundedMovementProperties : m_aerialMovementProperties;
@@ -334,6 +335,10 @@ namespace Stirge.Combat
             OnChangeAerialMovementProperties(newProperties);
         }
         protected virtual void OnChangeAerialMovementProperties(MovementProperties newProperties) { }
+        protected void EndCoyoteTime()
+        {
+            m_coyoteCountdown = 0;
+        }
         #endregion
 
         #region State

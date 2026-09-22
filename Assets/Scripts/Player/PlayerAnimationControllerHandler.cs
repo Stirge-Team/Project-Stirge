@@ -9,9 +9,7 @@ namespace Stirge.Player
 
         [Header("Component References")]
         [SerializeField]
-        private PlayerMovement m_playerMovement;
-        [SerializeField]
-        private MovementMotor m_motor;
+        private PlayerMotor m_motor;
 
         [Header("Animator Parameter Names")]
         [SerializeField]
@@ -26,8 +24,8 @@ namespace Stirge.Player
         // Update is called once per frame
         void Update()
         {
-            m_controller.SetFloat(m_movementParameter, m_motor._horizontalSpeed * m_speedScale);
-            m_controller.SetBool(m_isGroundedParameter, m_playerMovement.IsGrounded);
+            m_controller.SetFloat(m_movementParameter, m_motor.HorizontalSpeed * m_speedScale);
+            m_controller.SetBool(m_isGroundedParameter, m_motor.IsGrounded);
         }
     }
 }
