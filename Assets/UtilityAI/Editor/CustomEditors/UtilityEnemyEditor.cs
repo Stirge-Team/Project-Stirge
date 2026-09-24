@@ -17,6 +17,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private static GUIStyle s_centredLabel;
         private static bool s_centredLabelIsInitialised;
 
+        private const string NUM_DISPLAY_FORMAT = "0.###";
+
         private void OnEnable()
         {
             m_enemy = (UtilityEnemy)target;
@@ -74,12 +76,12 @@ namespace Stirge.UtilityAI.CustomEditors
 
                 EGL.BeginHorizontal();
                 EGL.LabelField("Time until Evaluates Actions");
-                DrawDisabledText(info.actionTimer <= 0, info.actionTimer.ToString());
+                DrawDisabledText(info.actionTimer <= 0, Mathf.Max(0, info.actionTimer).ToString(NUM_DISPLAY_FORMAT));
                 EGL.EndHorizontal();
 
                 EGL.BeginHorizontal();
                 EGL.LabelField("Time until Evaluates MovementGoals");
-                DrawDisabledText(info.movementGoalTimer <= 0, info.movementGoalTimer.ToString());
+                DrawDisabledText(info.movementGoalTimer <= 0, Mathf.Max(0, info.movementGoalTimer).ToString(NUM_DISPLAY_FORMAT));
                 EGL.EndHorizontal();
 
                 EGL.LabelField("Action Scores");
@@ -101,7 +103,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     EGL.BeginHorizontal();
                     EGL.LabelField($"{i + 1}.", GUILayout.MaxWidth(30f));
-                    DrawDisabledText(isInvalid, action.displayName, actionScore.ToString());
+                    DrawDisabledText(isInvalid, action.displayName, Mathf.Max(0, actionScore).ToString(NUM_DISPLAY_FORMAT));
                     EGL.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;
@@ -125,7 +127,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     EGL.BeginHorizontal();
                     EGL.LabelField($"{i + 1}.", GUILayout.MaxWidth(30f));
-                    DrawDisabledText(isInvalid, movementGoal.displayName, movementGoalScore.ToString());
+                    DrawDisabledText(isInvalid, movementGoal.displayName, Mathf.Max(0, movementGoalScore).ToString(NUM_DISPLAY_FORMAT));
                     EGL.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;
