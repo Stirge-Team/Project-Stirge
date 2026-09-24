@@ -60,33 +60,31 @@ namespace Stirge.UtilityAI.CustomEditors
 
                 EGL.BeginHorizontal();
                 EGL.LabelField("Current Action");
-                string currentActionText = info.currentActionIndex != -1 ? info.actions[info.currentActionIndex].displayName : "null";
-                using (new EditorGUI.DisabledScope(true))
-                    EGL.TextField(currentActionText);
+                bool hasCurrentAction = info.currentActionIndex != -1;
+                string currentActionText = hasCurrentAction ? info.actions[info.currentActionIndex].displayName : "null";
+                DrawDisabledText(!hasCurrentAction, currentActionText);
                 EGL.EndHorizontal();
 
                 EGL.BeginHorizontal();
                 EGL.LabelField("Current Movement Goal");
-                string currentMovementGoalText = info.currentMovementGoalIndex != -1 ? info.movementGoals[info.currentMovementGoalIndex].displayName : "null";
-                using (new EditorGUI.DisabledScope(true))
-                    EGL.TextField(currentMovementGoalText);
+                bool hasCurrentMovementGoal = info.currentMovementGoalIndex != -1;
+                string currentMovementGoalText = hasCurrentMovementGoal ? info.movementGoals[info.currentMovementGoalIndex].displayName : "null";
+                DrawDisabledText(!hasCurrentMovementGoal, currentMovementGoalText);
                 EGL.EndHorizontal();
 
                 EGL.BeginHorizontal();
                 EGL.LabelField("Time until Evaluates Actions");
-                using (new EditorGUI.DisabledScope(true))
-                    EGL.TextField(info.actionTimer.ToString());
+                DrawDisabledText(info.actionTimer <= 0, info.actionTimer.ToString());
                 EGL.EndHorizontal();
 
                 EGL.BeginHorizontal();
                 EGL.LabelField("Time until Evaluates MovementGoals");
-                using (new EditorGUI.DisabledScope(true))
-                    EGL.TextField(info.movementGoalTimer.ToString());
+                DrawDisabledText(info.movementGoalTimer <= 0, info.movementGoalTimer.ToString());
                 EGL.EndHorizontal();
 
                 EGL.LabelField("Action Scores");
 
-                // sort actions by score
+                // sort actions by score descending
                 int actionCount = info.actions.Length;
                 Action[] sortedActions = new Action[actionCount];
                 float[] sortedActionScores = new float[actionCount];
@@ -95,26 +93,15 @@ namespace Stirge.UtilityAI.CustomEditors
                 Array.Sort(sortedActionScores, sortedActions, new DescendingFloatComparer());
 
                 EditorGUI.indentLevel++;
-                bool dividerDrawn = false;
                 for (int i = 0; i < actionCount; i++)
                 {
-                    Action currentAction = sortedActions[i];
-                    float currentActionScore = sortedActionScores[i];
-
-                    // check if the divider needs to be drawn
-                    if (currentActionScore <= 0 && !dividerDrawn)
-                    {
-                        EGL.LabelField("---------------Invalid---------------", s_centredLabel);
-                        dividerDrawn = true;
-                    }
+                    Action action = sortedActions[i];
+                    float actionScore = sortedActionScores[i];
+                    bool isInvalid = actionScore <= 0;
 
                     EGL.BeginHorizontal();
                     EGL.LabelField($"{i + 1}.", GUILayout.MaxWidth(30f));
-                    using (new EditorGUI.DisabledScope(true))
-                    {
-                        EGL.TextField(currentAction.displayName);
-                        EGL.TextField(currentActionScore.ToString());
-                    }
+                    DrawDisabledText(isInvalid, action.displayName, actionScore.ToString());
                     EGL.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;
@@ -130,26 +117,15 @@ namespace Stirge.UtilityAI.CustomEditors
                 Array.Sort(sortedMovementGoalScores, sortedMovementGoals, new DescendingFloatComparer());
 
                 EditorGUI.indentLevel++;
-                dividerDrawn = false;
                 for (int i = 0; i < movementGoalCount; i++)
                 {
-                    MovementGoal currentMovementGoal = sortedMovementGoals[i];
-                    float currentMovementGoalScore = sortedMovementGoalScores[i];
-
-                    // check if the divider needs to be drawn
-                    if (currentMovementGoalScore <= 0 && !dividerDrawn)
-                    {
-                        EGL.LabelField("---------------Invalid---------------", s_centredLabel);
-                        dividerDrawn = true;
-                    }
+                    MovementGoal movementGoal = sortedMovementGoals[i];
+                    float movementGoalScore = sortedMovementGoalScores[i];
+                    bool isInvalid = movementGoalScore <= 0;
 
                     EGL.BeginHorizontal();
                     EGL.LabelField($"{i + 1}.", GUILayout.MaxWidth(30f));
-                    using (new EditorGUI.DisabledScope(true))
-                    {
-                        EGL.TextField(currentMovementGoal.displayName);
-                        EGL.TextField(currentMovementGoalScore.ToString());
-                    }
+                    DrawDisabledText(isInvalid, movementGoal.displayName, movementGoalScore.ToString());
                     EGL.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;
@@ -164,6 +140,17 @@ namespace Stirge.UtilityAI.CustomEditors
             public int Compare(float x, float y)
             {
                 return y.CompareTo(x);
+            }
+        }
+
+        private static void DrawDisabledText(bool showDisabled, params string[] labels)
+        {
+            using (new EditorGUI.DisabledScope(showDisabled))
+            {
+                foreach (string label in labels)
+                {
+                    EGL.LabelField(label, EditorStyles.textField);
+                }
             }
         }
     }

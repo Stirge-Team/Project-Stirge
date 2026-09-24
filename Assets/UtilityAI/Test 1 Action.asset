@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0375318d9c735894ca6d53a9bc1261d0, type: 3}
-  m_Name: Debug Test Action 2
+  m_Name: Test 1 Action
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Actions.SerializedDebugTestAction
   m_scoreScaling: 1
   m_duration: 3
-  m_displayName: Test Action 2
+  m_displayName: Test Action 1
   m_actionType: 0
   m_timeline: {fileID: 0}
   m_damage: 1
@@ -22,6 +22,6 @@ MonoBehaviour:
   m_statuses: []
   m_conditions: []
   m_scoringMethods: []
-  m_arg0: 2.3
-  m_arg1: farting 2
+  m_arg0: 2.4
+  m_arg1: farting 1
   m_arg2: 0
