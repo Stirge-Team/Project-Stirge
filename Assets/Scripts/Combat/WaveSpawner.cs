@@ -149,7 +149,7 @@ namespace Stirge.Combat
                 {
                     //other spawn functions
                     m_activeEnemies.Add(newEnemy); //save to list
-                    newEnemy.deathCallback = RemoveEnemyFromActiveList;
+                    //newEnemy.deathCallback = RemoveEnemyFromActiveList;
                     m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
                 }
             }

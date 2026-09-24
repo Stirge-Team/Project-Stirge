@@ -1,53 +1,60 @@
-using UnityEngine;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine;
+using UnityEngine.Playables;
+using UnityEngine.Timeline;
 
 namespace Stirge.Combat
 {
-    using Attacks;
+    using AttackTimeline;
+    using UtilityAI;
 
-    public abstract class CombatEntity : MonoBehaviour
+    public enum ModifierType
     {
-        private static bool s_debug = true;
+        Additive,
+        Multiplicative
+    }
+    
+    public abstract class CombatEntity : Hittable
+    {
+        [Header("References")]
+        [SerializeField] private CombatEntityMotor m_motor;
+        [SerializeField] private EntityHealth m_health;
+        [SerializeField] private PlayableDirector m_director;
 
-        [Header("Components")]
-        [SerializeField] protected Rigidbody m_rb;
-        [SerializeField] protected Animator m_anim;
+        // action fields
+        protected bool m_isPerformingAction;
 
-        [Header("Combat Properties")]
-        [SerializeField] protected EntityHealth m_health;
-        public EntityHealth Health => m_health;
-
-        protected Transform m_targetTransform;
-        public Transform TargetTransform => m_targetTransform;
-
-        protected bool m_isAttacking;
-        public bool IsAttacking => m_isAttacking;
-
-        [Header("Status")]
-        [SerializeReference] protected List<TimedStatus> m_inflictedStatuses = new();
-        
+        // status fields
+        protected List<Status> m_inflictedStatuses = new();
         protected bool m_isStunned;
 
-        [Header("Ground Check Properties")]
-        [SerializeField, Min(0)] protected float m_groundedCheckDistance;
-        [SerializeField] protected LayerMask m_groundedCheckMask;
+        // properties
+        public CombatEntityMotor Motor => m_motor;
+        public EntityHealth Health => m_health;
+        public bool IsPerformingAction => m_isPerformingAction;
 
         #region UnityEvents
         private void Awake()
         {
             AwakeThis();
         }
+
         private void Update()
         {
             float deltaTime = Time.deltaTime;
             UpdateThis(deltaTime);
 
             UpdateStatuses(deltaTime);
+        }
 
-            if (m_isAttacking)
-                UpdateAttacking();
+        private void OnEnable()
+        {
+            m_director.stopped += OnActionEnd;
+        }
+        private void OnDisable()
+        {
+            m_director.stopped -= OnActionEnd;
         }
 
         protected virtual void AwakeThis() { }
@@ -55,30 +62,20 @@ namespace Stirge.Combat
         #endregion
 
         #region Transformation
-        public virtual void ApplyRootMotion() { throw new System.NotImplementedException(); }
-
-        protected virtual Vector3 GetPosition() { throw new System.NotImplementedException(); }
-        protected virtual void SetPosition(Vector3 position) { throw new System.NotImplementedException(); }
-        protected virtual Quaternion GetRotation() { throw new System.NotImplementedException(); }
-        protected virtual void SetRotation(Quaternion rotation) { throw new System.NotImplementedException(); }
-        protected virtual void SetRotation(Vector3 eulerRotation) { throw new System.NotImplementedException(); }
+        public virtual Vector3 GetPosition() { throw new System.NotImplementedException(); }
+        public virtual void SetPosition(Vector3 position) { throw new System.NotImplementedException(); }
+        public virtual Quaternion GetRotation() { throw new System.NotImplementedException(); }
+        public virtual void SetRotation(Quaternion rotation) { throw new System.NotImplementedException(); }
+        public virtual void SetRotation(Vector3 eulerRotation) { throw new System.NotImplementedException(); }
         public virtual Vector3 GetForward() { throw new System.NotImplementedException(); }
         #endregion
 
-        #region Navigation
-        public void SetTargetTransform(Transform target) => m_targetTransform = target;
-
-        protected virtual void BeginGoToPosition(Vector3 newPosition) { throw new System.NotImplementedException(); }
-        protected virtual void StopGoToPosition() { throw new System.NotImplementedException(); }
-
-        protected virtual float GetMovementSpeed() { throw new System.NotImplementedException(); }
-        protected virtual void SetMovementSpeed(float speed) { throw new System.NotImplementedException(); }
-        protected virtual void ResetMovementSpeed() { throw new System.NotImplementedException(); }
-        #endregion
-
         #region Physics
-        public virtual bool IsGrounded() { throw new System.NotImplementedException(); }
-        public virtual void ApplyPhysicsToTransform() { throw new System.NotImplementedException(); }
+        /// <summary>
+        /// Move to position with respect to Physics.
+        /// </summary>
+        /// <param name="newPosition"></param>
+        public virtual void MovePosition(Vector3 newPosition) { throw new System.NotImplementedException(); }
         #endregion
 
         #region Death State
@@ -96,52 +93,33 @@ namespace Stirge.Combat
         #endregion
 
         #region Statuses
-        public void InflictStatus(Status status, CombatEntity attackingEntity)
+        public virtual void InflictStatus(Status status, CombatEntity user)
         {
             // inflict the Status
-            if (attackingEntity == null)
-                status.OnInflict(this);
-            else
-                status.OnInflict(this, attackingEntity);   
-        }
-
-        public void InflictTimedStatus(TimedStatus status, CombatEntity attackingEntity = null)
-        {
-            // add to list to be updated
-            switch (status.GetType().Name)
-            {
-                case nameof(Stun):
-                    // only allow one Stun at a time
-                    m_inflictedStatuses.RemoveAll(status => status.GetType() == typeof(Stun));
-
-                    // add and inflict
-                    Stun newStun = new(status as Stun);
-                    if (attackingEntity == null)
-                        newStun.OnInflict(this);
-                    else
-                        newStun.OnInflict(this, attackingEntity);
-
-                    m_inflictedStatuses.Add(newStun);
-                    break;
-            }
+            status.OnApply(user, this);
         }
 
         private void UpdateStatuses(float deltaTime)
         {
-            List<TimedStatus> toRemove = new();
-            foreach (TimedStatus status in m_inflictedStatuses)
+            List<int> toRemove = new();
+            int index = 0;
+            foreach (Status status in m_inflictedStatuses)
             {
-                status.Update(this, deltaTime);
-                if (status.IsCleared)
+                status.Update(this);
+
+                if (status.ShouldThisClear(this))
                 {
                     status.OnClear(this);
-                    toRemove.Add(status);
-                    continue;
+                    toRemove.Add(index);
                 }
+                index++;
             }
 
-            if (toRemove.Count > 0)
-                m_inflictedStatuses.RemoveAll(status => toRemove.Contains(status));
+            // remove backwards to avoid indicies from changing before removal
+            for (int i = toRemove.Count - 1; i >= 0; i--)
+            {
+                m_inflictedStatuses.RemoveAt(toRemove[i]);
+            }
         }
 
         public bool GetIsStunned()
@@ -156,231 +134,93 @@ namespace Stirge.Combat
                 EnterStun(stunLength);
         }
 
-        public abstract void EnterStun(float stunLength);
-        public abstract void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded);
-        public abstract void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded);
+        public virtual void EnterStun(float stunLength) { throw new NotImplementedException(); }
+        public virtual void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
+        public virtual void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
         #endregion
 
-        #region Attacks
-        // List of all the AttackNodes in the attack being used
-        private AttackNode[] m_attackSequence;
-        // Reference to the AttackNode currently being processed. Set to null once it is finished being processed
-        private AttackNode m_currentAttackNode;
-        // Stores the index of the AttackNode in m_attackSequence currently being processed.
-        // After an AttackNode is finished processing, incremented by one to determine the next node or if the attack
-        // is finished
-        private int m_currentAttackIndex;
-        // List of all the currently active Coroutines performing attack logic
-        private Coroutine[] m_attackCoroutines;
-
-        public virtual void UseAttack(AttackData attackData)
+        #region Actions
+        public virtual void UseAction(TimelineAsset attackTimeline)
         {
-            StopAttacking();
-            m_attackSequence = attackData.EvaluateSequence();
-            m_currentAttackNode = null;
-            m_currentAttackIndex = -1;
-            m_isAttacking = true;
+            StopPerformingAction();
+            m_director.Play(attackTimeline);
+            m_motor.OnActionStart();
+            m_isPerformingAction = true;
         }
 
-        private void UpdateAttacking()
+        /// <summary>
+        /// This should be added as a callback to m_director.stopped./>.
+        /// </summary>
+        /// <param name="director"></param>
+        public void OnActionEnd(PlayableDirector director)
         {
-            // if no node is currently being processed
-            if (m_currentAttackNode == null)
-            {
-                m_currentAttackIndex++;
-
-                // if reached the end of the sequence, exit this state
-                if (m_currentAttackIndex >= m_attackSequence.Length)
-                {
-                    m_attackCoroutines = null;
-                    m_isAttacking = false;
-                    return;
-                }
-
-                // start processing the new AttackNode
-                m_currentAttackNode = m_attackSequence[m_currentAttackIndex];
-                StartAttackCoroutine();
-            }
+            m_isPerformingAction = false;
+            m_motor.OnActionEnd();
         }
 
-        public void StopAttacking()
+        public void StopPerformingAction()
         {
-            if (m_isAttacking)
+            if (m_isPerformingAction)
             {
-                // Clear Coroutines
-                if (m_attackCoroutines != null)
-                {
-                    foreach (Coroutine coroutine in m_attackCoroutines)
-                    {
-                        if (coroutine != null)
-                            StopCoroutine(coroutine);
-                    }
-                    m_attackCoroutines = null;
-                }
-
-                // Get array of all Attack Nodes to process this step
-                AttackNode[] currentlyActiveNodes;
-                if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
-                {
-                    int length = simultaneousAttackNode.Nodes.Length;
-                    currentlyActiveNodes = new AttackNode[length];
-                    System.Array.Copy(simultaneousAttackNode.Nodes, currentlyActiveNodes, length);
-                }
-                else
-                {
-                    currentlyActiveNodes = new AttackNode[1] { m_currentAttackNode };
-                }
-
-                StopAttackNodes(currentlyActiveNodes);
+                m_director.Stop();
             }
 
             // Set attacking to false
-            m_isAttacking = false;
+            m_isPerformingAction = false;
         }
+        #endregion
 
-        private void StopAttackNodes(AttackNode[] attackNodes)
+        #region Combat
+        private float m_baseDamage;
+        private ModifierType m_damageModifierType;
+        private float m_damageModifier;
+
+        public float actualDamage
         {
-            foreach (AttackNode node in attackNodes)
+            get
             {
-                if (node == null)
-                    continue;
-
-                switch (node.GetType().Name)
+                return m_damageModifierType switch
                 {
-                    case nameof(AnimationNode):
-                        // reset animator component
-                        m_anim.speed = 1;
-                        //m_anim.StopPlayback();
-                        break;
-                    case nameof(ApproachTargetNode):
-                        ResetMovementSpeed();
-                        StopGoToPosition();
-                        break;
-                }
-            }
-        }
-
-        private void StartAttackCoroutine()
-        {
-            void SetAttackCoroutineElement(AttackNode node, int index)
-            {
-                m_attackCoroutines[index] = node.GetType().Name switch
-                {
-                    nameof(AnimationNode) => StartCoroutine(PlayAnimation(node as AnimationNode)),
-                    nameof(ApproachTargetNode) => StartCoroutine(ApproachTarget(node as ApproachTargetNode)),
-                    nameof(TranslateNode) => StartCoroutine(Translate(node as TranslateNode)),
-                    nameof(DelayNode) => StartCoroutine(Delay(node as DelayNode)),
-                    nameof(TimedMoveNode) => StartCoroutine(TimedMove(node as TimedMoveNode)),
-                    nameof(CurveMoveNode) => StartCoroutine(CurveMove(node as CurveMoveNode)),
-                    nameof(SpeedMoveNode) => StartCoroutine(SpeedMove(node as SpeedMoveNode)),
-                    nameof(AccelerateMoveNode) => StartCoroutine(AccelerateMove(node as AccelerateMoveNode)),
-                    _ => null
+                    ModifierType.Additive => m_baseDamage + m_damageModifier,
+                    ModifierType.Multiplicative => m_baseDamage * m_damageModifier,
+                    _ => m_baseDamage,
                 };
             }
-            
-            if (s_debug) Debug.Log($"Beginning processing {m_currentAttackNode.GetType().Name}.");
-
-            if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
-            {
-                int nodeCount = simultaneousAttackNode.Nodes.Length;
-                m_attackCoroutines = new Coroutine[nodeCount];
-                for (int i = 0; i < nodeCount; i++)
-                {
-                    SetAttackCoroutineElement(simultaneousAttackNode.Nodes[i], i);
-                }
-            }
-            else
-            {
-                m_attackCoroutines = new Coroutine[1];
-                SetAttackCoroutineElement(m_currentAttackNode, 0);
-            }
-
-            // If all the AttackCoroutines are already null, then the attack is invalid
-            if (m_attackCoroutines.All(c => c == null))
-            {
-                m_currentAttackNode = null;
-                m_attackCoroutines = null;
-                if (s_debug) Debug.Log($"None of the provided AttackNodes have implemented functionality. Stopping processing.");
-                // Then reattempt to Update
-                UpdateAttacking();
-            }
         }
 
-        private void OnAttackCoroutineFinished(AttackNode node)
+        public void SetDamageModifier(ModifierType type, float modifier)
         {
-            if (m_attackCoroutines != null)
-            {
-                int nodeIndex;
-                // set the coroutine of the Node that just finished to null
-                // for non-Simultaneous Attack Nodes, the index will always be 0
-                if (m_currentAttackNode is SimultaneousAttackNode simultaneousAttackNode)
-                {
-                    nodeIndex = System.Array.IndexOf(simultaneousAttackNode.Nodes, node);
-
-                    // if the index of this node is equal to the SignificantAttackNodeIndex of this SimultaneousAttackNode,
-                    // then this attack should be marked completed
-                    if (nodeIndex == simultaneousAttackNode.SignificantAttackNodeIndex)
-                    {
-                        // Get all the currently active nodes
-                        int length = simultaneousAttackNode.Nodes.Length;
-                        AttackNode[] currentlyActiveNodes = new AttackNode[length];
-                        System.Array.Copy(simultaneousAttackNode.Nodes, currentlyActiveNodes, length);
-                        for (int i = 0; i < length; i++)
-                        {
-                            // If it is the significant AttackNode, clear
-                            if (currentlyActiveNodes[i] == node)
-                            {
-                                currentlyActiveNodes[i] = null;
-                            }
-                            // If the AttackNode has already finished processing, clear
-                            else if (m_attackCoroutines[i] == null)
-                            {
-                                currentlyActiveNodes[i] = null;
-                            }
-                        }
-
-                        StopAttackNodes(currentlyActiveNodes);
-
-                        m_currentAttackNode = null;
-                        m_attackCoroutines = null;
-                        if (s_debug) Debug.Log($"Finished processing Simultaneous Attack Node.");
-                        return;
-                    }
-                }
-                else
-                {
-                    nodeIndex = 0;
-                }
-
-                m_attackCoroutines[nodeIndex] = null;
-
-                // If all the Coroutines are marked finished/All AttackNodes are finished processing,
-                // Then mark the Current Attack Node as finished
-                if (m_attackCoroutines.All(coroutine => coroutine == null))
-                {
-                    if (s_debug) Debug.Log($"Finished processing {m_currentAttackNode.GetType().Name}.");
-                    m_currentAttackNode = null;
-                    m_attackCoroutines = null;
-                }
-            }
+            m_damageModifierType = type;
+            m_damageModifier += modifier;
+        }
+        public void ResetDamgeModifier(float modifier)
+        {
+            m_damageModifier -= modifier;
+        }
+        /// <inheritdoc/>
+        public override void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)
+        {
+            hitboxData.OnHitEffect.OnHit(this, attackingEntity);
         }
 
+        #endregion
+
+        /* Attack Node Logic (OLD)
         #region NodeLogic
         private IEnumerator PlayAnimation(AnimationNode node)
         {
             // If there are issues with animator speed, check this first
             // init
-            m_anim.speed = node.Speed;
-            m_anim.Play(node.AnimationStateName);
+            //m_anim.speed = node.Speed;
+            //m_anim.Play(node.AnimationStateName);
 
             // running
             yield return new WaitForSeconds(node.Time);
 
             // exit
-            m_anim.speed = 1;
+            //m_anim.speed = 1;
 
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator ApproachTarget(ApproachTargetNode node)
         {
@@ -388,8 +228,8 @@ namespace Stirge.Combat
             Vector3 targetPosition = m_targetTransform.position;
 
             // running
-            BeginGoToPosition(targetPosition);
-            SetMovementSpeed(node.Speed);
+            //BeginGoToPosition(targetPosition);
+            //SetMovementSpeed(node.Speed);
             bool withinRange = false;
             while (!withinRange)
             {
@@ -397,7 +237,7 @@ namespace Stirge.Combat
                 if (!node.UseInitialPosition)
                 {
                     targetPosition = m_targetTransform.position;
-                    BeginGoToPosition(targetPosition);
+                    //BeginGoToPosition(targetPosition);
                 }
 
                 // provide some leeway for vertical difference
@@ -421,7 +261,6 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator Translate(TranslateNode node)
         {
@@ -460,7 +299,6 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator Delay(DelayNode node)
         {
@@ -471,7 +309,6 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator TimedMove(TimedMoveNode node)
         {
@@ -491,11 +328,9 @@ namespace Stirge.Combat
             while (!arrived)
             {
                 float t = Mathf.Clamp01(elapsedTime / time);
-                m_rb.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
+                MovePosition(Vector3.Lerp(startPosition, endPosition, t));
 
-                ApplyPhysicsToTransform();
-
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -516,7 +351,6 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator CurveMove(CurveMoveNode node)
         {
@@ -538,11 +372,9 @@ namespace Stirge.Combat
             {
                 // divide by time to get normalised 0 - 1 t value as Lerp clamps t to 0 - 1
                 float t = Mathf.Clamp(node.Curve.Evaluate(elapsedTime), 0, time) / time;
-                m_rb.MovePosition(Vector3.Lerp(startPosition, endPosition, t));
-                
-                ApplyPhysicsToTransform();
+                MovePosition(Vector3.Lerp(startPosition, endPosition, t));
 
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -563,7 +395,6 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator SpeedMove(SpeedMoveNode node)
         {
@@ -581,11 +412,9 @@ namespace Stirge.Combat
             while (!arrived)
             {
                 Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, speed * Time.fixedDeltaTime);
-                m_rb.MovePosition(target);
+                MovePosition(target);
 
-                ApplyPhysicsToTransform();
-
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -604,7 +433,6 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         private IEnumerator AccelerateMove(AccelerateMoveNode node)
         {
@@ -633,11 +461,9 @@ namespace Stirge.Combat
                 }
 
                 Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, currentSpeed * Time.fixedDeltaTime);
-                m_rb.MovePosition(target);
+                MovePosition(target);
 
-                ApplyPhysicsToTransform();
-
-                Vector3 currentPos = m_rb.position;
+                Vector3 currentPos = transform.position;
                 Vector3 targetPos = endPosition;
                 if (!considerYPosition)
                 {
@@ -656,10 +482,10 @@ namespace Stirge.Combat
 
             // exit
             if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-            OnAttackCoroutineFinished(node);
         }
         #endregion
 
         #endregion
+        */
     }
 }

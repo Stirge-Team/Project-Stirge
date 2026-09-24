@@ -289,7 +289,9 @@ namespace FrameFighter2.Manager
                 // SerializedAttackData.CreateAttackData() will create a new Instance based on the data stored in the Serialized object.
                 // To make this more performant, we would need to create a way of creating the AttackData instance on Start
                 // instead of here and storing it separately, or creating it in Editor whenever a change is made or something similar
-                PlayerInputProcessing.Instance.AddComboBinding(new AttackBinding(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack));
+                //PlayerInputProcessing.Instance.AddComboBinding(new AttackBinding(m_currentData.NextComboInput.ComboAttackInput, m_currentData.NextComboInput.NextComboAttack));
+                
+                //---- Commented out for Attack timeline testing purposes ----//
 
                 m_activeComboListers.Add(m_currentData.NextComboInput);
             }

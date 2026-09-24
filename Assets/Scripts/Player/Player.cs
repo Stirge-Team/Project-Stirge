@@ -4,61 +4,78 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
-    using Management;
-    
-    [RequireComponent(typeof(PlayerMovement))]
+    using UnityEngine.InputSystem;
+
     [RequireComponent(typeof(PlayerInputProcessing))]
+    [RequireComponent(typeof(EntityHealth))]
     public class Player : CombatEntity
     {
         [Header("Player Properties")]
-        [SerializeField] private PlayerMovement m_movement;
         [SerializeField] private PlayerInputProcessing m_input;
+        protected PlayerMotor Motor => (PlayerMotor)base.Motor;
+        protected Vector2 m_inputDirection;
+        private Transform m_camTransform;
 
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if(!m_movement || !m_input)
+            if (!Motor || !m_input || !Health)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
+            m_camTransform = UnityEngine.Camera.main.transform;
         }
 
         protected override void UpdateThis(float deltaTime)
         {
-            if (m_isAttacking)
+            if (!IsPerformingAction)
             {
-                m_movement.enabled = false;
-            }
-            else
-            {
-                m_movement.enabled = true;
+                Vector3 attemptedMoveDirection = (new Vector3(m_camTransform.forward.x, 0, m_camTransform.forward.z) * m_inputDirection.y +
+                                                  new Vector3(m_camTransform.right.x, 0, m_camTransform.right.z) * m_inputDirection.x).normalized;
+                //TODO player rotation and lock on stuff here
+                if (attemptedMoveDirection.sqrMagnitude > 0)
+                {
+                    Motor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), Motor.CurrentMovementProperties.AngularSpeed));
+                }
+
+                if (Motor.HorizontalSpeed < Motor.CurrentMovementProperties.HorizontalTopSpeed ||
+                   Vector3.Angle(Motor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
+                {
+                    Motor.AddForce(Motor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * Motor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                }
             }
 
+            Motor.AddForce(Motor.HorizontalDirection * -Motor.CurrentMovementProperties.Friction * Mathf.Clamp01(Motor.HorizontalSpeed) * Time.deltaTime);
         }
         #endregion
 
         #region Inputs
-        public void AttemptJump()
+        public void AttemptJump(InputAction.CallbackContext context)
         {
-            if(m_movement.OnJump())
-            {
-                m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
-            }
+            if (context.performed && !IsPerformingAction)
+                if (Motor.OnJump())
+                {
+                    Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+                }
+        }
+        public void OnMove(InputAction.CallbackContext context)
+        {
+            m_inputDirection = context.ReadValue<Vector2>();
         }
         #endregion
 
         #region DeathState
         protected override void OnDamageTaken(int damage)
         {
-            
+
         }
         #endregion
 
         #region Status
         public override void EnterStun(float stunLength)
         {
-            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.Off, stunLength);
-            m_anim.Play("hitstun");
+            Motor.ResetHorizontalVelocity();
+            //m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
@@ -68,33 +85,28 @@ namespace Stirge.Player
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
-            m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
-        }
-
-        public override bool IsGrounded()
-        {
-            return m_movement.IsGrounded;
+            Motor.AddForce(direction * strength + transform.up * height); //override
         }
         #endregion
 
         #region Transformation
-        protected override Vector3 GetPosition()
+        public override Vector3 GetPosition()
         {
             return transform.position;
         }
-        protected override Quaternion GetRotation()
+        public override Quaternion GetRotation()
         {
             return transform.rotation;
         }
-        protected Vector3 GetEulerRotation()
+        public Vector3 GetEulerRotation()
         {
             return transform.rotation.eulerAngles;
         }
-        protected override void SetPosition(Vector3 position)
+        public override void SetPosition(Vector3 position)
         {
             transform.position = position;
         }
-        protected override void SetRotation(Quaternion rotation)
+        public override void SetRotation(Quaternion rotation)
         {
             transform.rotation = rotation;
         }
@@ -107,29 +119,14 @@ namespace Stirge.Player
             return transform.forward;
         }
 
-        protected override void BeginGoToPosition(Vector3 newPosition)
+        public void BeginGoToPosition(Vector3 newPosition)
         {
             Vector3 direction = (newPosition - transform.position).normalized;
-            m_movement.Motor.ApplyForce(direction * m_movement._currentStateSettings._horizontalAcceleration);
+            Motor.AddForce(direction * Motor.CurrentMovementProperties.Acceleration);
         }
-        protected override void StopGoToPosition()
+        public void StopGoToPosition()
         {
-            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
-        }
-
-        protected override float GetMovementSpeed()
-        {
-            return m_movement.Motor._horizontalSpeed;
-        }
-
-        public override void ApplyPhysicsToTransform()
-        {
-            //nothing has to be done here - function name unclear?
-        }
-
-        public override void ApplyRootMotion()
-        {
-            //nothing needs to be done here also?
+            Motor.ResetHorizontalVelocity();
         }
         #endregion
     }
