@@ -40,7 +40,7 @@ namespace Stirge.UtilityAI.EditorTools
             for (int i = 0; i < countScorable; i++)
             {
                 var tempSerializedTable = (SerializedScoringMethod_Base<IScorable>)ScriptableObject.CreateInstance(s_serializedScorableScoringMethodTypes[i]);
-                s_scorableScoringMethodTypes[i] = tempSerializedTable.scoringMethodType;
+                s_scorableScoringMethodTypes[i] = tempSerializedTable.ScoringMethodType;
                 Object.DestroyImmediate(tempSerializedTable);
             }
 
@@ -59,7 +59,7 @@ namespace Stirge.UtilityAI.EditorTools
             for (int i = 0; i < countAction; i++)
             {
                 var tempSerializedTable = (SerializedScoringMethod_Base<Action>)ScriptableObject.CreateInstance(serializedActionScoringMethodTypes[i]);
-                actionScoringMethods[i] = tempSerializedTable.scoringMethodType;
+                actionScoringMethods[i] = tempSerializedTable.ScoringMethodType;
                 Object.DestroyImmediate(tempSerializedTable);
             }
             s_serializedActionScoringMethodTypes = s_serializedScorableScoringMethodTypes.Union(serializedActionScoringMethodTypes).ToArray();
@@ -80,7 +80,7 @@ namespace Stirge.UtilityAI.EditorTools
             for (int i = 0; i < countMovementGoal; i++)
             {
                 var tempSerializedTable = (SerializedScoringMethod_Base<MovementGoal>)ScriptableObject.CreateInstance(serializedMovementGoalScoringMethodTypes[i]);
-                movementGoalScoringMethods[i] = tempSerializedTable.scoringMethodType;
+                movementGoalScoringMethods[i] = tempSerializedTable.ScoringMethodType;
                 Object.DestroyImmediate(tempSerializedTable);
             }
             s_serializedMovementGoalScoringMethodTypes = s_serializedScorableScoringMethodTypes.Union(serializedMovementGoalScoringMethodTypes).ToArray();
@@ -101,7 +101,7 @@ namespace Stirge.UtilityAI.EditorTools
             for (int i = 0; i < countStatus; i++)
             {
                 var tempSerializedTable = (SerializedScoringMethod_Base<Status>)ScriptableObject.CreateInstance(serializedStatusScoringMethodTypes[i]);
-                statusScoringMethods[i] = tempSerializedTable.scoringMethodType;
+                statusScoringMethods[i] = tempSerializedTable.ScoringMethodType;
                 Object.DestroyImmediate(tempSerializedTable);
             }
             s_serializedStatusScoringMethodTypes = s_serializedScorableScoringMethodTypes.Union(serializedStatusScoringMethodTypes).ToArray();
@@ -113,26 +113,26 @@ namespace Stirge.UtilityAI.EditorTools
         public static IReadOnlyList<Type> movementGoalScoringMethodTypes => s_movementGoalScoringMethodTypes;
         public static IReadOnlyList<Type> statusScoringMethodTypes => s_statusScoringMethodTypes;
 
-        public static Type GetSerializedScoringMethodType<TScorable>(Type scoringMethodType) where TScorable : IScorable
+        public static Type GetSerializedScoringMethodType<TScorable>(Type ScoringMethodType) where TScorable : IScorable
         {
             if (typeof(TScorable) == typeof(Action))
             {
-                int index = Array.IndexOf(s_actionScoringMethodTypes, scoringMethodType);
+                int index = Array.IndexOf(s_actionScoringMethodTypes, ScoringMethodType);
                 return index >= 0 ? s_serializedActionScoringMethodTypes[index] : null;
             }
             else if (typeof(TScorable) == typeof(MovementGoal))
             {
-                int index = Array.IndexOf(s_movementGoalScoringMethodTypes, scoringMethodType);
+                int index = Array.IndexOf(s_movementGoalScoringMethodTypes, ScoringMethodType);
                 return index >= 0 ? s_serializedMovementGoalScoringMethodTypes[index] : null;
             }
             else if (typeof(TScorable) == typeof(Status))
             {
-                int index = Array.IndexOf(s_statusScoringMethodTypes, scoringMethodType);
+                int index = Array.IndexOf(s_statusScoringMethodTypes, ScoringMethodType);
                 return index >= 0 ? s_serializedStatusScoringMethodTypes[index] : null;
             }
             else
             {
-                int index = Array.IndexOf(s_scorableScoringMethodTypes, scoringMethodType);
+                int index = Array.IndexOf(s_scorableScoringMethodTypes, ScoringMethodType);
                 return index >= 0 ? s_serializedScorableScoringMethodTypes[index] : null;
             }
         }

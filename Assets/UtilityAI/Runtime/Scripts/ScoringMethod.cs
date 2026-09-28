@@ -4,14 +4,15 @@ namespace Stirge.UtilityAI
 {
     using Combat;
 
-    public abstract class ScoringMethod<T> : IScoringMethod<T> where T : IScorable
+    public abstract class ScoringMethod<TScorable> : IScoringMethod<TScorable> where TScorable : IScorable
     {
-        private T m_scorable;
+        private TScorable m_scorable;
         protected float m_scoreScaling;
 
-        float IScoringMethod<T>.scoreScaling { set => m_scoreScaling = value; }
+        float IScoringMethod<TScorable>.scoreScaling { set => m_scoreScaling = value; }
+        TScorable IScoringMethod<TScorable>.scorable { set => m_scorable = value; }
         
-        protected T Scorable => m_scorable;
+        protected TScorable Scorable => m_scorable;
 
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
