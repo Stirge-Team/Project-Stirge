@@ -8,6 +8,10 @@ namespace Stirge.UtilityAI
     {
         [SerializeField] private SerializedAction[] m_serializedActions;
         [SerializeField] private SerializedMovementGoal_Base[] m_serializedMovementGoals;
+        [Tooltip("The minimum non-inclusive score an Action must have for it to be considered by the AI.")]
+        [SerializeField, Min(0f)] private float m_minimumActionScore;
+        [Tooltip("The minimum non-inclusive score a Movement Goal must have for it to be considered by the AI.")]
+        [SerializeField, Min(0f)] private float m_minimumMovementGoalScore;
 
         public UtilityBrain CreateRuntimeBrain()
         {
@@ -25,7 +29,7 @@ namespace Stirge.UtilityAI
                 movementGoals[i] = m_serializedMovementGoals[i].CreateRuntimeMovementGoal();
             }
 
-            return UtilityBrain.Create(actions, movementGoals);
+            return UtilityBrain.Create(actions, movementGoals, m_minimumActionScore, m_minimumMovementGoalScore);
         }
     }
 }

@@ -5,11 +5,11 @@ namespace Stirge.UtilityAI.ScoringMethods
     using Combat;
     using Serialization;
 
-    public class DamageScoringMethod : ScoringMethod<Action>, INotSetupable
+    public class TestMovementGoalScoringMethod : ScoringMethod<MovementGoal>, INotSetupable
     {
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return Scorable.damage;
+            return 1f;
         }
     }
 }

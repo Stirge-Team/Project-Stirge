@@ -14,7 +14,7 @@ namespace Stirge.UtilityAI
         Movement
     }
 
-    public class Action
+    public class Action : IScorable
     {
         // fields
         private float m_scoreScaling = 1f;
@@ -26,7 +26,7 @@ namespace Stirge.UtilityAI
         private float m_range = 1f;
         private Status[] m_statuses;
         private ICondition[] m_conditions;
-        private ScoringMethod[] m_scoringMethods;
+        private IScoringMethod<Action>[] m_scoringMethods;
 
         // properties
         public float duration => m_duration;
@@ -37,7 +37,7 @@ namespace Stirge.UtilityAI
         public float range => m_range;
         public Status[] statuses => m_statuses;
         public ICondition[] conditions => m_conditions;
-        public ScoringMethod[] scoringMethods => m_scoringMethods;
+        public IScoringMethod<Action>[] scoringMethods => m_scoringMethods;
 
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
@@ -66,7 +66,7 @@ namespace Stirge.UtilityAI
         }
 
         #region Create
-        public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods) where TAction : Action, new()
+        public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods) where TAction : Action, new()
         {
             TAction action = new()
             {
@@ -84,31 +84,31 @@ namespace Stirge.UtilityAI
 
             return action;
         }
-        public static TAction Create<TAction, TArg>(TArg arg, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods) where TAction : Action, ISetupable<TArg>, new()
+        public static TAction Create<TAction, TArg>(TArg arg, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods) where TAction : Action, ISetupable<TArg>, new()
         {
             var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, statuses, conditions, scoringMethods);
             action.Setup(arg);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1>, new()
+        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1>, new()
         {
             var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, statuses, conditions, scoringMethods);
             action.Setup(arg0, arg1);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
         {
             var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, statuses, conditions, scoringMethods);
             action.Setup(arg0, arg1, arg2);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
         {
             var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, statuses, conditions, scoringMethods);
             action.Setup(arg0, arg1, arg2, arg3);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, ScoringMethod[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
         {
             var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, statuses, conditions, scoringMethods);
             action.Setup(arg0, arg1, arg2, arg3, arg4);

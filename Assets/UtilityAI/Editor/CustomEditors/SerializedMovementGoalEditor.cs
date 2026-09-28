@@ -145,7 +145,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 for (int i = 0, count = m_scoringMethodsProperty.arraySize; i < count; i++)
                 {
                     SerializedProperty scoringMethodProperty = m_scoringMethodsProperty.GetArrayElementAtIndex(i);
-                    var objectValue = (SerializedScoringMethod_Base)scoringMethodProperty.objectReferenceValue;
+                    var objectValue = (SerializedScoringMethod_Base<MovementGoal>)scoringMethodProperty.objectReferenceValue;
 
                     if (!s_scoringMethodEditors.TryGetValue(objectValue, out Editor editor))
                     {
@@ -231,7 +231,7 @@ namespace Stirge.UtilityAI.CustomEditors
         private void AddScoringMethod()
         {
             var genericMenu = new GenericMenu();
-            IReadOnlyList<Type> scoringMethodTypes = SerializedScoringMethodTypesCollection.scoringMethodTypes;
+            IReadOnlyList<Type> scoringMethodTypes = SerializedScoringMethodTypesCollection.movementGoalScoringMethodTypes;
 
             for (int i = 0, count = scoringMethodTypes.Count; i < count; i++)
             {
@@ -239,7 +239,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 string uiName = GetUIName(type);
                 genericMenu.AddItem(new GUIContent(uiName), false, () =>
                 {
-                    Type serializedScoringMethodType = SerializedScoringMethodTypesCollection.GetSerializedScoringMethodType(type);
+                    Type serializedScoringMethodType = SerializedScoringMethodTypesCollection.GetSerializedScoringMethodType<MovementGoal>(type);
                     ScriptableObject instance = CreateInstance(serializedScoringMethodType);
                     instance.name = uiName.Replace(" ", string.Empty);
 

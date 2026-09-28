@@ -19,6 +19,9 @@ namespace Stirge.UtilityAI
         private int m_currentActionIndex;
         private int m_currentMovementGoalIndex;
 
+        private float m_minimumActionScore;
+        private float m_minimumMovementGoalScore;
+
         // properties
         public Action CurrentAction => m_currentActionIndex == -1 ? null : m_actions[m_currentActionIndex];
         public MovementGoal CurrentMovementGoal => m_currentMovementGoalIndex == -1 ? null : m_movementGoals[m_currentMovementGoalIndex];
@@ -53,7 +56,8 @@ namespace Stirge.UtilityAI
                 List<int> validIndices = new();
                 for (int i = 0, count = m_actions.Length; i < count; i++)
                 {
-                    if ((m_actionScores[i] = m_actions[i].Evaluate(user, target)) > 0)
+                    m_actionScores[i] = m_actions[i].Evaluate(user, target);
+                    if (m_actionScores[i] > m_minimumActionScore)
                         validIndices.Add(i);
                 }
 
@@ -106,7 +110,8 @@ namespace Stirge.UtilityAI
                 List<int> validIndices = new();
                 for (int i = 0, count = m_movementGoals.Length; i < count; i++)
                 {
-                    if ((m_movementGoalScores[i] = m_movementGoals[i].Evaluate(user, target)) > 0)
+                    m_movementGoalScores[i] = m_movementGoals[i].Evaluate(user, target);
+                    if (m_movementGoalScores[i] > m_minimumMovementGoalScore)
                         validIndices.Add(i);
                 }
 
@@ -157,12 +162,14 @@ namespace Stirge.UtilityAI
         }
 
         #region Create
-        public static UtilityBrain Create(Action[] actions, MovementGoal[] movementGoals)
+        public static UtilityBrain Create(Action[] actions, MovementGoal[] movementGoals, float minimumActionScore, float minimumMovementGoalScore)
         {
             var newBrain = new UtilityBrain()
             {
                 m_actions = actions,
-                m_movementGoals = movementGoals
+                m_movementGoals = movementGoals,
+                m_minimumActionScore = minimumActionScore,
+                m_minimumMovementGoalScore = minimumMovementGoalScore
             };
             return newBrain;
         }

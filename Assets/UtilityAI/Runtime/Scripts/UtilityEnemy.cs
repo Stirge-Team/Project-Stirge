@@ -70,44 +70,29 @@ namespace Stirge.UtilityAI
         #endregion
 
         #region Status
-        public override void InflictStatus(Status status, CombatEntity user)
-        {
-            // NOTE: This needs to be changed. Statuses should be able to support:
-            // - Statuses with no stacking. Adding a new identical Status will add another
-            // - Statuses with no stacking. Cannot add identical Status while one already is inflicted.
-            // - Statuses with stacking. Adding a new identical Status will add to its current stacks, changing its Resolve effect.
-            // Timothy Cain video on Status Effects: https://www.youtube.com/watch?v=SH35RmM1BFM&t=9s
-            // if inflicted with Statuses of same type, get references
-            
-            Type statusType = status.GetType();
+        public override void InflictStatus(Status newStatus, CombatEntity user)
+        {            
+            Type statusType = newStatus.StatusType;
             int indexOfExistingStatus = GetIndexOfStatus(statusType);
-            // if matching status exists
+
+            // If a Status of the same type already exists
             if (indexOfExistingStatus != -1)
             {
-                switch (status.stackType)
+                switch (newStatus.StackType)
                 {
                     case StatusStackType.Stackable:
                         Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
-                        int existingStacks = existingStackableStatus.currentStackCount;
-                        int maxStacks = existingStackableStatus.maxStacks;
-                        if (existingStacks < maxStacks)
-                        {
-                            // add new stacks
-                            existingStackableStatus.currentStackCount = Mathf.Min(existingStacks + status.currentStackCount, maxStacks);
-                        }
-                        break;
-                    case StatusStackType.Unstackable:
-                        // fall through to standard Add and Apply
-                        break;
+                        existingStackableStatus.AddStacks(newStatus.CurrentStacks);
+                        return; // don't add again
                     case StatusStackType.Unique:
-                        // Exit to avoid adding multiples of Unique Status
-                        return;
+                        return; // don't add again
                     default:
-                        return;
+                        break;
                 }
             }
-            m_inflictedStatuses.Add(status);
-            status.OnApply(user, this);
+
+            m_inflictedStatuses.Add(newStatus);
+            newStatus.OnApply(user, this);
         }
 
         /// <summary>
@@ -117,7 +102,7 @@ namespace Stirge.UtilityAI
         /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
         public int GetIndexOfStatus(Type statusType)
         {
-            return m_inflictedStatuses.FindIndex(status => status.GetType() == statusType);
+            return m_inflictedStatuses.FindIndex(status => status.StatusType == statusType);
         }
 
         /// <summary>
@@ -127,7 +112,7 @@ namespace Stirge.UtilityAI
         /// <returns>The number of the provided <paramref name="statusType"/> the Enemy is inflicted with.</returns>
         public int GetNumberOfInflictedStatus(Type statusType)
         {
-            return m_inflictedStatuses.FindAll(status => status.statusType == statusType).Count;
+            return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
         }
         #endregion
     }
