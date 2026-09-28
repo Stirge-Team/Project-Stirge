@@ -33,7 +33,7 @@ MonoBehaviour:
       m_statuses: []
   m_eventData: []
   m_nextComboInput:
-    m_nextComboAttack: 
+    m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 0
     m_comboInputTimeStart: 0
     m_comboInputTimeEnd: 0

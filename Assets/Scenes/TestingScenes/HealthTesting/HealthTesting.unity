@@ -2428,6 +2428,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerHealth
   m_baseHealth: 10
+  m_healEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_modifyEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_damageEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_deathEvents:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!65 &1464279698
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3974,6 +3986,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerHealth
   m_baseHealth: 10
+  m_healEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_modifyEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_damageEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  m_deathEvents:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!135 &2045408739
 SphereCollider:
   m_ObjectHideFlags: 0

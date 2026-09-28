@@ -3300,9 +3300,9 @@ MonoBehaviour:
   m_bindingType: 0
   m_defaultBindings:
   - attackInput: 2
-    attackName: TestAttack
+    m_serializedAttackData: {fileID: 0}
   - attackInput: 4
-    attackName: TestLauncher
+    m_serializedAttackData: {fileID: 0}
 --- !u!4 &1234646949
 Transform:
   m_ObjectHideFlags: 0
@@ -3926,11 +3926,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
   m_PrefabInstance: {fileID: 315533888}
   m_PrefabAsset: {fileID: 0}
---- !u!95 &1463943177 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: -7840867231617242486, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
-  m_PrefabInstance: {fileID: 315533888}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1463943178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4015,8 +4010,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd060d3806dad3a4594af1e26ae7dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
+  m_spawnOnStart: 0
   m_enemyPrefab: {fileID: 1055941552344043229, guid: 342f97e0187e9d440b5933a061fac243, type: 3}
-  m_targetEnemyCount: 5
+  m_targetSpawnCount: 0
   m_spawnLocation: {fileID: 1509259609}
 --- !u!4 &1509259609
 Transform:
@@ -5801,6 +5797,7 @@ MonoBehaviour:
   m_jumpHeight: 1
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
+  m_landingSound: {fileID: 0}
   m_fallSpeedCap: 1000
   m_fallTimeSpeedMultiplier: 1
 --- !u!54 &2045072622
@@ -5927,7 +5924,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
-  m_playerAnimator: {fileID: 1463943177}
+  m_player: {fileID: 0}
   m_inputBufferTime: 0.2
 --- !u!4 &2118515599 stripped
 Transform:

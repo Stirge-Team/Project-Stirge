@@ -208,6 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -215,6 +216,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -386,6 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -393,6 +412,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -543,6 +579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -550,6 +587,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -584,6 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -591,6 +646,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -1139,6 +1211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -1146,6 +1219,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -1238,6 +1328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -1245,6 +1336,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -2054,6 +2162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -2061,6 +2170,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -2095,6 +2221,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -2102,6 +2229,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []
@@ -2389,6 +2533,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88ccc28d9a04d6c3883f6a3721779a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GreedyTokenEntity
+  m_rb: {fileID: 0}
   m_anim: {fileID: 0}
   m_health: {fileID: 0}
   m_inflictedStatuses: []
@@ -2396,6 +2541,23 @@ MonoBehaviour:
   m_groundedCheckMask:
     serializedVersion: 2
     m_Bits: 0
+  m_agent:
+    m_enemy: {fileID: 0}
+    m_transform: {fileID: 0}
+    m_modelTransform: {fileID: 0}
+    m_nav: {fileID: 0}
+    m_rb: {fileID: 0}
+    m_defaultState: {fileID: 0}
+    m_defaultNavSpeed: 3.5
+    m_targetDetectionRadius: 10
+    m_attackRadius: 4.5
+    m_defualtGravityAcceleration: 9
+    isOffGround: 0
+    airStallLength: 0
+  m_stunState: {fileID: 0}
+  m_airStunState: {fileID: 0}
+  m_knockbackState: {fileID: 0}
+  m_airJuggle: {fileID: 0}
   references:
     version: 2
     RefIds: []

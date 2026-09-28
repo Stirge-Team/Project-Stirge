@@ -3619,6 +3619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd060d3806dad3a4594af1e26ae7dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
+  m_spawnOnStart: 0
   m_enemyPrefab: {fileID: 1055941552344043229, guid: 342f97e0187e9d440b5933a061fac243, type: 3}
   m_targetSpawnCount: 1
   m_spawnLocation: {fileID: 1509259609}

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Stirge.Camera;
 using Stirge.Combat;
 using Stirge.Input;
@@ -12,7 +11,6 @@ namespace Stirge.Player
     [RequireComponent(typeof(MovementMotor))]
     public class PlayerMovement : MonoBehaviour
     {
-        #region Movement Vars
         [System.Serializable]
         public struct stateVariables
         {
@@ -46,9 +44,7 @@ namespace Stirge.Player
 
         //Selector for the settings
         public stateVariables _currentStateSettings { get { return IsGrounded ? m_groundSettings : m_aerialSettings; } }
-        #endregion
 
-        #region Jump Settings
         [Header("Jump Settings")]
         [SerializeField, Tooltip("The desired height you'd like the player to reach.")]
         private float m_jumpHeight = 5f;
@@ -70,11 +66,6 @@ namespace Stirge.Player
         //The remaining time for coyote time
         private float m_coyoteCountdown;
 
-        [SerializeField, Tooltip("How long (in seconds) the player should stay at their max jump height before falling.")]
-        private float m_hangTime = 0.2f;
-        #endregion
-
-        #region Fall Settings
         [Header("Fall Speed")]
         [SerializeField, Tooltip("The maximum speed the player can fall (0 will skip this check"), Min(0)]
         private float m_fallSpeedCap = 0;
@@ -87,7 +78,6 @@ namespace Stirge.Player
 
         //The maximum height the player reached - used for the fall speed mult check
         private float m_lastCheckedHeight = 0;
-        #endregion
 
         private Transform m_cameraTransform;
         private Transform m_lockOnTarget;
@@ -109,7 +99,12 @@ namespace Stirge.Player
         void FixedUpdate()
         {
             //Calculates the direction to move the player in given the current inputs and camera transform
-            Vector3 attemptedMoveDirection = (new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z) * m_inputDirection.y + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z) * m_inputDirection.x).normalized;
+            Vector3 attemptedMoveDirection = (
+                new Vector3(m_cameraTransform.forward.x, 0, m_cameraTransform.forward.z)
+                    * m_inputDirection.y
+                + new Vector3(m_cameraTransform.right.x, 0, m_cameraTransform.right.z)
+                    * m_inputDirection.x
+            ).normalized;
             //When we idle with a locked on target
             if (m_lockOnTarget != null && attemptedMoveDirection.sqrMagnitude <= 0)
             {
@@ -156,7 +151,13 @@ namespace Stirge.Player
             m_motor.ClampVerticalVelocity(-m_fallSpeedCap);
 
             //Casts a sphere down from the player's center, and outs true if a ground layer object is hit
-            if (Physics.CheckSphere(transform.position + Vector3.down * m_groundCheckDistance, 0.5f, m_groundCheckLayers))
+            if (
+                Physics.CheckSphere(
+                    transform.position + Vector3.down * m_groundCheckDistance,
+                    0.5f,
+                    m_groundCheckLayers
+                )
+            )
             {
                 //Check if the player is not considered grounded
                 if (!IsGrounded)
@@ -196,7 +197,9 @@ namespace Stirge.Player
                         m_currentFallTime += Time.deltaTime;
 
                         //Add a little more force to the player when they have been falling for a while.
-                        m_motor.ApplyForce(-transform.up * m_currentFallTime * m_fallTimeSpeedMultiplier);
+                        m_motor.ApplyForce(
+                            -transform.up * m_currentFallTime * m_fallTimeSpeedMultiplier
+                        );
                     }
                     //Update the last height if the player is height than before
                     else if (m_lastCheckedHeight < transform.position.y)
@@ -226,7 +229,6 @@ namespace Stirge.Player
                 );
                 //Remove all coyote time
                 m_coyoteCountdown = 0;
-                m_motor.StartJumpApexCheck(transform.position.y, m_jumpHeight, m_hangTime);
                 //Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
                 return true;
             }
