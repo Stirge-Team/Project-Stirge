@@ -26,7 +26,7 @@ namespace Stirge.UtilityAI
         private float m_range = 1f;
         private Status[] m_statuses;
         private ICondition[] m_conditions;
-        private IScoringMethod<Action>[] m_scoringMethods;
+        private ScoringMethod<Action>[] m_scoringMethods;
 
         // properties
         public float duration => m_duration;
@@ -37,7 +37,7 @@ namespace Stirge.UtilityAI
         public float range => m_range;
         public Status[] statuses => m_statuses;
         public ICondition[] conditions => m_conditions;
-        public IScoringMethod<Action>[] scoringMethods => m_scoringMethods;
+        public ScoringMethod<Action>[] scoringMethods => m_scoringMethods;
 
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
@@ -66,7 +66,7 @@ namespace Stirge.UtilityAI
         }
 
         #region Setup
-        public void Setup(Status[] statuses, ICondition[] conditions, IScoringMethod<Action>[] scoringMethods)
+        public void Setup(Status[] statuses, ICondition[] conditions, ScoringMethod<Action>[] scoringMethods)
         {
             m_statuses = statuses;
             m_conditions = conditions;

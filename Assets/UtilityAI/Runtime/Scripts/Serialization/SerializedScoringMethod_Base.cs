@@ -7,12 +7,12 @@ namespace Stirge.UtilityAI
     /// This setup is required for valid Contravariance.
     /// </summary>
     /// <typeparam name="TScorable"></typeparam>
-    public abstract class SerializedScoringMethod_Base<TScorable> : ScriptableObject where TScorable : IScorable
+    public abstract class SerializedScoringMethod_Base<T> : ScriptableObject where T : IScorable
     {
         [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;
 
         public abstract Type ScoringMethodType { get; }
 
-        public abstract IScoringMethod<TScorable> CreateRuntimeScoringMethod(TScorable scorable);
+        public abstract ScoringMethod<T> CreateRuntimeScoringMethod(T scorable);
     }
 }

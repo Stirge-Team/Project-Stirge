@@ -26,10 +26,10 @@ namespace Stirge.UtilityAI
             }
             return conditions;
         }
-        protected IScoringMethod<Status>[] CreateRuntimeScoringMethods(Status status)
+        protected ScoringMethod<Status>[] CreateRuntimeScoringMethods(Status status)
         {
             int scoringMethodCount = m_scoringMethods.Length;
-            IScoringMethod<Status>[] scoringMethods = new IScoringMethod<Status>[scoringMethodCount];
+            ScoringMethod<Status>[] scoringMethods = new ScoringMethod<Status>[scoringMethodCount];
             for (int i = 0; i < scoringMethodCount; i++)
             {
                 scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod(status);

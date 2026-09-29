@@ -12,7 +12,7 @@ namespace Stirge.UtilityAI
         protected float m_duration;
         protected string m_displayName;
         protected ICondition[] m_conditions;
-        protected IScoringMethod<MovementGoal>[] m_scoringMethods;
+        protected ScoringMethod<MovementGoal>[] m_scoringMethods;
 
         public float duration => m_duration;
         public string displayName => m_displayName;
@@ -29,7 +29,7 @@ namespace Stirge.UtilityAI
         public abstract void Reset();
 
         #region Setup
-        public void Setup(ICondition[] conditions, IScoringMethod<MovementGoal>[] scoringMethods)
+        public void Setup(ICondition[] conditions, ScoringMethod<MovementGoal>[] scoringMethods)
         {
             m_conditions = conditions;
             m_scoringMethods = scoringMethods;

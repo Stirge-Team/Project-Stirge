@@ -33,7 +33,7 @@ namespace Stirge.UtilityAI
         protected StatusDurationType m_durationType;
         protected float m_duration;
         protected ICondition[] m_conditions;
-        protected IScoringMethod<Status>[] m_scoringMethods;
+        protected ScoringMethod<Status>[] m_scoringMethods;
 
         // variables
         protected int m_currentStacks;
@@ -49,7 +49,7 @@ namespace Stirge.UtilityAI
         public StatusDurationType DurationType => m_durationType;
         public float Duration => m_duration;
         public ICondition[] Conditions => m_conditions;
-        public IScoringMethod<Status>[] ScoringMethods => m_scoringMethods;
+        public ScoringMethod<Status>[] ScoringMethods => m_scoringMethods;
 
         public int CurrentStacks => m_currentStacks;
         public float Timer => m_timer;
@@ -101,7 +101,7 @@ namespace Stirge.UtilityAI
         }
 
         #region Setup
-        public void Setup(ICondition[] conditions, IScoringMethod<Status>[] scoringMethods)
+        public void Setup(ICondition[] conditions, ScoringMethod<Status>[] scoringMethods)
         {
             m_conditions = conditions;
             m_scoringMethods = scoringMethods;
