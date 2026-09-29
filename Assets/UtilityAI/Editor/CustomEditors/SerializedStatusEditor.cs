@@ -160,7 +160,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 for (int i = 0, count = m_scoringMethodsProperty.arraySize; i < count; i++)
                 {
                     SerializedProperty scoringMethodProperty = m_scoringMethodsProperty.GetArrayElementAtIndex(i);
-                    var objectValue = (SerializedScoringMethod_Base<Status>)scoringMethodProperty.objectReferenceValue;
+                    var objectValue = (SerializedScoringMethod_Base)scoringMethodProperty.objectReferenceValue;
 
                     if (!s_scoringMethodEditors.TryGetValue(objectValue, out Editor editor))
                     {

@@ -11,8 +11,8 @@ namespace Stirge.UtilityAI
         [SerializeField, Range(1, 30)] protected int m_maxStacks;
         [SerializeField] protected StatusDurationType m_durationType;
         [SerializeField] protected float m_duration;
-        [SerializeField] protected SerializedCondition[] m_conditions;
-        [SerializeField] protected SerializedScoringMethod_Base<Status>[] m_scoringMethods;
+        [SerializeField] protected SerializedCondition[] m_conditions = new SerializedCondition[0];
+        [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
         public abstract Type StatusType { get; }
 
@@ -26,10 +26,10 @@ namespace Stirge.UtilityAI
             }
             return conditions;
         }
-        protected ScoringMethod<Status>[] CreateRuntimeScoringMethods(Status status)
+        protected IScoringMethod[] CreateRuntimeScoringMethods(Status status)
         {
             int scoringMethodCount = m_scoringMethods.Length;
-            ScoringMethod<Status>[] scoringMethods = new ScoringMethod<Status>[scoringMethodCount];
+            IScoringMethod[] scoringMethods = new IScoringMethod[scoringMethodCount];
             for (int i = 0; i < scoringMethodCount; i++)
             {
                 scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod(status);

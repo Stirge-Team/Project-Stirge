@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Stirge.UtilityAI.ScoringMethods
 {
     [NameOverride("Score", 0)]
-    public class SerializedConstantScoringMethod : SerializedScoringMethod<IScorable, ConstantScoringMethod, float>
+    public class SerializedConstantScoringMethod : SerializedScoringMethod<ConstantScoringMethod, float>
     {
 
     }

@@ -17,7 +17,7 @@ namespace Stirge.UtilityAI
         [SerializeField, Min(0)] protected float m_range = 1f;
         [SerializeField] protected SerializedStatus_Base[] m_statuses = new SerializedStatus_Base[0];
         [SerializeField] protected SerializedCondition[] m_conditions = new SerializedCondition[0];
-        [SerializeField] protected SerializedScoringMethod_Base<Action>[] m_scoringMethods = new SerializedScoringMethod_Base<Action>[0];
+        [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
         public virtual Type ActionType => typeof(Action);
 
@@ -43,10 +43,10 @@ namespace Stirge.UtilityAI
             return conditions;
         }
 
-        protected ScoringMethod<Action>[] CreateRuntimeScoringMethods(Action action)
+        protected IScoringMethod[] CreateRuntimeScoringMethods(Action action)
         {
             int scoringMethodCount = m_scoringMethods.Length;
-            ScoringMethod<Action>[] scoringMethods = new ScoringMethod<Action>[scoringMethodCount];
+            IScoringMethod[] scoringMethods = new IScoringMethod[scoringMethodCount];
             for (int i = 0; i < scoringMethodCount; i++)
             {
                 scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod(action);

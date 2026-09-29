@@ -9,7 +9,7 @@ namespace Stirge.UtilityAI
         [SerializeField] protected float m_duration = 1f;
         [SerializeField] protected string m_displayName;
         [SerializeField] protected SerializedCondition[] m_conditions =  new SerializedCondition[0];
-        [SerializeField] protected SerializedScoringMethod_Base<MovementGoal>[] m_scoringMethods = new SerializedScoringMethod_Base<MovementGoal>[0];
+        [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
         public abstract Type MovementGoalType { get; }
 
@@ -23,10 +23,10 @@ namespace Stirge.UtilityAI
             }
             return conditions;
         }
-        protected ScoringMethod<MovementGoal>[] CreateRuntimeScoringMethods(MovementGoal movementGoal)
+        protected IScoringMethod[] CreateRuntimeScoringMethods(MovementGoal movementGoal)
         {
             int scoringMethodCount = m_scoringMethods.Length;
-            ScoringMethod<MovementGoal>[] scoringMethods = new ScoringMethod<MovementGoal>[scoringMethodCount];
+            IScoringMethod[] scoringMethods = new IScoringMethod[scoringMethodCount];
             for (int i = 0; i < scoringMethodCount; i++)
             {
                 scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod(movementGoal);

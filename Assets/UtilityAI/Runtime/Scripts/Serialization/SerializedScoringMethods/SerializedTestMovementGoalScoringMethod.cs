@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI.ScoringMethods
 {
-    public class SerializedTestMovementGoalScoringMethod : SerializedScoringMethod<MovementGoal, TestMovementGoalScoringMethod>
+    public class SerializedTestMovementGoalScoringMethod : SerializedScoringMethod<TestMovementGoalScoringMethod>
     {
 
     }
