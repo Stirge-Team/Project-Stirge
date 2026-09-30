@@ -5,7 +5,7 @@ using UnityEngine.Timeline;
 namespace Stirge.UtilityAI
 {
     using Combat;
-    using Stirge.Serialization;
+    using Serialization;
 
     public enum ActionType
     {

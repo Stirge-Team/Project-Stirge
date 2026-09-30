@@ -10,8 +10,8 @@ namespace Stirge.UtilityAI
         private Action[] m_actions;
         private MovementGoal[] m_movementGoals;
 
-        private float m_actionTimer;
-        private float m_movementGoalTimer;
+        private float m_actionCountdown;
+        private float m_movementGoalCountdown;
 
         private float[] m_actionScores;
         private float[] m_movementGoalScores;
@@ -21,6 +21,9 @@ namespace Stirge.UtilityAI
 
         private float m_minimumActionScore;
         private float m_minimumMovementGoalScore;
+
+        // Used to check if the current Action has been performed yet, as we only want an Action to be performed once each time it is selected
+        private bool m_actionPerformed;
 
         // properties
         public Action CurrentAction => m_currentActionIndex == -1 ? null : m_actions[m_currentActionIndex];
@@ -33,6 +36,8 @@ namespace Stirge.UtilityAI
 
             m_currentActionIndex = -1;
             m_currentMovementGoalIndex = -1;
+
+            m_actionPerformed = false;
         }
 
         public void Update(UtilityEnemy user, CombatEntity target)
@@ -40,8 +45,12 @@ namespace Stirge.UtilityAI
             EvaluateActions(user, target);
             EvaluateMovementGoals(user, target);
 
-            // Perform Action!
-            CurrentAction?.Perform(user, target);
+            // Perform Action if not yet performed
+            if (!m_actionPerformed)
+            {
+                CurrentAction?.Perform(user, target);
+                m_actionPerformed = true;
+            }
 
             // Perform MovementGoal!
             CurrentMovementGoal?.Perform(user, target);
@@ -50,7 +59,7 @@ namespace Stirge.UtilityAI
         private void EvaluateActions(UtilityEnemy user, CombatEntity target)
         {
             // Either update timer or determine a new Action to Perform
-            if (m_actionTimer <= 0f)
+            if (m_actionCountdown <= 0f)
             {
                 // Evaluate the scores for each Action
                 List<int> validIndices = new();
@@ -84,7 +93,8 @@ namespace Stirge.UtilityAI
                         {
                             // Even if the new Action is the same as the previous, reset the duration
                             m_currentActionIndex = currentActionIndex;
-                            m_actionTimer = m_actions[currentActionIndex].duration;
+                            m_actionCountdown = m_actions[currentActionIndex].duration;
+                            m_actionPerformed = false;
                             break;
                         }
                     }
@@ -97,14 +107,14 @@ namespace Stirge.UtilityAI
             }
             else
             {
-                m_actionTimer -= Time.deltaTime;
+                m_actionCountdown -= Time.deltaTime;
             }
         }
 
         private void EvaluateMovementGoals(UtilityEnemy user, CombatEntity target)
         {
             // Either update timer or determine a new MovementGoal to Perform
-            if (m_movementGoalTimer <= 0f)
+            if (m_movementGoalCountdown <= 0f)
             {
                 // Evaluate the scores for each MovementGoal
                 List<int> validIndices = new();
@@ -144,7 +154,7 @@ namespace Stirge.UtilityAI
                             
                             // Even if the new MovementGoal is the same as the previous, reset the duration
                             m_currentMovementGoalIndex = currentMovementGoalIndex;
-                            m_movementGoalTimer = m_movementGoals[m_currentMovementGoalIndex].duration;
+                            m_movementGoalCountdown = m_movementGoals[m_currentMovementGoalIndex].duration;
                             break;
                         }
                     }
@@ -157,7 +167,7 @@ namespace Stirge.UtilityAI
             }
             else
             {
-                m_movementGoalTimer -= Time.deltaTime;
+                m_movementGoalCountdown -= Time.deltaTime;
             }
         }
 
@@ -180,8 +190,8 @@ namespace Stirge.UtilityAI
         {
             info.actions = m_actions;
             info.movementGoals = m_movementGoals;
-            info.actionTimer = m_actionTimer;
-            info.movementGoalTimer = m_movementGoalTimer;
+            info.actionTimer = m_actionCountdown;
+            info.movementGoalTimer = m_movementGoalCountdown;
             info.actionScores = m_actionScores;
             info.movementGoalScores = m_movementGoalScores;
             info.currentActionIndex = m_currentActionIndex;

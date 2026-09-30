@@ -5,7 +5,6 @@ namespace Stirge.UtilityAI
 {
     using Combat;
 
-    [RequireComponent(typeof(Rigidbody))]
     public class UtilityEnemyMotor : CombatEntityMotor
     {
         [Header("Enemy Components")]
@@ -46,7 +45,7 @@ namespace Stirge.UtilityAI
                 SyncNavMeshAgentPosition();
             }
         }
-        protected override void OnSetRotation()
+        protected override void OnSetRotation(Quaternion newRotation)
         {
             if (MovementState == MotorMovementState.Navigation)
             {
@@ -154,26 +153,21 @@ namespace Stirge.UtilityAI
         #endregion
 
         #region State
-        protected override void OnMovementStateChanged()
+        protected override void OnMovementStateChangedToVelocity()
         {
-            switch (MovementState)
-            {
-                case MotorMovementState.Velocity:
-                    Rigidbody.isKinematic = false;
-                    m_nav.enabled = false;
-                    break;
-                case MotorMovementState.Kinematic:
-                    Rigidbody.isKinematic = true;
-                    m_nav.enabled = false;
-                    break;
-                case MotorMovementState.Navigation:
-                    Rigidbody.isKinematic = true;
-                    m_nav.enabled = true;
-                    SyncNavMeshAgentPosition();
-                    break;
-                default:
-                    break;
-            }
+            Rigidbody.isKinematic = false;
+            m_nav.enabled = false;
+        }
+        protected override void OnMovementStateChangedToKinematic()
+        {
+            Rigidbody.isKinematic = true;
+            m_nav.enabled = false;
+        }
+        protected override void OnMovementStateChangedToNavigation()
+        {
+            Rigidbody.isKinematic = true;
+            m_nav.enabled = true;
+            SyncNavMeshAgentPosition();
         }
 
         protected override void OnActionEndInternal()
