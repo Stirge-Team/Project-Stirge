@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.MovementGoals.SerializedDebugTestMovementGoal
   m_scoreScaling: 1
   m_duration: 3
-  m_displayName: Test 1
+  m_displayName: Test 1 Movement Goal
   m_conditions: []
   m_scoringMethods: []
   m_arg0: 3.4

@@ -34,7 +34,7 @@ MonoBehaviour:
   m_firstConstantObject:
     rid: -2
   m_secondConstantObject:
-    rid: 9191495682441609302
+    rid: 9191495685712642535
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
   m_firstPropertyName:
@@ -55,7 +55,7 @@ MonoBehaviour:
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 9191495682441609302
+    - rid: 9191495685712642535
       type: {class: Boolean, ns: System, asm: mscorlib}
       data: 
 --- !u!114 &11400000
@@ -77,7 +77,8 @@ MonoBehaviour:
   m_timeline: {fileID: 11400000, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
   m_damage: 1
   m_range: 1
-  m_statuses: []
+  m_statuses:
+  - {fileID: 11400000, guid: c882f36c567358047915392e0a5d7c77, type: 2}
   m_conditions:
   - {fileID: -1882602300331660756}
   m_scoringMethods:
