@@ -1,5 +1,23 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8343616052023640821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 046b75f412b66c8438c565ff6bfc4396, type: 3}
+  m_Name: TrigScoringMethod
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.ScoringMethods.SerializedTrigScoringMethod
+  m_scoreScaling: 1
+  m_arg0: 0
+  m_arg1: 1
+  m_arg2: 1
+  m_arg3: 0
+  m_arg4: 3
 --- !u!114 &-1882602300331660756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16,7 +34,7 @@ MonoBehaviour:
   m_firstConstantObject:
     rid: -2
   m_secondConstantObject:
-    rid: -2
+    rid: 9191495682441609302
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
   m_firstPropertyName:
@@ -29,14 +47,17 @@ MonoBehaviour:
   m_secondPropertyTarget: 0
   m_firstTypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
     PublicKeyToken=b77a5c561934e089
-  m_secondTypeAssemblyQualifiedName: System.Void, mscorlib, Version=4.0.0.0, Culture=neutral,
+  m_secondTypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
     PublicKeyToken=b77a5c561934e089
-  m_isValid: 0
+  m_isValid: 1
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
+    - rid: 9191495682441609302
+      type: {class: Boolean, ns: System, asm: mscorlib}
+      data: 
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,4 +80,5 @@ MonoBehaviour:
   m_statuses: []
   m_conditions:
   - {fileID: -1882602300331660756}
-  m_scoringMethods: []
+  m_scoringMethods:
+  - {fileID: -8343616052023640821}
