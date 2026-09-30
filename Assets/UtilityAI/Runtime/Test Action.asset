@@ -1,23 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-4276708199791149537
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 046b75f412b66c8438c565ff6bfc4396, type: 3}
-  m_Name: TrigScoringMethod
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.ScoringMethods.SerializedTrigScoringMethod
-  m_scoreScaling: 1
-  m_arg0: 0
-  m_arg1: 1
-  m_arg2: 1
-  m_arg3: 0
-  m_arg4: 0
 --- !u!114 &-1882602300331660756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9d9ebb405b8b8d48ac7b4463018e275, type: 3}
-  m_Name: New Condition
+  m_Name: Not Performing Action
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedCondition
   m_operation: 0
   m_firstConstantObject:
     rid: -2
   m_secondConstantObject:
-    rid: 9191495678842896578
+    rid: -2
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
   m_firstPropertyName:
@@ -47,17 +29,14 @@ MonoBehaviour:
   m_secondPropertyTarget: 0
   m_firstTypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
     PublicKeyToken=b77a5c561934e089
-  m_secondTypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+  m_secondTypeAssemblyQualifiedName: System.Void, mscorlib, Version=4.0.0.0, Culture=neutral,
     PublicKeyToken=b77a5c561934e089
-  m_isValid: 1
+  m_isValid: 0
   references:
     version: 2
     RefIds:
     - rid: -2
       type: {class: , ns: , asm: }
-    - rid: 9191495678842896578
-      type: {class: Boolean, ns: System, asm: mscorlib}
-      data: 
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,5 +59,4 @@ MonoBehaviour:
   m_statuses: []
   m_conditions:
   - {fileID: -1882602300331660756}
-  m_scoringMethods:
-  - {fileID: -4276708199791149537}
+  m_scoringMethods: []

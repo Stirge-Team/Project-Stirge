@@ -1300,6 +1300,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5993207503619758613, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_serializedBrain
+      value: 
+      objectReference: {fileID: 11400000, guid: 37349f2dd120cd549af83425b115f513, type: 2}
     - target: {fileID: 5742239276836861200, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_Name
       value: Utility Enemy test
