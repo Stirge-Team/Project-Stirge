@@ -28,8 +28,6 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_conditionsPropertyName = "m_conditions";
         private const string s_scoringMethodsPropertyName = "m_scoringMethods";
 
-        private const string s_serializedConditionScorableTypeProperty = "m_scorableType";
-
         private static readonly string[] s_basePropertyNames = new string[10]
         {
             s_scoreScalingPropertyName,
@@ -132,7 +130,12 @@ namespace Stirge.UtilityAI.CustomEditors
                     EGL.BeginVertical(GUI.skin.box);
 
                     EGL.LabelField("Condition " + i, EditorStyles.boldLabel);
+                    EditorGUI.BeginChangeCheck();
                     objectValue.name = EGL.TextField("Name", objectValue.name);
+                    if (EditorGUI.EndChangeCheck())
+                    {
+                        serializedObject.ApplyModifiedProperties();
+                    }
 
                     editor.OnInspectorGUI();
 
@@ -186,7 +189,10 @@ namespace Stirge.UtilityAI.CustomEditors
                     EGL.BeginVertical(GUI.skin.box);
 
                     EGL.LabelField("Scoring Method " + i, EditorStyles.boldLabel);
+                    EditorGUI.BeginChangeCheck();
                     objectValue.name = EGL.TextField("Name", objectValue.name);
+                    if (EditorGUI.EndChangeCheck())
+                        serializedObject.ApplyModifiedProperties();
 
                     editor.OnInspectorGUI();
 
@@ -257,7 +263,7 @@ namespace Stirge.UtilityAI.CustomEditors
             int index = m_conditionsProperty.arraySize++;
             SerializedProperty newConditionProperty = m_conditionsProperty.GetArrayElementAtIndex(index);
             newConditionProperty.objectReferenceValue = instance;
-            newConditionProperty.FindPropertyRelative(s_serializedConditionScorableTypeProperty).intValue = (int)SerializedScorableType.Action;
+            ((SerializedCondition)newConditionProperty.objectReferenceValue).SetScorableType(SerializedScorableType.Action);
 
             serializedObject.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();

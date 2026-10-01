@@ -132,25 +132,19 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.LabelField(s_secondObjectLabel, EditorStyles.boldLabel);
             DrawObject(ref m_secondObject);
 
-            // Check for changes
-            ObjectChangeCheck(m_firstObject, m_firstValueTypeProperty, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
-            ObjectChangeCheck(m_secondObject, m_secondValueTypeProperty, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
-
             EGL.Space();
 
-            DrawPreview();           
+            // Draw preview expression
+            DrawPreview();
+            // Check validity of Condition and display any necessary warnings
+            CheckValidity();
 
             EGL.Separator();
 
-            // Controls
-            if (GUILayout.Button("Re-Initialise"))
-            {
-                OnEnable();
-                serializedObject.ApplyModifiedProperties();
-            }
-
             // Apply changes
-            if (EditorGUI.EndChangeCheck())
+            if (ObjectChangeCheck(m_firstObject, ref m_firstValueTypeProperty, ref m_firstConstantProperty, ref m_firstReferenceProperty, ref m_firstPropertyNameProperty, ref m_firstPropertyTargetProperty, ref m_firstTypeProperty)
+             || ObjectChangeCheck(m_secondObject, ref m_secondValueTypeProperty, ref m_secondConstantProperty, ref m_secondReferenceProperty, ref m_secondPropertyNameProperty, ref m_secondPropertyTargetProperty, ref m_secondTypeProperty)
+             || EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
             }
@@ -164,9 +158,10 @@ namespace Stirge.UtilityAI.CustomEditors
                 constantValue = constantProperty.managedReferenceValue,
                 referenceValue = referenceProperty.objectReferenceValue,
                 propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue,
+                propertyTarget = (ConditionPropertyTarget)propertyTargetProperty.intValue,
             };
 
-            obj.Init((ConditionPropertyTarget)propertyTargetProperty.intValue, typeProperty.stringValue);
+            obj.Init(typeProperty.stringValue);
 
             return obj;
         }
@@ -432,29 +427,23 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.EndHorizontal();
 
                     EGL.BeginHorizontal();
-                    EGL.LabelField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type), EditorStyles.textField);
-
+                    GUILayout.FlexibleSpace();
                     EGL.LabelField(new GUIContent("Property Target", "Where the property value should be retrieved from."), GUILayout.MaxWidth(110f));
-                    obj.propertyTarget = (ConditionPropertyTarget)EGL.EnumPopup(GUIContent.none, obj.propertyTarget, GUILayout.MaxWidth(90f));
+                    ConditionPropertyTarget newPropertyTarget = (ConditionPropertyTarget)EGL.EnumPopup(GUIContent.none, obj.propertyTarget, GUILayout.MinWidth(110f));
+                    if (newPropertyTarget != obj.propertyTarget)
+                    {
+                        // Clear the Property Value if the new Property Target is different
+                        obj.propertyValue = new();
+                        obj.propertyTarget = newPropertyTarget;
+                    }
+
+                    EGL.LabelField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type), EditorStyles.textField, GUILayout.MinWidth(Screen.width - 300f));
                     EGL.EndHorizontal();
                     break;
             }
-
-            /*
-            // Add button to clear data
-            // do not add the button if the obj is a constant value and the type has not been selected yet
-            if (obj.valueType != ConditionValueType.Constant && obj.type != null)
-            {
-                if (GUILayout.Button("Clear Data"))
-                {
-                    ConditionValueType valueType = obj.valueType; // maintain value type
-                    obj = new() { changed = true, valueType = valueType };
-                }
-            }
-            */
         }
 
-        private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty valueTypeProperty, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetProperty, SerializedProperty typeProperty)
+        private bool ObjectChangeCheck(SerializedConditionObject obj, ref SerializedProperty valueTypeProperty, ref SerializedProperty constantProperty, ref SerializedProperty referenceProperty, ref SerializedProperty propertyNameProperty, ref SerializedProperty propertyTargetProperty, ref SerializedProperty typeProperty)
         {
             if (obj.changed)
             {
@@ -481,7 +470,10 @@ namespace Stirge.UtilityAI.CustomEditors
                         break;
                 }
                 typeProperty.stringValue = obj.type?.AssemblyQualifiedName;
+
+                return true;
             }
+            return false;
         }
 
         #region Preview
@@ -511,10 +503,14 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.LabelField(operationString, s_middleStyle, GUILayout.MaxWidth(50f));
             DrawObjectPreview(m_secondObject);
             EGL.EndHorizontal();
+        }
 
+        private void CheckValidity()
+        {
             // Display validity message
             bool isValid = true;
-            if (m_firstObject.type == null || m_secondObject.type == null)
+            if (m_firstObject.type == null || m_secondObject.type == null ||
+               (m_firstObject.valueType == ConditionValueType.Property && m_firstObject.propertyValue.IsNull) || (m_secondObject.valueType == ConditionValueType.Property && m_secondObject.propertyValue.IsNull))
             {
                 isValid = false;
                 EGL.HelpBox("Please select values for this Condition.", MessageType.Warning);
@@ -522,13 +518,14 @@ namespace Stirge.UtilityAI.CustomEditors
             else
             {
                 bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
-                bool firstIsNull = m_firstObject.type == typeof(void);
-                bool secondIsNull = m_secondObject.type == typeof(void);
 
-                switch (operation)
+                switch ((Operation)m_operationProperty.intValue)
                 {
                     case Operation.Equal:
                     case Operation.NotEqual:
+                        bool firstIsNull = m_firstObject.type == typeof(void);
+                        bool secondIsNull = m_secondObject.type == typeof(void);
+
                         // if both are numeric, it's cool
                         if (bothNumeric)
                             break;

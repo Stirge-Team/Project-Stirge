@@ -47,6 +47,11 @@ namespace Stirge.UtilityAI
 
         [SerializeField] private bool m_isValid;
 
+        public void SetScorableType(SerializedScorableType scorableType)
+        {
+            m_scorableType = scorableType;
+        }
+
         public ICondition CreateRuntimeCondition<TScorable>(TScorable scorable) where TScorable : class, IScorable
         {
             if (!m_isValid)

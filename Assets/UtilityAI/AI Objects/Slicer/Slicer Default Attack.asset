@@ -18,7 +18,7 @@ MonoBehaviour:
   m_arg2: 1
   m_arg3: 0
   m_arg4: 3
---- !u!114 &-298654986088426285
+--- !u!114 &-3701780847286358614
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,6 +40,12 @@ MonoBehaviour:
     rid: -2
   m_firstReferenceObject: {fileID: 0}
   m_secondReferenceObject: {fileID: 0}
+  m_firstPropertyName:
+    m_propertyName: DistanceToTarget
+    m_hash: 415
+  m_secondPropertyName:
+    m_propertyName: range
+    m_hash: 143
   m_firstPropertyTarget: 0
   m_secondPropertyTarget: 2
   m_firstTypeAssemblyQualifiedName: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
@@ -74,6 +80,6 @@ MonoBehaviour:
   m_statuses:
   - {fileID: 11400000, guid: c882f36c567358047915392e0a5d7c77, type: 2}
   m_conditions:
-  - {fileID: -298654986088426285}
+  - {fileID: -3701780847286358614}
   m_scoringMethods:
   - {fileID: -8343616052023640821}
