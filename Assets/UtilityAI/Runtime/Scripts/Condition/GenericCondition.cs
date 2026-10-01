@@ -17,7 +17,7 @@ namespace Stirge.UtilityAI
         GreaterThanOrEqual,
     }
 
-    public abstract class GenericCondition<T1, T2> : ICondition
+    public abstract class GenericCondition<TScorable, T1, T2> : ICondition where TScorable : class, IScorable
     {
         protected enum ConditionType
         {
@@ -33,6 +33,7 @@ namespace Stirge.UtilityAI
         public static bool Equatable = (FirstType == SecondType) || Comparable;
         public static bool Comparable = StirgeTypeHelper.IsNumericType(FirstType) && StirgeTypeHelper.IsNumericType(SecondType);
 
+        private TScorable m_scorable;
         private Operation m_operation;
         private ConditionType m_type;
 
@@ -41,8 +42,8 @@ namespace Stirge.UtilityAI
         private T2 m_secondObject;
         private BlackboardPropertyName m_firstPropertyName;
         private BlackboardPropertyName m_secondPropertyName;
-        private EntityTargetType m_firstPropertyTarget;
-        private EntityTargetType m_secondPropertyTarget;
+        private ConditionPropertyTarget m_firstPropertyTarget;
+        private ConditionPropertyTarget m_secondPropertyTarget;
 
         private T1 GetFirstObject(UtilityEnemy user, CombatEntity target)
         {
@@ -52,8 +53,9 @@ namespace Stirge.UtilityAI
                 ConditionType.FirstPropertySecondObject or ConditionType.BothProperty =>
                     m_firstPropertyTarget switch
                     {
-                        EntityTargetType.User => GetFirstProperty(user, m_firstPropertyName),
-                        EntityTargetType.Target => GetFirstProperty(target, m_firstPropertyName),
+                        ConditionPropertyTarget.User => GetFirstProperty(user, m_firstPropertyName),
+                        ConditionPropertyTarget.Target => GetFirstProperty(target, m_firstPropertyName),
+                        ConditionPropertyTarget.Scorable => GetFirstProperty(m_scorable, m_firstPropertyName),
                         _ => default
                     },
                 _ => default,
@@ -67,16 +69,17 @@ namespace Stirge.UtilityAI
                 ConditionType.FirstObjectSecondProperty or ConditionType.BothProperty =>
                     m_secondPropertyTarget switch
                     {
-                        EntityTargetType.User => GetSecondProperty(user, m_secondPropertyName),
-                        EntityTargetType.Target => GetSecondProperty(target, m_secondPropertyName),
+                        ConditionPropertyTarget.User => GetSecondProperty(user, m_secondPropertyName),
+                        ConditionPropertyTarget.Target => GetSecondProperty(target, m_secondPropertyName),
+                        ConditionPropertyTarget.Scorable => GetSecondProperty(m_scorable, m_secondPropertyName),
                         _ => default
                     },
                 _ => default,
             };
         }
 
-        protected abstract T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName) where T : CombatEntity;
-        protected abstract T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName) where T : CombatEntity;
+        protected abstract T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName);
+        protected abstract T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName);
         #endregion      
 
         public bool Evaluate(UtilityEnemy user, CombatEntity target)
@@ -125,32 +128,36 @@ namespace Stirge.UtilityAI
             return false;
         }
 
-        #region Init
-        public void Init(Operation operation, object firstObject, object secondObject)
+        #region Setup
+        public void Setup<T>(T scorable, Operation operation, object firstObject, object secondObject) where T : class, IScorable
         {
+            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstObject = (T1)firstObject;
             m_secondObject = (T2)secondObject;
             m_type = ConditionType.BothObject;
         }
-        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, EntityTargetType propertyTarget)
+        public void Setup<T>(T scorable, Operation operation, object obj, BlackboardPropertyName propertyName, ConditionPropertyTarget propertyTarget) where T : class, IScorable
         {
+            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstObject = (T1)obj;
             m_secondPropertyName = propertyName;
             m_secondPropertyTarget = propertyTarget;
             m_type = ConditionType.FirstObjectSecondProperty;
         }
-        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, EntityTargetType propertyTarget)
+        public void Setup<T>(T scorable, Operation operation, BlackboardPropertyName propertyName, object obj, ConditionPropertyTarget propertyTarget) where T : class, IScorable
         {
+            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstPropertyName = propertyName;
             m_secondObject = (T2)obj;
             m_firstPropertyTarget = propertyTarget;
             m_type = ConditionType.FirstPropertySecondObject;
         }
-        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, EntityTargetType firstPropertyTarget, EntityTargetType secondPropertyTarget)
+        public void Setup<T>(T scorable, Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, ConditionPropertyTarget firstPropertyTarget, ConditionPropertyTarget secondPropertyTarget) where T : class, IScorable
         {
+            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstPropertyName = firstPropertyName;
             m_secondPropertyName = secondPropertyName;
@@ -162,7 +169,7 @@ namespace Stirge.UtilityAI
     }
 
     // These four classes exist because to get the value from the Blackboard you need to implicity provide whether the type is a class or struct
-    public class BothClassGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : class where T2 : class
+    public class BothClassGenericCondition<TScorable, T1, T2> : GenericCondition<TScorable, T1, T2> where TScorable : class, IScorable where T1 : class where T2 : class
     {
         protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
@@ -177,7 +184,7 @@ namespace Stirge.UtilityAI
             return null;
         }
     }
-    public class ClassStructGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : class where T2 : struct
+    public class ClassStructGenericCondition<TScorable, T1, T2> : GenericCondition<TScorable, T1, T2> where TScorable : class, IScorable where T1 : class where T2 : struct
     {
         protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
@@ -192,7 +199,7 @@ namespace Stirge.UtilityAI
             return new T2();
         }
     }
-    public class StructClassGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : struct where T2 : class
+    public class StructClassGenericCondition<TScorable, T1, T2> : GenericCondition<TScorable, T1, T2> where TScorable : class, IScorable where T1 : struct where T2 : class
     {
         protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
@@ -207,7 +214,7 @@ namespace Stirge.UtilityAI
             return null;
         }
     }
-    public class BothStructGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : struct where T2 : struct
+    public class BothStructGenericCondition<TScorable, T1, T2> : GenericCondition<TScorable, T1, T2> where TScorable : class, IScorable where T1 : struct where T2 : struct
     {
         protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
@@ -217,7 +224,7 @@ namespace Stirge.UtilityAI
         }
         protected override T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetStructValue(target, propertyName, out T2 value))
+            if (GenericBlackboard<T>.TryGetStructValue(target, propertyName, out T2 value))
                 return value;
             return new T2();
         }

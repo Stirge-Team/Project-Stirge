@@ -22,14 +22,14 @@ namespace Stirge.UtilityAI.CustomEditors
         private object m_constantValue;
         private Object m_referenceValue;
         private BlackboardPropertyName m_propertyValue;
-        private EntityTargetType m_propertyTarget;
+        private ConditionPropertyTarget m_propertyTarget;
 
         private Type m_type;
         private ConditionValueType m_valueType;
 
         private bool m_changed;
 
-        public void Init(EntityTargetType propertyTarget, string typeAssemblyQualifiedName)
+        public void Init(ConditionPropertyTarget propertyTarget, string typeAssemblyQualifiedName)
         {
             if (m_constantValue != null)
             {
@@ -106,13 +106,14 @@ namespace Stirge.UtilityAI.CustomEditors
                 }
             }
         }
-        public EntityTargetType propertyTarget
+        public ConditionPropertyTarget propertyTarget
         {
             get => m_propertyTarget;
             set
             {
                 if (m_propertyTarget != value)
                 {
+                    m_propertyValue = default;
                     m_propertyTarget = value;
                     m_changed = true;
                 }
@@ -138,6 +139,10 @@ namespace Stirge.UtilityAI.CustomEditors
             {
                 if (m_valueType != value)
                 {
+                    m_constantValue = null;
+                    m_referenceValue = null;
+                    m_propertyValue = default;
+
                     m_valueType = value;
                     m_changed = true;
                 }

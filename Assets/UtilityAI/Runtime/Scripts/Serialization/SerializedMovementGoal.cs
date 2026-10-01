@@ -12,7 +12,7 @@ namespace Stirge.UtilityAI
         public sealed override MovementGoal CreateRuntimeMovementGoal()
         {
             var movementGoal = MovementGoal.Create<TMovementGoal>(m_scoreScaling, m_duration, m_displayName);
-            movementGoal.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(movementGoal));
+            movementGoal.Setup(CreateRuntimeConditions(movementGoal), CreateRuntimeScoringMethods(movementGoal));
             return movementGoal;
         }
     }
@@ -25,7 +25,7 @@ namespace Stirge.UtilityAI
         public sealed override MovementGoal CreateRuntimeMovementGoal()
         {
             var movementGoal = MovementGoal.Create<TMovementGoal, TArg>(m_arg, m_scoreScaling, m_duration, m_displayName);
-            movementGoal.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(movementGoal));
+            movementGoal.Setup(CreateRuntimeConditions(movementGoal), CreateRuntimeScoringMethods(movementGoal));
             return movementGoal;
         }
     }
@@ -39,7 +39,7 @@ namespace Stirge.UtilityAI
         public sealed override MovementGoal CreateRuntimeMovementGoal()
         {
             var movementGoal = MovementGoal.Create<TMovementGoal, TArg0, TArg1>(m_arg0, m_arg1, m_scoreScaling, m_duration, m_displayName);
-            movementGoal.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(movementGoal));
+            movementGoal.Setup(CreateRuntimeConditions(movementGoal), CreateRuntimeScoringMethods(movementGoal));
             return movementGoal;
         }
     }
@@ -55,7 +55,7 @@ namespace Stirge.UtilityAI
         public sealed override MovementGoal CreateRuntimeMovementGoal()
         {
             var movementGoal = MovementGoal.Create<TMovementGoal, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, m_scoreScaling, m_duration, m_displayName);
-            movementGoal.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(movementGoal));
+            movementGoal.Setup(CreateRuntimeConditions(movementGoal), CreateRuntimeScoringMethods(movementGoal));
             return movementGoal;
         }
     }
@@ -72,7 +72,7 @@ namespace Stirge.UtilityAI
         public sealed override MovementGoal CreateRuntimeMovementGoal()
         {
             var movementGoal = MovementGoal.Create<TMovementGoal, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling, m_duration, m_displayName);
-            movementGoal.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(movementGoal));
+            movementGoal.Setup(CreateRuntimeConditions(movementGoal), CreateRuntimeScoringMethods(movementGoal));
             return movementGoal;
         }
     }
@@ -90,7 +90,7 @@ namespace Stirge.UtilityAI
         public sealed override MovementGoal CreateRuntimeMovementGoal()
         {
             var movementGoal = MovementGoal.Create<TMovementGoal, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling, m_duration, m_displayName);
-            movementGoal.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(movementGoal));
+            movementGoal.Setup(CreateRuntimeConditions(movementGoal), CreateRuntimeScoringMethods(movementGoal));
             return movementGoal;
         }
     }

@@ -28,7 +28,9 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_conditionsPropertyName = "m_conditions";
         private const string s_scoringMethodsPropertyName = "m_scoringMethods";
 
-        private static readonly string[] s_basePropertyNames = new string[]
+        private const string s_serializedConditionScorableTypeProperty = "m_scorableType";
+
+        private static readonly string[] s_basePropertyNames = new string[10]
         {
             s_scoreScalingPropertyName,
             s_durationPropertyName,
@@ -253,7 +255,9 @@ namespace Stirge.UtilityAI.CustomEditors
             AssetDatabase.AddObjectToAsset(instance, target);
 
             int index = m_conditionsProperty.arraySize++;
-            m_conditionsProperty.GetArrayElementAtIndex(index).objectReferenceValue = instance;
+            SerializedProperty newConditionProperty = m_conditionsProperty.GetArrayElementAtIndex(index);
+            newConditionProperty.objectReferenceValue = instance;
+            newConditionProperty.FindPropertyRelative(s_serializedConditionScorableTypeProperty).intValue = (int)SerializedScorableType.Action;
 
             serializedObject.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();

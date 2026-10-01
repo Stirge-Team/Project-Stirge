@@ -13,13 +13,13 @@ namespace Stirge.UtilityAI
 
         public abstract Type MovementGoalType { get; }
 
-        protected ICondition[] CreateRuntimeConditions()
+        protected ICondition[] CreateRuntimeConditions(MovementGoal movementGoal)
         {
             int conditionCount = m_conditions.Length;
             ICondition[] conditions = new ICondition[conditionCount];
             for (int i = 0; i < conditionCount; i++)
             {
-                conditions[i] = m_conditions[i].CreateRuntimeCondition();
+                conditions[i] = m_conditions[i].CreateRuntimeCondition(movementGoal);
             }
             return conditions;
         }

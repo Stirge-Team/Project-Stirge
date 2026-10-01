@@ -6,24 +6,48 @@ namespace Stirge.UtilityAI
 {
     using GenericBlackboard;
 
+    public enum SerializedScorableType
+    {
+        Action,
+        MovementGoal,
+        Status,
+    }
+
+    public enum ConditionValueType
+    {
+        Constant = 0,
+        Reference = 1,
+        Property = 2,
+    }
+
+    public enum ConditionPropertyTarget
+    {
+        User,
+        Target,
+        Scorable
+    }
+
     [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Condition", order = 450)]
     public class SerializedCondition : ScriptableObject
     {
+        [SerializeField] private SerializedScorableType m_scorableType;
         [SerializeField] private Operation m_operation;
+        [SerializeField] private ConditionValueType m_firstValueType;
+        [SerializeField] private ConditionValueType m_secondValueType;
         [SerializeReference] private object m_firstConstantObject;
         [SerializeReference] private object m_secondConstantObject;
         [SerializeField] private Object m_firstReferenceObject;
         [SerializeField] private Object m_secondReferenceObject;
         [SerializeField] private BlackboardPropertyName m_firstPropertyName;
         [SerializeField] private BlackboardPropertyName m_secondPropertyName;
-        [SerializeField] private EntityTargetType m_firstPropertyTarget;
-        [SerializeField] private EntityTargetType m_secondPropertyTarget;
+        [SerializeField] private ConditionPropertyTarget m_firstPropertyTarget;
+        [SerializeField] private ConditionPropertyTarget m_secondPropertyTarget;
         [SerializeField] private string m_firstTypeAssemblyQualifiedName;
         [SerializeField] private string m_secondTypeAssemblyQualifiedName;
 
         [SerializeField] private bool m_isValid;
 
-        public ICondition CreateRuntimeCondition()
+        public ICondition CreateRuntimeCondition<TScorable>(TScorable scorable) where TScorable : class, IScorable
         {
             if (!m_isValid)
             {
@@ -32,66 +56,64 @@ namespace Stirge.UtilityAI
             }
 
             object firstObject = null;
-            bool firstIsProperty;
-            if (m_firstConstantObject != null)
+            bool firstIsProperty = false;
+            switch (m_firstValueType)
             {
-                firstObject = m_firstConstantObject;
-                firstIsProperty = false;
-            }
-            else if (m_firstReferenceObject != null)
-            {
-                firstObject = m_firstReferenceObject;
-                firstIsProperty = false;
-            }
-            else
-            {
-                firstIsProperty = true;
+                case ConditionValueType.Constant:
+                    firstObject = m_firstConstantObject;
+                    break;
+                case ConditionValueType.Reference:
+                    firstObject = m_firstReferenceObject;
+                    break;
+                case ConditionValueType.Property:
+                    firstIsProperty = true;
+                    break;
             }
 
             object secondObject = null;
-            bool secondIsProperty;
-            if (m_secondConstantObject != null)
+            bool secondIsProperty = false;
+            switch (m_secondValueType)
             {
-                secondObject = m_secondConstantObject;
-                secondIsProperty = false;
-            }
-            else if (m_secondReferenceObject != null)
-            {
-                secondObject = m_secondReferenceObject;
-                secondIsProperty = false;
-            }
-            else
-            {
-                secondIsProperty = true;
+                case ConditionValueType.Constant:
+                    secondObject = m_secondConstantObject;
+                    break;
+                case ConditionValueType.Reference:
+                    secondObject = m_secondReferenceObject;
+                    break;
+                case ConditionValueType.Property:
+                    secondIsProperty = true;
+                    break;
             }
 
             Type firstType = Type.GetType(m_firstTypeAssemblyQualifiedName);
             Type secondType = Type.GetType(m_secondTypeAssemblyQualifiedName);
 
+            // Can I improve this section? No reflection to create instance of Condition class?
             Type conditionType = (firstType.IsClass, secondType.IsClass) switch
             {
-                (true, true) => typeof(BothClassGenericCondition<,>),
-                (true, false) => typeof(ClassStructGenericCondition<,>),
-                (false, true) => typeof(StructClassGenericCondition<,>),
-                (false, false) => typeof(BothStructGenericCondition<,>)
+                (true, true) => typeof(BothClassGenericCondition<,,>),
+                (true, false) => typeof(ClassStructGenericCondition<,,>),
+                (false, true) => typeof(StructClassGenericCondition<,,>),
+                (false, false) => typeof(BothStructGenericCondition<,,>)
             };
 
-            Type genericConditionType = conditionType.MakeGenericType(firstType, secondType);
+            Type genericConditionType = conditionType.MakeGenericType(typeof(TScorable), firstType, secondType);
             ICondition newCondition = Activator.CreateInstance(genericConditionType) as ICondition;
+            // end section
 
             switch (firstIsProperty, secondIsProperty)
             {
                 case (true, true):
-                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, m_firstPropertyTarget, m_secondPropertyTarget);
+                    newCondition.Setup(scorable, m_operation, m_firstPropertyName, m_secondPropertyName, m_firstPropertyTarget, m_secondPropertyTarget);
                     break;
                 case (true, false):
-                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, m_firstPropertyTarget);
+                    newCondition.Setup(scorable, m_operation, m_firstPropertyName, secondObject, m_firstPropertyTarget);
                     break;
                 case (false, true):
-                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, m_secondPropertyTarget);
+                    newCondition.Setup(scorable, m_operation, firstObject, m_secondPropertyName, m_secondPropertyTarget);
                     break;
                 case (false, false):
-                    newCondition.Init(m_operation, firstObject, secondObject);
+                    newCondition.Setup(scorable, m_operation, firstObject, secondObject);
                     break;
             }
             

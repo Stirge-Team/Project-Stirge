@@ -6,11 +6,23 @@ using UnityEngine;
 
 namespace Stirge.GenericBlackboard
 {
-    public static class GenericBlackboard<TBase> where TBase : MonoBehaviour
+    public static class GenericBlackboard<TBase>
     {
         static GenericBlackboard()
         {
-            CachedPropertyInfosArray = typeof(TBase).GetProperties(s_propertyFlags);
+            if (CachedPropertyInfosArray == null || CachedPropertyInfosArray.Length == 0)
+            {
+                List<PropertyInfo> propertyInfos = new();
+                propertyInfos.AddRange(typeof(TBase).GetProperties(s_propertyFlags));
+                Type typeToGetPropertiesFrom = typeof(TBase).BaseType;
+                while (!s_invalidTypes.Contains(typeToGetPropertiesFrom))
+                {
+                    propertyInfos.AddRange(typeToGetPropertiesFrom.GetProperties(s_propertyFlags));
+                    typeToGetPropertiesFrom = typeToGetPropertiesFrom.BaseType;
+                }
+                propertyInfos.Sort((p1, p2) => p1.PropertyType.Name.CompareTo(p2.PropertyType.Name));
+                CachedPropertyInfosArray = propertyInfos.ToArray();
+            }
 
             // Check each PropertyInfo in the cache and organise them into this dictionary by Type
             // Check all of them to ensure we create a new entry in the dictionary for every unique Type
@@ -50,6 +62,10 @@ namespace Stirge.GenericBlackboard
         }
         
         private static readonly BindingFlags s_propertyFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+        private static readonly Type[] s_invalidTypes = new Type[2]
+        {
+            null, typeof(MonoBehaviour) // Type.BaseClass will return null if the type is System.Object, which is the base class of all C# classes
+        };
         public static readonly PropertyInfo[] CachedPropertyInfosArray;
 
         private static readonly Dictionary<Type, IBlackboardTable<TBase>> s_tables = new();
@@ -102,12 +118,12 @@ namespace Stirge.GenericBlackboard
                 }
                 else
                 {
-                    Debug.LogError($"Table of Type '{valueType.Name}' does not exist on {nameof(TValue)}!", target);
+                   LogError($"Table of Type '{valueType.Name}' does not exist on {nameof(TValue)}!", target);
                 }
             }
             else
             {
-                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
+                LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
             }
         }
         public static void SetClassValue<TValue>(TBase target, BlackboardPropertyName propertyName, TValue value) where TValue : class
@@ -123,12 +139,12 @@ namespace Stirge.GenericBlackboard
                 }
                 else
                 {
-                    Debug.LogError($"Table of Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
+                    LogError($"Table of Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
                 }
             }
             else
             {
-                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
+                LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
             }
         }
         public static void SetObjectValue(TBase target, Type valueType, BlackboardPropertyName propertyName, object value)
@@ -147,15 +163,23 @@ namespace Stirge.GenericBlackboard
                 }
                 else
                 {
-                    Debug.LogError($"Property with Name '{propertyName.Name}' exists with Type '{valueIndex.table.valueType}', not Type '{valueType}' on {typeof(TBase).Name}!", target);
+                    LogError($"Property with Name '{propertyName.Name}' exists with Type '{valueIndex.table.valueType}', not Type '{valueType}' on {typeof(TBase).Name}!", target);
                 }
             }
             else
             {
-                Debug.LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
+                LogError($"Property with Name '{propertyName.Name}' with Type '{valueType.Name}' does not exist on {typeof(TBase).Name}!", target);
             }
         }
         #endregion
+
+        private static void LogError(object message, TBase target = default)
+        {
+            if (target is UnityEngine.Object obj)
+                Debug.LogError(message, obj);
+            else
+                Debug.LogError(message);
+        }
 
         /// <summary>
         /// Reference to a property in an <see cref="IBlackboardTable{TBase}"/>.<br/>

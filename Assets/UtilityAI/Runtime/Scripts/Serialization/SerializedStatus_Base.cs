@@ -16,13 +16,13 @@ namespace Stirge.UtilityAI
 
         public abstract Type StatusType { get; }
 
-        protected ICondition[] CreateRuntimeConditions()
+        protected ICondition[] CreateRuntimeConditions(Status status)
         {
             int conditionCount = m_conditions.Length;
             ICondition[] conditions = new ICondition[conditionCount];
             for (int i = 0; i < conditionCount; i++)
             {
-                conditions[i] = m_conditions[i].CreateRuntimeCondition();
+                conditions[i] = m_conditions[i].CreateRuntimeCondition(status);
             }
             return conditions;
         }

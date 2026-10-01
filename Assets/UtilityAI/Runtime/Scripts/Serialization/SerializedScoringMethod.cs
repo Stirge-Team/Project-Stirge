@@ -22,7 +22,7 @@ namespace Stirge.UtilityAI
 
         public sealed override IScoringMethod CreateRuntimeScoringMethod<TScorable>(TScorable scorable)
         {
-            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg>(scorable, m_arg, m_scoreScaling);
+            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg>(m_arg, scorable, m_scoreScaling);
         }
     }
     public abstract class SerializedScoringMethod<TScoringMethod, TArg0, TArg1> : SerializedScoringMethod_Base where TScoringMethod : IScoringMethod, ISetupable<TArg0, TArg1>, new()
@@ -34,7 +34,7 @@ namespace Stirge.UtilityAI
 
         public sealed override IScoringMethod CreateRuntimeScoringMethod<TScorable>(TScorable scorable)
         {
-            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1>(scorable, m_arg0, m_arg1, m_scoreScaling);
+            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1>(m_arg0, m_arg1, scorable, m_scoreScaling);
         }
     }
     public abstract class SerializedScoringMethod<TScoringMethod, TArg0, TArg1, TArg2> : SerializedScoringMethod_Base where TScoringMethod : IScoringMethod, ISetupable<TArg0, TArg1, TArg2>, new()
@@ -47,7 +47,7 @@ namespace Stirge.UtilityAI
 
         public sealed override IScoringMethod CreateRuntimeScoringMethod<TScorable>(TScorable scorable)
         {
-            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1, TArg2>(scorable, m_arg0, m_arg1, m_arg2, m_scoreScaling);
+            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, scorable, m_scoreScaling);
         }
     }
     public abstract class SerializedScoringMethod<TScoringMethod, TArg0, TArg1, TArg2, TArg3> : SerializedScoringMethod_Base where TScoringMethod : IScoringMethod, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
@@ -61,7 +61,7 @@ namespace Stirge.UtilityAI
 
         public sealed override IScoringMethod CreateRuntimeScoringMethod<TScorable>(TScorable scorable)
         {
-            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1, TArg2, TArg3>(scorable, m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling);
+            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, scorable, m_scoreScaling);
         }
     }
     public abstract class SerializedScoringMethod<TScoringMethod, TArg0, TArg1, TArg2, TArg3, TArg4> : SerializedScoringMethod_Base where TScoringMethod : IScoringMethod, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
@@ -76,7 +76,7 @@ namespace Stirge.UtilityAI
 
         public sealed override IScoringMethod CreateRuntimeScoringMethod<TScorable>(TScorable scorable)
         {
-            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1, TArg2, TArg3, TArg4>(scorable, m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling);
+            return ScoringMethod<TScorable>.Create<TScoringMethod, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, scorable, m_scoreScaling);
         }
     }
 }

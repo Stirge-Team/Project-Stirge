@@ -28,7 +28,8 @@ namespace Stirge.UtilityAI
         // field properties
         public CombatEntity Target => m_target;
         public Vector3 TargetPosition => m_targetPosition;
-        public override bool HasTarget => m_hasTarget;
+        public bool HasTarget => m_hasTarget;
+        public float DistanceToTarget => m_hasTarget ? Vector3.Distance(Motor.GetPosition(), m_targetPosition) : float.PositiveInfinity;
 
         #region Unity Events
         private void Awake()

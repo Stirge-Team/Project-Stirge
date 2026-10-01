@@ -10,17 +10,19 @@ namespace Stirge.UtilityAI
         private Action[] m_actions;
         private MovementGoal[] m_movementGoals;
 
-        private float m_actionCountdown;
-        private float m_movementGoalCountdown;
-
         private float[] m_actionScores;
         private float[] m_movementGoalScores;
 
+        // the index of the current Action that is being performed in m_actions
         private int m_currentActionIndex;
+        // the index of the current MovementGoal that is being performed in m_movementGoals
         private int m_currentMovementGoalIndex;
 
         private float m_minimumActionScore;
         private float m_minimumMovementGoalScore;
+
+        private float m_actionCountdown;
+        private float m_movementGoalCountdown;
 
         // Used to check if the current Action has been performed yet, as we only want an Action to be performed once each time it is selected
         private bool m_actionPerformed;
@@ -46,9 +48,9 @@ namespace Stirge.UtilityAI
             EvaluateMovementGoals(user, target);
 
             // Perform Action if not yet performed
-            if (!m_actionPerformed)
+            if (!m_actionPerformed && m_currentActionIndex != -1)
             {
-                CurrentAction?.Perform(user, target);
+                CurrentAction.Perform(user, target);
                 m_actionPerformed = true;
             }
 

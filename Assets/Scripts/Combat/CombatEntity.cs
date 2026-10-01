@@ -33,7 +33,6 @@ namespace Stirge.Combat
         public CombatEntityMotor Motor => m_motor;
         public EntityHealth Health => m_health;
         public bool IsPerformingAction => m_isPerformingAction;
-        public virtual bool HasTarget => false;
 
         #region UnityEvents
         private void Awake()

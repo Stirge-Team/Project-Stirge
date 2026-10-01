@@ -14,18 +14,53 @@ namespace Stirge.UtilityAI
         Movement
     }
 
+    /// <summary>
+    /// Part of the <see cref="UtilityBrain"/>. Used to determine the things the <see cref="UtilityEnemy"/> can do.<br/>
+    /// When inheriting this class, you must also implement either <see cref="INotSetupable"/> or one of the <see cref="ISetupable{TArg}"/> interfaces.
+    /// The number of generic arguments in <see cref="ISetupable{TArg}"/> should be equal to the number of unique properties you want your <see cref="Action"/> to have.
+    /// </summary>
     public class Action : IScorable
     {
         // fields
+        /// <summary>
+        /// The returned score of this <see cref="Action"/> will be multiplied by this value.
+        /// </summary>
         private float m_scoreScaling = 1f;
+        /// <summary>
+        /// The length of time in seconds the <see cref="UtilityBrain"/> will wait after this <see cref="Action"/> is Performed until it Evaluates a new <see cref="Action"/>.
+        /// </summary>
         private float m_duration;
+        /// <summary>
+        /// The name of this <see cref="Action"/> for testing purposes and in case we want to be able to show the Player names of Attacks.
+        /// </summary>
         private string m_displayName;
+        /// <summary>
+        /// Which type of <see cref="Action"/> this is.
+        /// </summary>
         private ActionType m_actionType;
+        /// <summary>
+        /// The <see cref="TimelineAsset"/> that will be played when this <see cref="Action"/> is performed.
+        /// </summary>
         private TimelineAsset m_timeline;
+        /// <summary>
+        /// The base damage if this is an Attack.
+        /// </summary>
         private float m_damage = 1f;
+        /// <summary>
+        /// The base range if this is an Attack.
+        /// </summary>
         private float m_range = 1f;
+        /// <summary>
+        /// The <see cref="Status"/>es that can be inflicted by this <see cref="Action"/>. See the individual <see cref="Status"/>es for targeting information.
+        /// </summary>
         private Status[] m_statuses;
+        /// <summary>
+        /// The Conditions that must be met for this <see cref="Action"/> to be Performed.
+        /// </summary>
         private ICondition[] m_conditions;
+        /// <summary>
+        /// The ScoringMethods that determine the score this <see cref="Action"/> will return when Evaluated.
+        /// </summary>
         private IScoringMethod[] m_scoringMethods;
 
         // properties
@@ -35,6 +70,7 @@ namespace Stirge.UtilityAI
         public float damage => m_damage;
         public float range => m_range;
 
+        /// <inheritdoc/>
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
             if (!Enumerable.All(m_conditions, condition => condition.Evaluate(user, target)))
@@ -50,11 +86,16 @@ namespace Stirge.UtilityAI
 
             return (scoringMethodScore + statusScore + EvaluateInternal(user, target)) * m_scoreScaling;
         }
+
+        /// <inheritdoc cref="IScorable.Evaluate"/>
         protected virtual float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
             return 0f;
         }
 
+        /// <summary>
+        /// What happens when the <paramref name="user"/> Performs this <see cref="Action"/>.
+        /// </summary>
         public virtual void Perform(CombatEntity user, CombatEntity target)
         {
             if (m_timeline != null)

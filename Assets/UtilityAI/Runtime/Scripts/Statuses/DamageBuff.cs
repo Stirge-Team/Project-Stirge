@@ -19,7 +19,7 @@ namespace Stirge.UtilityAI.Statuses
             m_modifier = modifier;
         }
 
-        protected override void OnApplyInternal(CombatEntity target)
+        protected override void OnApplyInternal(CombatEntity user, CombatEntity target)
         {
             target.SetDamageModifier(m_type, m_modifier);
         }

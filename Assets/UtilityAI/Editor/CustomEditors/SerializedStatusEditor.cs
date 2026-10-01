@@ -16,14 +16,17 @@ namespace Stirge.UtilityAI.CustomEditors
     [CustomEditor(typeof(SerializedStatus_Base), true)]
     public class SerializedStatusEditor : Editor
     {
-        private static string s_scoreScalingPropertyName = "m_scoreScaling";
-        private static string s_displayNamePropertyName = "m_displayName";
-        private static string s_stackTypePropertyName = "m_stackType";
-        private static string s_maxStacksPropertyName = "m_maxStacks";
-        private static string s_durationTypePropertyName = "m_durationType";
-        private static string s_durationPropertyName = "m_duration";
-        private static string s_conditionsPropertyName = "m_conditions";
-        private static string s_scoringMethodsPropertyName = "m_scoringMethods";
+        private const string s_scoreScalingPropertyName = "m_scoreScaling";
+        private const string s_displayNamePropertyName = "m_displayName";
+        private const string s_stackTypePropertyName = "m_stackType";
+        private const string s_maxStacksPropertyName = "m_maxStacks";
+        private const string s_durationTypePropertyName = "m_durationType";
+        private const string s_durationPropertyName = "m_duration";
+        private const string s_conditionsPropertyName = "m_conditions";
+        private const string s_scoringMethodsPropertyName = "m_scoringMethods";
+
+        private const string s_serializedConditionScorableTypeProperty = "m_scorableType";
+
 
         private static readonly string[] s_basePropertyNames = new string[]
         {
@@ -237,7 +240,9 @@ namespace Stirge.UtilityAI.CustomEditors
             AssetDatabase.AddObjectToAsset(instance, target);
 
             int index = m_conditionsProperty.arraySize++;
-            m_conditionsProperty.GetArrayElementAtIndex(index).objectReferenceValue = instance;
+            SerializedProperty newConditionProperty = m_conditionsProperty.GetArrayElementAtIndex(index);
+            newConditionProperty.objectReferenceValue = instance;
+            newConditionProperty.FindPropertyRelative(s_serializedConditionScorableTypeProperty).intValue = (int)SerializedScorableType.Status;
 
             serializedObject.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();

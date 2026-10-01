@@ -15,13 +15,6 @@ namespace Stirge.UtilityAI.CustomEditors
     using GenericBlackboard;
     using Tools;
 
-    public enum ConditionValueType
-    {
-        Constant = 0,
-        Reference = 1,
-        Property = 2
-    }
-
     [CustomEditor(typeof(SerializedCondition))]
     public class SerializedConditionEditor : Editor
     {
@@ -37,7 +30,10 @@ namespace Stirge.UtilityAI.CustomEditors
         #endregion
 
         #region Properties
+        private const string s_scorableTypePropertyName = "m_scorableType";
         private const string s_operationPropertyName = "m_operation";
+        private const string s_firstValueTypePropertyName = "m_firstValueType";
+        private const string s_secondValueTypePropertyName = "m_secondValueType";
         private const string s_firstConstantPropertyName = "m_firstConstantObject";
         private const string s_secondConstantPropertyName = "m_secondConstantObject";
         private const string s_firstReferencePropertyName = "m_firstReferenceObject";
@@ -50,7 +46,10 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_secondTypePropertyName = "m_secondTypeAssemblyQualifiedName";
         private const string s_isValidPropertyName = "m_isValid";
 
+        private SerializedScorableType m_scorableType;
         private SerializedProperty m_operationProperty;
+        private SerializedProperty m_firstValueTypeProperty;
+        private SerializedProperty m_secondValueTypeProperty;
         private SerializedProperty m_firstConstantProperty;
         private SerializedProperty m_secondConstantProperty;
         private SerializedProperty m_firstReferenceProperty;
@@ -67,8 +66,6 @@ namespace Stirge.UtilityAI.CustomEditors
         #region Labels
         private static readonly GUIContent s_firstObjectLabel = new("First Object");
         private static readonly GUIContent s_secondObjectLabel = new("Second Object");
-        
-        private static string[] s_entityTargetTypeNames = Enum.GetNames(typeof(EntityTargetType));
 
         private static GUIStyle s_middleStyle;
         private static bool s_middleStyleInitialised = false;
@@ -81,8 +78,12 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             try
             {
+                m_scorableType = (SerializedScorableType)serializedObject.FindProperty(s_scorableTypePropertyName).intValue;
+
                 // init objects
                 m_operationProperty = serializedObject.FindProperty(s_operationPropertyName);
+                m_firstValueTypeProperty = serializedObject.FindProperty(s_firstValueTypePropertyName);
+                m_secondValueTypeProperty = serializedObject.FindProperty(s_secondValueTypePropertyName);
                 m_firstConstantProperty = serializedObject.FindProperty(s_firstConstantPropertyName);
                 m_secondConstantProperty = serializedObject.FindProperty(s_secondConstantPropertyName);
                 m_firstReferenceProperty = serializedObject.FindProperty(s_firstReferencePropertyName);
@@ -94,8 +95,9 @@ namespace Stirge.UtilityAI.CustomEditors
                 m_firstTypeProperty = serializedObject.FindProperty(s_firstTypePropertyName);
                 m_secondTypeProperty = serializedObject.FindProperty(s_secondTypePropertyName);
                 m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
-                m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
-                m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
+
+                m_firstObject ??= InitialiseObject(m_firstValueTypeProperty, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
+                m_secondObject ??= InitialiseObject(m_secondValueTypeProperty, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
             }
             catch
             {
@@ -131,8 +133,8 @@ namespace Stirge.UtilityAI.CustomEditors
             DrawObject(ref m_secondObject);
 
             // Check for changes
-            ObjectChangeCheck(m_firstObject, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
-            ObjectChangeCheck(m_secondObject, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
+            ObjectChangeCheck(m_firstObject, m_firstValueTypeProperty, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
+            ObjectChangeCheck(m_secondObject, m_secondValueTypeProperty, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
 
             EGL.Space();
 
@@ -154,16 +156,17 @@ namespace Stirge.UtilityAI.CustomEditors
             }
         }
 
-        private SerializedConditionObject InitialiseObject(SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetIsUserProperty, SerializedProperty typeProperty)
+        private SerializedConditionObject InitialiseObject(SerializedProperty valueTypeProperty, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetProperty, SerializedProperty typeProperty)
         {
             SerializedConditionObject obj = new()
             {
+                valueType = (ConditionValueType)valueTypeProperty.intValue,
                 constantValue = constantProperty.managedReferenceValue,
                 referenceValue = referenceProperty.objectReferenceValue,
                 propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue,
             };
 
-            obj.Init((EntityTargetType)propertyTargetIsUserProperty.intValue, typeProperty.stringValue);
+            obj.Init((ConditionPropertyTarget)propertyTargetProperty.intValue, typeProperty.stringValue);
 
             return obj;
         }
@@ -180,7 +183,6 @@ namespace Stirge.UtilityAI.CustomEditors
             // ValueType enum field
             obj.valueType = (ConditionValueType)EGL.EnumPopup(new GUIContent("Value Type"), obj.valueType);
 
-            // if set to Constant value
             switch (obj.valueType)
             {
                 case ConditionValueType.Constant:
@@ -354,10 +356,7 @@ namespace Stirge.UtilityAI.CustomEditors
                                 obj.constantValue = sByteValue;
                                 break;
                             case var n when n == typeof(void).Name:
-                                using (new EditorGUI.DisabledScope(true))
-                                {
-                                    EGL.TextField("null");
-                                }
+                                EGL.LabelField("null", EditorStyles.textField);
                                 obj.constantValue = null;
                                 break;
                             default:
@@ -390,7 +389,7 @@ namespace Stirge.UtilityAI.CustomEditors
                     break;
                 case ConditionValueType.Reference:
                     EditorGUI.BeginDisabledGroup(true);
-                    EGL.TextField(obj.type != null ? obj.type.Name : "null", GUILayout.MaxWidth(140f));
+                    EGL.LabelField(obj.type != null ? obj.type.Name : "null", EditorStyles.textField, GUILayout.MaxWidth(140f));
                     EditorGUI.EndDisabledGroup();
 
             EGL.EndHorizontal();
@@ -406,16 +405,38 @@ namespace Stirge.UtilityAI.CustomEditors
                     // Property field
                     if (GUILayout.Button("Select Property"))
                     {
-                        SelectProperty<CombatEntity>(obj);
+                        switch (obj.propertyTarget)
+                        {
+                            case ConditionPropertyTarget.User:
+                                SelectProperty<UtilityEnemy>(ref obj);
+                                break;
+                            case ConditionPropertyTarget.Target:
+                                SelectProperty<CombatEntity>(ref obj);
+                                break;
+                            case ConditionPropertyTarget.Scorable:
+                                switch (m_scorableType)
+                                {
+                                    case SerializedScorableType.Action:
+                                        SelectProperty<Action>(ref obj);
+                                        break;
+                                    case SerializedScorableType.MovementGoal:
+                                        SelectProperty<MovementGoal>(ref obj);
+                                        break;
+                                    case SerializedScorableType.Status:
+                                        SelectProperty<Status>(ref obj);
+                                        break;
+                                }
+                                break;
+                        }
                     }
             EGL.EndHorizontal();
 
-                    EGL.TextField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type));
+                    EGL.BeginHorizontal();
+                    EGL.LabelField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type), EditorStyles.textField);
 
-                    int selectedTargetType = (int)obj.propertyTarget;
-                    selectedTargetType = EGL.Popup(new GUIContent("Property Target", "Where the property value should be retrieved from."),
-                        selectedTargetType, s_entityTargetTypeNames);
-                    obj.propertyTarget = (EntityTargetType)selectedTargetType;
+                    EGL.LabelField(new GUIContent("Property Target", "Where the property value should be retrieved from."), GUILayout.MaxWidth(110f));
+                    obj.propertyTarget = (ConditionPropertyTarget)EGL.EnumPopup(GUIContent.none, obj.propertyTarget, GUILayout.MaxWidth(90f));
+                    EGL.EndHorizontal();
                     break;
             }
 
@@ -433,11 +454,13 @@ namespace Stirge.UtilityAI.CustomEditors
             */
         }
 
-        private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetIsUserProperty, SerializedProperty typeProperty)
+        private void ObjectChangeCheck(SerializedConditionObject obj, SerializedProperty valueTypeProperty, SerializedProperty constantProperty, SerializedProperty referenceProperty, SerializedProperty propertyNameProperty, SerializedProperty propertyTargetProperty, SerializedProperty typeProperty)
         {
             if (obj.changed)
             {
                 obj.changed = false;
+
+                valueTypeProperty.intValue = (int)obj.valueType;
                 switch (obj.valueType)
                 {
                     case ConditionValueType.Constant:
@@ -454,7 +477,7 @@ namespace Stirge.UtilityAI.CustomEditors
                         propertyNameProperty.boxedValue = obj.propertyValue;
                         constantProperty.managedReferenceValue = null;
                         referenceProperty.objectReferenceValue = null;
-                        propertyTargetIsUserProperty.intValue = (int)obj.propertyTarget;
+                        propertyTargetProperty.intValue = (int)obj.propertyTarget;
                         break;
                 }
                 typeProperty.stringValue = obj.type?.AssemblyQualifiedName;
@@ -485,7 +508,7 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.BeginHorizontal();
             GUILayout.FlexibleSpace();
             DrawObjectPreview(m_firstObject);
-            EGL.LabelField(operationString, s_middleStyle, GUILayout.MaxWidth(80f));
+            EGL.LabelField(operationString, s_middleStyle, GUILayout.MaxWidth(50f));
             DrawObjectPreview(m_secondObject);
             EGL.EndHorizontal();
 
@@ -545,17 +568,33 @@ namespace Stirge.UtilityAI.CustomEditors
 
         private void DrawObjectPreview(SerializedConditionObject obj)
         {
-            EditorGUI.BeginDisabledGroup(true);
+            float minWidth = (Screen.width - 50f) * 0.35f;
             switch (obj.valueType)
             {
                 case ConditionValueType.Constant:
-                    EGL.TextField(obj.constantValue != null ? obj.constantValue.ToString() : "null", GUILayout.ExpandWidth(true));
+                    EGL.LabelField(obj.constantValue != null ? obj.constantValue.ToString() : "null", EditorStyles.textField, GUILayout.MinWidth(minWidth));
                     break;
                 case ConditionValueType.Reference:
-                    EGL.ObjectField(obj.referenceValue, typeof(Object), false, GUILayout.ExpandWidth(true));
+                    using (new EditorGUI.DisabledScope(true))
+                    {
+                        EGL.ObjectField(obj.referenceValue, typeof(Object), false, GUILayout.MinWidth(minWidth));
+                    }
                     break;
                 case ConditionValueType.Property:
-                    EGL.TextField(!obj.propertyValue.IsNull ? obj.propertyValue.Name : "null", GUILayout.ExpandWidth(true));
+                    string propertyTargetLabel = obj.propertyTarget switch
+                    {
+                        ConditionPropertyTarget.User => "User.",
+                        ConditionPropertyTarget.Target => "Target.",
+                        ConditionPropertyTarget.Scorable => m_scorableType switch
+                        {
+                            SerializedScorableType.Action => "Action.",
+                            SerializedScorableType.MovementGoal => "MovementGoal.",
+                            SerializedScorableType.Status => "Status.",
+                            _ => string.Empty
+                        },
+                        _ => string.Empty
+                    };
+                    EGL.LabelField(propertyTargetLabel + (!obj.propertyValue.IsNull ? obj.propertyValue.Name : "null"), EditorStyles.textField, GUILayout.MinWidth(minWidth));
                     break;
             }
             EditorGUI.EndDisabledGroup();
@@ -580,8 +619,10 @@ namespace Stirge.UtilityAI.CustomEditors
             genericMenu.ShowAsContext();
         }
 
-        private void SelectProperty<TBase>(SerializedConditionObject obj) where TBase : MonoBehaviour
+        private void SelectProperty<TBase>(ref SerializedConditionObject obj)
         {
+            bool objectIsFirst = obj == m_firstObject;
+
             var genericMenu = new GenericMenu();
             IReadOnlyList<PropertyInfo> propertyInfos = GenericBlackboard<TBase>.CachedPropertyInfosArray;
             for (int i = 0, count = propertyInfos.Count; i < count; i++)
@@ -592,8 +633,16 @@ namespace Stirge.UtilityAI.CustomEditors
                 string typeName = GetUIName(type);
                 genericMenu.AddItem(new GUIContent(name + " : " + typeName), false, () =>
                 {
-                    obj.propertyValue = new(propertyInfo.Name);
-                    obj.type = type;
+                    if (objectIsFirst)
+                    {
+                        m_firstObject.propertyValue = new(propertyInfo.Name);
+                        m_firstObject.type = type;
+                    }
+                    else
+                    {
+                        m_secondObject.propertyValue = new(propertyInfo.Name);
+                        m_secondObject.type = type;
+                    }
                 });
             }
 

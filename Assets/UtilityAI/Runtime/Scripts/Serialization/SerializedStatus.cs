@@ -12,7 +12,7 @@ namespace Stirge.UtilityAI
         public sealed override Status CreateRuntimeStatus()
         {
             var status = Status.Create<TStatus>(m_scoreScaling, m_displayName, m_stackType, m_maxStacks, m_durationType, m_duration);
-            status.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(status));
+            status.Setup(CreateRuntimeConditions(status), CreateRuntimeScoringMethods(status));
             return status;
         }
     }
@@ -25,7 +25,7 @@ namespace Stirge.UtilityAI
         public sealed override Status CreateRuntimeStatus()
         {
             var status = Status.Create<TStatus, TArg>(m_arg, m_scoreScaling, m_displayName, m_stackType, m_maxStacks, m_durationType, m_duration);
-            status.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(status));
+            status.Setup(CreateRuntimeConditions(status), CreateRuntimeScoringMethods(status));
             return status;
         }
     }
@@ -39,7 +39,7 @@ namespace Stirge.UtilityAI
         public sealed override Status CreateRuntimeStatus()
         {
             var status = Status.Create<TStatus, TArg0, TArg1>(m_arg0, m_arg1, m_scoreScaling, m_displayName, m_stackType, m_maxStacks, m_durationType, m_duration);
-            status.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(status));
+            status.Setup(CreateRuntimeConditions(status), CreateRuntimeScoringMethods(status));
             return status;
         }
     }
@@ -55,7 +55,7 @@ namespace Stirge.UtilityAI
         public sealed override Status CreateRuntimeStatus()
         {
             var status = Status.Create<TStatus, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, m_scoreScaling, m_displayName, m_stackType, m_maxStacks, m_durationType, m_duration);
-            status.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(status));
+            status.Setup(CreateRuntimeConditions(status), CreateRuntimeScoringMethods(status));
             return status;
         }
     }
@@ -72,7 +72,7 @@ namespace Stirge.UtilityAI
         public sealed override Status CreateRuntimeStatus()
         {
             var status = Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling, m_displayName, m_stackType, m_maxStacks, m_durationType, m_duration);
-            status.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(status));
+            status.Setup(CreateRuntimeConditions(status), CreateRuntimeScoringMethods(status));
             return status;
         }
     }
@@ -90,7 +90,7 @@ namespace Stirge.UtilityAI
         public sealed override Status CreateRuntimeStatus()
         {
             var status = Status.Create<TStatus, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling, m_displayName, m_stackType, m_maxStacks, m_durationType, m_duration);
-            status.Setup(CreateRuntimeConditions(), CreateRuntimeScoringMethods(status));
+            status.Setup(CreateRuntimeConditions(status), CreateRuntimeScoringMethods(status));
             return status;
         }
     }
