@@ -44,75 +44,40 @@ namespace Stirge.UtilityAI
         private EntityTargetType m_firstPropertyTarget;
         private EntityTargetType m_secondPropertyTarget;
 
-        private T1 GetFirstObject(CombatEntity user, CombatEntity target)
+        private T1 GetFirstObject(UtilityEnemy user, CombatEntity target)
         {
             return m_type switch
             {
                 ConditionType.BothObject or ConditionType.FirstObjectSecondProperty => m_firstObject,
                 ConditionType.FirstPropertySecondObject or ConditionType.BothProperty =>
-                    GetT1PropertyMethod(m_firstPropertyTarget switch
+                    m_firstPropertyTarget switch
                     {
-                        EntityTargetType.User => user,
-                        EntityTargetType.Target => target,
-                        _ => null
-                    }, m_firstPropertyName),
+                        EntityTargetType.User => GetFirstProperty(user, m_firstPropertyName),
+                        EntityTargetType.Target => GetFirstProperty(target, m_firstPropertyName),
+                        _ => default
+                    },
                 _ => default,
             };
         }
-        private T2 GetSecondObject(CombatEntity user, CombatEntity target)
+        private T2 GetSecondObject(UtilityEnemy user, CombatEntity target)
         {
             return m_type switch
             {
                 ConditionType.BothObject or ConditionType.FirstPropertySecondObject => m_secondObject,
                 ConditionType.FirstObjectSecondProperty or ConditionType.BothProperty =>
-                    GetT2PropertyMethod(m_secondPropertyTarget switch
+                    m_secondPropertyTarget switch
                     {
-                        EntityTargetType.User => user,
-                        EntityTargetType.Target => target,
-                        _ => null
-                    }, m_secondPropertyName),
+                        EntityTargetType.User => GetSecondProperty(user, m_secondPropertyName),
+                        EntityTargetType.Target => GetSecondProperty(target, m_secondPropertyName),
+                        _ => default
+                    },
                 _ => default,
             };
         }
 
-        protected abstract T1 GetT1PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName);
-        protected abstract T2 GetT2PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName);
-        #endregion
-
-        #region Init
-        public void Init(Operation operation, object firstObject, object secondObject)
-        {
-            m_operation = operation;
-            m_firstObject = (T1)firstObject;
-            m_secondObject = (T2)secondObject;
-            m_type = ConditionType.BothObject;
-        }
-        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, EntityTargetType propertyTarget)
-        {
-            m_operation = operation;
-            m_firstObject = (T1)obj;
-            m_secondPropertyName = propertyName;
-            m_secondPropertyTarget = propertyTarget;
-            m_type = ConditionType.FirstObjectSecondProperty;
-        }
-        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, EntityTargetType propertyTarget)
-        {
-            m_operation = operation;
-            m_firstPropertyName = propertyName;
-            m_secondObject = (T2)obj;
-            m_firstPropertyTarget = propertyTarget;
-            m_type = ConditionType.FirstPropertySecondObject;
-        }
-        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, EntityTargetType firstPropertyTarget, EntityTargetType secondPropertyTarget)
-        {
-            m_operation = operation;
-            m_firstPropertyName = firstPropertyName;
-            m_secondPropertyName = secondPropertyName;
-            m_firstPropertyTarget = firstPropertyTarget;
-            m_secondPropertyTarget = secondPropertyTarget;
-            m_type = ConditionType.BothProperty;
-        }
-        #endregion       
+        protected abstract T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName) where T : CombatEntity;
+        protected abstract T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName) where T : CombatEntity;
+        #endregion      
 
         public bool Evaluate(UtilityEnemy user, CombatEntity target)
         {
@@ -159,62 +124,98 @@ namespace Stirge.UtilityAI
             Debug.LogError($"Types {FirstType.Name} and {SecondType.Name} are not comparable!");
             return false;
         }
+
+        #region Init
+        public void Init(Operation operation, object firstObject, object secondObject)
+        {
+            m_operation = operation;
+            m_firstObject = (T1)firstObject;
+            m_secondObject = (T2)secondObject;
+            m_type = ConditionType.BothObject;
+        }
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, EntityTargetType propertyTarget)
+        {
+            m_operation = operation;
+            m_firstObject = (T1)obj;
+            m_secondPropertyName = propertyName;
+            m_secondPropertyTarget = propertyTarget;
+            m_type = ConditionType.FirstObjectSecondProperty;
+        }
+        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, EntityTargetType propertyTarget)
+        {
+            m_operation = operation;
+            m_firstPropertyName = propertyName;
+            m_secondObject = (T2)obj;
+            m_firstPropertyTarget = propertyTarget;
+            m_type = ConditionType.FirstPropertySecondObject;
+        }
+        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, EntityTargetType firstPropertyTarget, EntityTargetType secondPropertyTarget)
+        {
+            m_operation = operation;
+            m_firstPropertyName = firstPropertyName;
+            m_secondPropertyName = secondPropertyName;
+            m_firstPropertyTarget = firstPropertyTarget;
+            m_secondPropertyTarget = secondPropertyTarget;
+            m_type = ConditionType.BothProperty;
+        }
+        #endregion 
     }
 
+    // These four classes exist because to get the value from the Blackboard you need to implicity provide whether the type is a class or struct
     public class BothClassGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : class where T2 : class
     {
-        protected override T1 GetT1PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetClassValue(target, propertyName, out T1 value))
+            if (GenericBlackboard<T>.TryGetClassValue(target, propertyName, out T1 value))
                 return value;
             return null;
         }
-        protected override T2 GetT2PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetClassValue(target, propertyName, out T2 value))
+            if (GenericBlackboard<T>.TryGetClassValue(target, propertyName, out T2 value))
                 return value;
             return null;
         }
     }
     public class ClassStructGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : class where T2 : struct
     {
-        protected override T1 GetT1PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetClassValue(target, propertyName, out T1 value))
+            if (GenericBlackboard<T>.TryGetClassValue(target, propertyName, out T1 value))
                 return value;
             return null;
         }
-        protected override T2 GetT2PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetStructValue(target, propertyName, out T2 value))
+            if (GenericBlackboard<T>.TryGetStructValue(target, propertyName, out T2 value))
                 return value;
             return new T2();
         }
     }
     public class StructClassGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : struct where T2 : class
     {
-        protected override T1 GetT1PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetStructValue(target, propertyName, out T1 value))
+            if (GenericBlackboard<T>.TryGetStructValue(target, propertyName, out T1 value))
                 return value;
             return new T1();
         }
-        protected override T2 GetT2PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetClassValue(target, propertyName, out T2 value))
+            if (GenericBlackboard<T>.TryGetClassValue(target, propertyName, out T2 value))
                 return value;
             return null;
         }
     }
     public class BothStructGenericCondition<T1, T2> : GenericCondition<T1, T2> where T1 : struct where T2 : struct
     {
-        protected override T1 GetT1PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName)
         {
-            if (GenericBlackboard<CombatEntity>.TryGetStructValue(target, propertyName, out T1 value))
+            if (GenericBlackboard<T>.TryGetStructValue(target, propertyName, out T1 value))
                 return value;
             return new T1();
         }
-        protected override T2 GetT2PropertyMethod(CombatEntity target, BlackboardPropertyName propertyName)
+        protected override T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName)
         {
             if (GenericBlackboard<CombatEntity>.TryGetStructValue(target, propertyName, out T2 value))
                 return value;

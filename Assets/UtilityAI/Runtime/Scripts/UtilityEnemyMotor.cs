@@ -74,7 +74,7 @@ namespace Stirge.UtilityAI
             if (m_headingIsTargetPosition)
             {
                 // determine what target heading is
-                m_targetHeading = (m_enemy.Target.GetPosition() - Rigidbody.position).normalized;
+                m_targetHeading = (m_enemy.Target.Motor.GetPosition() - Rigidbody.position).normalized;
                 m_targetHeading.y = 0;
             }
             else

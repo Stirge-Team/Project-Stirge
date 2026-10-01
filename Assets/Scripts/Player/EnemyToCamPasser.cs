@@ -7,7 +7,7 @@ namespace Stirge.Player
 {
     //Stirge namespaces
     using Camera;
-    using Enemy;
+    using UtilityAI;
 
     public class EnemyToCamPasser : MonoBehaviour
     {
@@ -33,7 +33,7 @@ namespace Stirge.Player
         private IEnumerator GrabAllEnemies(float waitTime)
         {
             m_enemyAgentList.Clear();
-            foreach (var ene in FindObjectsByType<Enemy>(FindObjectsSortMode.None))
+            foreach (var ene in FindObjectsByType<UtilityEnemy>(FindObjectsSortMode.None))
             {
                 m_enemyAgentList.Add(ene.GetComponentInChildren<NavMeshAgent>().transform);
             }

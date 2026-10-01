@@ -1,4 +1,3 @@
-using Stirge.AI;
 using Stirge.Combat;
 using Stirge.GenericBlackboard;
 using Stirge.Tools;

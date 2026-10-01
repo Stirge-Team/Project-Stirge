@@ -12,14 +12,14 @@ namespace Stirge.Player
     {
         [Header("Player Properties")]
         [SerializeField] private PlayerInputProcessing m_input;
-        protected PlayerMotor Motor => (PlayerMotor)base.Motor;
+        protected PlayerMotor PlayerMotor => (PlayerMotor)base.Motor;
         protected Vector2 m_inputDirection;
         private Transform m_camTransform;
 
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if (!Motor || !m_input || !Health)
+            if (!PlayerMotor || !m_input || !Health)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
@@ -35,17 +35,17 @@ namespace Stirge.Player
                 //TODO player rotation and lock on stuff here
                 if (attemptedMoveDirection.sqrMagnitude > 0)
                 {
-                    Motor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), Motor.CurrentMovementProperties.AngularSpeed));
+                    PlayerMotor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), PlayerMotor.CurrentMovementProperties.AngularSpeed));
                 }
 
-                if (Motor.HorizontalSpeed < Motor.CurrentMovementProperties.HorizontalTopSpeed ||
-                   Vector3.Angle(Motor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
+                if (PlayerMotor.HorizontalSpeed < PlayerMotor.CurrentMovementProperties.HorizontalTopSpeed ||
+                   Vector3.Angle(PlayerMotor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
                 {
-                    Motor.AddForce(Motor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * Motor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                    PlayerMotor.AddForce(PlayerMotor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * PlayerMotor.CurrentMovementProperties.Acceleration * Time.deltaTime);
                 }
             }
 
-            Motor.AddForce(Motor.HorizontalDirection * -Motor.CurrentMovementProperties.Friction * Mathf.Clamp01(Motor.HorizontalSpeed) * Time.deltaTime);
+            PlayerMotor.AddForce(PlayerMotor.HorizontalDirection * -PlayerMotor.CurrentMovementProperties.Friction * Mathf.Clamp01(PlayerMotor.HorizontalSpeed) * Time.deltaTime);
         }
         #endregion
 
@@ -53,7 +53,7 @@ namespace Stirge.Player
         public void AttemptJump(InputAction.CallbackContext context)
         {
             if (context.performed && !IsPerformingAction)
-                if (Motor.OnJump())
+                if (PlayerMotor.OnJump())
                 {
                     Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
@@ -74,7 +74,7 @@ namespace Stirge.Player
         #region Status
         public override void EnterStun(float stunLength)
         {
-            Motor.ResetHorizontalVelocity();
+            PlayerMotor.ResetHorizontalVelocity();
             //m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
@@ -85,49 +85,18 @@ namespace Stirge.Player
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
-            Motor.AddForce(direction * strength + transform.up * height); //override
+            PlayerMotor.AddForce(direction * strength + transform.up * height); //override
         }
         #endregion
-
-        #region Transformation
-        public override Vector3 GetPosition()
-        {
-            return transform.position;
-        }
-        public override Quaternion GetRotation()
-        {
-            return transform.rotation;
-        }
-        public Vector3 GetEulerRotation()
-        {
-            return transform.rotation.eulerAngles;
-        }
-        public override void SetPosition(Vector3 position)
-        {
-            transform.position = position;
-        }
-        public override void SetRotation(Quaternion rotation)
-        {
-            transform.rotation = rotation;
-        }
-        protected void SetEulerRotation(Vector3 eulerRotation)
-        {
-            transform.rotation = Quaternion.Euler(eulerRotation);
-        }
-        public override Vector3 GetForward()
-        {
-            return transform.forward;
-        }
 
         public void BeginGoToPosition(Vector3 newPosition)
         {
             Vector3 direction = (newPosition - transform.position).normalized;
-            Motor.AddForce(direction * Motor.CurrentMovementProperties.Acceleration);
+            PlayerMotor.AddForce(direction * PlayerMotor.CurrentMovementProperties.Acceleration);
         }
         public void StopGoToPosition()
         {
-            Motor.ResetHorizontalVelocity();
+            PlayerMotor.ResetHorizontalVelocity();
         }
-        #endregion
     }
 }

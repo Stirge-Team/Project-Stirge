@@ -105,7 +105,7 @@ namespace Stirge.Combat.OldStatus
 
         public override void OnInflict(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
-            Vector3 dir = attackingEntity.GetForward();
+            Vector3 dir = attackingEntity.Motor.transform.forward;
             targetEntity.EnterKnockback(m_strength, dir, m_height, 0, m_ignoreGrounded);
         }
     }

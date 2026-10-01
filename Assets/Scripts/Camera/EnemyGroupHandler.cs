@@ -1,10 +1,12 @@
-using UnityEngine;
-using Unity.Cinemachine;
-using UnityEngine.AI;
 using System.Collections.Generic;
+using Unity.Cinemachine;
+using UnityEngine;
+using UnityEngine.AI;
 
 namespace Stirge.Camera
 {
+    using UtilityAI;
+
     public class EnemyGroupHandler : MonoBehaviour
     {
         private static bool s_debug = false;
@@ -30,7 +32,7 @@ namespace Stirge.Camera
             foreach (var ene in FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None))
             { 
                 //If this agent doesn't have a stirge enemy script - skip them
-                if (ene.GetComponentInParent<Enemy.Enemy>() == null)
+                if (ene.GetComponentInParent<UtilityEnemy>() == null)
                     continue;
 
                 //Get this enemy's transform

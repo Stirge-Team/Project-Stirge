@@ -56,19 +56,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
-  m_rb: {fileID: 2713100686291229703}
-  m_anim: {fileID: 6992374104284298522}
+  m_motor: {fileID: 0}
   m_health: {fileID: 4312719870174949881}
-  m_inflictedStatuses: []
-  m_groundedCheckDistance: 1.3
-  m_groundedCheckMask:
-    serializedVersion: 2
-    m_Bits: 0
-  m_movement: {fileID: 2920065731834999269}
+  m_director: {fileID: 0}
   m_input: {fileID: 5079235152578265304}
-  references:
-    version: 2
-    RefIds: []
 --- !u!136 &1532762708043262146
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -377,22 +368,6 @@ MonoBehaviour:
     m_ActionId: cee7e8b9-c1c4-4e9c-a33d-38335a19aa8c
     m_ActionName: 'Player/Hurtself[/Gamepad/buttonWest]'
   - m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 5079235152578265304}
-        m_TargetAssemblyTypeName: Stirge.Input.PlayerInputProcessing, Assembly-CSharp
-        m_MethodName: GetAInput
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_ActionId: 70c6e45d-6e67-44ab-acbc-7bc58bd9583c
-    m_ActionName: 'Player/A[/Mouse/middleButton]'
-  - m_PersistentCalls:
       m_Calls: []
     m_ActionId: b7a5efb1-ce94-49c6-a903-b168263ac74b
     m_ActionName: 'Debug/Exit Mouse Lock[/Keyboard/escape]'
@@ -426,8 +401,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerAnimationControllerHandler
   m_controller: {fileID: 6992374104284298522}
-  m_playerMovement: {fileID: 2920065731834999269}
-  m_motor: {fileID: 5256876837077168771}
+  m_motor: {fileID: 0}
   m_movementParameter: IsMoving
   m_isGroundedParameter: IsGrounded
   m_speedScale: 1
@@ -444,7 +418,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
   m_player: {fileID: 369394295828842384}
-  m_inputBufferTime: 0.2
+  m_inputDuration: 0.2
+  m_bufferDuration: 0.4
 --- !u!114 &4312719870174949881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -491,12 +466,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1253332100919465643}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 580071fdd96fbe048b8e25b177a64a5d, type: 3}
+  m_Script: {fileID: 11500000, guid: cc2753d86d1c624408a2db60db52a9ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Hitbox.HitboxCollider
-  m_onCollision:
-    m_PersistentCalls:
-      m_Calls: []
+  m_owner: {fileID: 369394295828842384}
 --- !u!1 &2937563319759706959
 GameObject:
   m_ObjectHideFlags: 0
@@ -1665,9 +1638,6 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2124328068652129529}
-    - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 5938381950428784864}
     - targetCorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
       insertIndex: -1
@@ -1683,271 +1653,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4357118449180629203, guid: c2bea4bfe1ac5c63cb53dc6f01d9f955, type: 3}
   m_PrefabInstance: {fileID: 8225336506013013904}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2124328068652129529
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5643533546166619971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6396eda12d42e6846bfc47b83a7d13fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrameFighter2.Manager.FrameDataManager
-  m_animationEvents:
-  - m_eventID: TestAttackEvent0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: HaltHorizontalVelocity
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestAttackEvent1
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: set_enabled
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
-  - m_eventID: TestLauncherEvent0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: HaltHorizontalVelocity
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestLauncherEvent1
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: set_enabled
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
-  - m_eventID: TestString1Event0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: HaltHorizontalVelocity
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestString1Event1
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: set_enabled
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
-  - m_eventID: TestString2Event0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: HaltHorizontalVelocity
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestString2Event1
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: set_enabled
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
-  - m_eventID: TestString3Event0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: HaltHorizontalVelocity
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestString3Event1
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 5256876837077168771}
-          m_TargetAssemblyTypeName: Stirge.Player.MovementMotor, Assembly-CSharp
-          m_MethodName: set_enabled
-          m_Mode: 6
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 1
-          m_CallState: 2
-  - m_eventID: TestAttackOnHit0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticleWraper
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: HitEffect
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestString1OnHit0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticleWraper
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: HitEffect
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestLauncherOnHit0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticleWraper
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 1
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestString2OnHit0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticleWraper
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: HitEffect
-            m_BoolArgument: 0
-          m_CallState: 2
-  - m_eventID: TestString3OnHit0
-    m_event:
-    - m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 0}
-          m_TargetAssemblyTypeName: ParticleInstancer, Assembly-CSharp
-          m_MethodName: PlayParticleWraper
-          m_Mode: 5
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: HitEffect
-            m_BoolArgument: 0
-          m_CallState: 2
-  m_characterAnimData:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 11400000, guid: 1a7309668d24b70a4949c5834790b588, type: 2}
-  - {fileID: 11400000, guid: 21acf07377a3abe0d8ba98d8b976a247, type: 2}
-  - {fileID: 11400000, guid: 9130691532d77d61fb0ef3ce7f238004, type: 2}
-  - {fileID: 11400000, guid: aeb7afd0269c608be881ba1a41f90784, type: 2}
-  - {fileID: 11400000, guid: 6eaa0761d4271d7fcaa60b75717f429e, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 11400000, guid: 74759b6f31c3cdba9946379e62b2b06c, type: 2}
 --- !u!114 &5938381950428784864
 MonoBehaviour:
   m_ObjectHideFlags: 0

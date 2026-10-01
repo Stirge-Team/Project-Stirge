@@ -16,7 +16,7 @@ namespace Stirge.UtilityAI.MovementGoals
 
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return Mathf.Min(3f, Vector3.Distance(user.GetPosition(), m_worldPosition));
+            return Mathf.Min(3f, Vector3.Distance(user.Motor.GetPosition(), m_worldPosition));
         }
 
         public override void Perform(UtilityEnemy user, CombatEntity target)

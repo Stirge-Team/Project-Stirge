@@ -13,7 +13,7 @@ namespace Stirge.UtilityAI
 
         private CombatEntity m_target;
         private Vector3 m_targetPosition;
-        private bool m_hasTarget;
+        private bool m_hasTarget = false;
 
         private UtilityBrain m_brain;
         private UtilityEnemyMotor m_enemyMotor;
@@ -28,7 +28,7 @@ namespace Stirge.UtilityAI
         // field properties
         public CombatEntity Target => m_target;
         public Vector3 TargetPosition => m_targetPosition;
-        public bool HasTarget => m_hasTarget;
+        public override bool HasTarget => m_hasTarget;
 
         #region Unity Events
         private void Awake()
@@ -40,6 +40,8 @@ namespace Stirge.UtilityAI
         {
             //Time.fixedDeltaTime = 0.333f;
 
+            m_hasTarget = false;
+
             m_brain = m_serializedBrain.CreateRuntimeBrain();
             m_brain.Start();
         }
@@ -50,40 +52,6 @@ namespace Stirge.UtilityAI
                 m_targetPosition = m_target.Motor.GetPosition();
             
             m_brain.Update(this, m_target);
-        }
-        #endregion
-
-        #region Transformation
-        public override Vector3 GetPosition()
-        {
-            return Motor.transform.position;
-        }
-        public override void SetPosition(Vector3 newPosition)
-        {
-            Motor.SetPosition(newPosition);
-        }
-        public override Quaternion GetRotation()
-        {
-            return Motor.transform.rotation;
-        }
-        public override void SetRotation(Quaternion newRotation)
-        {
-            Motor.SetRotation(newRotation);
-        }
-        public override void SetRotation(Vector3 eulerRotation)
-        {
-            Motor.SetRotation(Quaternion.Euler(eulerRotation));
-        }
-        public override Vector3 GetForward()
-        {
-            return Motor.transform.forward;
-        }
-        #endregion
-
-        #region Physics
-        public override void MovePosition(Vector3 newPosition)
-        {
-            Motor.SetPosition(newPosition);
         }
         #endregion
 

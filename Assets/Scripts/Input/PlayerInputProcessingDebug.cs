@@ -1,7 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Stirge.Combat.Attacks;
-using System.Linq;
 using UnityEngine.Timeline;
 
 namespace Stirge.Input

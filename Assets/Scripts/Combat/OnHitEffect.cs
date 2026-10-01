@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace Stirge.Combat
 {
-    using Enemy;
     using OldStatus;
 
     [System.Serializable]

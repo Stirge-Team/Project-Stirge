@@ -33,6 +33,7 @@ namespace Stirge.Combat
         public CombatEntityMotor Motor => m_motor;
         public EntityHealth Health => m_health;
         public bool IsPerformingAction => m_isPerformingAction;
+        public virtual bool HasTarget => false;
 
         #region UnityEvents
         private void Awake()
@@ -59,23 +60,6 @@ namespace Stirge.Combat
 
         protected virtual void AwakeThis() { }
         protected virtual void UpdateThis(float deltaTime) { }
-        #endregion
-
-        #region Transformation
-        public virtual Vector3 GetPosition() { throw new System.NotImplementedException(); }
-        public virtual void SetPosition(Vector3 position) { throw new System.NotImplementedException(); }
-        public virtual Quaternion GetRotation() { throw new System.NotImplementedException(); }
-        public virtual void SetRotation(Quaternion rotation) { throw new System.NotImplementedException(); }
-        public virtual void SetRotation(Vector3 eulerRotation) { throw new System.NotImplementedException(); }
-        public virtual Vector3 GetForward() { throw new System.NotImplementedException(); }
-        #endregion
-
-        #region Physics
-        /// <summary>
-        /// Move to position with respect to Physics.
-        /// </summary>
-        /// <param name="newPosition"></param>
-        public virtual void MovePosition(Vector3 newPosition) { throw new System.NotImplementedException(); }
         #endregion
 
         #region Death State

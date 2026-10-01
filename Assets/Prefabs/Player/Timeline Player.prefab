@@ -208,11 +208,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
---- !u!4 &2202064621031587732 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
-  m_PrefabInstance: {fileID: 4799812991401377094}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &2564161512617394268 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 6992374104284298522, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
@@ -275,7 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73f4dd88a9b4d6242bfefd1f6f4745b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerMotor
-  m_transform: {fileID: 2202064621031587732}
+  m_anim: {fileID: 2564161512617394268}
   m_rb: {fileID: 7438401560705065281}
   m_col: {fileID: 6330139077499344260}
   m_defaultMovementState: 1
@@ -286,12 +281,12 @@ MonoBehaviour:
   m_aerialMovementProperties: {fileID: 11400000, guid: dbec2a8f79c4f73fc98d7619e41cc3b7, type: 2}
   m_verticalTopSpeed: 1000
   m_maxFallingSpeed: 1000
-  m_coyoteTime: 0.2
   m_fallSpeedMultiplier: 1
   m_groundCheckDistance: 1
   m_groundCheckRadius: 0.5
   m_slopeLimit: 45
   m_jumpHeight: 3
+  m_coyoteTime: 0.2
   m_inputStrengthScalar:
     serializedVersion: 2
     m_Curve:
