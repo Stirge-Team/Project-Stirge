@@ -1,0 +1,24 @@
+#ROOTNAMESPACEBEGIN#using UnityEngine;
+
+namespace Stirge.AI
+{
+    [System.Serializable]
+    public class #SCRIPTNAME# : Behaviour
+    {
+        #NOTRIM#public override void _Enter(Agent agent)
+        {
+            
+        }
+
+        public override void _Update(Agent agent, float deltaTime)
+        {
+            
+        }
+
+        public override void _Exit(Agent agent)
+        {
+            
+        }
+    }
+}
+#ROOTNAMESPACEEND#

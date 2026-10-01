@@ -1,9 +1,14 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Stirge.Input
 {
+    using Combat.Attacks;
+    using Player;
+    using System.Linq;
+
     [System.Flags]
     public enum AttackInput
     {
@@ -16,24 +21,46 @@ namespace Stirge.Input
 
     public class PlayerInputProcessing : MonoBehaviour
     {
-        [SerializeField] private Animator m_playerAnimator;
-        
+        #region Singleton
+        public static PlayerInputProcessing Instance { get; private set; }
+
+        private void Awake()
+        {
+            if (Instance != null)
+            {
+                Destroy(Instance); // you could do Instance.gameObject but if the PIP is attached to the player then that would destroy the player, up to you
+            }
+
+            Instance = this;
+            Init();
+        }
+        private void Init()
+        {
+            m_comboBindings = new();
+        }
+        #endregion
+
+        [SerializeField] private Player m_player;
+
         [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
-        
-        private Dictionary<AttackInput, string> m_groundedBindings;
-        private Dictionary<AttackInput, string> m_airBindings;
+
+        private Dictionary<AttackInput, AttackData> m_groundedBindings = new();
+        private Dictionary<AttackInput, AttackData> m_airBindings = new();
 
         // if combos are never going to have branching paths, this can just become an AttackBinding
-        private Dictionary<AttackInput, string> m_comboBindings;
+        private Dictionary<AttackInput, AttackData> m_comboBindings;
 
         private List<AttackInput> m_sequence = new();
 
         private float m_bufferTimer = 0;
 
-        private void Start()
+        public List<KeyValuePair<AttackInput, AttackData>> ComboBindings
         {
-            m_comboBindings = new();
+            get
+            {
+                return m_comboBindings != null ? m_comboBindings.ToList() : null;
+            }
         }
 
         private void Update()
@@ -51,26 +78,26 @@ namespace Stirge.Input
         }
 
         #region Bindings
-        public void SetGroundedBindings(Dictionary<AttackInput, string> bindings)
+        public void SetGroundedBindings(Dictionary<AttackInput, AttackData> bindings)
         {
             m_groundedBindings = new(bindings);
         }
-        public void SetAirBindings(Dictionary<AttackInput, string> bindings)
+        public void SetAirBindings(Dictionary<AttackInput, AttackData> bindings)
         {
             m_airBindings = new(bindings);
         }
 
-        public void SetComboBinding(AttackBinding binding)
+        public void AddComboBinding(AttackBinding binding)
         {
-            m_comboBindings = AttackBinding.ConvertToDictionary(binding);
+            m_comboBindings.Add(binding.attackInput, binding.attackData);
         }
-        public void SetComboBinding(Dictionary<AttackInput, string> bindings)
+        public void SetComboBinding(Dictionary<AttackInput, AttackData> bindings)
         {
             m_comboBindings = new(bindings);
         }
         public void ClearComboBinding()
         {
-            m_comboBindings = null;
+            m_comboBindings.Clear();
         }
         #endregion
 
@@ -107,28 +134,29 @@ namespace Stirge.Input
 
         public bool ProcessInput(AttackInput input)
         {
-            if (m_comboBindings.TryGetValue(input, out string attackName))
+            // Combo Bindings does not check if the player is in an available state,
+            // As combo attacks can interrupt other actions
+            if (m_comboBindings.TryGetValue(input, out AttackData attackData))
             {
-                m_playerAnimator.Play(attackName);
+                m_player.UseAttack(attackData);
+                ClearComboBinding();
                 return true;
             }
             // check if the player is in a state where they are able to attack
-            
-            bool grounded = m_playerAnimator.GetBool("IsGrounded");
-            // grounded bindings
-            if (grounded)
+            if (!m_player.IsAttacking)
             {
-                if (m_groundedBindings.TryGetValue(input, out attackName))
+                // grounded bindings
+                if (m_player.IsGrounded() && m_groundedBindings.TryGetValue(input, out attackData))
                 {
-                    m_playerAnimator.Play(attackName);
+                    m_player.UseAttack(attackData);
                     return true;
                 }
-            }
-            // air bindings
-            else if (m_airBindings.TryGetValue(input, out attackName))
-            {
-                m_playerAnimator.Play(attackName);
-                return true;
+                // air bindings
+                else if (m_airBindings.TryGetValue(input, out attackData))
+                {
+                    m_player.UseAttack(attackData);
+                    return true;
+                }
             }
 
             return false;
@@ -172,5 +200,18 @@ namespace Stirge.Input
             }
         }
         #endregion
+
+        //Disabling should 
+        public void SetInputReading(bool setTo, float time = 1)
+        {
+            enabled = setTo;
+            if(time > 0) StartCoroutine(ReEnableInputs(time));
+            else if(!enabled) Debug.LogWarning($"You have provided no time for when {name} should start reading inputs again. Please make sure that you reenable this functionality elsewhere!");
+        }
+        private IEnumerator ReEnableInputs(float time)
+        {
+            yield return new WaitForSeconds(time);
+            enabled = true;
+        }
     }
 }

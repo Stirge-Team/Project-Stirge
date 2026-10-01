@@ -34,7 +34,7 @@ MonoBehaviour:
       - rid: 2758101256172994624
   m_eventData: []
   m_nextComboInput:
-    m_nextComboAttack: 
+    m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 2
     m_comboInputTimeStart: 2
     m_comboInputTimeEnd: 17
@@ -45,3 +45,5 @@ MonoBehaviour:
       type: {class: Knockback, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_strength: 5
+        m_height: 1
+        m_ignoreGrounded: 0

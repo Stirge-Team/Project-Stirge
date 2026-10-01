@@ -1,38 +1,55 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Stirge.Input
 {
-    using Combat;
+    using Combat.Attacks;
+    using Combat.Attacks.Serialization;
     
     [System.Serializable]
     public class AttackBinding
     {
+        public AttackBinding(AttackInput input, SerializedAttackData data)
+        {
+            attackInput = input;
+            m_serializedAttackData = data;
+        }
         public AttackBinding(AttackBinding binding)
         {
             attackInput = binding.attackInput;
-            attackName = binding.attackName;
+            m_serializedAttackData = binding.m_serializedAttackData;
         }
         
         public AttackInput attackInput;
-        public string attackName;
+        [SerializeField] private SerializedAttackData m_serializedAttackData;
 
-        public KeyValuePair<AttackInput, string> ConvertToDictionaryEntry()
+        private AttackData m_deserializedAttackData;
+
+        public AttackData attackData
         {
-            return new KeyValuePair<AttackInput, string>(attackInput, attackName);
+            get
+            {
+                m_deserializedAttackData ??= m_serializedAttackData.CreateAttackData();
+                return m_deserializedAttackData;
+            }
         }
 
-        public static Dictionary<AttackInput, string> ConvertToDictionary(AttackBinding binding)
+        public KeyValuePair<AttackInput, AttackData> ConvertToDictionaryEntry()
         {
-            return new Dictionary<AttackInput, string>
+            return new KeyValuePair<AttackInput, AttackData>(attackInput, attackData);
+        }
+
+        public static Dictionary<AttackInput, AttackData> ConvertToDictionary(AttackBinding binding)
+        {
+            return new Dictionary<AttackInput, AttackData>
             {
-                { binding.attackInput, binding.attackName }
+                { binding.attackInput, binding.attackData }
             };
         }
-        public static Dictionary<AttackInput, string> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
+        public static Dictionary<AttackInput, AttackData> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
         {
-            return new Dictionary<AttackInput, string>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
+            return new Dictionary<AttackInput, AttackData>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
         }
     }
 }

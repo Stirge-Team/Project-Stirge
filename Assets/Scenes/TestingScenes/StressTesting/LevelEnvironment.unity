@@ -1457,6 +1457,7 @@ MonoBehaviour:
   m_jumpHeight: 4
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
+  m_landingSound: {fileID: 0}
   m_fallSpeedCap: 1000
   m_fallTimeSpeedMultiplier: 2.2
 --- !u!114 &60138664
@@ -10111,6 +10112,94 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 8686905464242370237, guid: 93544438d8572044b862a01b62b6b3c3, type: 3}
+--- !u!1 &526141742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 526141745}
+  - component: {fileID: 526141744}
+  - component: {fileID: 526141743}
+  m_Layer: 0
+  m_Name: WaveSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &526141743
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526141742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da0b8c4a10e7915b79b04983cafe25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ParticleInstancer
+  m_particles:
+  - m_name: LightningSpawn
+    m_particleEffect: {fileID: 7307422956041462421, guid: fa20e410a0bfb6a86a6ca57d86e1d21f, type: 3}
+    m_defaultLocation: {fileID: 0}
+  - m_name: LightningSpawn
+    m_particleEffect: {fileID: 5811371191471910201, guid: 2a3caf475e40e8823aa4e710e51293d8, type: 3}
+    m_defaultLocation: {fileID: 0}
+--- !u!114 &526141744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526141742}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0413fc8044716d85088d0c3acbcfe4ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.WaveSpawner
+  m_waves:
+  - m_spawnArea: {x: 0, y: 0, z: 3, w: 3}
+    m_startDelay: 0
+    m_spawnRate: 0
+    m_batchSpawn: 1
+    m_canBatchOverflow: 0
+    m_maxSpawnCount: 1
+    m_enemyList:
+    - m_type: {fileID: 4942877625448988306, guid: 27fff962d825df64db6cc947cb686c13, type: 3}
+      m_maxCount: 1
+  - m_spawnArea: {x: 10, y: 0, z: 9, w: 3}
+    m_startDelay: 3
+    m_spawnRate: 0.2
+    m_batchSpawn: 2
+    m_canBatchOverflow: 0
+    m_maxSpawnCount: 3
+    m_enemyList:
+    - m_type: {fileID: 4942877625448988306, guid: 27fff962d825df64db6cc947cb686c13, type: 3}
+      m_maxCount: 6
+  m_completeEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_spawnParticleName: LightningSpawn
+  m_gizmoAlpha: 1
+--- !u!4 &526141745
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 526141742}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17, y: 1, z: 9.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &528554767
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43266,3 +43355,4 @@ SceneRoots:
   - {fileID: 1425119668}
   - {fileID: 159340978}
   - {fileID: 1046846189}
+  - {fileID: 526141745}
