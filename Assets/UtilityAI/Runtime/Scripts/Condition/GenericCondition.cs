@@ -41,8 +41,8 @@ namespace Stirge.UtilityAI
         private T2 m_secondObject;
         private BlackboardPropertyName m_firstPropertyName;
         private BlackboardPropertyName m_secondPropertyName;
-        private bool m_firstIsForUser;
-        private bool m_secondIsForUser;
+        private EntityTargetType m_firstPropertyTarget;
+        private EntityTargetType m_secondPropertyTarget;
 
         private T1 GetFirstObject(CombatEntity user, CombatEntity target)
         {
@@ -50,7 +50,12 @@ namespace Stirge.UtilityAI
             {
                 ConditionType.BothObject or ConditionType.FirstObjectSecondProperty => m_firstObject,
                 ConditionType.FirstPropertySecondObject or ConditionType.BothProperty =>
-                    GetT1PropertyMethod(m_firstIsForUser ? user : target, m_firstPropertyName),
+                    GetT1PropertyMethod(m_firstPropertyTarget switch
+                    {
+                        EntityTargetType.User => user,
+                        EntityTargetType.Target => target,
+                        _ => null
+                    }, m_firstPropertyName),
                 _ => default,
             };
         }
@@ -60,7 +65,12 @@ namespace Stirge.UtilityAI
             {
                 ConditionType.BothObject or ConditionType.FirstPropertySecondObject => m_secondObject,
                 ConditionType.FirstObjectSecondProperty or ConditionType.BothProperty =>
-                    GetT2PropertyMethod(m_secondIsForUser ? user : target, m_secondPropertyName),
+                    GetT2PropertyMethod(m_secondPropertyTarget switch
+                    {
+                        EntityTargetType.User => user,
+                        EntityTargetType.Target => target,
+                        _ => null
+                    }, m_secondPropertyName),
                 _ => default,
             };
         }
@@ -77,29 +87,29 @@ namespace Stirge.UtilityAI
             m_secondObject = (T2)secondObject;
             m_type = ConditionType.BothObject;
         }
-        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, bool propertyTargetIsUser)
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, EntityTargetType propertyTarget)
         {
             m_operation = operation;
             m_firstObject = (T1)obj;
             m_secondPropertyName = propertyName;
-            m_secondIsForUser = propertyTargetIsUser;
+            m_secondPropertyTarget = propertyTarget;
             m_type = ConditionType.FirstObjectSecondProperty;
         }
-        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, bool propertyTargetIsUser)
+        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, EntityTargetType propertyTarget)
         {
             m_operation = operation;
             m_firstPropertyName = propertyName;
             m_secondObject = (T2)obj;
-            m_firstIsForUser = propertyTargetIsUser;
+            m_firstPropertyTarget = propertyTarget;
             m_type = ConditionType.FirstPropertySecondObject;
         }
-        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, bool firstPropertyTargetIsUser, bool secondPropertyTargetIsUser)
+        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, EntityTargetType firstPropertyTarget, EntityTargetType secondPropertyTarget)
         {
             m_operation = operation;
             m_firstPropertyName = firstPropertyName;
             m_secondPropertyName = secondPropertyName;
-            m_firstIsForUser = firstPropertyTargetIsUser;
-            m_secondIsForUser = secondPropertyTargetIsUser;
+            m_firstPropertyTarget = firstPropertyTarget;
+            m_secondPropertyTarget = secondPropertyTarget;
             m_type = ConditionType.BothProperty;
         }
         #endregion       

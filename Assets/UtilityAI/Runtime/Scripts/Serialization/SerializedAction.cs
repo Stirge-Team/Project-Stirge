@@ -19,7 +19,7 @@ namespace Stirge.UtilityAI
         [SerializeField] protected SerializedCondition[] m_conditions = new SerializedCondition[0];
         [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
-        public virtual Type actionType => typeof(Action);
+        public virtual Type ActionType => typeof(Action);
 
         protected Status[] CreateRuntimeStatuses()
         {
@@ -43,20 +43,22 @@ namespace Stirge.UtilityAI
             return conditions;
         }
 
-        protected ScoringMethod[] CreateRuntimeScoringMethods()
+        protected IScoringMethod[] CreateRuntimeScoringMethods(Action action)
         {
             int scoringMethodCount = m_scoringMethods.Length;
-            ScoringMethod[] scoringMethods = new ScoringMethod[scoringMethodCount];
+            IScoringMethod[] scoringMethods = new IScoringMethod[scoringMethodCount];
             for (int i = 0; i < scoringMethodCount; i++)
             {
-                scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod();
+                scoringMethods[i] = m_scoringMethods[i].CreateRuntimeScoringMethod(action);
             }
             return scoringMethods;
         }
 
         public virtual Action CreateRuntimeAction()
         {
-            return Action.Create<Action>(m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods());
+            var action = Action.Create<Action>(m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range);
+            action.Setup(CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods(action));
+            return action;
         }
     }
 
@@ -64,11 +66,13 @@ namespace Stirge.UtilityAI
     {
         [SerializeField, NameOverriden(0)] private TArg m_arg;
 
-        public override Type actionType => typeof(TAction);
+        public override Type ActionType => typeof(TAction);
 
         public sealed override Action CreateRuntimeAction()
         {
-            return Action.Create<TAction, TArg>(m_arg, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods());
+            var action = Action.Create<TAction, TArg>(m_arg, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range);
+            action.Setup(CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods(action));
+            return action;
         }
     }
 
@@ -77,11 +81,13 @@ namespace Stirge.UtilityAI
         [SerializeField, NameOverriden(0)] private TArg0 m_arg0;
         [SerializeField, NameOverriden(1)] private TArg1 m_arg1;
 
-        public override Type actionType => typeof(TAction);
+        public override Type ActionType => typeof(TAction);
 
         public sealed override Action CreateRuntimeAction()
         {
-            return Action.Create<TAction, TArg0, TArg1>(m_arg0, m_arg1, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods());
+            var action = Action.Create<TAction, TArg0, TArg1>(m_arg0, m_arg1, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range);
+            action.Setup(CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods(action));
+            return action;
         }
     }
 
@@ -91,11 +97,13 @@ namespace Stirge.UtilityAI
         [SerializeField, NameOverriden(1)] private TArg1 m_arg1;
         [SerializeField, NameOverriden(2)] private TArg2 m_arg2;
 
-        public override Type actionType => typeof(TAction);
+        public override Type ActionType => typeof(TAction);
 
         public sealed override Action CreateRuntimeAction()
         {
-            return Action.Create<TAction, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods());
+            var action = Action.Create<TAction, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range);
+            action.Setup(CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods(action));
+            return action;
         }
     }
 
@@ -106,11 +114,13 @@ namespace Stirge.UtilityAI
         [SerializeField, NameOverriden(2)] private TArg2 m_arg2;
         [SerializeField, NameOverriden(3)] private TArg3 m_arg3;
 
-        public sealed override Type actionType => typeof(TAction);
+        public sealed override Type ActionType => typeof(TAction);
 
         public sealed override Action CreateRuntimeAction()
         {
-            return Action.Create<TAction, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods());
+            var action = Action.Create<TAction, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range);
+            action.Setup(CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods(action));
+            return action;
         }
     }
 
@@ -122,11 +132,13 @@ namespace Stirge.UtilityAI
         [SerializeField, NameOverriden(3)] private TArg3 m_arg3;
         [SerializeField, NameOverriden(4)] private TArg4 m_arg4;
 
-        public sealed override Type actionType => typeof(TAction);
+        public sealed override Type ActionType => typeof(TAction);
 
         public sealed override Action CreateRuntimeAction()
         {
-            return Action.Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range, CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods());
+            var action = Action.Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, m_scoreScaling, m_duration, m_displayName, m_actionType, m_timeline, m_damage, m_range);
+            action.Setup(CreateRuntimeStatuses(), CreateRuntimeConditions(), CreateRuntimeScoringMethods(action));
+            return action;
         }
     }
 }

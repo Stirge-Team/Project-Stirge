@@ -22,14 +22,14 @@ namespace Stirge.UtilityAI.CustomEditors
         private object m_constantValue;
         private Object m_referenceValue;
         private BlackboardPropertyName m_propertyValue;
-        private bool m_propertyTargetIsUser;
+        private EntityTargetType m_propertyTarget;
 
         private Type m_type;
         private ConditionValueType m_valueType;
 
         private bool m_changed;
 
-        public void Init(bool propertyTargetIsUser, string typeAssemblyQualifiedName)
+        public void Init(EntityTargetType propertyTarget, string typeAssemblyQualifiedName)
         {
             if (m_constantValue != null)
             {
@@ -44,24 +44,11 @@ namespace Stirge.UtilityAI.CustomEditors
                 m_valueType = ConditionValueType.Property;
             }
 
-            m_propertyTargetIsUser = propertyTargetIsUser;
+            m_propertyTarget = propertyTarget;
             m_type = Type.GetType(typeAssemblyQualifiedName);
             m_changed = false;
         }
 
-        public bool IsNull
-        {
-            get
-            {
-                return m_valueType switch
-                {
-                    ConditionValueType.Constant => m_constantValue == null,
-                    ConditionValueType.Reference => m_referenceValue == null,
-                    ConditionValueType.Property => m_propertyValue.IsNull,
-                    _ => true,
-                };
-            }
-        }
         public object constantValue
         {
             get => m_constantValue;
@@ -119,14 +106,14 @@ namespace Stirge.UtilityAI.CustomEditors
                 }
             }
         }
-        public bool propertyTargetIsUser
+        public EntityTargetType propertyTarget
         {
-            get => m_propertyTargetIsUser;
+            get => m_propertyTarget;
             set
             {
-                if (m_propertyTargetIsUser != value)
+                if (m_propertyTarget != value)
                 {
-                    m_propertyTargetIsUser = value;
+                    m_propertyTarget = value;
                     m_changed = true;
                 }
             }

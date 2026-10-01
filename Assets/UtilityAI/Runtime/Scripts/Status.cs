@@ -20,38 +20,39 @@ namespace Stirge.UtilityAI
         Conditional
     }
 
-    public abstract class Status
+    public abstract class Status : IScorable
     {
         private CombatEntity m_user;
         
         // fields
         protected float m_scoreScaling;
-        protected StatusStackType m_stackType;
-        protected StatusDurationType m_durationType;
         protected string m_displayName;
+        protected EntityTargetType m_target;
+        protected StatusStackType m_stackType;
         protected int m_maxStacks;
+        protected StatusDurationType m_durationType;
+        protected float m_duration;
         protected ICondition[] m_conditions;
-        protected ScoringMethod[] m_scoringMethods;
+        protected IScoringMethod[] m_scoringMethods;
 
         // variables
-        protected int m_currentStackCount;
+        protected int m_currentStacks;
+        protected float m_timer;
 
         // properties
-        public float scoreScaling => m_scoreScaling;
-        public StatusStackType stackType => m_stackType;
-        public StatusDurationType durationType => m_durationType;
-        public string displayName => m_displayName;
-        public int maxStacks => m_maxStacks;
-        public ICondition[] conditions => m_conditions;
-        public ScoringMethod[] scoringMethods => m_scoringMethods;
+        protected CombatEntity user => m_user;
+        public float ScoreScaling => m_scoreScaling;
+        public string DisplayName => m_displayName;
+        public EntityTargetType Target => m_target;
+        public StatusStackType StackType => m_stackType;
+        public int MaxStacks => m_maxStacks;
+        public StatusDurationType DurationType => m_durationType;
+        public float Duration => m_duration;
 
-        public int currentStackCount
-        {
-            get => m_currentStackCount;
-            set => m_currentStackCount = value;
-        }
+        public int CurrentStacks => m_currentStacks;
+        public float Timer => m_timer;
 
-        public abstract Type statusType { get; }
+        public abstract Type StatusType { get; }
 
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
@@ -60,73 +61,94 @@ namespace Stirge.UtilityAI
         }
         protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
 
-        /// <summary>
-        /// User is passed here so it may be saved as a reference for any effects that require the applier of the effect during Resolve or Clear.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="target"></param>
-        /// <returns>If the Status should end. This should be false for any non-instant Statuses.</returns>
-        public abstract bool OnApply(CombatEntity user, CombatEntity target);
-        /// <summary>
-        /// Update method.
-        /// </summary>
-        /// <param name="target"></param>
-        public virtual void Update(CombatEntity target) { }
-        /// <summary>
-        /// Run before removing the Status from the Statuses array.
-        /// </summary>
-        /// <param name="target"></param>
-        public virtual void OnClear(CombatEntity target) { }
+        public void OnApply(CombatEntity user, CombatEntity target)
+        {
+            m_user = user;
+            OnApplyInternal(target);
+        }
+        protected abstract void OnApplyInternal(CombatEntity target);
 
-        /// <returns>If the Status should end. You should return 'false' unless the <see cref="durationType"/> of this Status is <see cref="StatusDurationType.Conditional"/>.</returns>
-        public virtual bool ShouldThisClear(CombatEntity target) { return false; }
+        public void Update(CombatEntity target)
+        {
+            m_timer += Time.deltaTime;
+            UpdateInternal(target);
+        }
+        protected abstract void UpdateInternal(CombatEntity target);
+
+        public void OnClear(CombatEntity target)
+        {
+            m_currentStacks = 0;
+            m_timer = 0f;
+            OnClearInternal(target);
+        }
+        protected abstract void OnClearInternal(CombatEntity target);
+
+        public virtual bool ShouldThisClear(CombatEntity target)
+        {
+            return m_durationType switch
+            {
+                StatusDurationType.Instant => true,
+                StatusDurationType.Timed => m_timer >= m_duration,
+                _ => false,
+            };
+        }
+
+        public void AddStacks(int stackCount)
+        {
+            m_currentStacks = Math.Min(m_currentStacks + stackCount, m_maxStacks);
+        }
 
         #region Setup
-        private static TStatus CreateInternal<TStatus>(float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, new()
+        public void Setup(ICondition[] conditions, IScoringMethod[] scoringMethods)
+        {
+            m_conditions = conditions;
+            m_scoringMethods = scoringMethods;
+        }
+
+        private static TStatus CreateInternal<TStatus>(float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, new()
         {
             var status = new TStatus()
             {
                 m_scoreScaling = scoreScaling,
-                m_stackType = stackType,
-                m_durationType = durationType,
                 m_displayName = displayName,
+                m_stackType = stackType,
                 m_maxStacks = maxStacks,
-                m_conditions = conditions,
-                m_scoringMethods = scoringMethods
+                m_durationType = durationType,
+                m_duration = duration
             };
             return status;
         }
-        public static TStatus Create<TStatus>(float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, INotSetupable, new()
+        public static TStatus Create<TStatus>(float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, INotSetupable, new()
         {
-            return CreateInternal<TStatus>(scoreScaling, stackType, durationType, displayName, maxStacks, conditions, scoringMethods);
+            return CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
         }
-        public static TStatus Create<TStatus, TArg>(TArg arg, float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, ISetupable<TArg>, new()
+        public static TStatus Create<TStatus, TArg>(TArg arg, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, stackType, durationType, displayName, maxStacks, conditions, scoringMethods);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ0>(TArg0 arg0, Targ0 arg1, float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, ISetupable<TArg0, Targ0>, new()
+        public static TStatus Create<TStatus, TArg0, Targ0>(TArg0 arg0, Targ0 arg1, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ0>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, stackType, durationType, displayName, maxStacks, conditions, scoringMethods);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2, float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, stackType, durationType, displayName, maxStacks, conditions, scoringMethods);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1, arg2);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, stackType, durationType, displayName, maxStacks, conditions, scoringMethods);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1, arg2, arg3);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4, float scoreScaling, StatusStackType stackType, StatusDurationType durationType, string displayName, int maxStacks, ICondition[] conditions, ScoringMethod[] scoringMethods) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, stackType, durationType, displayName, maxStacks, conditions, scoringMethods);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1, arg2, arg3, arg4);
             return status;
         }

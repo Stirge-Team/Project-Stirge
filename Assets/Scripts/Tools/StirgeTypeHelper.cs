@@ -43,5 +43,14 @@ namespace Stirge.Tools
             { "delegate", typeof(Delegate) },
             { "dynamic", typeof(System.Object) }
         };
+
+        public static bool CanBeNull(Type type)
+        {
+            if (!type.IsValueType) return true;
+
+            if (Nullable.GetUnderlyingType(type) != null) return true;
+
+            return false;
+        }
     }
 }

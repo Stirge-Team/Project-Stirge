@@ -32,7 +32,7 @@ namespace Stirge.UtilityAI.CustomEditors
         }
         public static readonly HashSet<Type> ConstantTypes = new HashSet<Type>
         {
-            typeof(Boolean), typeof(String), typeof(Vector2), typeof(Vector3), typeof(Color)
+            typeof(Boolean), typeof(String), typeof(Vector2), typeof(Vector3), typeof(Color), typeof(void)
         };
         #endregion
 
@@ -44,8 +44,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_secondReferencePropertyName = "m_secondReferenceObject";
         private const string s_firstPropertyPropertyName = "m_firstPropertyName";
         private const string s_secondPropertyPropertyName = "m_secondPropertyName";
-        private const string s_firstPropertyTargetIsUserPropertyName = "m_firstPropertyTargetIsUser";
-        private const string s_secondPropertyTargetIsUserPropertyName = "m_secondPropertyTargetIsUser";
+        private const string s_firstPropertyTargetPropertyName = "m_firstPropertyTarget";
+        private const string s_secondPropertyTargetPropertyName = "m_secondPropertyTarget";
         private const string s_firstTypePropertyName = "m_firstTypeAssemblyQualifiedName";
         private const string s_secondTypePropertyName = "m_secondTypeAssemblyQualifiedName";
         private const string s_isValidPropertyName = "m_isValid";
@@ -57,8 +57,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private SerializedProperty m_secondReferenceProperty;
         private SerializedProperty m_firstPropertyNameProperty;
         private SerializedProperty m_secondPropertyNameProperty;
-        private SerializedProperty m_firstPropertyTargetIsUserProperty;
-        private SerializedProperty m_secondPropertyTargetIsUserProperty;
+        private SerializedProperty m_firstPropertyTargetProperty;
+        private SerializedProperty m_secondPropertyTargetProperty;
         private SerializedProperty m_firstTypeProperty;
         private SerializedProperty m_secondTypeProperty;
         private SerializedProperty m_isValidProperty;
@@ -67,6 +67,8 @@ namespace Stirge.UtilityAI.CustomEditors
         #region Labels
         private static readonly GUIContent s_firstObjectLabel = new("First Object");
         private static readonly GUIContent s_secondObjectLabel = new("Second Object");
+        
+        private static string[] s_entityTargetTypeNames = Enum.GetNames(typeof(EntityTargetType));
 
         private static GUIStyle s_middleStyle;
         private static bool s_middleStyleInitialised = false;
@@ -77,22 +79,30 @@ namespace Stirge.UtilityAI.CustomEditors
 
         private void OnEnable()
         {
-            m_operationProperty = serializedObject.FindProperty(s_operationPropertyName);
-            m_firstConstantProperty = serializedObject.FindProperty(s_firstConstantPropertyName);
-            m_secondConstantProperty = serializedObject.FindProperty(s_secondConstantPropertyName);
-            m_firstReferenceProperty = serializedObject.FindProperty(s_firstReferencePropertyName);
-            m_secondReferenceProperty = serializedObject.FindProperty(s_secondReferencePropertyName);
-            m_firstPropertyNameProperty = serializedObject.FindProperty(s_firstPropertyPropertyName);
-            m_secondPropertyNameProperty = serializedObject.FindProperty(s_secondPropertyPropertyName);
-            m_firstPropertyTargetIsUserProperty = serializedObject.FindProperty(s_firstPropertyTargetIsUserPropertyName);
-            m_secondPropertyTargetIsUserProperty = serializedObject.FindProperty(s_secondPropertyTargetIsUserPropertyName);
-            m_firstTypeProperty = serializedObject.FindProperty(s_firstTypePropertyName);
-            m_secondTypeProperty = serializedObject.FindProperty(s_secondTypePropertyName);
-            m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
-
-            // init objects
-            m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetIsUserProperty, m_firstTypeProperty);
-            m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetIsUserProperty, m_secondTypeProperty);
+            try
+            {
+                // init objects
+                m_operationProperty = serializedObject.FindProperty(s_operationPropertyName);
+                m_firstConstantProperty = serializedObject.FindProperty(s_firstConstantPropertyName);
+                m_secondConstantProperty = serializedObject.FindProperty(s_secondConstantPropertyName);
+                m_firstReferenceProperty = serializedObject.FindProperty(s_firstReferencePropertyName);
+                m_secondReferenceProperty = serializedObject.FindProperty(s_secondReferencePropertyName);
+                m_firstPropertyNameProperty = serializedObject.FindProperty(s_firstPropertyPropertyName);
+                m_secondPropertyNameProperty = serializedObject.FindProperty(s_secondPropertyPropertyName);
+                m_firstPropertyTargetProperty = serializedObject.FindProperty(s_firstPropertyTargetPropertyName);
+                m_secondPropertyTargetProperty = serializedObject.FindProperty(s_secondPropertyTargetPropertyName);
+                m_firstTypeProperty = serializedObject.FindProperty(s_firstTypePropertyName);
+                m_secondTypeProperty = serializedObject.FindProperty(s_secondTypePropertyName);
+                m_isValidProperty = serializedObject.FindProperty(s_isValidPropertyName);
+                m_firstObject ??= InitialiseObject(m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
+                m_secondObject ??= InitialiseObject(m_secondConstantProperty, m_firstReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
+            }
+            catch
+            {
+                // this try-catch block stops a bunch of errors from being thrown on Script re-compilation.
+                // Post from PigletPants explains it but it doesn't appear to cause any functional errors sooo ignore it is.
+                // https://discussions.unity.com/t/im-getting-now-error-serializedobjectnotcreatableexception-object-at-index-0-is-null-how-to-fix/788961/3
+            }
         }
 
         public override void OnInspectorGUI()
@@ -121,8 +131,8 @@ namespace Stirge.UtilityAI.CustomEditors
             DrawObject(ref m_secondObject);
 
             // Check for changes
-            ObjectChangeCheck(m_firstObject, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetIsUserProperty, m_firstTypeProperty);
-            ObjectChangeCheck(m_secondObject, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetIsUserProperty, m_secondTypeProperty);
+            ObjectChangeCheck(m_firstObject, m_firstConstantProperty, m_firstReferenceProperty, m_firstPropertyNameProperty, m_firstPropertyTargetProperty, m_firstTypeProperty);
+            ObjectChangeCheck(m_secondObject, m_secondConstantProperty, m_secondReferenceProperty, m_secondPropertyNameProperty, m_secondPropertyTargetProperty, m_secondTypeProperty);
 
             EGL.Space();
 
@@ -153,7 +163,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 propertyValue = (BlackboardPropertyName)propertyNameProperty.boxedValue,
             };
 
-            obj.Init(propertyTargetIsUserProperty.boolValue, typeProperty.stringValue);
+            obj.Init((EntityTargetType)propertyTargetIsUserProperty.intValue, typeProperty.stringValue);
 
             return obj;
         }
@@ -343,6 +353,13 @@ namespace Stirge.UtilityAI.CustomEditors
                                 TryCast(EGL.IntField(label, sByteValue), out sByteValue);
                                 obj.constantValue = sByteValue;
                                 break;
+                            case var n when n == typeof(void).Name:
+                                using (new EditorGUI.DisabledScope(true))
+                                {
+                                    EGL.TextField("null");
+                                }
+                                obj.constantValue = null;
+                                break;
                             default:
                                 // check if type is an Enum type
                                 if (obj.type.IsEnum)
@@ -395,10 +412,10 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     EGL.TextField(obj.propertyValue.IsNull ? "null" : obj.propertyValue.Name + " : " + GetUIName(obj.type));
 
-                    int selectedIndex = obj.propertyTargetIsUser ? 0 : 1;
-                    selectedIndex = EGL.Popup(new GUIContent("Property Target", "Where the property value should be retrieved from."),
-                        selectedIndex, new GUIContent[] { new("User"), new("Target") });
-                    obj.propertyTargetIsUser = selectedIndex == 0;
+                    int selectedTargetType = (int)obj.propertyTarget;
+                    selectedTargetType = EGL.Popup(new GUIContent("Property Target", "Where the property value should be retrieved from."),
+                        selectedTargetType, s_entityTargetTypeNames);
+                    obj.propertyTarget = (EntityTargetType)selectedTargetType;
                     break;
             }
 
@@ -437,7 +454,7 @@ namespace Stirge.UtilityAI.CustomEditors
                         propertyNameProperty.boxedValue = obj.propertyValue;
                         constantProperty.managedReferenceValue = null;
                         referenceProperty.objectReferenceValue = null;
-                        propertyTargetIsUserProperty.boolValue = obj.propertyTargetIsUser;
+                        propertyTargetIsUserProperty.intValue = (int)obj.propertyTarget;
                         break;
                 }
                 typeProperty.stringValue = obj.type?.AssemblyQualifiedName;
@@ -482,27 +499,32 @@ namespace Stirge.UtilityAI.CustomEditors
             else
             {
                 bool bothNumeric = StirgeTypeHelper.IsNumericType(m_firstObject.type) && StirgeTypeHelper.IsNumericType(m_secondObject.type);
-                bool firstCanBeNull = !m_firstObject.type.IsValueType || Nullable.GetUnderlyingType(m_firstObject.type) != null;
-                bool secondCanBeNull = !m_secondObject.type.IsValueType || Nullable.GetUnderlyingType(m_secondObject.type) != null;
-
-                Type firstEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_secondObject.type);
-                Type secondEquatableInterfaceType = typeof(IEquatable<>).MakeGenericType(m_firstObject.type);
+                bool firstIsNull = m_firstObject.type == typeof(void);
+                bool secondIsNull = m_secondObject.type == typeof(void);
 
                 switch (operation)
                 {
                     case Operation.Equal:
                     case Operation.NotEqual:
-                        if (bothNumeric) // if both are numeric, it's cool
+                        // if both are numeric, it's cool
+                        if (bothNumeric)
                             break;
-                        if ((m_firstObject.type != m_secondObject.type) || // if the types do not match
-                            (m_firstObject.IsNull && !m_secondObject.IsNull && !secondCanBeNull) || // if first is null and second cannot be null
-                            (m_secondObject.IsNull && !m_firstObject.IsNull && !firstCanBeNull) || // if second is null and first is not a class
-                                                                                                   // Both types implement IEquatable<OtherType>
-                            !(m_firstObject.type.GetInterfaces().Contains(firstEquatableInterfaceType) && m_secondObject.type.GetInterfaces().Contains(secondEquatableInterfaceType)))
-                        {
-                            EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
-                            isValid = false;
-                        }
+                        // if the types match, it's cool
+                        if (m_firstObject.type == m_secondObject.type)
+                            break;
+                        // If both are null, it's fine I guess?
+                        if (firstIsNull && secondIsNull)
+                            break;
+                        // If one value is null and the other can be null
+                        if (firstIsNull && StirgeTypeHelper.CanBeNull(m_secondObject.type) || secondIsNull && StirgeTypeHelper.CanBeNull(m_firstObject.type))
+                            break;
+                        // If both types implement IEquatable<> for the other Type, it's cool
+                        if (!secondIsNull && m_firstObject.type.GetInterfaces().Contains(typeof(IEquatable<>).MakeGenericType(m_secondObject.type)) &&
+                            !firstIsNull && m_secondObject.type.GetInterfaces().Contains(typeof(IEquatable<>).MakeGenericType(m_firstObject.type)))
+                            break;
+
+                        EGL.HelpBox("Condition is invalid as these types are not Equatable.", MessageType.Error);
+                        isValid = false;
                         break;
                     default:
                         if (!bothNumeric)

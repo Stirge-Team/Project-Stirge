@@ -9,6 +9,8 @@ namespace Stirge.Player
         [Header("Jump settings")]
         [SerializeField, Tooltip("How high (in units) the player should be able to jump.")]
         private float m_jumpHeight = 1;
+        [SerializeField, Min(0f)] private float m_coyoteTime;
+        private float m_coyoteCountdown;
 
         public Vector3 HorizontalVelocity =>
             new Vector3(
@@ -30,7 +32,7 @@ namespace Stirge.Player
                 //Apply a force up on the player
                 AddImpluse(transform.up * Mathf.Sqrt(2 * m_jumpHeight * -Physics.gravity.y));
                 //Remove all coyote time
-                EndCoyoteTime();
+                m_coyoteTime = 0f;
                 //Grounded is not set to off here as the first check in fixed update will reset the player to being grounded in this frame
                 return true;
             }
@@ -41,6 +43,20 @@ namespace Stirge.Player
         {
             SetMovementState(MotorMovementState.Force);
             Rigidbody.AddForce(force, ForceMode.Impulse);
+        }
+
+        protected override void OnUpdate()
+        {
+            if (m_coyoteCountdown > 0)
+            {
+                m_coyoteCountdown -= Time.deltaTime;
+            }
+        }
+
+        protected override void OnBecomeNotGrounded()
+        {
+            // if leaving the ground, start coyote countdown
+            m_coyoteCountdown = m_coyoteTime;
         }
     }
 }

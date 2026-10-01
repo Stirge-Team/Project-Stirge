@@ -16,8 +16,8 @@ namespace Stirge.UtilityAI
         [SerializeField] private Object m_secondReferenceObject;
         [SerializeField] private BlackboardPropertyName m_firstPropertyName;
         [SerializeField] private BlackboardPropertyName m_secondPropertyName;
-        [SerializeField] private bool m_firstPropertyTargetIsUser;
-        [SerializeField] private bool m_secondPropertyTargetIsUser;
+        [SerializeField] private EntityTargetType m_firstPropertyTarget;
+        [SerializeField] private EntityTargetType m_secondPropertyTarget;
         [SerializeField] private string m_firstTypeAssemblyQualifiedName;
         [SerializeField] private string m_secondTypeAssemblyQualifiedName;
 
@@ -82,13 +82,13 @@ namespace Stirge.UtilityAI
             switch (firstIsProperty, secondIsProperty)
             {
                 case (true, true):
-                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, m_firstPropertyTargetIsUser, m_secondPropertyTargetIsUser);
+                    newCondition.Init(m_operation, m_firstPropertyName, m_secondPropertyName, m_firstPropertyTarget, m_secondPropertyTarget);
                     break;
                 case (true, false):
-                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, m_firstPropertyTargetIsUser);
+                    newCondition.Init(m_operation, m_firstPropertyName, secondObject, m_firstPropertyTarget);
                     break;
                 case (false, true):
-                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, m_secondPropertyTargetIsUser);
+                    newCondition.Init(m_operation, firstObject, m_secondPropertyName, m_secondPropertyTarget);
                     break;
                 case (false, false):
                     newCondition.Init(m_operation, firstObject, secondObject);

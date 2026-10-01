@@ -101,7 +101,7 @@ namespace Stirge.Combat
 
         private void UpdateStatuses(float deltaTime)
         {
-            List<int> toRemove = new();
+            List<int> indicesToRemove = new();
             int index = 0;
             foreach (Status status in m_inflictedStatuses)
             {
@@ -110,15 +110,15 @@ namespace Stirge.Combat
                 if (status.ShouldThisClear(this))
                 {
                     status.OnClear(this);
-                    toRemove.Add(index);
+                    indicesToRemove.Add(index);
                 }
                 index++;
             }
 
             // remove backwards to avoid indicies from changing before removal
-            for (int i = toRemove.Count - 1; i >= 0; i--)
+            for (int i = indicesToRemove.Count - 1; i >= 0; i--)
             {
-                m_inflictedStatuses.RemoveAt(toRemove[i]);
+                m_inflictedStatuses.RemoveAt(indicesToRemove[i]);
             }
         }
 
@@ -205,7 +205,8 @@ namespace Stirge.Combat
 
         #endregion
 
-        /* Attack Node Logic (OLD)
+        #region Attack Node Logic (OLD)
+        /*
         #region NodeLogic
         private IEnumerator PlayAnimation(AnimationNode node)
         {
@@ -487,5 +488,6 @@ namespace Stirge.Combat
 
         #endregion
         */
+        #endregion
     }
 }

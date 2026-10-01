@@ -1,15 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Timeline;
 
 namespace Stirge.Input
 {
-    using Combat.Attacks;
     using Player;
-    using System.Linq;
-    using UnityEngine.Timeline;
-    using static FrameFighter2.Data.CharacterAnimationData;
 
     [System.Flags]
     public enum AttackInput
@@ -45,7 +43,8 @@ namespace Stirge.Input
         public const int MaxSequenceLength = 5;
 
         [SerializeField] private Player m_player;
-        [SerializeField] private float m_inputBufferTime = 0.2f;
+        [SerializeField] private float m_inputDuration = 0.2f;
+        [SerializeField] private float m_bufferDuration = 0.4f;
 
         private AttackBindingDictionary m_groundedBindings = new();
         private AttackBindingDictionary m_airBindings = new();
@@ -53,20 +52,30 @@ namespace Stirge.Input
 
         private readonly List<AttackInput> m_sequence = new();
 
-        private float m_bufferTimer = 0;
+        private float m_inputCountdown = 0f;
+        private float m_bufferCountdown = 0f;
+            
+        public List<AttackBinding> ComboBindingDebugList => m_comboBindings.ToList().ConvertAll(e => new AttackBinding(e.Key, e.Value));
 
         private void Update()
         {
-            if (m_bufferTimer <= 0)
+            if (m_inputCountdown <= 0)
             {
                 ProcessSequence();
                 m_sequence.Clear();
-                m_bufferTimer = m_inputBufferTime;
+                m_inputCountdown = m_inputDuration;
             }
+
+            if (m_bufferCountdown > 0)
+            {
+                m_bufferCountdown -= Time.deltaTime;
+            }
+            
             if (m_sequence.Count > 0)
             {
-                m_bufferTimer -= Time.deltaTime;
+                m_inputCountdown -= Time.deltaTime;
             }
+
         }
 
         #region Bindings
@@ -194,7 +203,7 @@ namespace Stirge.Input
         }
         #endregion
 
-        //Disabling should 
+        #region State
         public void SetInputReading(bool setTo, float time = 1)
         {
             enabled = setTo;
@@ -206,8 +215,8 @@ namespace Stirge.Input
             yield return new WaitForSeconds(time);
             enabled = true;
         }
+        #endregion
 
-        public List<AttackBinding> ComboBindingDebugList => m_comboBindings.ToList().ConvertAll(e => new AttackBinding(e.Key, e.Value));
 
         private class AttackBindingDictionary : Dictionary<AttackInput, TimelineAsset>
         {

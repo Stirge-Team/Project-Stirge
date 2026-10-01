@@ -18,7 +18,7 @@ namespace Stirge.Combat
     public abstract class CombatEntityMotor : MonoBehaviour
     {
         [Header("Components")]
-        [SerializeField] private Transform m_transform;
+        [SerializeField] private Animator m_anim;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Collider m_col;
 
@@ -29,7 +29,6 @@ namespace Stirge.Combat
         [SerializeField] private MovementProperties m_aerialMovementProperties;
         [SerializeField, Min(0f)] private float m_verticalTopSpeed;
         [SerializeField, Min(0f)] private float m_maxFallingSpeed;
-        [SerializeField, Min(0f)] private float m_coyoteTime;
         [SerializeField, Min(0f)] private float m_fallSpeedMultiplier;
 
         [Header("Grounded Check")]
@@ -47,13 +46,12 @@ namespace Stirge.Combat
 
         // movement state
         private MotorMovementState m_movementState = MotorMovementState.Kinematic;
-        private float m_coyoteCountdown;
         private float m_airTime;
         private bool m_isGrounded;
         private readonly RaycastHit[] m_groundedCheckHits = new RaycastHit[10];
 
         // reference properties
-        public new Transform transform => m_transform;
+        public Animator Animator => m_anim;
         public Rigidbody Rigidbody => m_rb;
         public Collider Collider => m_col;
 
@@ -69,7 +67,6 @@ namespace Stirge.Combat
         protected float friction => CurrentMovementProperties.Friction;
         protected float verticalTopSpeed => m_verticalTopSpeed;
         protected float maxFallingSpeed => m_maxFallingSpeed;
-        protected float coyoteCountdown => m_coyoteCountdown;
 
         // public properties
         public MovementProperties CurrentMovementProperties => m_isGrounded ? m_groundedMovementProperties : m_aerialMovementProperties;
@@ -103,11 +100,6 @@ namespace Stirge.Combat
             if (!m_isGrounded)
             {
                 m_airTime += Time.deltaTime;
-            }
-
-            if (m_coyoteCountdown > 0)
-            {
-                m_coyoteCountdown -= Time.deltaTime;
             }
 
             OnUpdate();
@@ -144,22 +136,38 @@ namespace Stirge.Combat
         #region Transformation
         public void SetPosition(Vector3 newPosition)
         {
+            //transform.position = newPosition;
             m_rb.MovePosition(newPosition);
             OnSetPosition(newPosition);
         }
         protected virtual void OnSetPosition(Vector3 newPosition) { }
         public void SetRotation(Quaternion newRotation)
         {
+            //transform.rotation = newRotation;
             m_rb.MoveRotation(newRotation);
-            OnSetRotation();
+            OnSetRotation(newRotation);
         }
-        protected virtual void OnSetRotation() { }
+        protected virtual void OnSetRotation(Quaternion newRotation) { }
         public void SetPositionAndRotation(Vector3 newPosition, Quaternion newRotation)
         {
+            //transform.SetPositionAndRotation(newPosition, newRotation);
             m_rb.Move(newPosition, newRotation);
             OnSetPositionAndRotation(newPosition, newRotation);
         }
         protected virtual void OnSetPositionAndRotation(Vector3 newPosition, Quaternion newRotation) { }
+
+        public Vector3 GetPosition()
+        {
+            return m_rb.position;
+        }
+        #endregion
+
+        #region Animation
+        public void OnAnimatorMove()
+        {
+            SetPosition(m_rb.position + m_anim.deltaPosition);
+            SetRotation(m_rb.rotation * m_anim.deltaRotation);
+        }
         #endregion
 
         #region Physics
@@ -182,10 +190,10 @@ namespace Stirge.Combat
             // if no hits, not grounded
             if (hitCount == 0)
             {
-                // if leaving the ground, start coyote countdown
+                // if changing from grounded to not grounded aka leaving ground
                 if (m_isGrounded)
                 {
-                    m_coyoteCountdown = m_coyoteTime;
+                    OnBecomeNotGrounded();
                 }
                 return false;
             }
@@ -193,9 +201,8 @@ namespace Stirge.Combat
             {
                 // if changing from not grounded to grounded aka landing
                 if (!m_isGrounded)
-                {                    
-                    m_airTime = 0f;
-                    ResetVerticalVelocity();
+                {
+                    OnBecomeGrounded();
                 }
 
                 // get closest hit walkable object
@@ -221,6 +228,16 @@ namespace Stirge.Combat
 
                 return true;
             }
+        }
+
+        protected virtual void OnBecomeGrounded()
+        {
+            m_airTime = 0f;
+            ResetVerticalVelocity();
+        }
+        protected virtual void OnBecomeNotGrounded()
+        {
+            
         }
 
         private void UpdateForce()
@@ -335,10 +352,6 @@ namespace Stirge.Combat
             OnChangeAerialMovementProperties(newProperties);
         }
         protected virtual void OnChangeAerialMovementProperties(MovementProperties newProperties) { }
-        protected void EndCoyoteTime()
-        {
-            m_coyoteCountdown = 0;
-        }
         #endregion
 
         #region State
@@ -348,25 +361,51 @@ namespace Stirge.Combat
             {
                 m_movementState = newState;
 
+                switch (m_movementState)
+                {
+                    case MotorMovementState.Force:
+
+                    case MotorMovementState.Velocity:
+                        OnMovementStateChangedToVelocity();
+                        break;
+                    case MotorMovementState.Kinematic:
+                        OnMovementStateChangedToKinematic();
+                        break;
+                    case MotorMovementState.Navigation:
+                        OnMovementStateChangedToNavigation();
+                        break;
+                    case MotorMovementState.Action:
+                        OnMovementStateChangedToAction();
+                        break;
+                    default:
+                        break;
+                }
+
                 OnMovementStateChanged();
             }
         }
-        protected virtual void OnMovementStateChanged()
+        protected virtual void OnMovementStateChanged() { }
+        protected virtual void OnMovementStateChangedToForce()
         {
-            switch (m_movementState)
-            {
-                case MotorMovementState.Velocity:
-                    m_rb.isKinematic = false;
-                    break;
-                case MotorMovementState.Kinematic:
-                    m_rb.isKinematic = true;
-                    break;
-                case MotorMovementState.Navigation:
-                    m_rb.isKinematic = true;
-                    break;
-                default:
-                    break;
-            }
+            m_rb.isKinematic = false;
+        }
+        protected virtual void OnMovementStateChangedToVelocity()
+        {
+            m_rb.isKinematic = false;
+        }
+        protected virtual void OnMovementStateChangedToKinematic()
+        {
+            m_rb.isKinematic = true;
+        }
+        protected virtual void OnMovementStateChangedToNavigation()
+        {
+            m_rb.isKinematic = true;
+        }
+        protected virtual void OnMovementStateChangedToAction()
+        {
+            m_rb.isKinematic = false;
+            m_rb.linearVelocity = Vector3.zero;
+            ResetVelocity();
         }
 
         public void OnActionStart()
@@ -390,7 +429,8 @@ namespace Stirge.Combat
         #region Debug
         private void OnDrawGizmos()
         {
-            Matrix4x4 orig = Handles.matrix;
+            if (m_rb == null || m_col == null)
+                return;
 
             Handles.color = Color.blue;
             Vector3 cubePos = (m_rb.position + m_rb.position + (Vector3.down * m_groundCheckDistance)) / 2f;
@@ -405,9 +445,6 @@ namespace Stirge.Combat
             //Vector3 p2 = Quaternion.AngleAxis(m_slopeLimit, transform.right) * -transform.forward + FeetPosition;
             //Handles.DrawLine(p1, p2);
             Handles.DrawWireDisc(FeetPosition, Quaternion.AngleAxis(m_slopeLimit, Vector3.right) * Vector3.up, 0.75f);
-
-            Handles.matrix = transform.localToWorldMatrix;
-            Handles.matrix = orig;
         }
         #endregion
     }

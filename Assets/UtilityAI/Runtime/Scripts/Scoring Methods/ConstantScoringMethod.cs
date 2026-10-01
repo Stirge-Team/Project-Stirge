@@ -5,7 +5,7 @@ namespace Stirge.UtilityAI.ScoringMethods
     using Combat;
     using Serialization;
 
-    public class ConstantScoringMethod : ScoringMethod, ISetupable<float>
+    public class ConstantScoringMethod : ScoringMethod<IScorable>, ISetupable<float>
     {
         private float m_score;
 

@@ -8,9 +8,9 @@ namespace Stirge.UtilityAI
     public interface ICondition
     {
         public void Init(Operation operation, object firstObject, object secondObject);
-        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, bool propertyTargetIsUser);
-        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, bool propertyTargetIsUser);
-        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, bool firstPropertyTargetIsUser, bool secondPropertyTargetIsUser);
+        public void Init(Operation operation, object obj, BlackboardPropertyName propertyName, EntityTargetType propertyTarget);
+        public void Init(Operation operation, BlackboardPropertyName propertyName, object obj, EntityTargetType propertyTarget);
+        public void Init(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, EntityTargetType firstPropertyTarget, EntityTargetType secondPropertyTarget);
         public bool Evaluate(UtilityEnemy user, CombatEntity target);
     }
 }
