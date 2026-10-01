@@ -75,11 +75,55 @@ namespace Stirge.Combat
         }
         #endregion
 
-        #region Statuses
-        public virtual void InflictStatus(Status status, CombatEntity user)
+        #region Status
+        public void InflictStatus(Status newStatus, CombatEntity user)
         {
-            // inflict the Status
-            status.OnApply(user, this);
+            Type statusType = newStatus.StatusType;
+            int indexOfExistingStatus = GetIndexOfStatus(statusType);
+
+            // If a Status of the same type already exists
+            if (indexOfExistingStatus != -1)
+            {
+                switch (newStatus.StackType)
+                {
+                    case StatusStackType.Stackable:
+                        Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
+                        existingStackableStatus.AddStacks(newStatus.CurrentStacks);
+                        return; // don't add again
+                    case StatusStackType.Unique:
+                        return; // don't add again
+                    default:
+                        break;
+                }
+            }
+
+            m_inflictedStatuses.Add(newStatus);
+            newStatus.OnApply(user, this);
+        }
+
+        /// <summary>
+        /// Returns -1 if no <see cref="Status"/> of type <paramref name="statusType"/> is inflicted.
+        /// </summary>
+        /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
+        public int GetIndexOfStatus(Type statusType)
+        {
+            return m_inflictedStatuses.FindIndex(status => status.StatusType == statusType);
+        }
+        /// <summary>
+        /// Returns -1 if no <see cref="Status"/> with name <paramref name="statusName"/> is inflicted.
+        /// </summary>
+        /// <returns>Index of first inflicted <see cref="Status"/> with matching <see cref="Status.DisplayName"/>.</returns>
+        public int GetIndexOfStatus(string statusName)
+        {
+            return m_inflictedStatuses.FindIndex(status => status.DisplayName == statusName);
+        }
+
+        /// <summary>
+        /// Returns the number of the provided <paramref name="statusType"/> the Enemy is inflicted with.
+        /// </summary>
+        public int GetNumberOfInflictedStatus(Type statusType)
+        {
+            return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
         }
 
         private void UpdateStatuses(float deltaTime)

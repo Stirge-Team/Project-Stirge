@@ -8,7 +8,7 @@ namespace Stirge.UtilityAI
         [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;
         [SerializeField] protected float m_duration = 1f;
         [SerializeField] protected string m_displayName;
-        [SerializeField] protected SerializedCondition[] m_conditions =  new SerializedCondition[0];
+        [SerializeField] protected SerializedCondition_Base[] m_conditions =  new SerializedCondition_Base[0];
         [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
         public abstract Type MovementGoalType { get; }

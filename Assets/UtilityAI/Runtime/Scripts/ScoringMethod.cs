@@ -3,16 +3,7 @@ using UnityEngine;
 namespace Stirge.UtilityAI
 {
     using Combat;
-    using Stirge.Serialization;
-
-    /// <summary>
-    /// Do not implement this interface in your own ScoringMethods.
-    /// </summary>
-    public interface IScoringMethod
-    {
-        public abstract float Evaluate(UtilityEnemy user, CombatEntity target);
-        public abstract void Setup<T>(T scorable, float scoreScaling) where T : class, IScorable;
-    }
+    using Serialization;
 
     /// <summary>
     /// Attached to an <see cref="Action"/>, <see cref="MovementGoal"/>, or <see cref="Status"/> to modify the score it returns when Evaluated by the <see cref="UtilityBrain"/>.<br/><br/>
@@ -23,7 +14,7 @@ namespace Stirge.UtilityAI
     /// You must also implement either <see cref="INotSetupable"/> or one of the <see cref="ISetupable{TArg}"/> interfaces.
     /// The number of generic arguments in <see cref="ISetupable{TArg}"/> should be equal to the number of unique properties you want your <see cref="ScoringMethod{TScorable}"/> to have.
     /// </summary>
-    /// <typeparam name="TScorable">Must be <see cref="Action"/>, <see cref="MovementGoal"/>, or <see cref="Status"/>.</typeparam>
+    /// <typeparam name="TScorable">Must be <see cref="Action"/>, <see cref="MovementGoal"/>, <see cref="Status"/>, or <see cref="IScorable"/>.</typeparam>
     public abstract class ScoringMethod<TScorable> : IScoringMethod where TScorable : class, IScorable
     {
         /// <summary>

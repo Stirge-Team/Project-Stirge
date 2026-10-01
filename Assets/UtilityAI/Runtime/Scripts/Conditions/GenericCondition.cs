@@ -17,7 +17,7 @@ namespace Stirge.UtilityAI
         GreaterThanOrEqual,
     }
 
-    public abstract class GenericCondition<TScorable, T1, T2> : ICondition where TScorable : class, IScorable
+    public abstract class GenericCondition<TScorable, T1, T2> : GenericCondition_Base where TScorable : class, IScorable
     {
         protected enum ConditionType
         {
@@ -37,7 +37,6 @@ namespace Stirge.UtilityAI
         private Operation m_operation;
         private ConditionType m_type;
 
-        #region Objects
         private T1 m_firstObject;
         private T2 m_secondObject;
         private BlackboardPropertyName m_firstPropertyName;
@@ -45,7 +44,62 @@ namespace Stirge.UtilityAI
         private ConditionPropertyTarget m_firstPropertyTarget;
         private ConditionPropertyTarget m_secondPropertyTarget;
 
-        private T1 GetFirstObject(UtilityEnemy user, CombatEntity target)
+        public sealed override bool Evaluate(CombatEntity user, CombatEntity target)
+        {
+            // if not comparable
+            if (!Comparable)
+            {
+                // if not equatable
+                if (!Equatable)
+                {
+                    Debug.LogError($"Types {FirstType.Name} and {SecondType.Name} are not equatable!");
+                    return false;
+                }
+
+                if (user is UtilityEnemy enemyUser)
+                {
+                    return m_operation switch
+                    {
+                        Operation.Equal => GetFirstObject(enemyUser, target).Equals(GetSecondObject(enemyUser, target)),
+                        Operation.NotEqual => !GetFirstObject(enemyUser, target).Equals(GetSecondObject(enemyUser, target)),
+                        _ => LogNotComparableError(), // if operation is neither Equals or NotEquals, then its trying to compare
+                    };
+                }
+                else
+                {
+                    return m_operation switch
+                    {
+                        Operation.Equal => GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
+                        Operation.NotEqual => !GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
+                        _ => LogNotComparableError(), // if operation is neither Equals or NotEquals, then its trying to compare
+                    };
+                }
+            }
+
+            // if comparable, convert to single
+            float firstValue = Convert.ToSingle(GetFirstObject(user, target));
+            float secondValue = Convert.ToSingle(GetSecondObject(user, target));
+
+            return m_operation switch
+            {
+                Operation.Equal => firstValue == secondValue || Mathf.Approximately(firstValue, secondValue),
+                Operation.NotEqual => firstValue != secondValue,
+                Operation.LessThan => firstValue < secondValue,
+                Operation.GreaterThan => firstValue > secondValue,
+                Operation.LessThanOrEqual => firstValue <= secondValue || Mathf.Approximately(firstValue, secondValue),
+                Operation.GreaterThanOrEqual => firstValue >= secondValue || Mathf.Approximately(firstValue, secondValue),
+                _ => false,
+            };
+
+            static bool LogNotComparableError()
+            {
+                Debug.LogError($"Types {FirstType.Name} and {SecondType.Name} are not comparable!");
+                return false;
+            }
+        }
+
+        #region Get Objects
+        private T1 GetFirstObject<T>(T user, CombatEntity target) where T : CombatEntity
         {
             return m_type switch
             {
@@ -61,7 +115,7 @@ namespace Stirge.UtilityAI
                 _ => default,
             };
         }
-        private T2 GetSecondObject(UtilityEnemy user, CombatEntity target)
+        private T2 GetSecondObject<T>(T user, CombatEntity target) where T : CombatEntity
         {
             return m_type switch
             {
@@ -80,84 +134,38 @@ namespace Stirge.UtilityAI
 
         protected abstract T1 GetFirstProperty<T>(T target, BlackboardPropertyName propertyName);
         protected abstract T2 GetSecondProperty<T>(T target, BlackboardPropertyName propertyName);
-        #endregion      
-
-        public bool Evaluate(UtilityEnemy user, CombatEntity target)
-        {
-            // if not comparable
-            if (!Comparable)
-            {
-                // if not equatable
-                if (!Equatable)
-                {
-                    LogNotEquatableError();
-                    return false;
-                }
-
-                return m_operation switch
-                {
-                    Operation.Equal => GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
-                    Operation.NotEqual => !GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
-                    _ => LogNotComparableError(), // if operation is not Equals or NotEquals, then its trying to compare
-                };
-            }
-
-            // if comparable, convert to single
-            float firstValue = Convert.ToSingle(GetFirstObject(user, target));
-            float secondValue = Convert.ToSingle(GetSecondObject(user, target));
-
-            return m_operation switch
-            {
-                Operation.Equal => firstValue == secondValue || Mathf.Approximately(firstValue, secondValue),
-                Operation.NotEqual => firstValue != secondValue,
-                Operation.LessThan => firstValue < secondValue,
-                Operation.GreaterThan => firstValue > secondValue,
-                Operation.LessThanOrEqual => firstValue <= secondValue || Mathf.Approximately(firstValue, secondValue),
-                Operation.GreaterThanOrEqual => firstValue >= secondValue || Mathf.Approximately(firstValue, secondValue),
-                _ => false,
-            };
-        }
-
-        private static void LogNotEquatableError()
-        {
-            Debug.LogError($"Types {FirstType.Name} and {SecondType.Name} are not equatable!");
-        }
-        private static bool LogNotComparableError()
-        {
-            Debug.LogError($"Types {FirstType.Name} and {SecondType.Name} are not comparable!");
-            return false;
-        }
+        #endregion
 
         #region Setup
-        public void Setup<T>(T scorable, Operation operation, object firstObject, object secondObject) where T : class, IScorable
+        public sealed override void Setup<T>(T scorable)
         {
             m_scorable = scorable as TScorable;
+        }
+        public sealed override void Setup(Operation operation, object firstObject, object secondObject)
+        {
             m_operation = operation;
             m_firstObject = (T1)firstObject;
             m_secondObject = (T2)secondObject;
             m_type = ConditionType.BothObject;
         }
-        public void Setup<T>(T scorable, Operation operation, object obj, BlackboardPropertyName propertyName, ConditionPropertyTarget propertyTarget) where T : class, IScorable
+        public sealed override void Setup(Operation operation, object obj, BlackboardPropertyName propertyName, ConditionPropertyTarget propertyTarget)
         {
-            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstObject = (T1)obj;
             m_secondPropertyName = propertyName;
             m_secondPropertyTarget = propertyTarget;
             m_type = ConditionType.FirstObjectSecondProperty;
         }
-        public void Setup<T>(T scorable, Operation operation, BlackboardPropertyName propertyName, object obj, ConditionPropertyTarget propertyTarget) where T : class, IScorable
+        public sealed override void Setup(Operation operation, BlackboardPropertyName propertyName, object obj, ConditionPropertyTarget propertyTarget)
         {
-            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstPropertyName = propertyName;
             m_secondObject = (T2)obj;
             m_firstPropertyTarget = propertyTarget;
             m_type = ConditionType.FirstPropertySecondObject;
         }
-        public void Setup<T>(T scorable, Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, ConditionPropertyTarget firstPropertyTarget, ConditionPropertyTarget secondPropertyTarget) where T : class, IScorable
+        public sealed override void Setup(Operation operation, BlackboardPropertyName firstPropertyName, BlackboardPropertyName secondPropertyName, ConditionPropertyTarget firstPropertyTarget, ConditionPropertyTarget secondPropertyTarget)
         {
-            m_scorable = scorable as TScorable;
             m_operation = operation;
             m_firstPropertyName = firstPropertyName;
             m_secondPropertyName = secondPropertyName;

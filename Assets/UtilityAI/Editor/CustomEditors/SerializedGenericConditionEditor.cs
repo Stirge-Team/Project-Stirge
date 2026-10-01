@@ -15,11 +15,11 @@ namespace Stirge.UtilityAI.CustomEditors
     using GenericBlackboard;
     using Tools;
 
-    [CustomEditor(typeof(SerializedCondition))]
-    public class SerializedConditionEditor : Editor
+    [CustomEditor(typeof(SerializedGenericCondition))]
+    public class SerializedGenericConditionEditor : Editor
     {
         #region Static Setup
-        static SerializedConditionEditor()
+        static SerializedGenericConditionEditor()
         {
             ConstantTypes.UnionWith(StirgeTypeHelper.NumericTypes);
         }
@@ -31,6 +31,8 @@ namespace Stirge.UtilityAI.CustomEditors
 
         #region Properties
         private const string s_scorableTypePropertyName = "m_scorableType";
+        private const string s_isForEnemyPropertyName = "m_isForEnemy";
+
         private const string s_operationPropertyName = "m_operation";
         private const string s_firstValueTypePropertyName = "m_firstValueType";
         private const string s_secondValueTypePropertyName = "m_secondValueType";
@@ -47,6 +49,8 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_isValidPropertyName = "m_isValid";
 
         private SerializedScorableType m_scorableType;
+        private SerializedProperty m_isForEnemyProperty;
+
         private SerializedProperty m_operationProperty;
         private SerializedProperty m_firstValueTypeProperty;
         private SerializedProperty m_secondValueTypeProperty;
@@ -81,6 +85,8 @@ namespace Stirge.UtilityAI.CustomEditors
                 m_scorableType = (SerializedScorableType)serializedObject.FindProperty(s_scorableTypePropertyName).intValue;
 
                 // init objects
+                m_isForEnemyProperty = serializedObject.FindProperty(s_isForEnemyPropertyName);
+
                 m_operationProperty = serializedObject.FindProperty(s_operationPropertyName);
                 m_firstValueTypeProperty = serializedObject.FindProperty(s_firstValueTypePropertyName);
                 m_secondValueTypeProperty = serializedObject.FindProperty(s_secondValueTypePropertyName);
@@ -117,6 +123,31 @@ namespace Stirge.UtilityAI.CustomEditors
 
             EGL.Separator();
             EditorGUI.BeginChangeCheck();
+
+            // Is For Enemy property field
+            EGL.BeginHorizontal();
+            EGL.LabelField("Is this for the AI?");
+            bool newIsForEnemyValue = EGL.Toggle(GUIContent.none, m_isForEnemyProperty.boolValue);
+            EGL.EndHorizontal();
+
+            if (newIsForEnemyValue != m_isForEnemyProperty.boolValue)
+            {
+                m_isForEnemyProperty.boolValue = newIsForEnemyValue;
+
+                // If changing the Is For Enemy value to false,
+                // then we want to clear any properties targeting the User as they may be UtilityEnemy properties
+                if (!newIsForEnemyValue)
+                {
+                    if (m_firstObject.valueType == ConditionValueType.Property && m_firstObject.propertyTarget == ConditionPropertyTarget.User)
+                    {
+                        m_firstObject.propertyValue = default;
+                    }
+                    if (m_secondObject.valueType == ConditionValueType.Property && m_secondObject.propertyTarget == ConditionPropertyTarget.User)
+                    {
+                        m_secondObject.propertyValue = default;
+                    }
+                }
+            }
 
             // Draw Operation Enum property field
             EGL.BeginHorizontal();
@@ -403,7 +434,10 @@ namespace Stirge.UtilityAI.CustomEditors
                         switch (obj.propertyTarget)
                         {
                             case ConditionPropertyTarget.User:
-                                SelectProperty<UtilityEnemy>(ref obj);
+                                if (m_isForEnemyProperty.boolValue)
+                                    SelectProperty<UtilityEnemy>(ref obj);
+                                else
+                                    SelectProperty<CombatEntity>(ref obj);
                                 break;
                             case ConditionPropertyTarget.Target:
                                 SelectProperty<CombatEntity>(ref obj);
@@ -663,9 +697,16 @@ namespace Stirge.UtilityAI.CustomEditors
         public static string GetUIName(Type type)
         {
             string typeName = type.Name;
-            if (typeName.Length >= 11 && typeName[..10] == "Serialized")
-                return Regex.Replace(type.Name[10..], "(\\B[A-Z])", " $1");
-            return Regex.Replace(type.Name, "(\\B[A-Z])", " $1");
+            int indexOfUnderscore = typeName.IndexOf('_');
+            if (indexOfUnderscore > 0)
+                typeName = typeName[..indexOfUnderscore];
+
+            if (typeName.Length >= 10 && typeName[..10] == "Serialized")
+                typeName = Regex.Replace(typeName[10..], "(\\B[A-Z])", " $1");
+            else
+                typeName = Regex.Replace(typeName, "(\\B[A-Z])", " $1");
+
+            return typeName;
         }
     }
 }

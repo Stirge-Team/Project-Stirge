@@ -15,47 +15,6 @@ MonoBehaviour:
   m_scoreScaling: 1
   m_duration: 2
   m_displayName: Target
-  m_conditions:
-  - {fileID: 3465297831834169246}
+  m_conditions: []
   m_scoringMethods: []
   m_arg: 10
---- !u!114 &3465297831834169246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9d9ebb405b8b8d48ac7b4463018e275, type: 3}
-  m_Name: New Condition
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedCondition
-  m_operation: 0
-  m_firstConstantObject:
-    rid: -2
-  m_secondConstantObject:
-    rid: 9056080267981357129
-  m_firstReferenceObject: {fileID: 0}
-  m_secondReferenceObject: {fileID: 0}
-  m_firstPropertyName:
-    m_propertyName: HasTarget
-    m_hash: 265
-  m_secondPropertyName:
-    m_propertyName: 
-    m_hash: 0
-  m_firstPropertyTarget: 0
-  m_secondPropertyTarget: 0
-  m_firstTypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-    PublicKeyToken=b77a5c561934e089
-  m_secondTypeAssemblyQualifiedName: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
-    PublicKeyToken=b77a5c561934e089
-  m_isValid: 1
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 9056080267981357129
-      type: {class: Boolean, ns: System, asm: mscorlib}
-      data: 

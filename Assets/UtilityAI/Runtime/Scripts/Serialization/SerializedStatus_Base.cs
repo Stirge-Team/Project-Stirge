@@ -11,7 +11,7 @@ namespace Stirge.UtilityAI
         [SerializeField, Range(1, 30)] protected int m_maxStacks;
         [SerializeField] protected StatusDurationType m_durationType;
         [SerializeField] protected float m_duration;
-        [SerializeField] protected SerializedCondition[] m_conditions = new SerializedCondition[0];
+        [SerializeField] protected SerializedCondition_Base[] m_conditions = new SerializedCondition_Base[0];
         [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 
         public abstract Type StatusType { get; }

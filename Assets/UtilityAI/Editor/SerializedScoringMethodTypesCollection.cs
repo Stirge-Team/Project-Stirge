@@ -104,9 +104,25 @@ namespace Stirge.UtilityAI.EditorTools
             s_statusScoringMethodTypes = statusScoringMethodTypes.ToArray();
         }
 
-        public static IReadOnlyList<Type> actionScoringMethodTypes => s_actionScoringMethodTypes;
-        public static IReadOnlyList<Type> movementGoalScoringMethodTypes => s_movementGoalScoringMethodTypes;
-        public static IReadOnlyList<Type> statusScoringMethodTypes => s_statusScoringMethodTypes;
+        public static IReadOnlyList<Type> GetScoringMethodTypes<TScorable>() where TScorable : IScorable
+        {
+            if (typeof(TScorable) == typeof(Action))
+            {
+                return s_actionScoringMethodTypes;
+            }
+            else if (typeof(TScorable) == typeof(MovementGoal))
+            {
+                return s_movementGoalScoringMethodTypes;
+            }
+            else if (typeof(TScorable) == typeof(Status))
+            {
+                return s_statusScoringMethodTypes;
+            }
+            else
+            {
+                return s_scoringMethodTypes;
+            }
+        }
 
         public static Type GetSerializedScoringMethodType<TScorable>(Type scoringMethodType) where TScorable : IScorable
         {

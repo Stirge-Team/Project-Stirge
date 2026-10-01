@@ -1,22 +1,13 @@
-using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 using EGL = UnityEditor.EditorGUILayout;
-using Object = UnityEngine.Object;
 
 namespace Stirge.UtilityAI.CustomEditors
 {
-    using EditorTools;
-    using Serialization;
-
     [CustomEditor(typeof(SerializedAction), true)]
-    public class SerializedActionEditor : Editor
+    public class SerializedActionEditor : SerializedScorableEditor<Action>
     {
-        #region Property Names
         private const string s_scoreScalingPropertyName = "m_scoreScaling";
         private const string s_durationPropertyName = "m_duration";
         private const string s_displayNamePropertyName = "m_displayName";
@@ -41,9 +32,7 @@ namespace Stirge.UtilityAI.CustomEditors
             s_conditionsPropertyName,
             s_scoringMethodsPropertyName
         };
-        #endregion
 
-        #region Serialized Properties
         private SerializedProperty m_scoreScalingProperty;
         private SerializedProperty m_durationProperty;
         private SerializedProperty m_displayNameProperty;
@@ -54,17 +43,12 @@ namespace Stirge.UtilityAI.CustomEditors
         private SerializedProperty m_statusesProperty;
         private SerializedProperty m_conditionsProperty;
         private SerializedProperty m_scoringMethodsProperty;
-        #endregion
 
-        private Type m_targetType;
+        protected override string[] basePropertyNames => s_basePropertyNames;
+        protected override SerializedProperty conditionsProperty => m_conditionsProperty;
+        protected override SerializedProperty scoringMethodsProperty => m_scoringMethodsProperty;
 
-        private static readonly Dictionary<Object, Editor> s_conditionEditors = new();
-        private static readonly Dictionary<Object, Editor> s_scoringMethodEditors = new();
-
-        private static bool s_conditionsFoldout;
-        private static bool s_scoringMethodsFoldout;
-
-        private void OnEnable()
+        protected override void FindSerializedProperties()
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
             m_durationProperty = serializedObject.FindProperty(s_durationPropertyName);
@@ -76,21 +60,10 @@ namespace Stirge.UtilityAI.CustomEditors
             m_statusesProperty = serializedObject.FindProperty(s_statusesPropertyName);
             m_conditionsProperty = serializedObject.FindProperty(s_conditionsPropertyName);
             m_scoringMethodsProperty = serializedObject.FindProperty(s_scoringMethodsPropertyName);
-
-            m_targetType = target.GetType();
         }
 
-        public override void OnInspectorGUI()
+        protected override void DrawBaseProperties()
         {
-            // Draw script field
-            using (new EditorGUI.DisabledScope(true))
-            {
-                EGL.PropertyField(serializedObject.FindProperty("m_Script"));
-            }
-
-            EditorGUI.BeginChangeCheck();
-
-            // Draw the normal properties
             EGL.PropertyField(m_scoreScalingProperty);
             EGL.PropertyField(m_durationProperty);
             EGL.PropertyField(m_displayNameProperty);
@@ -99,210 +72,6 @@ namespace Stirge.UtilityAI.CustomEditors
             EGL.PropertyField(m_damageProperty);
             EGL.PropertyField(m_rangeProperty);
             EGL.PropertyField(m_statusesProperty);
-
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-            }
-
-            // Conditions property editor
-            EGL.BeginHorizontal();
-            s_conditionsFoldout = EGL.Foldout(s_conditionsFoldout, "Conditions", EditorStyles.foldoutHeader);
-            using (new EditorGUI.DisabledScope(true))
-            {
-                EGL.IntField(GUIContent.none, m_conditionsProperty.arraySize, GUILayout.MaxWidth(48f));
-            }
-            EGL.EndHorizontal();
-            if (s_conditionsFoldout)
-            {
-                EGL.BeginVertical(GUI.skin.window);
-                for (int i = 0, count = m_conditionsProperty.arraySize; i < count; i++)
-                {
-                    SerializedProperty conditionProperty = m_conditionsProperty.GetArrayElementAtIndex(i);
-                    var objectValue = (SerializedCondition)conditionProperty.objectReferenceValue;
-
-                    if (!s_conditionEditors.TryGetValue(objectValue, out Editor editor))
-                    {
-                        editor = CreateEditorWithContext(new Object[] { objectValue }, target);
-                        s_conditionEditors.Add(objectValue, editor);
-                    }
-
-                    EGL.BeginVertical(GUI.skin.box);
-
-                    EGL.LabelField("Condition " + i, EditorStyles.boldLabel);
-                    EditorGUI.BeginChangeCheck();
-                    objectValue.name = EGL.TextField("Name", objectValue.name);
-                    if (EditorGUI.EndChangeCheck())
-                    {
-                        serializedObject.ApplyModifiedProperties();
-                    }
-
-                    editor.OnInspectorGUI();
-
-                    if (GUILayout.Button("Remove Condition"))
-                    {
-                        DestroyImmediate(objectValue, true);
-                        SerializedPropertyHelper.CompletelyRemove(m_conditionsProperty, i);
-
-                        --i;
-                        count = m_conditionsProperty.arraySize;
-
-                        serializedObject.ApplyModifiedProperties();
-                        AssetDatabase.SaveAssets();
-                        AssetDatabase.Refresh();
-                    }
-
-                    EGL.EndVertical();
-                }
-
-                if (GUILayout.Button("Add Condition"))
-                {
-                    AddCondition();
-                }
-
-                EGL.EndVertical();
-            }
-
-            // Scoring Methods property editor
-            EGL.BeginHorizontal();
-            s_scoringMethodsFoldout = EGL.Foldout(s_scoringMethodsFoldout, "Scoring Methods", EditorStyles.foldoutHeader);
-            using (new EditorGUI.DisabledScope(true))
-            {
-                EGL.IntField(GUIContent.none, m_scoringMethodsProperty.arraySize, GUILayout.MaxWidth(48f));
-            }
-            EGL.EndHorizontal();
-            if (s_scoringMethodsFoldout)
-            {
-                EGL.BeginVertical(GUI.skin.window);
-
-                for (int i = 0, count = m_scoringMethodsProperty.arraySize; i < count; i++)
-                {
-                    SerializedProperty scoringMethodProperty = m_scoringMethodsProperty.GetArrayElementAtIndex(i);
-                    var objectValue = (SerializedScoringMethod_Base)scoringMethodProperty.objectReferenceValue;
-
-                    if (!s_scoringMethodEditors.TryGetValue(objectValue, out Editor editor))
-                    {
-                        editor = CreateEditorWithContext(new Object[] { objectValue }, target);
-                        s_scoringMethodEditors.Add(objectValue, editor);
-                    }
-
-                    EGL.BeginVertical(GUI.skin.box);
-
-                    EGL.LabelField("Scoring Method " + i, EditorStyles.boldLabel);
-                    EditorGUI.BeginChangeCheck();
-                    objectValue.name = EGL.TextField("Name", objectValue.name);
-                    if (EditorGUI.EndChangeCheck())
-                        serializedObject.ApplyModifiedProperties();
-
-                    editor.OnInspectorGUI();
-
-                    if (GUILayout.Button("Remove Scoring Method"))
-                    {
-                        DestroyImmediate(objectValue, true);
-                        SerializedPropertyHelper.CompletelyRemove(m_scoringMethodsProperty, i);
-
-                        --i;
-                        count = m_scoringMethodsProperty.arraySize;
-
-                        serializedObject.ApplyModifiedProperties();
-                        AssetDatabase.SaveAssets();
-                        AssetDatabase.Refresh();
-                    }
-
-                    EGL.EndVertical();
-                }
-
-                EGL.Separator();
-
-                if (GUILayout.Button("Add Scoring Method"))
-                {
-                    AddScoringMethod();
-                }
-
-                EGL.EndVertical();
-            }
-
-            EGL.Separator();
-
-            // Draw any Additional properties, unless its the non-generic Action type which has no more properties
-            string typeName = GetUIName(m_targetType);
-            if (typeName == GetUIName(typeof(Action)))
-                return;
-
-            EGL.LabelField(new GUIContent(typeName + " Properties"), EditorStyles.boldLabel);
-
-            // Move to the first visible property
-            EditorGUI.BeginChangeCheck();
-            SerializedProperty prop = serializedObject.GetIterator();
-            if (prop.NextVisible(true))
-            {
-                do
-                {
-                    // Skip the script reference and the properties we have already drawn
-                    if (prop.name == "m_Script" || s_basePropertyNames.Contains(prop.name))
-                        continue;
-
-                    // This draws everything else
-                    EGL.PropertyField(prop, true);
-                }
-                while (prop.NextVisible(false)); // Use 'false' to avoid drawing child elements of complex structs/arrays twice
-            }
-            if (EditorGUI.EndChangeCheck())
-            {
-                serializedObject.ApplyModifiedProperties();
-            }
-        }
-
-        private void AddCondition()
-        {
-            ScriptableObject instance = CreateInstance<SerializedCondition>();
-            instance.name = "New Condition";
-
-            AssetDatabase.AddObjectToAsset(instance, target);
-
-            int index = m_conditionsProperty.arraySize++;
-            SerializedProperty newConditionProperty = m_conditionsProperty.GetArrayElementAtIndex(index);
-            newConditionProperty.objectReferenceValue = instance;
-            ((SerializedCondition)newConditionProperty.objectReferenceValue).SetScorableType(SerializedScorableType.Action);
-
-            serializedObject.ApplyModifiedProperties();
-            AssetDatabase.SaveAssets();
-        }
-
-        private void AddScoringMethod()
-        {
-            var genericMenu = new GenericMenu();
-            IReadOnlyList<Type> scoringMethodTypes = SerializedScoringMethodTypesCollection.actionScoringMethodTypes;
-
-            for (int i = 0, count = scoringMethodTypes.Count; i < count; i++)
-            {
-                Type type = scoringMethodTypes[i];
-                string uiName = GetUIName(type);
-                genericMenu.AddItem(new GUIContent(uiName), false, () =>
-                {
-                    Type serializedScoringMethodType = SerializedScoringMethodTypesCollection.GetSerializedScoringMethodType<Action>(type);
-                    ScriptableObject instance = CreateInstance(serializedScoringMethodType);
-                    instance.name = uiName.Replace(" ", string.Empty);
-
-                    AssetDatabase.AddObjectToAsset(instance, target);
-
-                    int index = m_scoringMethodsProperty.arraySize++;
-                    m_scoringMethodsProperty.GetArrayElementAtIndex(index).objectReferenceValue = instance;
-
-                    serializedObject.ApplyModifiedProperties();
-                    AssetDatabase.SaveAssets();
-                });
-            }
-
-            genericMenu.ShowAsContext();
-        }
-
-        public static string GetUIName(Type type)
-        {
-            string typeName = type.Name;
-            if (typeName.Length >= 11 && typeName[..10] == "Serialized")
-                return Regex.Replace(type.Name[10..], "(\\B[A-Z])", " $1");
-            return Regex.Replace(type.Name, "(\\B[A-Z])", " $1");
         }
     }
 }

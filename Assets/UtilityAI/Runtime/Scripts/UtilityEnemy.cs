@@ -79,52 +79,5 @@ namespace Stirge.UtilityAI
             return Vector3.SqrMagnitude(position - Motor.GetPosition()) > NavMeshAgent.stoppingDistance * NavMeshAgent.stoppingDistance;
         }
         #endregion
-
-        #region Status
-        public override void InflictStatus(Status newStatus, CombatEntity user)
-        {            
-            Type statusType = newStatus.StatusType;
-            int indexOfExistingStatus = GetIndexOfStatus(statusType);
-
-            // If a Status of the same type already exists
-            if (indexOfExistingStatus != -1)
-            {
-                switch (newStatus.StackType)
-                {
-                    case StatusStackType.Stackable:
-                        Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
-                        existingStackableStatus.AddStacks(newStatus.CurrentStacks);
-                        return; // don't add again
-                    case StatusStackType.Unique:
-                        return; // don't add again
-                    default:
-                        break;
-                }
-            }
-
-            m_inflictedStatuses.Add(newStatus);
-            newStatus.OnApply(user, this);
-        }
-
-        /// <summary>
-        /// Returns -1 if no <see cref="Status"/> of type <paramref name="statusType"/> was found.
-        /// </summary>
-        /// <param name="statusType"></param>
-        /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
-        public int GetIndexOfStatus(Type statusType)
-        {
-            return m_inflictedStatuses.FindIndex(status => status.StatusType == statusType);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="statusType"></param>
-        /// <returns>The number of the provided <paramref name="statusType"/> the Enemy is inflicted with.</returns>
-        public int GetNumberOfInflictedStatus(Type statusType)
-        {
-            return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
-        }
-        #endregion
     }
 }
