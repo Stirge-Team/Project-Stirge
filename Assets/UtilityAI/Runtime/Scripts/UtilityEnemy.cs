@@ -4,7 +4,6 @@ using UnityEngine;
 namespace Stirge.UtilityAI
 {
     using Combat;
-    using System.Security.Cryptography;
     using UnityEngine.AI;
 
     public class UtilityEnemy : CombatEntity
