@@ -4,52 +4,43 @@ using System.Collections.Generic;
 
 namespace Stirge.Input
 {
-    using Combat.Attacks;
-    using Combat.Attacks.Serialization;
-    
+    using UnityEngine.Timeline;
+
     [System.Serializable]
     public class AttackBinding
     {
-        public AttackBinding(AttackInput input, SerializedAttackData data)
+        public AttackBinding(AttackInput input, TimelineAsset timeline)
         {
-            attackInput = input;
-            m_serializedAttackData = data;
+            m_attackInput = input;
+            m_attackTimeline = timeline;
         }
         public AttackBinding(AttackBinding binding)
         {
-            attackInput = binding.attackInput;
-            m_serializedAttackData = binding.m_serializedAttackData;
+            m_attackInput = binding.m_attackInput;
+            m_attackTimeline = binding.m_attackTimeline;
         }
         
-        public AttackInput attackInput;
-        [SerializeField] private SerializedAttackData m_serializedAttackData;
+        [SerializeField] private AttackInput m_attackInput;
+        [SerializeField] private TimelineAsset m_attackTimeline;
 
-        private AttackData m_deserializedAttackData;
+        public AttackInput attackInput => m_attackInput;
+        public TimelineAsset attackTimeline => m_attackTimeline;
 
-        public AttackData attackData
+        public KeyValuePair<AttackInput, TimelineAsset> ConvertToDictionaryEntry()
         {
-            get
-            {
-                m_deserializedAttackData ??= m_serializedAttackData.CreateAttackData();
-                return m_deserializedAttackData;
-            }
+            return new KeyValuePair<AttackInput, TimelineAsset>(m_attackInput, m_attackTimeline);
         }
 
-        public KeyValuePair<AttackInput, AttackData> ConvertToDictionaryEntry()
+        public static Dictionary<AttackInput, TimelineAsset> ConvertToDictionary(AttackBinding binding)
         {
-            return new KeyValuePair<AttackInput, AttackData>(attackInput, attackData);
-        }
-
-        public static Dictionary<AttackInput, AttackData> ConvertToDictionary(AttackBinding binding)
-        {
-            return new Dictionary<AttackInput, AttackData>
+            return new Dictionary<AttackInput, TimelineAsset>
             {
-                { binding.attackInput, binding.attackData }
+                { binding.m_attackInput, binding.m_attackTimeline }
             };
         }
-        public static Dictionary<AttackInput, AttackData> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
+        public static Dictionary<AttackInput, TimelineAsset> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
         {
-            return new Dictionary<AttackInput, AttackData>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
+            return new Dictionary<AttackInput, TimelineAsset>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
         }
     }
 }

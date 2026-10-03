@@ -1,13 +1,13 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
-using System.Collections;
+using UnityEngine.Timeline;
 
 namespace Stirge.Input
 {
-    using Combat.Attacks;
     using Player;
-    using System.Linq;
 
     [System.Flags]
     public enum AttackInput
@@ -40,64 +40,63 @@ namespace Stirge.Input
         }
         #endregion
 
-        [SerializeField] private Player m_player;
-
-        [SerializeField] private float m_inputBufferTime = 0.2f;
         public const int MaxSequenceLength = 5;
 
-        private Dictionary<AttackInput, AttackData> m_groundedBindings = new();
-        private Dictionary<AttackInput, AttackData> m_airBindings = new();
+        [SerializeField] private Player m_player;
+        [SerializeField] private float m_inputDuration = 0.2f;
+        [SerializeField] private float m_bufferDuration = 0.4f;
 
-        // if combos are never going to have branching paths, this can just become an AttackBinding
-        private Dictionary<AttackInput, AttackData> m_comboBindings;
+        private AttackBindingDictionary m_groundedBindings = new();
+        private AttackBindingDictionary m_airBindings = new();
+        private AttackBindingDictionary m_comboBindings = new(); // if combos are never going to have branching paths, this can just become an AttackBinding
 
-        private List<AttackInput> m_sequence = new();
+        private readonly List<AttackInput> m_sequence = new();
 
-        private float m_bufferTimer = 0;
-
-        public List<KeyValuePair<AttackInput, AttackData>> ComboBindings
-        {
-            get
-            {
-                return m_comboBindings != null ? m_comboBindings.ToList() : null;
-            }
-        }
+        private float m_inputCountdown = 0f;
+        private float m_bufferCountdown = 0f;
+            
+        public List<AttackBinding> ComboBindingDebugList => m_comboBindings.ToList().ConvertAll(e => new AttackBinding(e.Key, e.Value));
 
         private void Update()
         {
-            if (m_bufferTimer <= 0)
+            if (m_inputCountdown <= 0)
             {
                 ProcessSequence();
                 m_sequence.Clear();
-                m_bufferTimer = m_inputBufferTime;
+                m_inputCountdown = m_inputDuration;
             }
+
+            if (m_bufferCountdown > 0)
+            {
+                m_bufferCountdown -= Time.deltaTime;
+            }
+            
             if (m_sequence.Count > 0)
             {
-                m_bufferTimer -= Time.deltaTime;
+                m_inputCountdown -= Time.deltaTime;
             }
+
         }
 
         #region Bindings
-        public void SetGroundedBindings(Dictionary<AttackInput, AttackData> bindings)
+        public void SetGroundedBindings(List<AttackBinding> bindings)
         {
-            m_groundedBindings = new(bindings);
+            m_groundedBindings = new(bindings.ToDictionary(binding => binding.attackInput, binding => binding.attackTimeline));
         }
-        public void SetAirBindings(Dictionary<AttackInput, AttackData> bindings)
+        public void SetAirBindings(List<AttackBinding> bindings)
         {
-            m_airBindings = new(bindings);
+            m_airBindings = new(bindings.ToDictionary(binding => binding.attackInput, binding => binding.attackTimeline));
         }
 
-        public void AddComboBinding(AttackBinding binding)
+        public void AddComboBinding(AttackInput comboInput, TimelineAsset comboTimeline)
         {
-            m_comboBindings.Add(binding.attackInput, binding.attackData);
-        }
-        public void SetComboBinding(Dictionary<AttackInput, AttackData> bindings)
-        {
-            m_comboBindings = new(bindings);
+            m_comboBindings.Add(comboInput, comboTimeline);
+            Debug.Log($"Began listening for new Combo Binding: {comboInput} : {comboTimeline.name}");
         }
         public void ClearComboBinding()
         {
             m_comboBindings.Clear();
+            Debug.Log($"Stopped listening for Combo Bindings.");
         }
         #endregion
 
@@ -136,25 +135,28 @@ namespace Stirge.Input
         {
             // Combo Bindings does not check if the player is in an available state,
             // As combo attacks can interrupt other actions
-            if (m_comboBindings.TryGetValue(input, out AttackData attackData))
+            if (m_comboBindings.TryGetValue(input, out TimelineAsset attackTimeline))
             {
-                m_player.UseAttack(attackData);
+                m_player.UseAction(attackTimeline);
                 ClearComboBinding();
                 return true;
             }
             // check if the player is in a state where they are able to attack
-            if (!m_player.IsAttacking)
+            if (!m_player.IsPerformingAction)
             {
                 // grounded bindings
-                if (m_player.IsGrounded() && m_groundedBindings.TryGetValue(input, out attackData))
+                if (m_player.Motor.IsGrounded)
                 {
-                    m_player.UseAttack(attackData);
-                    return true;
+                    if (m_groundedBindings.TryGetValue(input, out attackTimeline))
+                    {
+                        m_player.UseAction(attackTimeline);
+                        return true;
+                    }
                 }
                 // air bindings
-                else if (m_airBindings.TryGetValue(input, out attackData))
+                else if (m_airBindings.TryGetValue(input, out attackTimeline))
                 {
-                    m_player.UseAttack(attackData);
+                    m_player.UseAction(attackTimeline);
                     return true;
                 }
             }
@@ -201,7 +203,7 @@ namespace Stirge.Input
         }
         #endregion
 
-        //Disabling should 
+        #region State
         public void SetInputReading(bool setTo, float time = 1)
         {
             enabled = setTo;
@@ -212,6 +214,15 @@ namespace Stirge.Input
         {
             yield return new WaitForSeconds(time);
             enabled = true;
+        }
+        #endregion
+
+
+        private class AttackBindingDictionary : Dictionary<AttackInput, TimelineAsset>
+        {
+            public AttackBindingDictionary() : base() { }
+            public AttackBindingDictionary(IEnumerable<KeyValuePair<AttackInput, TimelineAsset>> collection) : base(collection) { }
+            public AttackBindingDictionary(IDictionary<AttackInput, TimelineAsset> dictionary) : base(dictionary) { }
         }
     }
 }

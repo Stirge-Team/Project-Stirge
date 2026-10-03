@@ -98,7 +98,7 @@ namespace Stirge.Tools
                 property = m_property.FindPropertyRelative(propertyName);
                 if (property == null)
                 {
-                    Debug.LogWarning($"Could not find property relative with Name '{propertyName}' with Path '{m_property.propertyPath}'.");
+                    //Debug.LogWarning($"Could not find property relative with Name '{propertyName}' with Path '{m_property.propertyPath}'.");
                     return null;
                 }
 

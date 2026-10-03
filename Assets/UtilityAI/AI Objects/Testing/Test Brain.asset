@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7893df53f9d160f4dbf858b4a6f7ab71, type: 3}
+  m_Name: Test Brain
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedUtilityBrain
+  m_serializedActions:
+  - {fileID: 11400000, guid: e6cee69daee25a94384f5803e0a804ca, type: 2}
+  - {fileID: 11400000, guid: f13fdebc0399412429223b628e363f23, type: 2}
+  m_serializedMovementGoals:
+  - {fileID: 11400000, guid: 3daf0f1bf5e14724c8291f413c9b3de3, type: 2}
+  - {fileID: 11400000, guid: 255f971467e89b041a66fad2394badb0, type: 2}

@@ -23,10 +23,10 @@ namespace Stirge.Input
             switch (m_bindingType)
             {
                 case BindingType.Grounded:
-                    m_inputManager.SetGroundedBindings(AttackBinding.ConvertToDictionary(m_defaultBindings));
+                    m_inputManager.SetGroundedBindings(m_defaultBindings);
                     break;
                 case BindingType.Air:
-                    m_inputManager.SetAirBindings(AttackBinding.ConvertToDictionary(m_defaultBindings));
+                    m_inputManager.SetAirBindings(m_defaultBindings);
                     break;
             }
 

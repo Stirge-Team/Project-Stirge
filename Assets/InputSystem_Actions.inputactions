@@ -68,15 +68,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "A",
-                    "type": "Button",
-                    "id": "70c6e45d-6e67-44ab-acbc-7bc58bd9583c",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -319,28 +310,6 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "HelmSplitter",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0e92d065-a115-4ebd-b7cd-c965c40c5778",
-                    "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Keyboard&Mouse",
-                    "action": "A",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e8157af2-7996-482c-ba47-75c9717d49dd",
-                    "path": "<Gamepad>/buttonWest",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "A",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
