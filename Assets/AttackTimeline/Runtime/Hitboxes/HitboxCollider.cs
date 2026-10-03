@@ -69,11 +69,74 @@ namespace Stirge.AttackTimeline
 
         private void OnDrawGizmos()
         {
-            if (Application.isPlaying)
+            if (enabled)
             {
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(transform.position, transform.position + m_velocityVector);
                 Gizmos.DrawSphere(transform.position + m_velocityVector, .05f);
+
+                Gizmos.color = Color.paleGreen;
+                Collider[] cols = GetColliderComponentsInChildrenThatAreNotHitboxCollider();
+                foreach (Collider col in cols)
+                {
+                    if (col is SphereCollider sphere)
+                    {
+                        Gizmos.DrawWireSphere(transform.position + sphere.center, sphere.radius);
+                    }
+                    else if (col is BoxCollider box)
+                    {
+                        Gizmos.DrawWireCube(transform.position + box.center, box.size);
+                    }
+                    else if (col is CapsuleCollider capsule)
+                    {
+                        Gizmos.matrix = transform.localToWorldMatrix;
+
+                        Vector3 pos = capsule.center;
+                        Vector3 up = pos + new Vector3(0f, capsule.height / 2f - capsule.radius);
+                        Vector3 down = pos + new Vector3(0f, -capsule.height / 2f + capsule.radius);
+                        float radius = capsule.radius;
+
+                        Gizmos.DrawWireSphere(up, radius);
+                        Gizmos.DrawLine(up + Vector3.right * radius, down + Vector3.right * radius);
+                        Gizmos.DrawLine(up - Vector3.right * radius, down - Vector3.right * radius);
+                        Gizmos.DrawLine(up + Vector3.forward * radius, down + Vector3.forward * radius);
+                        Gizmos.DrawLine(up - Vector3.forward * radius, down - Vector3.forward * radius);
+                        Gizmos.DrawWireSphere(down, radius);
+
+                        Gizmos.matrix = Matrix4x4.identity;
+                    }
+                }
+            }
+        }
+
+        private Collider[] GetColliderComponentsInChildrenThatAreNotHitboxCollider()
+        {
+            List<Collider> foundColliders = new();
+            if (TryGetComponent(out Collider col))
+            {
+                foundColliders.Add(col);
+            }
+            CheckChildren(transform);
+            return foundColliders.ToArray();
+
+            void CheckChildren(Transform root)
+            {
+                for (int i = 0, count = root.childCount; i < count; i++)
+                {
+                    Transform child = root.GetChild(i);
+
+                    // if child is a HitboxCollider, allow it to draw its own Hitboxes
+                    if (!child.TryGetComponent(out HitboxCollider collider))
+                    {
+                        if (child.TryGetComponent(out Collider found))
+                        {
+                            foundColliders.Add(found);
+                        }
+
+                        // Check this Transform's children too
+                        CheckChildren(child);
+                    }
+                }
             }
         }
 #endif

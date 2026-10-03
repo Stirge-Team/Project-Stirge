@@ -18,6 +18,8 @@ MonoBehaviour:
   m_maxStacks: 20
   m_durationType: 0
   m_duration: 9.84
+  m_inflictCondition: 1
+  m_inflictDelay: 0
   m_conditions: []
   m_scoringMethods: []
   m_arg0: 0
