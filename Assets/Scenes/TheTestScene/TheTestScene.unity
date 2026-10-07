@@ -3264,6 +3264,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: Timeline Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7489572912865040449, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_defaultBindings.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489572912865040449, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_defaultBindings.Array.data[1].m_attackInput
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489572912865040449, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_defaultBindings.Array.data[2].m_attackInput
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7489572912865040449, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_defaultBindings.Array.data[2].m_attackTimeline
+      value: 
+      objectReference: {fileID: 11400000, guid: f352615271322db49b558ba6b27e4704, type: 2}
+    - target: {fileID: 9209861614420571021, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_jumpHeight
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 9209861614420571021, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_maxFallingSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 9209861614420571021, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_verticalTopSpeed
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3298,13 +3326,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361484462ac61fd679fb2bf9729b55f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.AttackTokenDispenser
-  m_maxTokens: 1
-  m_tokenLifetime: 1
-  m_raffleTime: 2
-  m_entryLimit: 3
-  m_drawOnLimitReached: 0
-  m_allowRepeatEntries: 0
-  m_defaultComparisionMethod: 1
 --- !u!4 &1085961194
 Transform:
   m_ObjectHideFlags: 0
