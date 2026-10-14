@@ -78,6 +78,12 @@ namespace Stirge.Combat
         #region Status
         public void InflictStatus(Status newStatus, CombatEntity user)
         {
+            if (newStatus.DurationType == StatusDurationType.Instant)
+            {
+                newStatus.OnApply(user, this);
+                return;
+            }
+            
             Type statusType = newStatus.StatusType;
             int indexOfExistingStatus = GetIndexOfStatus(statusType);
 

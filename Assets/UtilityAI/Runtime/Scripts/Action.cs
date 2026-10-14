@@ -1,11 +1,11 @@
 using System.Linq;
-using UnityEngine;
 using UnityEngine.Timeline;
 
 namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
+    using UnityEngine;
 
     public enum ActionType
     {
@@ -63,6 +63,11 @@ namespace Stirge.UtilityAI
         /// </summary>
         private IScoringMethod[] m_scoringMethods;
 
+        private bool m_performed;
+        private float m_lifeTime;
+
+        private bool[] m_inflictedStatuses;
+
         // properties
         public float duration => m_duration;
         public string displayName => m_displayName;
@@ -96,10 +101,40 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// What happens when the <paramref name="user"/> Performs this <see cref="Action"/>.
         /// </summary>
-        public virtual void Perform(CombatEntity user, CombatEntity target)
+        public void Perform(CombatEntity user, CombatEntity target)
         {
-            if (m_timeline != null)
-                user.UseAction(m_timeline);
+            if (!m_performed)
+            {
+                m_performed = true;
+                
+                if (m_timeline != null)
+                    user.UseAction(m_timeline);
+            }
+
+            // Update Statuses
+            for (int i = 0, count = m_statuses.Length; i < count; i++)
+            {
+                Status status = m_statuses[i];
+
+                if (status.InflictCondition == StatusInflictCondition.AfterDelay && // If this Status is a Delay status
+                    !m_inflictedStatuses[i] && // If this Status has not yet been inflicted
+                    m_lifeTime >= status.InflictDelay) // If the required amount of time has passed
+                {
+                    status.Inflict(user, target);
+                    m_inflictedStatuses[i] = true;
+                }
+            }
+
+            m_lifeTime += Time.deltaTime;
+
+            PerformInternal(user, target);
+        }
+        protected virtual void PerformInternal(CombatEntity user, CombatEntity target) { }
+
+        public virtual void Reset()
+        {
+            m_performed = false;
+            m_lifeTime = 0f;
         }
 
         #region Setup
@@ -108,6 +143,8 @@ namespace Stirge.UtilityAI
             m_statuses = statuses;
             m_conditions = conditions;
             m_scoringMethods = scoringMethods;
+
+            m_inflictedStatuses = new bool[statuses.Length];
         }
 
         public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, new()
@@ -120,7 +157,7 @@ namespace Stirge.UtilityAI
                 m_actionType = actionType,
                 m_timeline = timeline,
                 m_damage = damage,
-                m_range = range
+                m_range = range,
             };
 
             return action;

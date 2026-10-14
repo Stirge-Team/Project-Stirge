@@ -304,7 +304,6 @@ MonoBehaviour:
   m_health: {fileID: 440547860124242161}
   m_director: {fileID: 1876474870715131292}
   m_serializedBrain: {fileID: 11400000, guid: 37349f2dd120cd549af83425b115f513, type: 2}
-  m_target: {fileID: 0}
 --- !u!320 &1876474870715131292
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -428,6 +427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cb14ad2fe2f2a94b87e935d2fa8d973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemyMotor
+  m_transform: {fileID: 8488527449091659221}
   m_anim: {fileID: 8260787191455650821}
   m_rb: {fileID: 4469904274038837039}
   m_col: {fileID: 1581800406304502069}
