@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.MoveTrack
 {
     using Combat;
 

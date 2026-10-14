@@ -1,11 +1,13 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.HitboxTrack
 {
+    using Combat.Hitboxes;
+
     public class HitboxMixerBehaviour : PlayableBehaviour
     {
-        private GameObject m_boundObject;
+        private Hitbox m_boundHitbox;
 
         //bool m_shouldInitialize = true;
         bool m_boundObjectInitialStateIsActive = false;
@@ -17,15 +19,16 @@ namespace Stirge.AttackTimeline
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            if (m_boundObject == null)
+            if (m_boundHitbox == null)
             {
-                m_boundObject = playerData as GameObject;
-                m_boundObjectInitialStateIsActive = m_boundObject != null && m_boundObject.activeSelf;
+                m_boundHitbox = playerData as Hitbox;
+                m_boundObjectInitialStateIsActive = m_boundHitbox != null && m_boundHitbox.isActive;
             }
 
-            if (m_boundObject == null)
+            if (m_boundHitbox == null)
                 return;
 
+            // hasInput means that a clip is currently playing on this track
             int inputCount = playable.GetInputCount();
             bool hasInput = false;
             for (int i = 0; i < inputCount; i++)
@@ -33,26 +36,30 @@ namespace Stirge.AttackTimeline
                 if (playable.GetInputWeight(i) > 0)
                 {
                     hasInput = true;
-
-                    var input = playable.GetInput(i);
-
-                    //InitializeData(input);
-
                     break;
                 }
             }
 
-            m_boundObject.SetActive(hasInput);
+            // change the active state
+            m_boundHitbox.isActive = hasInput;
 
-             //playable as PlayableAsset
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                if (hasInput)
+                    m_boundHitbox.EnableHitbox();
+                else
+                    m_boundHitbox.DisableHitbox();
+            }
+#endif
         }
 
         public override void OnPlayableDestroy(Playable playable)
         {
-            if (m_boundObject == null)
+            if (m_boundHitbox == null)
                 return;
 
-            m_boundObject.SetActive(m_boundObjectInitialStateIsActive);
+            m_boundHitbox.isActive = m_boundObjectInitialStateIsActive;
         }
     }
 }

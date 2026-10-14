@@ -4,43 +4,26 @@ using System.Collections.Generic;
 
 namespace Stirge.Input
 {
-    using UnityEngine.Timeline;
+    using Stirge.UtilityAI;
 
     [System.Serializable]
     public class AttackBinding
     {
-        public AttackBinding(AttackInput input, TimelineAsset timeline)
+        public AttackBinding(AttackInput input, SerializedAction action)
         {
             m_attackInput = input;
-            m_attackTimeline = timeline;
+            m_attackAction = action;
         }
         public AttackBinding(AttackBinding binding)
         {
             m_attackInput = binding.m_attackInput;
-            m_attackTimeline = binding.m_attackTimeline;
+            m_attackAction = binding.m_attackAction;
         }
         
         [SerializeField] private AttackInput m_attackInput;
-        [SerializeField] private TimelineAsset m_attackTimeline;
+        [SerializeField] private SerializedAction m_attackAction;
 
-        public AttackInput attackInput => m_attackInput;
-        public TimelineAsset attackTimeline => m_attackTimeline;
-
-        public KeyValuePair<AttackInput, TimelineAsset> ConvertToDictionaryEntry()
-        {
-            return new KeyValuePair<AttackInput, TimelineAsset>(m_attackInput, m_attackTimeline);
-        }
-
-        public static Dictionary<AttackInput, TimelineAsset> ConvertToDictionary(AttackBinding binding)
-        {
-            return new Dictionary<AttackInput, TimelineAsset>
-            {
-                { binding.m_attackInput, binding.m_attackTimeline }
-            };
-        }
-        public static Dictionary<AttackInput, TimelineAsset> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
-        {
-            return new Dictionary<AttackInput, TimelineAsset>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
-        }
+        public AttackInput AttackInput => m_attackInput;
+        public SerializedAction AttackAction => m_attackAction;
     }
 }

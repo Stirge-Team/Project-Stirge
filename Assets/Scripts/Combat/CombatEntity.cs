@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
 
 namespace Stirge.Combat
 {
-    using AttackTimeline;
+    using Hitboxes;
     using UtilityAI;
 
     public enum ModifierType
@@ -29,10 +28,29 @@ namespace Stirge.Combat
         protected List<Status> m_inflictedStatuses = new();
         protected bool m_isStunned;
 
-        // properties
+        // combat fields
+        private float m_baseDamage;
+        private ModifierType m_damageModifierType;
+        private float m_damageModifier;
+
+        // reference properties
         public CombatEntityMotor Motor => m_motor;
         public EntityHealth Health => m_health;
+
+        // public properties
         public bool IsPerformingAction => m_isPerformingAction;
+        public float actualDamage
+        {
+            get
+            {
+                return m_damageModifierType switch
+                {
+                    ModifierType.Additive => m_baseDamage + m_damageModifier,
+                    ModifierType.Multiplicative => m_baseDamage * m_damageModifier,
+                    _ => m_baseDamage,
+                };
+            }
+        }
 
         #region UnityEvents
         private void Awake()
@@ -173,12 +191,12 @@ namespace Stirge.Combat
         #endregion
 
         #region Actions
-        public virtual void UseAction(TimelineAsset attackTimeline)
+        public virtual void UseAction(Action action)
         {
             StopPerformingAction();
-            m_director.Play(attackTimeline);
+            if (action.Timeline != null)
+                m_director.Play(action.Timeline);
             m_motor.OnActionStart();
-            m_isPerformingAction = true;
         }
 
         /// <summary>
@@ -195,32 +213,12 @@ namespace Stirge.Combat
         {
             if (m_isPerformingAction)
             {
-                m_director.Stop();
+                m_director.Stop(); // OnActionEnd()
             }
-
-            // Set attacking to false
-            m_isPerformingAction = false;
         }
         #endregion
 
         #region Combat
-        private float m_baseDamage;
-        private ModifierType m_damageModifierType;
-        private float m_damageModifier;
-
-        public float actualDamage
-        {
-            get
-            {
-                return m_damageModifierType switch
-                {
-                    ModifierType.Additive => m_baseDamage + m_damageModifier,
-                    ModifierType.Multiplicative => m_baseDamage * m_damageModifier,
-                    _ => m_baseDamage,
-                };
-            }
-        }
-
         public void SetDamageModifier(ModifierType type, float modifier)
         {
             m_damageModifierType = type;
@@ -230,10 +228,23 @@ namespace Stirge.Combat
         {
             m_damageModifier -= modifier;
         }
+
         /// <inheritdoc/>
-        public override void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity)
         {
-            hitboxData.OnHitEffect.OnHit(this, attackingEntity);
+            OnHit(attacker, hitboxData, hitPosition, hitVelocity, null);
+        }
+        /// <inheritdoc/>
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, List<Status> statusesToApply)
+        {
+            TakeDamage(hitboxData.Damage);
+            if (statusesToApply != null)
+            {
+                foreach (Status status in statusesToApply)
+                {
+                    InflictStatus(status, attacker);
+                }
+            }
         }
 
         #endregion

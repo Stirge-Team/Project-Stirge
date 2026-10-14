@@ -219,14 +219,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae7ddafc519d4064bafc13a530230b3e, type: 3}
   m_Name: HitboxClip
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AttackTimeline.HitboxClip
-  m_data:
-    m_onHitEffect:
-      m_damage: 2
-    m_mask:
-      serializedVersion: 2
-      m_Bits: 129
-    HitboxWorldPosition: {x: 0.042085633, y: 1.3298751, z: 7.0745335}
-    HitboxVelocityVector: {x: 0.5374895, y: 0.5333567, z: -0.6531736}
+  m_template:
+    m_hitboxData:
+      m_collisionMask:
+        serializedVersion: 2
+        m_Bits: 128
+      m_damage: 1
+      m_inflictedStatuses: []
 --- !u!114 &6152242168876675252
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -308,7 +307,7 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
-    m_Start: 0.5
+    m_Start: 0.55
     m_ClipIn: 0
     m_Asset: {fileID: 7551328200929167266}
     m_Duration: 1.9500000476837158

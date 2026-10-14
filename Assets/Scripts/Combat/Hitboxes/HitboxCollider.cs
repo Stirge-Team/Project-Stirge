@@ -1,79 +1,100 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.Combat.Hitboxes
 {
     using Combat;
+    using Stirge.UtilityAI;
 
     [RequireComponent(typeof(Collider))]
-    public class HitboxCollider : MonoBehaviour
+    public class HitboxCollider : Hitbox
     {
-        [SerializeField] private CombatEntity m_owner;
-
-        private HitboxData m_data = new();
-
         private Vector3 m_lastPos;
-        private Vector3 m_velocityVector;
+        private Vector3 m_velocity;
 
-        public HitboxData Data
-        {
-            get { return m_data; }
-            set { m_data = value; }
-        }
-
-        private List<Collider> m_savedColliders = new();
+        private readonly List<Collider> m_savedColliders = new();
+        private readonly List<int> m_appliedStatuses = new();
 
         private void OnTriggerStay(Collider other)
         {
             //if the checked object's layer is NOT in the layer mask, do nothing
-            if (!(((1 << other.gameObject.layer) & m_data.Mask.value) != 0)) return;
+            if (!(((1 << other.gameObject.layer) & m_data.CollisionMask) != 0))
+                return;
 
             //prevent repeat collisions
-            if (m_savedColliders.Contains(other)) return;
-            //add collider to list of collided objects 
-            m_savedColliders.Add(other);
+            if (m_savedColliders.Contains(other))
+                return;
 
             // do OnHit Shtuff
-            Hittable hittableObject = other.GetComponent<Hittable>();
-
-            m_data.HitboxWorldPosition = transform.position;
-            m_data.HitboxVelocityVector = m_velocityVector;
-            if (hittableObject) hittableObject.OnHit(m_data, m_owner);
+            if (other.TryGetComponent(out Hittable target))
+            {
+                //add collider to list of collided objects
+                m_savedColliders.Add(other);
+                OnHit(target);
+            }
         }
 
         private void Update()
         {
-            m_velocityVector = (transform.position - m_lastPos).normalized;
+            m_velocity = transform.position - m_lastPos;
 
             m_lastPos = transform.position;
         }
 
-        private void OnEnable()
+        public override void InitHitbox(SerializedHitboxData hitboxData)
         {
-            m_lastPos = transform.position;
-            m_velocityVector = Vector3.zero;
+            m_data = hitboxData;
         }
-
-        public void CreateHitbox(HitboxData data)
+        public override void EnableHitbox()
         {
+            gameObject.SetActive(true);
+            
             //reset collided objects
-            m_savedColliders = new();
-            //set hitbox data
-            m_data = data;
+            m_savedColliders.Clear();
+            m_appliedStatuses.Clear();
+
             //reset vectors
             m_lastPos = transform.position;
-            m_velocityVector = Vector3.zero;
+            m_velocity = Vector3.zero;
+        }
+        public override void DisableHitbox()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public void OnHit(Hittable target)
+        {
+            List<Status> statusesToApply = new();
+            for (int i = 0, count = m_data.InflictedStatuses.Length; i < count; i++)
+            {
+                // if the Status at this index has already been inflicted and should only be inflicted once, skip
+                if (m_appliedStatuses.Contains(i))
+                    continue;
+
+                // if the Status at this index should only be inflicted once, add it's index to the tracking list
+                StatusInflictData inflictData = m_data.InflictedStatuses[i];
+                if (inflictData.InflictOnlyOnce)
+                    m_appliedStatuses.Add(i);
+
+                // add the Status at the StatusActionIndex to the list of Statuses to apply
+                //statusesToApply.Add();
+            }
+            target.OnHit(m_owner, m_data, target.transform.position, m_velocity, statusesToApply);
         }
 
 #if UNITY_EDITOR
-
         private void OnDrawGizmos()
         {
             if (enabled)
             {
+                Gizmos.matrix = transform.localToWorldMatrix;
+
                 Gizmos.color = Color.red;
-                Gizmos.DrawLine(transform.position, transform.position + m_velocityVector);
-                Gizmos.DrawSphere(transform.position + m_velocityVector, .05f);
+                if (m_velocity != Vector3.zero)
+                {
+                    Gizmos.DrawLine(Vector3.zero, m_velocity);
+                    Gizmos.DrawSphere(m_velocity, .05f);
+                }
 
                 Gizmos.color = Color.paleGreen;
                 Collider[] cols = GetColliderComponentsInChildrenThatAreNotHitboxCollider();
@@ -81,16 +102,14 @@ namespace Stirge.AttackTimeline
                 {
                     if (col is SphereCollider sphere)
                     {
-                        Gizmos.DrawWireSphere(transform.position + sphere.center, sphere.radius);
+                        Gizmos.DrawWireSphere(sphere.center, sphere.radius);
                     }
                     else if (col is BoxCollider box)
                     {
-                        Gizmos.DrawWireCube(transform.position + box.center, box.size);
+                        Gizmos.DrawWireCube(box.center, box.size);
                     }
                     else if (col is CapsuleCollider capsule)
                     {
-                        Gizmos.matrix = transform.localToWorldMatrix;
-
                         Vector3 pos = capsule.center;
                         Vector3 up = pos + new Vector3(0f, capsule.height / 2f - capsule.radius);
                         Vector3 down = pos + new Vector3(0f, -capsule.height / 2f + capsule.radius);
@@ -102,10 +121,10 @@ namespace Stirge.AttackTimeline
                         Gizmos.DrawLine(up + Vector3.forward * radius, down + Vector3.forward * radius);
                         Gizmos.DrawLine(up - Vector3.forward * radius, down - Vector3.forward * radius);
                         Gizmos.DrawWireSphere(down, radius);
-
-                        Gizmos.matrix = Matrix4x4.identity;
                     }
                 }
+
+                Gizmos.matrix = Matrix4x4.identity;
             }
         }
 

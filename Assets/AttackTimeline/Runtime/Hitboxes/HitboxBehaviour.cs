@@ -2,44 +2,39 @@ using System;
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.HitboxTrack
 {
+    using Combat.Hitboxes;
 
     [Serializable]
     public class HitboxBehaviour : PlayableBehaviour
     {
-        public HitboxData HitboxData;
+        [SerializeField] private SerializedHitboxData m_hitboxData;
 
-        private GameObject m_boundObject;
-        private bool m_initiated = false;
+        private Hitbox m_boundHitbox;
+        private bool m_initialised = false;
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            if (m_initiated) { return; }
+            if (m_initialised)
+                return;
 
-            if (m_boundObject == null)
+            if (m_boundHitbox == null)
             {
-                m_boundObject = playerData as GameObject;
-                m_initiated = true;
+                m_boundHitbox = playerData as Hitbox;
+                m_initialised = true;
             }
 
-            if (m_boundObject == null) return;
+            if (m_boundHitbox == null)
+                return;
 
-
-            HitboxBehaviour hitboxBehaviour = GetHitboxBehaviour(playable);
-            HitboxData hitboxData = hitboxBehaviour.HitboxData;
-            
-            HitboxCollider collider = m_boundObject.GetComponent<HitboxCollider>();
-            collider.CreateHitbox(hitboxData);
-
+            // Enable Hitbox using found Data
+            m_boundHitbox.InitHitbox(m_hitboxData);
         }
-        static HitboxBehaviour GetHitboxBehaviour(Playable playable)
+
+        public void SetBoundHitbox(Hitbox hitbox)
         {
-            ScriptPlayable<HitboxBehaviour> hitboxInput = (ScriptPlayable<HitboxBehaviour>)playable;
-            return hitboxInput.GetBehaviour();
+            m_boundHitbox = hitbox;
         }
-        
     }
 }
-
-
