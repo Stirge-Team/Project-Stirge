@@ -24,9 +24,6 @@ namespace Stirge.UtilityAI
         private float m_actionCountdown;
         private float m_movementGoalCountdown;
 
-        // Used to check if the current Action has been performed yet, as we only want an Action to be performed once each time it is selected
-        private bool m_actionPerformed;
-
         // properties
         public Action CurrentAction => m_currentActionIndex == -1 ? null : m_actions[m_currentActionIndex];
         public MovementGoal CurrentMovementGoal => m_currentMovementGoalIndex == -1 ? null : m_movementGoals[m_currentMovementGoalIndex];
@@ -38,8 +35,6 @@ namespace Stirge.UtilityAI
 
             m_currentActionIndex = -1;
             m_currentMovementGoalIndex = -1;
-
-            m_actionPerformed = false;
         }
 
         public void Update(UtilityEnemy user, CombatEntity target)
@@ -47,14 +42,7 @@ namespace Stirge.UtilityAI
             EvaluateActions(user, target);
             EvaluateMovementGoals(user, target);
 
-            // Perform Action if not yet performed
-            if (!m_actionPerformed && m_currentActionIndex != -1)
-            {
-                CurrentAction.Perform(user, target);
-                m_actionPerformed = true;
-            }
-
-            // Perform MovementGoal!
+            CurrentAction?.Perform(user, target);
             CurrentMovementGoal?.Perform(user, target);
         }
 
@@ -86,17 +74,18 @@ namespace Stirge.UtilityAI
                     float runningScore = 0;
                     for (int i = 0, count = validIndices.Count; i < count; i++)
                     {
-                        int currentActionIndex = validIndices[i];
+                        int actionIndex = validIndices[i];
                         // update running total
-                        runningScore += m_actionScores[currentActionIndex];
+                        runningScore += m_actionScores[actionIndex];
 
                         // if running total breaches our targetScore, we've landed on our target
                         if (runningScore > targetScore)
                         {
-                            // Even if the new Action is the same as the previous, reset the duration
-                            m_currentActionIndex = currentActionIndex;
-                            m_actionCountdown = m_actions[currentActionIndex].duration;
-                            m_actionPerformed = false;
+                            m_currentActionIndex = actionIndex;
+                            m_actionCountdown = m_actions[actionIndex].duration;
+
+                            // Even if the new Action is the same as the previous, reset it
+                            CurrentAction.Reset();
                             break;
                         }
                     }
@@ -141,22 +130,22 @@ namespace Stirge.UtilityAI
                     float runningScore = 0;
                     for (int i = 0, count = validIndices.Count; i < count; i++)
                     {
-                        int currentMovementGoalIndex = validIndices[i];
+                        int movementGoalIndex = validIndices[i];
                         // update running total
-                        runningScore += m_movementGoalScores[currentMovementGoalIndex];
+                        runningScore += m_movementGoalScores[movementGoalIndex];
 
                         // if running total breaches our targetScore, we've landed on our target
                         if (runningScore > targetScore)
                         {
                             // If the new MovementGoal is different, Reset it before it begins Performing
-                            if (currentMovementGoalIndex != m_currentMovementGoalIndex)
+                            if (movementGoalIndex != m_currentMovementGoalIndex)
                             {
-                                m_movementGoals[currentMovementGoalIndex].Reset();
+                                m_movementGoals[movementGoalIndex].Reset();
                             }
-                            
-                            // Even if the new MovementGoal is the same as the previous, reset the duration
-                            m_currentMovementGoalIndex = currentMovementGoalIndex;
+
+                            m_currentMovementGoalIndex = movementGoalIndex;
                             m_movementGoalCountdown = m_movementGoals[m_currentMovementGoalIndex].duration;
+
                             break;
                         }
                     }
@@ -173,7 +162,7 @@ namespace Stirge.UtilityAI
             }
         }
 
-        #region Create
+        #region Setup
         public static UtilityBrain Create(Action[] actions, MovementGoal[] movementGoals, float minimumActionScore, float minimumMovementGoalScore)
         {
             var newBrain = new UtilityBrain()

@@ -47,7 +47,7 @@ namespace Stirge.AttackTimeline
             {
                 if (!Application.isPlaying)
                 {
-                    m_boundMotor.transform.parent.position = m_previewInitialPosition;
+                    m_boundMotor.transform.position = m_previewInitialPosition;
                 }
             }
         }
@@ -85,7 +85,7 @@ namespace Stirge.AttackTimeline
                 if (m_state == MoveState.Waiting)
                 {
                     m_state = MoveState.Moving;
-                    m_previewInitialPosition = m_boundMotor.transform.parent.position;
+                    m_previewInitialPosition = m_boundMotor.transform.position;
                     m_previewLastTranslation = Vector3.zero;
                     m_previewLastSampleTime = 0d;
                 }
@@ -117,9 +117,9 @@ namespace Stirge.AttackTimeline
                         */
 
                         if (sampleTime > m_previewLastSampleTime)
-                            m_boundMotor.transform.parent.position = m_boundMotor.transform.parent.position + targetTranslation - m_previewLastTranslation;
+                            m_boundMotor.transform.position = m_boundMotor.transform.position + targetTranslation - m_previewLastTranslation;
                         else if (sampleTime < m_previewLastSampleTime)
-                            m_boundMotor.transform.parent.position = m_boundMotor.transform.parent.position - m_previewLastTranslation + targetTranslation;
+                            m_boundMotor.transform.position = m_boundMotor.transform.position - m_previewLastTranslation + targetTranslation;
 
                         m_previewLastTranslation = targetTranslation;
                         m_previewLastSampleTime = sampleTime;

@@ -26,7 +26,7 @@ namespace Stirge.UtilityAI.Actions
                 return m_score * Mathf.Sin(Time.time);
         }
 
-        public override void Perform(CombatEntity user, CombatEntity target)
+        protected override void PerformInternal(CombatEntity user, CombatEntity target)
         {
             Debug.Log(m_message);
         }
