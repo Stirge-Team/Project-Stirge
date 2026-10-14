@@ -18,6 +18,7 @@ namespace Stirge.Combat
     public abstract class CombatEntityMotor : MonoBehaviour
     {
         [Header("Components")]
+        [SerializeField] private Transform m_transform;
         [SerializeField] private Animator m_anim;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Collider m_col;
@@ -51,6 +52,7 @@ namespace Stirge.Combat
         private readonly RaycastHit[] m_groundedCheckHits = new RaycastHit[10];
 
         // reference properties
+        public new Transform transform => m_transform;
         public Animator Animator => m_anim;
         public Rigidbody Rigidbody => m_rb;
         public Collider Collider => m_col;
