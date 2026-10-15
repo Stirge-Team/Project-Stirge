@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e3e542b754e2b440818a2234e9bae89, type: 3}
   m_Name: Movement_Player_Aerial
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.MovementProperties
-  m_horizontalTopSpeed: 12
+  m_horizontalTopSpeed: 15
   m_acceleration: 500
   m_angularSpeed: 300
   m_friction: 0
