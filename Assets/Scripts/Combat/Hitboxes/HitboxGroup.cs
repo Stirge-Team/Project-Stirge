@@ -14,18 +14,18 @@ namespace Stirge.Combat.Hitboxes
                 hitbox.InitHitbox(hitboxData);
             }
         }
-        public override void EnableHitbox()
+        protected override void EnableHitbox()
         {
             foreach (HitboxCollider hitbox in m_hitboxes)
             {
-                hitbox.EnableHitbox();
+                hitbox.isActive = true;
             }
         }
-        public override void DisableHitbox()
+        protected override void DisableHitbox()
         {
             foreach (HitboxCollider hitbox in m_hitboxes)
             {
-                hitbox.DisableHitbox();
+                hitbox.isActive = true;
             }
         }
     }

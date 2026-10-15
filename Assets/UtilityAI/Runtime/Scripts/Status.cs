@@ -1,11 +1,11 @@
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
-    using System.Linq;
 
     /// <summary>
     /// Used to determine the target of a <see cref="Status"/>.
@@ -70,7 +70,7 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// The <see cref="CombatEntity"/> who applied this <see cref="Status"/>.
         /// </summary>
-        private CombatEntity m_user;
+        private CombatEntity m_inflicter;
 
         // fields
         /// <summary>
@@ -114,7 +114,7 @@ namespace Stirge.UtilityAI
         protected float m_durationCountdown;
 
         // properties
-        protected CombatEntity user => m_user;
+        protected CombatEntity user => m_inflicter;
         public float ScoreScaling => m_scoreScaling;
         public string DisplayName => m_displayName;
         public StatusTarget Target => m_target;
@@ -138,36 +138,21 @@ namespace Stirge.UtilityAI
         /// <inheritdoc cref="IScorable.Evaluate"/>
         protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
 
-        public void Inflict(CombatEntity userOfAction, CombatEntity targetOfAction)
-        {
-            switch (m_target)
-            {
-                case StatusTarget.User:
-                    userOfAction.InflictStatus(this, userOfAction);
-                    break;
-                case StatusTarget.Target:
-                    targetOfAction.InflictStatus(this, userOfAction);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         /// <summary>
         /// What happens when this <see cref="Status"/> is first Inflicted onto <paramref name="target"/>.<br/>
-        /// For non-Instant <see cref="Status"/>es, this is where a reference to <paramref name="user"/> is stored in <see cref="m_user"/>.
+        /// For non-Instant <see cref="Status"/>es, this is where a reference to <paramref name="inflicter"/> is stored in <see cref="m_inflicter"/>.
         /// </summary>
-        public void OnApply(CombatEntity user, CombatEntity target)
+        public void OnApply(CombatEntity inflicter, CombatEntity target)
         {
-            m_user = user;
+            m_inflicter = inflicter;
             if (m_durationType == StatusDurationType.Timed)
                 m_durationCountdown = m_duration;
-            OnApplyInternal(user, target);
+            OnApplyInternal(inflicter, target);
         }
         /// <summary>
         /// Override to provide your <see cref="Status"/>es logic for what happens when the <see cref="Status"/> is initially inflicted.
         /// </summary>
-        protected abstract void OnApplyInternal(CombatEntity user, CombatEntity target);
+        protected abstract void OnApplyInternal(CombatEntity inflicter, CombatEntity target);
 
         /// <summary>
         /// What happens each frame while this <see cref="Status"/> is inflicted.
@@ -215,6 +200,12 @@ namespace Stirge.UtilityAI
         }
 
         #region Setup
+        /// <summary>
+        /// As <see cref="Action"/>s may be destroyed while this <see cref="Status"/> is still active, so if you need any properties from the <see cref="Action"/> this <see cref="Status"/> is from, then retrive them here.
+        /// </summary>
+        /// <param name="action"></param>
+        public virtual void Setup(Action action) { }
+
         public void Setup(ICondition[] conditions, IScoringMethod[] scoringMethods)
         {
             m_conditions = conditions;

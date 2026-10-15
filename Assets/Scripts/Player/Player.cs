@@ -27,7 +27,7 @@ namespace Stirge.Player
             m_camTransform = UnityEngine.Camera.main.transform;
         }
 
-        protected override void UpdateThis(float deltaTime)
+        protected override void UpdateThis()
         {
             if (!IsPerformingAction)
             {

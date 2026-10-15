@@ -29,7 +29,7 @@ namespace Stirge.Combat.Hitboxes
         public CombatEntity Owner => m_owner;
 
         public abstract void InitHitbox(SerializedHitboxData hitboxData);
-        public abstract void EnableHitbox();
-        public abstract void DisableHitbox();
+        protected abstract void EnableHitbox();
+        protected abstract void DisableHitbox();
     }
 }

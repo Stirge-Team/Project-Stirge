@@ -22,6 +22,7 @@ namespace Stirge.Combat
         [SerializeField] private PlayableDirector m_director;
 
         // action fields
+        private Action m_currentAction;
         protected bool m_isPerformingAction;
 
         // status fields
@@ -53,30 +54,35 @@ namespace Stirge.Combat
         }
 
         #region UnityEvents
-        private void Awake()
+        protected void Awake()
         {
             AwakeThis();
         }
 
-        private void Update()
+        protected void Start()
         {
-            float deltaTime = Time.deltaTime;
-            UpdateThis(deltaTime);
-
-            UpdateStatuses(deltaTime);
+            StartThis();
         }
 
-        private void OnEnable()
+        protected void Update()
+        {
+            UpdateThis();
+
+            UpdateStatuses();
+        }
+
+        protected void OnEnable()
         {
             m_director.stopped += OnActionEnd;
         }
-        private void OnDisable()
+        protected void OnDisable()
         {
             m_director.stopped -= OnActionEnd;
         }
 
         protected virtual void AwakeThis() { }
-        protected virtual void UpdateThis(float deltaTime) { }
+        protected virtual void StartThis() { }
+        protected virtual void UpdateThis() { }
         #endregion
 
         #region Death State
@@ -94,16 +100,16 @@ namespace Stirge.Combat
         #endregion
 
         #region Status
-        public void InflictStatus(Status newStatus, CombatEntity user)
+        public void InflictStatus(CombatEntity inflicter, Status newStatus, StatusInflictData inflictData)
         {
             if (newStatus.DurationType == StatusDurationType.Instant)
             {
-                newStatus.OnApply(user, this);
+                newStatus.OnApply(inflicter, this);
                 return;
             }
             
             Type statusType = newStatus.StatusType;
-            int indexOfExistingStatus = GetIndexOfStatus(statusType);
+            int indexOfExistingStatus = GetIndexOfStatus(statusType, newStatus.DisplayName);
 
             // If a Status of the same type already exists
             if (indexOfExistingStatus != -1)
@@ -122,16 +128,16 @@ namespace Stirge.Combat
             }
 
             m_inflictedStatuses.Add(newStatus);
-            newStatus.OnApply(user, this);
+            newStatus.OnApply(inflicter, this);
         }
 
         /// <summary>
         /// Returns -1 if no <see cref="Status"/> of type <paramref name="statusType"/> is inflicted.
         /// </summary>
         /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
-        public int GetIndexOfStatus(Type statusType)
+        public int GetIndexOfStatus(Type statusType, string statusName)
         {
-            return m_inflictedStatuses.FindIndex(status => status.StatusType == statusType);
+            return m_inflictedStatuses.FindIndex(s => s.StatusType == statusType && s.DisplayName == statusName);
         }
         /// <summary>
         /// Returns -1 if no <see cref="Status"/> with name <paramref name="statusName"/> is inflicted.
@@ -150,7 +156,7 @@ namespace Stirge.Combat
             return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
         }
 
-        private void UpdateStatuses(float deltaTime)
+        private void UpdateStatuses()
         {
             List<int> indicesToRemove = new();
             int index = 0;
@@ -171,6 +177,11 @@ namespace Stirge.Combat
             {
                 m_inflictedStatuses.RemoveAt(indicesToRemove[i]);
             }
+        }
+
+        public Status CreateRuntimeStatusFromCurrentActionAtIndex(int statusIndex)
+        {
+            return m_currentAction.CreateRuntimeStatusAtIndex(statusIndex);
         }
 
         public bool GetIsStunned()
@@ -194,6 +205,7 @@ namespace Stirge.Combat
         public virtual void UseAction(Action action)
         {
             StopPerformingAction();
+            m_currentAction = action;
             if (action.Timeline != null)
                 m_director.Play(action.Timeline);
             m_motor.OnActionStart();
@@ -205,6 +217,7 @@ namespace Stirge.Combat
         /// <param name="director"></param>
         public void OnActionEnd(PlayableDirector director)
         {
+            m_currentAction = null;
             m_isPerformingAction = false;
             m_motor.OnActionEnd();
         }
@@ -230,19 +243,14 @@ namespace Stirge.Combat
         }
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity)
-        {
-            OnHit(attacker, hitboxData, hitPosition, hitVelocity, null);
-        }
-        /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, List<Status> statusesToApply)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices)
         {
             TakeDamage(hitboxData.Damage);
-            if (statusesToApply != null)
+            if (statusesToApplyIndices != null)
             {
-                foreach (Status status in statusesToApply)
+                foreach (int statusIndex in statusesToApplyIndices)
                 {
-                    InflictStatus(status, attacker);
+                    InflictStatus(attacker, CreateRuntimeStatusFromCurrentActionAtIndex(statusIndex), hitboxData.StatusInflictDatas[statusIndex]);
                 }
             }
         }

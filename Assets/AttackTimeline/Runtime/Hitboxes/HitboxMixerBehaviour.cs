@@ -42,16 +42,6 @@ namespace Stirge.AttackTimeline.HitboxTrack
 
             // change the active state
             m_boundHitbox.isActive = hasInput;
-
-#if UNITY_EDITOR
-            if (!Application.isPlaying)
-            {
-                if (hasInput)
-                    m_boundHitbox.EnableHitbox();
-                else
-                    m_boundHitbox.DisableHitbox();
-            }
-#endif
         }
 
         public override void OnPlayableDestroy(Playable playable)

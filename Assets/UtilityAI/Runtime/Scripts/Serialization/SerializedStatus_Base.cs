@@ -38,6 +38,6 @@ namespace Stirge.UtilityAI
             return scoringMethods;
         }
 
-        public abstract Status CreateRuntimeStatus();
+        public abstract Status CreateRuntimeStatus(Action action);
     }
 }

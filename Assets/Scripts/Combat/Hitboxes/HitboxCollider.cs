@@ -1,11 +1,8 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Stirge.Combat.Hitboxes
 {
-    using Combat;
-    using Stirge.UtilityAI;
-
     [RequireComponent(typeof(Collider))]
     public class HitboxCollider : Hitbox
     {
@@ -13,7 +10,7 @@ namespace Stirge.Combat.Hitboxes
         private Vector3 m_velocity;
 
         private readonly List<Collider> m_savedColliders = new();
-        private readonly List<int> m_appliedStatuses = new();
+        private readonly Dictionary<Hittable, List<int>> m_appliedStatuses = new();
 
         private void OnTriggerStay(Collider other)
         {
@@ -30,7 +27,7 @@ namespace Stirge.Combat.Hitboxes
             {
                 //add collider to list of collided objects
                 m_savedColliders.Add(other);
-                OnHit(target);
+                OnHittableHit(target);
             }
         }
 
@@ -45,7 +42,7 @@ namespace Stirge.Combat.Hitboxes
         {
             m_data = hitboxData;
         }
-        public override void EnableHitbox()
+        protected override void EnableHitbox()
         {
             gameObject.SetActive(true);
             
@@ -57,29 +54,36 @@ namespace Stirge.Combat.Hitboxes
             m_lastPos = transform.position;
             m_velocity = Vector3.zero;
         }
-        public override void DisableHitbox()
+        protected override void DisableHitbox()
         {
             gameObject.SetActive(false);
         }
 
-        public void OnHit(Hittable target)
+        private void OnHittableHit(Hittable hitTarget)
         {
-            List<Status> statusesToApply = new();
-            for (int i = 0, count = m_data.InflictedStatuses.Length; i < count; i++)
+            List<int> statusesToInflictIndices = new();
+            for (int i = 0, count = m_data.StatusInflictDatas.Length; i < count; i++)
             {
-                // if the Status at this index has already been inflicted and should only be inflicted once, skip
-                if (m_appliedStatuses.Contains(i))
+                // if the Status at this index has already been inflicted on this Hittable and should only be inflicted once, skip
+                // We use the index of the StatusInflictData from the HitboxData because multiple of those Statuses may inflict the same Status but in different ways
+                if (m_appliedStatuses.ContainsKey(hitTarget) && m_appliedStatuses[hitTarget].Contains(i))
                     continue;
 
-                // if the Status at this index should only be inflicted once, add it's index to the tracking list
-                StatusInflictData inflictData = m_data.InflictedStatuses[i];
-                if (inflictData.InflictOnlyOnce)
-                    m_appliedStatuses.Add(i);
+                StatusInflictData inflictData = m_data.StatusInflictDatas[i];
 
-                // add the Status at the StatusActionIndex to the list of Statuses to apply
-                //statusesToApply.Add();
+                // if the Status at this index should only be inflicted once, add its index to the tracking list
+                if (inflictData.InflictOnlyOnce)
+                {
+                    // create Dictionary entry for this Hittable if it doesn't exist
+                    m_appliedStatuses.TryAdd(hitTarget, new());
+                    m_appliedStatuses[hitTarget].Add(i);
+                }
+
+                // add the StatusActionIndex to the list of Statuses to apply
+                statusesToInflictIndices.Add(inflictData.StatusActionIndex);
             }
-            target.OnHit(m_owner, m_data, target.transform.position, m_velocity, statusesToApply);
+
+            hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflictIndices.ToArray());
         }
 
 #if UNITY_EDITOR

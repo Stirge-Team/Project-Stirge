@@ -62,6 +62,7 @@ namespace Stirge.UtilityAI
         /// The ScoringMethods that determine the score this <see cref="Action"/> will return when Evaluated.
         /// </summary>
         private IScoringMethod[] m_scoringMethods;
+        private SerializedStatus_Base[] m_serializedStatuses;
 
         private bool m_performed;
 
@@ -116,6 +117,11 @@ namespace Stirge.UtilityAI
             m_performed = false;
         }
 
+        public Status CreateRuntimeStatusAtIndex(int statusIndex)
+        {
+            return m_serializedStatuses[statusIndex].CreateRuntimeStatus(this);
+        }
+
         #region Setup
         public void Setup(Status[] statuses, ICondition[] conditions, IScoringMethod[] scoringMethods)
         {
@@ -124,7 +130,7 @@ namespace Stirge.UtilityAI
             m_scoringMethods = scoringMethods;
         }
 
-        public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, new()
+        public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, new()
         {
             TAction action = new()
             {
@@ -135,37 +141,38 @@ namespace Stirge.UtilityAI
                 m_timeline = timeline,
                 m_damage = damage,
                 m_range = range,
+                m_serializedStatuses = serializedStatuses,
             };
 
             return action;
         }
-        public static TAction Create<TAction, TArg>(TArg arg, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg>, new()
+        public static TAction Create<TAction, TArg>(TArg arg, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1>, new()
+        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2, arg3);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2, arg3, arg4);
             return action;
         }

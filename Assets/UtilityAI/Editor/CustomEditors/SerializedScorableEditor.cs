@@ -192,23 +192,27 @@ namespace Stirge.UtilityAI.CustomEditors
             if (typeName == GetUIName(typeof(Action)))
                 return;
 
-            EGL.LabelField(new GUIContent(typeName + " Properties"), EditorStyles.boldLabel);
-
             // Move to the first visible property
             EditorGUI.BeginChangeCheck();
             SerializedProperty prop = serializedObject.GetIterator();
             if (prop.NextVisible(true))
             {
-                do
+                // Skip the script reference and the properties we have already drawn
+                if (prop.name != "m_Script" && !basePropertyNames.Contains(prop.name))
                 {
-                    // Skip the script reference and the properties we have already drawn
-                    if (prop.name == "m_Script" || basePropertyNames.Contains(prop.name))
-                        continue;
+                    // Draw label
+                    EGL.LabelField(new GUIContent(typeName + " Properties"), EditorStyles.boldLabel);
+                    do
+                    {
+                        // Skip the script reference and the properties we have already drawn
+                        if (prop.name == "m_Script" || basePropertyNames.Contains(prop.name))
+                            continue;
 
-                    // This draws everything else
-                    EGL.PropertyField(prop, true);
+                        // This draws everything else
+                        EGL.PropertyField(prop, true);
+                    }
+                    while (prop.NextVisible(false)); // Use 'false' to avoid drawing child elements of complex structs/arrays twice
                 }
-                while (prop.NextVisible(false)); // Use 'false' to avoid drawing child elements of complex structs/arrays twice
             }
             if (EditorGUI.EndChangeCheck())
             {
