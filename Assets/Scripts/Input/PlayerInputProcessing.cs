@@ -8,6 +8,7 @@ using UnityEngine.Timeline;
 namespace Stirge.Input
 {
     using Player;
+    using Stirge.UtilityAI;
 
     [System.Flags]
     public enum AttackInput
@@ -79,19 +80,19 @@ namespace Stirge.Input
         }
 
         #region Bindings
-        public void SetGroundedBindings(List<AttackBinding> bindings)
+        public void SetGroundedBindings(AttackBinding[] bindings)
         {
-            m_groundedBindings = new(bindings.ToDictionary(binding => binding.attackInput, binding => binding.attackTimeline));
+            m_groundedBindings = new(bindings.ToDictionary(binding => binding.AttackInput, binding => binding.AttackAction));
         }
-        public void SetAirBindings(List<AttackBinding> bindings)
+        public void SetAirBindings(AttackBinding[] bindings)
         {
-            m_airBindings = new(bindings.ToDictionary(binding => binding.attackInput, binding => binding.attackTimeline));
+            m_airBindings = new(bindings.ToDictionary(binding => binding.AttackInput, binding => binding.AttackAction));
         }
 
-        public void AddComboBinding(AttackInput comboInput, TimelineAsset comboTimeline)
+        public void AddComboBinding(AttackInput comboInput, SerializedAction comboAction)
         {
-            m_comboBindings.Add(comboInput, comboTimeline);
-            Debug.Log($"Began listening for new Combo Binding: {comboInput} : {comboTimeline.name}");
+            m_comboBindings.Add(comboInput, comboAction);
+            Debug.Log($"Began listening for new Combo Binding: {comboInput} : {comboAction.name}");
         }
         public void ClearComboBinding()
         {
@@ -135,9 +136,9 @@ namespace Stirge.Input
         {
             // Combo Bindings does not check if the player is in an available state,
             // As combo attacks can interrupt other actions
-            if (m_comboBindings.TryGetValue(input, out TimelineAsset attackTimeline))
+            if (m_comboBindings.TryGetValue(input, out SerializedAction serializedAction))
             {
-                m_player.UseAction(attackTimeline);
+                m_player.UseAction(serializedAction.CreateRuntimeAction());
                 ClearComboBinding();
                 return true;
             }
@@ -147,16 +148,16 @@ namespace Stirge.Input
                 // grounded bindings
                 if (m_player.Motor.IsGrounded)
                 {
-                    if (m_groundedBindings.TryGetValue(input, out attackTimeline))
+                    if (m_groundedBindings.TryGetValue(input, out serializedAction))
                     {
-                        m_player.UseAction(attackTimeline);
+                        m_player.UseAction(serializedAction.CreateRuntimeAction());
                         return true;
                     }
                 }
                 // air bindings
-                else if (m_airBindings.TryGetValue(input, out attackTimeline))
+                else if (m_airBindings.TryGetValue(input, out serializedAction))
                 {
-                    m_player.UseAction(attackTimeline);
+                    m_player.UseAction(serializedAction.CreateRuntimeAction());
                     return true;
                 }
             }
@@ -218,11 +219,11 @@ namespace Stirge.Input
         #endregion
 
 
-        private class AttackBindingDictionary : Dictionary<AttackInput, TimelineAsset>
+        private class AttackBindingDictionary : Dictionary<AttackInput, SerializedAction>
         {
             public AttackBindingDictionary() : base() { }
-            public AttackBindingDictionary(IEnumerable<KeyValuePair<AttackInput, TimelineAsset>> collection) : base(collection) { }
-            public AttackBindingDictionary(IDictionary<AttackInput, TimelineAsset> dictionary) : base(dictionary) { }
+            public AttackBindingDictionary(IEnumerable<KeyValuePair<AttackInput, SerializedAction>> collection) : base(collection) { }
+            public AttackBindingDictionary(IDictionary<AttackInput, SerializedAction> dictionary) : base(dictionary) { }
         }
     }
 }

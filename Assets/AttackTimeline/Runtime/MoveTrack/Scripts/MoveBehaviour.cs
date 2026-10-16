@@ -6,7 +6,7 @@ using UnityEngine.Timeline;
 using UnityEditor.Timeline;
 #endif
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.MoveTrack
 {
     using Combat;
     using Tools;
@@ -97,9 +97,11 @@ namespace Stirge.AttackTimeline
                     // get the current double time of the Timeline
                     double currentTime = window.playbackControls.GetCurrentTime();
 
+                    // TODO: Change this to return all clips that have already been active (including currently active)
+                    // then sum the translation of each of them for this time
                     TimelineClip activeClip = GetActiveMoveClip(currentTime);
 
-                    // If there is an active clip, preview the Animation of that clip
+                    // If there is an active clip, preview the Movement of that clip
                     if (activeClip != null)
                     {
                         double sampleTime = currentTime - activeClip.start;
@@ -181,6 +183,7 @@ namespace Stirge.AttackTimeline
             {
                 if (track is MoveTrack moveTrack)
                 {
+                    // return clip that is active at currentTime
                     foreach (TimelineClip clip in moveTrack.GetClips())
                     {
                         if (clip.start <= currentTime && clip.end >= currentTime)

@@ -3,25 +3,20 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-#if UNITY_EDITOR
-using UnityEditor.Animations;
-#endif
-
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.HitboxTrack
 {
-    [Serializable]
+    using Combat.Hitboxes;
+
     [TrackClipType(typeof(HitboxClip))]
-    [TrackBindingType(typeof(GameObject))]
+    [TrackBindingType(typeof(Hitbox))]
     [TrackColor(0.6901960784313725f, 0.0431372549019608f, 0.4117647058823529f)] //b00b69
     public class HitboxTrack : TrackAsset
     {
-        HitboxMixerBehaviour m_HitboxMixer;
-
         /// <inheritdoc/>
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
             var mixer = HitboxMixerBehaviour.Create(graph, inputCount);
-            m_HitboxMixer = mixer.GetBehaviour();
+            //m_HitboxMixer = mixer.GetBehaviour();
 
             return mixer;
         }
