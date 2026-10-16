@@ -88,7 +88,7 @@ namespace Stirge.AttackTimeline
                     TimelineClip activeClip = GetActiveAnimationStateClip(currentTime);
 
                     // If there is an active clip, preview the Animation of that clip
-                    if (activeClip != null)
+                    if (activeClip != null && m_previewClip != null)
                     {
                         float sampleTime = (float)(currentTime - activeClip.start);
                         AnimationMode.BeginSampling();
