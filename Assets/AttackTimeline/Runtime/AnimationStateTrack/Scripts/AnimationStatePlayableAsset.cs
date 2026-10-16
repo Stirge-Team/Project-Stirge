@@ -30,6 +30,12 @@ namespace Stirge.AttackTimeline
             set => m_previewClip = value;
         }
 
+        public string ExitParameterName
+        {
+            get => m_exitParameterName;
+            set => m_exitParameterName = value;
+        }
+
         /// <summary>
         /// Duration of the clip
         /// </summary>
