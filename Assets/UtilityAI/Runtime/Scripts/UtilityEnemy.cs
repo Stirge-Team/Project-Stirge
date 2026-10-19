@@ -32,12 +32,12 @@ namespace Stirge.UtilityAI
         public float DistanceToTarget => m_hasTarget ? Vector3.Distance(Motor.GetPosition(), m_targetPosition) : float.PositiveInfinity;
 
         #region Unity Events
-        private void Awake()
+        protected override void AwakeThis()
         {
             m_enemyMotor = (UtilityEnemyMotor)Motor;
         }
 
-        private void Start()
+        protected override void StartThis()
         {
             //Time.fixedDeltaTime = 0.333f;
 
@@ -47,7 +47,7 @@ namespace Stirge.UtilityAI
             m_brain.Start();
         }
 
-        private void Update()
+        protected override void UpdateThis()
         {
             if (m_target != null)
                 m_targetPosition = m_target.Motor.GetPosition();

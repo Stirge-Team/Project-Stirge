@@ -1,11 +1,11 @@
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
-    using System.Linq;
 
     /// <summary>
     /// Used to determine the target of a <see cref="Status"/>.
@@ -61,21 +61,6 @@ namespace Stirge.UtilityAI
     }
 
     /// <summary>
-    /// Used to determine the conditions under which a <see cref="Status"/> is inflicted during an Action.
-    /// </summary>
-    public enum StatusInflictCondition
-    {
-        /// <summary>
-        /// Inflicted whenever a <see cref="CombatEntity"/> is hit during an Attack Action.
-        /// </summary>
-        OnHit,
-        /// <summary>
-        /// Inflicted after a length of time in seconds equal to <see cref="Status.m_inflictDelay"/>.
-        /// </summary>
-        AfterDelay
-    }
-
-    /// <summary>
     /// Part of Attack <see cref="Action"/>s. They are applied to <see cref="CombatEntity"/> objects when certain  conditions are met.<br/>
     /// When inheriting this class, you must also implement either <see cref="INotSetupable"/> or one of the <see cref="ISetupable{TArg}"/> interfaces.
     /// The number of generic arguments in <see cref="ISetupable{TArg}"/> should be equal to the number of unique properties you want your <see cref="Status"/> to have.
@@ -85,7 +70,7 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// The <see cref="CombatEntity"/> who applied this <see cref="Status"/>.
         /// </summary>
-        private CombatEntity m_user;
+        private CombatEntity m_inflicter;
 
         // fields
         /// <summary>
@@ -116,20 +101,6 @@ namespace Stirge.UtilityAI
         /// For <see cref="Status"/> of <see cref="StatusDurationType.Timed"/>, the length of time in seconds it lasts for.
         /// </summary>
         protected float m_duration;
-        /// <summary>
-        /// When this <see cref="Status"/> is inflicted.
-        /// </summary>
-        protected StatusInflictCondition m_inflictCondition;
-        /// <summary>
-        /// For <see cref="Status"/> of <see cref="StatusInflictCondition.AfterDelay"/>, the length of time in seconds after which the <see cref="Status"/> is inflicted.<br/>
-        /// Leave at 0 for instant.
-        /// </summary>
-        protected float m_inflictDelay;
-        /// <summary>
-        /// Whether or not the <see cref="Status"/> can only be inflicted once per <see cref="Action"/> Performance.
-        /// </summary>
-        protected bool m_onlyInflictOnce;
-        /// <summary>
         /// The Conditions that must be met for this <see cref="Status"/> to be Inflicted on its target.
         /// </summary>
         protected ICondition[] m_conditions;
@@ -143,7 +114,7 @@ namespace Stirge.UtilityAI
         protected float m_durationCountdown;
 
         // properties
-        protected CombatEntity user => m_user;
+        protected CombatEntity user => m_inflicter;
         public float ScoreScaling => m_scoreScaling;
         public string DisplayName => m_displayName;
         public StatusTarget Target => m_target;
@@ -151,9 +122,6 @@ namespace Stirge.UtilityAI
         public int MaxStacks => m_maxStacks;
         public StatusDurationType DurationType => m_durationType;
         public float Duration => m_duration;
-        public StatusInflictCondition InflictCondition => m_inflictCondition;
-        public float InflictDelay => m_inflictDelay;
-        public bool OnlyInflictOnce => m_onlyInflictOnce;
 
         public int CurrentStacks => m_currentStacks;
         public float DurationCountdown => m_durationCountdown;
@@ -170,35 +138,21 @@ namespace Stirge.UtilityAI
         /// <inheritdoc cref="IScorable.Evaluate"/>
         protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
 
-        public void Inflict(CombatEntity userOfAction, CombatEntity targetOfAction)
-        {
-            switch (m_target)
-            {
-                case StatusTarget.User:
-                    userOfAction.InflictStatus(this, userOfAction);
-                    break;
-                case StatusTarget.Target:
-                    targetOfAction.InflictStatus(this, userOfAction);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         /// <summary>
         /// What happens when this <see cref="Status"/> is first Inflicted onto <paramref name="target"/>.<br/>
-        /// For non-Instant <see cref="Status"/>es, this is where a reference to <paramref name="user"/> is stored in <see cref="m_user"/>.
+        /// For non-Instant <see cref="Status"/>es, this is where a reference to <paramref name="inflicter"/> is stored in <see cref="m_inflicter"/>.
         /// </summary>
-        public void OnApply(CombatEntity user, CombatEntity target)
+        public void OnApply(CombatEntity inflicter, CombatEntity target)
         {
-            if (m_durationType != StatusDurationType.Instant)
-                m_user = user;
-            OnApplyInternal(user, target);
+            m_inflicter = inflicter;
+            if (m_durationType == StatusDurationType.Timed)
+                m_durationCountdown = m_duration;
+            OnApplyInternal(inflicter, target);
         }
         /// <summary>
         /// Override to provide your <see cref="Status"/>es logic for what happens when the <see cref="Status"/> is initially inflicted.
         /// </summary>
-        protected abstract void OnApplyInternal(CombatEntity user, CombatEntity target);
+        protected abstract void OnApplyInternal(CombatEntity inflicter, CombatEntity target);
 
         /// <summary>
         /// What happens each frame while this <see cref="Status"/> is inflicted.
@@ -235,12 +189,9 @@ namespace Stirge.UtilityAI
         /// <returns></returns>
         public virtual bool ShouldThisClear(CombatEntity target)
         {
-            return m_durationType switch
-            {
-                StatusDurationType.Instant => true,
-                StatusDurationType.Timed => m_durationCountdown >= m_duration,
-                _ => false,
-            };
+            if (m_durationType == StatusDurationType.Timed && m_durationCountdown <= 0f)
+                return true;
+            return false;
         }
 
         public void AddStacks(int stackCount)
@@ -249,58 +200,62 @@ namespace Stirge.UtilityAI
         }
 
         #region Setup
+        /// <summary>
+        /// As <see cref="Action"/>s may be destroyed while this <see cref="Status"/> is still active, so if you need any properties from the <see cref="Action"/> this <see cref="Status"/> is from, then retrive them here.
+        /// </summary>
+        /// <param name="action"></param>
+        public virtual void Setup(Action action) { }
+
         public void Setup(ICondition[] conditions, IScoringMethod[] scoringMethods)
         {
             m_conditions = conditions;
             m_scoringMethods = scoringMethods;
         }
 
-        private static TStatus CreateInternal<TStatus>(float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, new()
+        private static TStatus CreateInternal<TStatus>(float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, new()
         {
             var status = new TStatus()
             {
                 m_scoreScaling = scoreScaling,
                 m_displayName = displayName,
                 m_stackType = stackType,
-                m_maxStacks = maxStacks,
+                m_maxStacks = (maxStacks == 0 ? int.MaxValue : maxStacks), // if maxStacks is 0, treat it as infinite
                 m_durationType = durationType,
                 m_duration = duration,
-                m_inflictCondition = inflictCondition,
-                m_inflictDelay = inflictDelay,
             };
             return status;
         }
-        public static TStatus Create<TStatus>(float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, INotSetupable, new()
+        public static TStatus Create<TStatus>(float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, INotSetupable, new()
         {
-            return CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration, inflictCondition, inflictDelay);
+            return CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
         }
-        public static TStatus Create<TStatus, TArg>(TArg arg, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, ISetupable<TArg>, new()
+        public static TStatus Create<TStatus, TArg>(TArg arg, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration, inflictCondition, inflictDelay);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ0>(TArg0 arg0, Targ0 arg1, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, ISetupable<TArg0, Targ0>, new()
+        public static TStatus Create<TStatus, TArg0, Targ0>(TArg0 arg0, Targ0 arg1, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ0>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration, inflictCondition, inflictDelay);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2>(TArg0 arg0, Targ1 arg1, Targ2 arg2, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration, inflictCondition, inflictDelay);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1, arg2);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration, inflictCondition, inflictDelay);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1, arg2, arg3);
             return status;
         }
-        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration, StatusInflictCondition inflictCondition, float inflictDelay) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
+        public static TStatus Create<TStatus, TArg0, Targ1, Targ2, TArg3, TArg4>(TArg0 arg0, Targ1 arg1, Targ2 arg2, TArg3 arg3, TArg4 arg4, float scoreScaling, string displayName, StatusStackType stackType, int maxStacks, StatusDurationType durationType, float duration) where TStatus : Status, ISetupable<TArg0, Targ1, Targ2, TArg3, TArg4>, new()
         {
-            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration, inflictCondition, inflictDelay);
+            var status = CreateInternal<TStatus>(scoreScaling, displayName, stackType, maxStacks, durationType, duration);
             status.Setup(arg0, arg1, arg2, arg3, arg4);
             return status;
         }

@@ -79,7 +79,8 @@ MonoBehaviour:
   m_damage: 1
   m_range: 1
   m_statuses:
-  - {fileID: 11400000, guid: c882f36c567358047915392e0a5d7c77, type: 2}
+  - {fileID: 11400000, guid: cab97a9f129f6ae4a8025da6e24794a1, type: 2}
+  - {fileID: 11400000, guid: d3e096b43999c23418635ccf10f97386, type: 2}
   m_conditions:
   - {fileID: -3701780847286358614}
   m_scoringMethods:

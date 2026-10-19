@@ -2,9 +2,10 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.ComboTrack
 {
     using Input;
+    using Stirge.UtilityAI;
 
     [TrackClipType(typeof(ComboPlayableAsset))]
     [TrackBindingType(typeof(PlayerInputProcessing))]
@@ -12,22 +13,19 @@ namespace Stirge.AttackTimeline
     public class ComboTrack : TrackAsset
     {
         [SerializeField] private AttackInput m_comboInput;
-        [SerializeField] private TimelineAsset m_comboTimeline;
-
-        private ComboMixer m_comboMixer;
+        [SerializeField] private SerializedAction m_serializedComboAction;
 
         public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
         {
-            var mixer = ComboMixer.Create(graph, inputCount, m_comboInput, m_comboTimeline);
-            m_comboMixer = mixer.GetBehaviour();
-
+            var mixer = ComboMixer.Create(graph, inputCount, m_comboInput, m_serializedComboAction);
+            //m_comboMixer = mixer.GetBehaviour();
             return mixer;
         }
 
         protected override void OnCreateClip(TimelineClip clip)
         {
-            if (m_comboTimeline != null)
-                clip.displayName = m_comboTimeline.name;
+            if (m_serializedComboAction != null)
+                clip.displayName = m_serializedComboAction.name;
             clip.duration = 1.5d;
         }
     }

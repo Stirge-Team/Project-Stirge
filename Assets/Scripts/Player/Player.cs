@@ -4,6 +4,7 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
+    using Stirge.AttackTimeline;
     using UnityEngine.InputSystem;
 
     [RequireComponent(typeof(PlayerInputProcessing))]
@@ -26,7 +27,7 @@ namespace Stirge.Player
             m_camTransform = UnityEngine.Camera.main.transform;
         }
 
-        protected override void UpdateThis(float deltaTime)
+        protected override void UpdateThis()
         {
             if (!IsPerformingAction)
             {
@@ -88,15 +89,5 @@ namespace Stirge.Player
             PlayerMotor.AddForce(direction * strength + transform.up * height); //override
         }
         #endregion
-
-        public void BeginGoToPosition(Vector3 newPosition)
-        {
-            Vector3 direction = (newPosition - transform.position).normalized;
-            PlayerMotor.AddForce(direction * PlayerMotor.CurrentMovementProperties.Acceleration);
-        }
-        public void StopGoToPosition()
-        {
-            PlayerMotor.ResetHorizontalVelocity();
-        }
     }
 }

@@ -13,14 +13,12 @@ MonoBehaviour:
   m_Name: New Damage Buff
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Statuses.SerializedDamageBuff
   m_scoreScaling: 1
-  m_displayName: 
+  m_displayName: +1 Damage
   m_stackType: 0
-  m_maxStacks: 20
+  m_maxStacks: 10
   m_durationType: 0
-  m_duration: 9.84
-  m_inflictCondition: 1
-  m_inflictDelay: 0
+  m_duration: 0
   m_conditions: []
   m_scoringMethods: []
   m_arg0: 0
-  m_arg1: 5
+  m_arg1: 1

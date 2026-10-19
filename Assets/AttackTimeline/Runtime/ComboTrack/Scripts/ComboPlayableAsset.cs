@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.ComboTrack
 {
 #if UNITY_EDITOR
     using System.ComponentModel;
