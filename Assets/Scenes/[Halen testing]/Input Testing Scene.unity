@@ -227,10 +227,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d0cb3a217254154da50c0a46de3d350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
-  m_playerAnimator: {fileID: 0}
+  m_player: {fileID: 0}
   m_inputBufferTime: 0.8
-  m_sequenceDisplay: {fileID: 486975317}
-  m_usedAttackDisplay: {fileID: 1616122021}
 --- !u!4 &474993492
 Transform:
   m_ObjectHideFlags: 0
@@ -1074,17 +1072,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.AttackBindingDefinition
   m_inputManager: {fileID: 474993491}
+  m_bindingType: 0
   m_defaultBindings:
   - attackInput: 1
-    attackName: Slash
+    m_serializedAttackData: {fileID: 0}
   - attackInput: 2
-    attackName: Punch
+    m_serializedAttackData: {fileID: 0}
   - attackInput: 4
-    attackName: 
+    m_serializedAttackData: {fileID: 0}
   - attackInput: 3
-    attackName: 
+    m_serializedAttackData: {fileID: 0}
   - attackInput: 15
-    attackName: 
+    m_serializedAttackData: {fileID: 0}
 --- !u!4 &1480484848967135267
 Transform:
   m_ObjectHideFlags: 0

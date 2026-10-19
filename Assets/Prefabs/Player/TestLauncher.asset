@@ -32,7 +32,7 @@ MonoBehaviour:
       m_damage: 1
       m_statuses:
       - rid: 2001017013982199898
-      - rid: 2974341731308797952
+      - rid: -2
       - rid: 2974341731308797953
       - rid: 2974341731308797954
   m_eventData:
@@ -54,16 +54,14 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
     - rid: 2001017013982199898
       type: {class: AirJuggle, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:
         m_strength: 5
         m_stallLength: 3
         m_ignoreGrounded: 0
-    - rid: 2974341731308797952
-      type: {class: ParticleEffectOnHit, ns: Stirge.Combat, asm: Assembly-CSharp}
-      data:
-        m_particleReference: {fileID: 4375904562942587282, guid: 758c63b4931df6c96b37f505b4cb4060, type: 3}
     - rid: 2974341731308797953
       type: {class: ScreenShakeEffect, ns: Stirge.Combat, asm: Assembly-CSharp}
       data:

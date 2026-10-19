@@ -4,52 +4,26 @@ using System.Collections.Generic;
 
 namespace Stirge.Input
 {
-    using Combat.Attacks;
-    using Combat.Attacks.Serialization;
-    
+    using Stirge.UtilityAI;
+
     [System.Serializable]
     public class AttackBinding
     {
-        public AttackBinding(AttackInput input, SerializedAttackData data)
+        public AttackBinding(AttackInput input, SerializedAction action)
         {
-            attackInput = input;
-            m_serializedAttackData = data;
+            m_attackInput = input;
+            m_attackAction = action;
         }
         public AttackBinding(AttackBinding binding)
         {
-            attackInput = binding.attackInput;
-            m_serializedAttackData = binding.m_serializedAttackData;
+            m_attackInput = binding.m_attackInput;
+            m_attackAction = binding.m_attackAction;
         }
         
-        public AttackInput attackInput;
-        [SerializeField] private SerializedAttackData m_serializedAttackData;
+        [SerializeField] private AttackInput m_attackInput;
+        [SerializeField] private SerializedAction m_attackAction;
 
-        private AttackData m_deserializedAttackData;
-
-        public AttackData attackData
-        {
-            get
-            {
-                m_deserializedAttackData ??= m_serializedAttackData.CreateAttackData();
-                return m_deserializedAttackData;
-            }
-        }
-
-        public KeyValuePair<AttackInput, AttackData> ConvertToDictionaryEntry()
-        {
-            return new KeyValuePair<AttackInput, AttackData>(attackInput, attackData);
-        }
-
-        public static Dictionary<AttackInput, AttackData> ConvertToDictionary(AttackBinding binding)
-        {
-            return new Dictionary<AttackInput, AttackData>
-            {
-                { binding.attackInput, binding.attackData }
-            };
-        }
-        public static Dictionary<AttackInput, AttackData> ConvertToDictionary(IEnumerable<AttackBinding> bindings)
-        {
-            return new Dictionary<AttackInput, AttackData>(bindings.Select(binding => binding.ConvertToDictionaryEntry()));
-        }
+        public AttackInput AttackInput => m_attackInput;
+        public SerializedAction AttackAction => m_attackAction;
     }
 }

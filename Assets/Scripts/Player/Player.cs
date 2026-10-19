@@ -4,16 +4,14 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
-    using Stirge.Combat.Attacks;
-    using Stirge.Tools;
+    using Stirge.AttackTimeline;
     using UnityEngine.InputSystem;
 
-    [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerInputProcessing))]
+    [RequireComponent(typeof(EntityHealth))]
     public class Player : CombatEntity
     {
         [Header("Player Properties")]
-        [SerializeField] private PlayerMovement m_movement;
         [SerializeField] private PlayerInputProcessing m_input;
         [Header("Attack Snapping")]
         [SerializeField, Tooltip("The minimum angle (in degrees) to find a valid snapping target.")]
@@ -21,29 +19,50 @@ namespace Stirge.Player
         [SerializeField] private LayerMask m_attackSnappingMask;
         private Transform m_softlockTarget = null; //either move this to the camera or put the hard lock on here (along with some of the lock on code.)
         [SerializeField, Tooltip("How far until the soft lock target is cleared.")] private float m_softLockHoldRange = 2;
+        protected PlayerMotor PlayerMotor => (PlayerMotor)base.Motor;
+        protected Vector2 m_inputDirection;
+        private Transform m_camTransform;
 
         #region UnityEvents
         protected override void AwakeThis()
         {
-            if (!m_movement || !m_input)
+            if (!PlayerMotor || !m_input || !Health)
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
+            m_camTransform = UnityEngine.Camera.main.transform;
         }
 
-        protected override void UpdateThis(float deltaTime)
+        protected override void UpdateThis()
         {
+            if (!IsPerformingAction)
+            {
+                Vector3 attemptedMoveDirection = (new Vector3(m_camTransform.forward.x, 0, m_camTransform.forward.z) * m_inputDirection.y +
+                                                  new Vector3(m_camTransform.right.x, 0, m_camTransform.right.z) * m_inputDirection.x).normalized;
+                //TODO player rotation and lock on stuff here
+                if (attemptedMoveDirection.sqrMagnitude > 0)
+                {
+                    PlayerMotor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), PlayerMotor.CurrentMovementProperties.AngularSpeed));
+                }
 
+                if (PlayerMotor.HorizontalSpeed < PlayerMotor.CurrentMovementProperties.HorizontalTopSpeed ||
+                   Vector3.Angle(PlayerMotor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
+                {
+                    PlayerMotor.AddForce(PlayerMotor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * PlayerMotor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                }
+            }
+
+            PlayerMotor.AddForce(PlayerMotor.HorizontalDirection * -PlayerMotor.CurrentMovementProperties.Friction * Mathf.Clamp01(PlayerMotor.HorizontalSpeed) * Time.deltaTime);
         }
         #endregion
 
         #region Inputs
         public void AttemptJump(InputAction.CallbackContext context)
         {
-            if (context.performed)
-                if (m_movement.OnJump())
+            if (context.performed && !IsPerformingAction)
+                if (PlayerMotor.OnJump())
                 {
-                    m_health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
+                    Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
         }
 
@@ -85,6 +104,9 @@ namespace Stirge.Player
             }
 
             base.UseAttack(attackData);
+        public void OnMove(InputAction.CallbackContext context)
+        {
+            m_inputDirection = context.ReadValue<Vector2>();
         }
         #endregion
 
@@ -98,8 +120,8 @@ namespace Stirge.Player
         #region Status
         public override void EnterStun(float stunLength)
         {
-            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.Off, stunLength);
-            m_anim.Play("hitstun");
+            PlayerMotor.ResetHorizontalVelocity();
+            //m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
         public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
@@ -109,58 +131,7 @@ namespace Stirge.Player
         }
         public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
         {
-            m_movement.Motor.ApplyForce(direction * strength + transform.up * height, ForceMode.Impulse, true);
-        }
-
-        public override bool IsGrounded()
-        {
-            return m_movement.IsGrounded;
-        }
-        #endregion
-
-        #region Transformation
-        protected override Vector3 GetPosition()
-        {
-            return transform.position;
-        }
-        protected override Quaternion GetRotation()
-        {
-            return transform.rotation;
-        }
-        protected Vector3 GetEulerRotation()
-        {
-            return transform.rotation.eulerAngles;
-        }
-        protected override void SetPosition(Vector3 position)
-        {
-            transform.position = position;
-        }
-        protected override void SetRotation(Quaternion rotation)
-        {
-            transform.rotation = rotation;
-        }
-        protected void SetEulerRotation(Vector3 eulerRotation)
-        {
-            transform.rotation = Quaternion.Euler(eulerRotation);
-        }
-        public override Vector3 GetForward()
-        {
-            return transform.forward;
-        }
-
-        protected override void BeginGoToPosition(Vector3 newPosition)
-        {
-            Vector3 direction = (newPosition - transform.position).normalized;
-            m_movement.Motor.ApplyForce(direction * m_movement._currentStateSettings._horizontalAcceleration);
-        }
-        protected override void StopGoToPosition()
-        {
-            m_movement.Motor.HaltHorizontalVelocity(MovementMotor.SetMotorAction.NoChange);
-        }
-
-        protected override float GetMovementSpeed()
-        {
-            return m_movement.Motor._horizontalSpeed;
+            PlayerMotor.AddForce(direction * strength + transform.up * height); //override
         }
         #endregion
     }

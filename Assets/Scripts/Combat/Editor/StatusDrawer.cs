@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Stirge.Combat
+namespace Stirge.Combat.OldStatus
 {
     using Tools;
 
@@ -44,9 +44,6 @@ namespace Stirge.Combat
                     case nameof(ScreenShakeEffect):
                         DrawPropertyField("m_preset");
                         break;
-                    case nameof(ParticleEffectOnHit):
-                        DrawPropertyField("m_particleReference");
-                        break;
                 }
             }
             EditorGUI.EndProperty();
@@ -76,7 +73,6 @@ namespace Stirge.Combat
                         break;
                     case nameof(Stun):
                     case nameof(ScreenShakeEffect):
-                    case nameof(ParticleEffectOnHit):
                         totalLines++;
                         break;
                 }

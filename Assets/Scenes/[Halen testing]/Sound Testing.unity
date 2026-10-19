@@ -596,7 +596,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29f5cc5001720164e999cf11c988acff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Sound.ScaleTransformWithMixerGroupVolume
-  m_mixer: {fileID: 24100000, guid: d836fe3832ac26b4c95e80045022dda6, type: 2}
 --- !u!4 &1055809403
 Transform:
   m_ObjectHideFlags: 0

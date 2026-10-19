@@ -3692,8 +3692,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd060d3806dad3a4594af1e26ae7dbca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Enemy.EnemySpawner
+  m_spawnOnStart: 0
   m_enemyPrefab: {fileID: 6890042860578074719, guid: b8073e1796063d54b962337c094a523a, type: 3}
-  m_targetEnemyCount: 300
+  m_targetSpawnCount: 0
   m_spawnLocation: {fileID: 1509259609}
 --- !u!4 &1509259609
 Transform:
@@ -4383,8 +4384,6 @@ MonoBehaviour:
     _relativePosition: {x: 5, y: 3}
     _pivotSpeed: 5
     _pivotGapStrength: 1
-    _autoMoveWait: 5
-    _autoPivotSpeed: 0.3
     _inputSensitivity: 2
   m_primaryTarget: {fileID: 2045072624}
   m_secondaryTargets: []
@@ -4394,8 +4393,6 @@ MonoBehaviour:
     _relativePosition: {x: 4, y: 4}
     _pivotSpeed: 5
     _pivotGapStrength: 1
-    _autoMoveWait: 2
-    _autoPivotSpeed: 7
     _inputSensitivity: 2
   m_groupDistanceScaling: 0.2
   m_combatRangeCutoff: 15
@@ -4406,15 +4403,12 @@ MonoBehaviour:
     _relativePosition: {x: 6, y: 2}
     _pivotSpeed: 5
     _pivotGapStrength: 1
-    _autoMoveWait: 1
-    _autoPivotSpeed: 5
     _inputSensitivity: 2
   m_toggleLockOn: 0
   m_usePrimaryForward: 0
   m_lockOnRange: 15
   m_lockOnDisengauge: 1
   m_lockOnIncludeTargetsOutOfRange: 0
-  m_lockOnOffset: -90
 --- !u!114 &1642650731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5704,6 +5698,7 @@ MonoBehaviour:
   m_jumpHeight: 5
   m_groundCheckDistance: 0.51
   m_coyoteTime: 0.2
+  m_landingSound: {fileID: 0}
   m_fallSpeedCap: 1000
   m_fallTimeSpeedMultiplier: 1
 --- !u!54 &2045072622

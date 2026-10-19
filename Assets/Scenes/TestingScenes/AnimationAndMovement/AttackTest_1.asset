@@ -22,12 +22,15 @@ MonoBehaviour:
     m_hitboxShape: 0
     m_hitboxType: 2
     m_hitboxParent: 01
-    m_onHit:
+    m_onHitEvent:
       m_eventType: 0
       m_eventID: 
       m_shouldEndOnCancel: 0
       m_startFrame: 0
       m_endFrame: 0
+    m_onHitEffect:
+      m_damage: 0
+      m_statuses: []
   m_eventData:
   - m_eventType: 0
     m_eventID: AttackTest_1Event0
@@ -40,7 +43,10 @@ MonoBehaviour:
     m_startFrame: 28
     m_endFrame: 30
   m_nextComboInput:
-    m_nextComboAttack: 
+    m_nextComboAttack: {fileID: 0}
     m_comboAttackInput: 0
     m_comboInputTimeStart: 0
     m_comboInputTimeEnd: 0
+  references:
+    version: 2
+    RefIds: []

@@ -18,7 +18,8 @@ namespace Stirge.Sound
         }
         public void PlayClip(SoundClip clip)
         {
-            SoundManager.Instance.PlaySoundClipOnObject(clip, m_defaultSoundLocation ? m_defaultSoundLocation : transform);
+            if (Application.isPlaying)
+                SoundManager.Instance.PlaySoundClipOnObject(clip, m_defaultSoundLocation ? m_defaultSoundLocation : transform);
         }
     }
 }

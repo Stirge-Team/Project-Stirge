@@ -1,11 +1,12 @@
-using UnityEngine;
-using Unity.Cinemachine;
-using UnityEngine.AI;
 using System.Collections.Generic;
-using Stirge.Combat;
+using Unity.Cinemachine;
+using UnityEngine;
+using UnityEngine.AI;
 
 namespace Stirge.Camera
 {
+    using UtilityAI;
+
     public class EnemyGroupHandler : MonoBehaviour
     {
         private static bool s_debug = false;
@@ -30,6 +31,13 @@ namespace Stirge.Camera
 
             foreach (var ene in FindObjectsByType<CombatEntity>(FindObjectsSortMode.None))
             { 
+                //If this agent doesn't have a stirge enemy script - skip them
+                if (ene.GetComponentInParent<UtilityEnemy>() == null)
+                    continue;
+
+                //Get this enemy's transform
+                Transform eneTrans = ene.transform.parent.GetChild(0).transform;
+
                 //Check if the distance from the origin is within range
                 if (Vector3.Distance(ene.transform.position, m_rangeOrigin.transform.position) <= m_range)
                 {
