@@ -11,7 +11,8 @@ namespace Stirge.UtilityAI
     {
         Melee,
         Ranged,
-        Movement
+        Movement,
+        Utility
     }
 
     /// <summary>
@@ -64,21 +65,25 @@ namespace Stirge.UtilityAI
         private IScoringMethod[] m_scoringMethods;
         private SerializedStatus_Base[] m_serializedStatuses;
 
-        private bool m_performed;
+        protected bool m_performed;
 
         // properties
-        public float duration => m_duration;
-        public string displayName => m_displayName;
-        public ActionType actionType => m_actionType;
+        public float Duration => m_duration;
+        public string DisplayName => m_displayName;
+        public ActionType ActionType => m_actionType;
         public TimelineAsset Timeline => m_timeline;
-        public float damage => m_damage;
-        public float range => m_range;
+        public float Damage => m_damage;
+        public float Range => m_range;
 
         /// <inheritdoc/>
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
-            if (!Enumerable.All(m_conditions, condition => condition.Evaluate(user, target)))
-                return 0f;
+            // If any Condition is false, return 0 score
+            foreach (ICondition condition in m_conditions)
+            {
+                if (!condition.Evaluate(user, target))
+                    return 0f;
+            }
 
             // Get score from Scoring Methods
             int scoringMethodCount = m_scoringMethods.Length;
@@ -100,21 +105,27 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// What happens when the <paramref name="user"/> Performs this <see cref="Action"/>.
         /// </summary>
-        public void Perform(CombatEntity user, CombatEntity target)
+        public virtual void Perform(CombatEntity user, CombatEntity target)
         {
             if (!m_performed)
             {
                 m_performed = true;
                 user.UseAction(this);
             }
-
-            PerformInternal(user, target);
         }
-        protected virtual void PerformInternal(CombatEntity user, CombatEntity target) { }
 
         public virtual void Reset()
         {
             m_performed = false;
+        }
+
+        /// <summary>
+        /// Override to draw custom gizmos per Action.
+        /// </summary>
+        public virtual void OnDrawGizmos(CombatEntity user, CombatEntity target)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(user.Motor.GetPosition(), m_range);
         }
 
         public Status CreateRuntimeStatusAtIndex(int statusIndex)

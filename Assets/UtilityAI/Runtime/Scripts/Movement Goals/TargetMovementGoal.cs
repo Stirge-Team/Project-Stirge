@@ -16,21 +16,19 @@ namespace Stirge.UtilityAI.MovementGoals
 
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return m_maxScore - Mathf.Min(m_maxScore, Vector3.SqrMagnitude(user.TargetPosition - user.Motor.GetPosition()));
+            if (user.HasTarget)
+                return m_maxScore - Mathf.Min(m_maxScore, Vector3.Distance(target.Motor.GetPosition(), user.Motor.GetPosition()));
+            else
+                return 0f;
         }
 
         public override void Perform(UtilityEnemy user, CombatEntity target)
         {
-            if (user.IsNotWithinStoppingDistanceOf(user.NavMeshAgent.destination))
+            // if user has a target and its current destination is not within stopping distance of its Target's position
+            if (user.Motor.IsGrounded && target != null && Vector3.Distance(user.NavMeshAgent.destination, target.Motor.GetPosition()) > user.NavMeshAgent.stoppingDistance)
             {
-                if (user.HasTarget)
-                {
-                    user.NavMeshAgent.SetDestination(user.TargetPosition);
-                }
-                else
-                {
-                    user.NavMeshAgent.SetDestination(user.Motor.GetPosition());
-                }
+                // update nav destination
+                user.EnemyMotor.SetDestination(target.Motor.GetPosition());
             }
         }
 

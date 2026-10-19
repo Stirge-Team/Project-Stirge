@@ -110,7 +110,7 @@ namespace Stirge.UtilityAI
             GenericCondition_Base newCondition = Activator.CreateInstance(genericConditionType) as GenericCondition_Base;
             // end section
 
-            newCondition.Setup(scorable);
+            newCondition.Setup(scorable, name);
             switch (firstIsProperty, secondIsProperty)
             {
                 case (true, true):

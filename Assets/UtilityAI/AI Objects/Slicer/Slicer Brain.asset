@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Slicer Brain
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedUtilityBrain
   m_serializedActions:
+  - {fileID: 11400000, guid: 04e04809a3048e246887992e6cfe1ba1, type: 2}
   - {fileID: 11400000, guid: fdfe44bacacb6aa49a9e44d3914611f7, type: 2}
-  m_serializedMovementGoals: []
+  m_serializedMovementGoals:
+  - {fileID: 11400000, guid: 277d24115c12d774d85643fb9674662b, type: 2}
   m_minimumActionScore: 0
   m_minimumMovementGoalScore: 0

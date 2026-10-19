@@ -1,10 +1,11 @@
-using Stirge.Combat;
-using Stirge.Serialization;
 using System;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.Statuses
 {
+    using Combat;
+    using Serialization;
+
     public class DebugTestStatus : Status, INotSetupable
     {
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)

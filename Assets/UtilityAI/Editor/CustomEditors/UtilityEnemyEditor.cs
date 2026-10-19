@@ -63,7 +63,7 @@ namespace Stirge.UtilityAI.CustomEditors
                 EGL.BeginHorizontal();
                 EGL.LabelField("Current Action");
                 bool hasCurrentAction = info.currentActionIndex != -1;
-                string currentActionText = hasCurrentAction ? info.actions[info.currentActionIndex].displayName : "null";
+                string currentActionText = hasCurrentAction ? info.actions[info.currentActionIndex].DisplayName : "null";
                 DrawDisabledText(!hasCurrentAction, currentActionText);
                 EGL.EndHorizontal();
 
@@ -103,7 +103,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     EGL.BeginHorizontal();
                     EGL.LabelField($"{i + 1}.", GUILayout.MaxWidth(30f));
-                    DrawDisabledText(isInvalid, action.displayName, Mathf.Max(0, actionScore).ToString(NUM_DISPLAY_FORMAT));
+                    DrawDisabledText(isInvalid, action.DisplayName, Mathf.Max(0, actionScore).ToString(NUM_DISPLAY_FORMAT));
                     EGL.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;

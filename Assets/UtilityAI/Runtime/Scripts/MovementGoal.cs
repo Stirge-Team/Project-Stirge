@@ -40,6 +40,13 @@ namespace Stirge.UtilityAI
         /// <inheritdoc/>
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
+            // If any Condition is false, return 0 score
+            foreach (ICondition condition in m_conditions)
+            {
+                if (!condition.Evaluate(user, target))
+                    return 0f;
+            }
+
             float score = EvaluateInternal(user, target);
             // if the base score is Negative infinity, then we should only count the scores of the Scoring Methods
             if (score == Mathf.NegativeInfinity)

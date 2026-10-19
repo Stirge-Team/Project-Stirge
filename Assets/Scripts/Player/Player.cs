@@ -4,7 +4,6 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
-    using Stirge.AttackTimeline;
     using UnityEngine.InputSystem;
 
     [RequireComponent(typeof(PlayerInputProcessing))]
@@ -73,20 +72,10 @@ namespace Stirge.Player
         #endregion
 
         #region Status
-        public override void EnterStun(float stunLength)
+        protected override void OnStunned(float stunLength)
         {
             PlayerMotor.ResetHorizontalVelocity();
-            //m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
-        }
-        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
-        {
-            //lazy implementation - do more later
-            EnterStun(stunLength);
-        }
-        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
-        {
-            PlayerMotor.AddForce(direction * strength + transform.up * height); //override
         }
         #endregion
     }

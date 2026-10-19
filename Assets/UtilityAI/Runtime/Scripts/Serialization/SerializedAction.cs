@@ -1,10 +1,11 @@
-using Stirge.Serialization;
 using System;
 using UnityEngine;
 using UnityEngine.Timeline;
 
 namespace Stirge.UtilityAI
 {
+    using Serialization;
+
     [CreateAssetMenu(menuName = "Utility AI/Serialized Action", fileName = "New Serialized Action", order = 449)]
     public class SerializedAction : ScriptableObject
     {
