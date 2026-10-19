@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 namespace Stirge.Camera
 {
+    using Stirge.Combat;
     using UtilityAI;
 
     public class EnemyGroupHandler : MonoBehaviour

@@ -104,6 +104,7 @@ namespace Stirge.Player
             }
 
             base.UseAttack(attackData);
+        }
         public void OnMove(InputAction.CallbackContext context)
         {
             m_inputDirection = context.ReadValue<Vector2>();
