@@ -5,6 +5,7 @@ namespace Stirge.Player
     using Combat;
     using Input;
     using UnityEngine.InputSystem;
+    using UnityEngine.Playables;
 
     [RequireComponent(typeof(PlayerInputProcessing))]
     [RequireComponent(typeof(EntityHealth))]
@@ -61,6 +62,11 @@ namespace Stirge.Player
         public void OnMove(InputAction.CallbackContext context)
         {
             m_inputDirection = context.ReadValue<Vector2>();
+        }
+
+        protected override void OnActionEndInternal(PlayableDirector director)
+        {
+            m_input.ClearStoredComboAction();
         }
         #endregion
 

@@ -28,6 +28,10 @@ namespace Stirge.UtilityAI
         /// </summary>
         private float m_scoreScaling = 1f;
         /// <summary>
+        /// If the <see cref="Player.Player"/> performs this <see cref="Action"/>, should the <see cref="Input.PlayerInputProcessing"/> buffer be flushed?
+        /// </summary>
+        private bool m_shouldFlushPlayerInputBuffer;
+        /// <summary>
         /// The length of time in seconds the <see cref="UtilityBrain"/> will wait after this <see cref="Action"/> is Performed until it Evaluates a new <see cref="Action"/>.
         /// </summary>
         private float m_duration;
@@ -68,6 +72,7 @@ namespace Stirge.UtilityAI
         protected bool m_performed;
 
         // properties
+        public bool ShouldFlushPlayerInputBuffer => m_shouldFlushPlayerInputBuffer;
         public float Duration => m_duration;
         public string DisplayName => m_displayName;
         public ActionType ActionType => m_actionType;
@@ -110,7 +115,7 @@ namespace Stirge.UtilityAI
             if (!m_performed)
             {
                 m_performed = true;
-                user.UseAction(this);
+                user.PerformAction(this);
             }
         }
 
@@ -141,11 +146,12 @@ namespace Stirge.UtilityAI
             m_scoringMethods = scoringMethods;
         }
 
-        public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, new()
+        public static TAction Create<TAction>(float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, new()
         {
             TAction action = new()
             {
                 m_scoreScaling = scaling,
+                m_shouldFlushPlayerInputBuffer = shouldFlushPlayerInputBuffer,
                 m_duration = duration,
                 m_displayName = displayName,
                 m_actionType = actionType,
@@ -157,33 +163,33 @@ namespace Stirge.UtilityAI
 
             return action;
         }
-        public static TAction Create<TAction, TArg>(TArg arg, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg>, new()
+        public static TAction Create<TAction, TArg>(TArg arg, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1>, new()
+        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2, arg3);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2, arg3, arg4);
             return action;
         }

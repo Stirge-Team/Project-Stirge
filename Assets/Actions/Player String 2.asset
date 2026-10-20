@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Player String 2
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedAction
   m_scoreScaling: 1
+  m_shouldFlushPlayerInputBuffer: 1
   m_duration: 1
   m_displayName: String 1
   m_actionType: 0
