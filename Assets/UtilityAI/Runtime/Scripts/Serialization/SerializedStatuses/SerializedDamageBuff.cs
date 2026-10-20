@@ -1,8 +1,8 @@
-using Stirge.Combat;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.Statuses
 {
+    using Combat;
     using Serialization;
 
     [NameOverride("Modifier Type", 0), NameOverride("Modifier", 1)]

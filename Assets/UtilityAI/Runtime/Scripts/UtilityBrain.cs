@@ -82,7 +82,7 @@ namespace Stirge.UtilityAI
                         if (runningScore > targetScore)
                         {
                             m_currentActionIndex = actionIndex;
-                            m_actionCountdown = m_actions[actionIndex].duration;
+                            m_actionCountdown = m_actions[actionIndex].Duration;
 
                             // Even if the new Action is the same as the previous, reset it
                             CurrentAction.Reset();
@@ -160,6 +160,11 @@ namespace Stirge.UtilityAI
             {
                 m_movementGoalCountdown -= Time.deltaTime;
             }
+        }
+
+        public void OnDrawGizmos(CombatEntity user, CombatEntity target)
+        {
+            CurrentAction?.OnDrawGizmos(user, target);
         }
 
         #region Setup

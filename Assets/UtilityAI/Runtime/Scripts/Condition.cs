@@ -22,55 +22,73 @@ namespace Stirge.UtilityAI
     {
         protected TScorable m_scorable;
 
+        protected string m_displayName;
+
+        public string DisplayName => m_displayName;
+
         public abstract bool Evaluate(CombatEntity user, CombatEntity target);
 
         #region Setup
-        public void Setup<T>(T scorable) where T : class, IScorable
+        public void Setup<T>(T scorable, string displayName) where T : class, IScorable
         {
             m_scorable = scorable as TScorable;
+            m_displayName = displayName;
         }
 
-        private static TCondition CreateInternal<TCondition>(TScorable scorable) where TCondition : ICondition, new()
+        private static TCondition CreateInternal<TCondition>(TScorable scorable, string displayName) where TCondition : ICondition, new()
         {
             var condition = new TCondition();
-            condition.Setup(scorable);
+            condition.Setup(scorable, displayName);
             return condition;
         }
-        public static TCondition Create<TCondition>(TScorable scorable) where TCondition : ICondition, INotSetupable, new()
+        public static TCondition Create<TCondition>(TScorable scorable, string displayName) where TCondition : ICondition, INotSetupable, new()
         {
-            var condition = CreateInternal<TCondition>(scorable);
+            var condition = CreateInternal<TCondition>(scorable, displayName);
             return condition;
         }
-        public static TCondition Create<TCondition, TArg>(TArg arg, TScorable scorable) where TCondition : ICondition, ISetupable<TArg>, new()
+        public static TCondition Create<TCondition, TArg>(TArg arg, TScorable scorable, string displayName) where TCondition : ICondition, ISetupable<TArg>, new()
         {
-            var condition = CreateInternal<TCondition>(scorable);
+            var condition = CreateInternal<TCondition>(scorable, displayName);
             condition.Setup(arg);
             return condition;
         }
-        public static TCondition Create<TCondition, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, TScorable scorable) where TCondition : ICondition, ISetupable<TArg0, TArg1>, new()
+        public static TCondition Create<TCondition, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, TScorable scorable, string displayName) where TCondition : ICondition, ISetupable<TArg0, TArg1>, new()
         {
-            var condition = CreateInternal<TCondition>(scorable);
+            var condition = CreateInternal<TCondition>(scorable, displayName);
             condition.Setup(arg0, arg1);
             return condition;
         }
-        public static TCondition Create<TCondition, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TScorable scorable) where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2>, new()
+        public static TCondition Create<TCondition, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TScorable scorable, string displayName) where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2>, new()
         {
-            var condition = CreateInternal<TCondition>(scorable);
+            var condition = CreateInternal<TCondition>(scorable, displayName);
             condition.Setup(arg0, arg1, arg2);
             return condition;
         }
-        public static TCondition Create<TCondition, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TScorable scorable) where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+        public static TCondition Create<TCondition, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TScorable scorable, string displayName) where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
         {
-            var condition = CreateInternal<TCondition>(scorable);
+            var condition = CreateInternal<TCondition>(scorable, displayName);
             condition.Setup(arg0, arg1, arg2, arg3);
             return condition;
         }
-        public static TCondition Create<TCondition, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TScorable scorable) where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+        public static TCondition Create<TCondition, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TScorable scorable, string displayName) where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
         {
-            var condition = CreateInternal<TCondition>(scorable);
+            var condition = CreateInternal<TCondition>(scorable, displayName);
             condition.Setup(arg0, arg1, arg2, arg3, arg4);
             return condition;
         }
         #endregion
+
+        public sealed override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj);
+        }
+        public sealed override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+        public sealed override string ToString()
+        {
+            return m_displayName;
+        }
     }
 }

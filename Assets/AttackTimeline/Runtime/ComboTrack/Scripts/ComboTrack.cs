@@ -5,7 +5,7 @@ using UnityEngine.Timeline;
 namespace Stirge.AttackTimeline.ComboTrack
 {
     using Input;
-    using Stirge.UtilityAI;
+    using UtilityAI;
 
     [TrackClipType(typeof(ComboPlayableAsset))]
     [TrackBindingType(typeof(PlayerInputProcessing))]

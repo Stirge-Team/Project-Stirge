@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
-  m_baseHealth: 10
+  m_baseHealth: 3
   m_healEvents:
     m_PersistentCalls:
       m_Calls: []

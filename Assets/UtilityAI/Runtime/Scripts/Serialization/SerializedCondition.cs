@@ -11,7 +11,7 @@ namespace Stirge.UtilityAI
 
         public sealed override ICondition CreateRuntimeCondition<TScorable>(TScorable scorable)
         {
-            return Condition<TScorable>.Create<TCondition>(scorable);
+            return Condition<TScorable>.Create<TCondition>(scorable, name);
         }
     }
     public class SerializedCondition<TCondition, TArg> : SerializedCondition_Base where TCondition : ICondition, ISetupable<TArg>, new()
@@ -22,7 +22,7 @@ namespace Stirge.UtilityAI
 
         public sealed override ICondition CreateRuntimeCondition<TScorable>(TScorable scorable)
         {
-            return Condition<TScorable>.Create<TCondition, TArg>(m_arg, scorable);
+            return Condition<TScorable>.Create<TCondition, TArg>(m_arg, scorable, name);
         }
     }
     public class SerializedCondition<TCondition, TArg0, TArg1> : SerializedCondition_Base where TCondition : ICondition, ISetupable<TArg0, TArg1>, new()
@@ -34,7 +34,7 @@ namespace Stirge.UtilityAI
 
         public sealed override ICondition CreateRuntimeCondition<TScorable>(TScorable scorable)
         {
-            return Condition<TScorable>.Create<TCondition, TArg0, TArg1>(m_arg0, m_arg1, scorable);
+            return Condition<TScorable>.Create<TCondition, TArg0, TArg1>(m_arg0, m_arg1, scorable, name);
         }
     }
     public class SerializedCondition<TCondition, TArg0, TArg1, TArg2> : SerializedCondition_Base where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2>, new()
@@ -47,7 +47,7 @@ namespace Stirge.UtilityAI
 
         public sealed override ICondition CreateRuntimeCondition<TScorable>(TScorable scorable)
         {
-            return Condition<TScorable>.Create<TCondition, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, scorable);
+            return Condition<TScorable>.Create<TCondition, TArg0, TArg1, TArg2>(m_arg0, m_arg1, m_arg2, scorable, name);
         }
     }
     public class SerializedCondition<TCondition, TArg0, TArg1, TArg2, TArg3> : SerializedCondition_Base where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
@@ -61,7 +61,7 @@ namespace Stirge.UtilityAI
 
         public sealed override ICondition CreateRuntimeCondition<TScorable>(TScorable scorable)
         {
-            return Condition<TScorable>.Create<TCondition, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, scorable);
+            return Condition<TScorable>.Create<TCondition, TArg0, TArg1, TArg2, TArg3>(m_arg0, m_arg1, m_arg2, m_arg3, scorable, name);
         }
     }
     public class SerializedCondition<TCondition, TArg0, TArg1, TArg2, TArg3, TArg4> : SerializedCondition_Base where TCondition : ICondition, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
@@ -76,7 +76,7 @@ namespace Stirge.UtilityAI
 
         public sealed override ICondition CreateRuntimeCondition<TScorable>(TScorable scorable)
         {
-            return Condition<TScorable>.Create<TCondition, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, scorable);
+            return Condition<TScorable>.Create<TCondition, TArg0, TArg1, TArg2, TArg3, TArg4>(m_arg0, m_arg1, m_arg2, m_arg3, m_arg4, scorable, name);
         }
     }
 }

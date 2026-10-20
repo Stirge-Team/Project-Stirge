@@ -7,9 +7,11 @@ namespace Stirge.UtilityAI
 
     public abstract class GenericCondition_Base : ICondition
     {        
+        public abstract string DisplayName { get; }
+        
         public abstract bool Evaluate(CombatEntity user, CombatEntity target);
 
-        public abstract void Setup<T>(T scorable) where T : class, IScorable;
+        public abstract void Setup<T>(T scorable, string displayName) where T : class, IScorable;
         public abstract void Setup(Operation operation, object firstObject, object secondObject);
         public abstract void Setup(Operation operation, object obj, BlackboardPropertyName propertyName, ConditionPropertyTarget propertyTarget);
         public abstract void Setup(Operation operation, BlackboardPropertyName propertyName, object obj, ConditionPropertyTarget propertyTarget);
