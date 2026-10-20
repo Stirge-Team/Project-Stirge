@@ -53,7 +53,7 @@ namespace Stirge.Camera
             }
 
             //if the current state is the combat state and the only target is the origin point
-            if (m_groupScript.Targets.Count <= 1 && CameraStateManager.Instance.State == "Combat" && m_groupScript.Targets[0].Object == m_rangeOrigin)
+            if (m_groupScript.Targets.Count <= 1 && CameraStateManager.Instance.State == "Combat" && m_groupScript.Targets[0].Object == m_rangeOrigin.transform)
             {
                 if (s_debug) Debug.Log("Only the origin remains. Returning to the explore camera & clearing all targets");
                 //exit the combat state
@@ -90,7 +90,7 @@ namespace Stirge.Camera
         {
             foreach(var target in m_groupScript.Targets)
             {
-                if(newMember == target.Object)
+                if(newMember.transform == target.Object)
                     return;
             }
             

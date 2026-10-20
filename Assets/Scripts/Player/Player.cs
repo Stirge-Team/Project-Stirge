@@ -76,15 +76,16 @@ namespace Stirge.Player
                 m_softlockTarget = null;
                 //Check for nearby enemies - range value to be pulled from the attack data later on.
                 //use the attack data to determine the range to check, TODO - currently not possible
-                RaycastHit[] hits = Physics.SphereCastAll(transform.position, 2f, transform.forward, 2f, m_attackSnappingMask);
+                RaycastHit[] hits = Physics.SphereCastAll(transform.position, attackData.Range, transform.forward, attackData.Range, m_attackSnappingMask);
 
                 if (hits.Length > 0)
                 {
+                    Debug.Log("Attempting to snap the player to a nearby target");
                     //only check against a given angle infront of the player (90 degress currently) - the player whipping around might be annoying
                     float recordAngle = m_snappingMaxAngle;
                     foreach (var hit in hits)
                     {
-                        if (AbsoluteParent.GetAbsoluteParent(hit.transform).GetComponent<CombatEntity>() && hit.transform != transform) //change to hittable later
+                        if (AbsoluteParent.GetAbsoluteParent(hit.transform).GetComponentInChildren<CombatEntity>() && hit.transform != transform) //change to hittable later
                         {
                             //check angle against player forward
                             Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
@@ -92,6 +93,7 @@ namespace Stirge.Player
                             Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
                             if (Mathf.Abs(recordAngle) > Mathf.Abs(angleFromPlayer))
                             {
+                                Debug.Log($"Closer attack target found at angle {Mathf.Abs(angleFromPlayer)}");
                                 m_softlockTarget = hit.transform;
                                 recordAngle = angleFromPlayer;
                             }

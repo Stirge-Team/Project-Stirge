@@ -24,15 +24,15 @@ namespace Stirge.Camera
         private bool m_lockOnTargetFailOver = false;
         [SerializeField, Range(0, 1)]
         private float m_lockOnWeight = 0.5f;
-        private PlayerMovement m_playerObject;
+        private PlayerMotor m_playerObject;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             m_groupScript = FindFirstObjectByType<CinemachineTargetGroup>();
-            m_playerObject = FindAnyObjectByType<PlayerMovement>();
+            m_playerObject = FindAnyObjectByType<PlayerMotor>();
             if (!m_playerObject)
             {
-                Debug.LogError($"Player object not found! Removing lock on camera. Ensure you have a \"PlayerMovement\" script attached to your player object if this behavior was unintened.");
+                Debug.LogError($"Player object not found! Removing lock on camera. Ensure you have a \"PlayerMotor\" script attached to your player object if this behavior was unintened.");
                 Destroy(this);
             }
         }
