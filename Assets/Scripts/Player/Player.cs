@@ -69,7 +69,7 @@ namespace Stirge.Player
                 }
         }
 
-        public override void UseAction(Action attackData)
+        public override void PerformAction(Action attackData)
         {
             if (m_softlockTarget == null || Vector3.Distance(transform.position, m_softlockTarget.position) > m_softLockHoldRange) //if the last target is out of range or dead
             {
@@ -108,7 +108,7 @@ namespace Stirge.Player
                 transform.LookAt(new Vector3(m_softlockTarget.position.x, transform.position.y, m_softlockTarget.position.z)); //stupid ngl
             }
 
-            base.UseAction(attackData);
+            base.PerformAction(attackData);
         }
         public void OnMove(InputAction.CallbackContext context)
         {
