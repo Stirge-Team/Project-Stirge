@@ -214,10 +214,12 @@ namespace Stirge.Combat
         #endregion
 
         #region Actions
-        public virtual void UseAction(Action action)
+        public virtual void PerformAction(Action action)
         {
             StopPerformingAction();
             m_currentAction = action;
+            m_isPerformingAction = true;
+
             if (action.Timeline != null)
                 m_director.Play(action.Timeline);
             m_motor.OnActionStart();
@@ -232,7 +234,9 @@ namespace Stirge.Combat
             m_currentAction = null;
             m_isPerformingAction = false;
             m_motor.OnActionEnd();
+            OnActionEndInternal(director);
         }
+        protected virtual void OnActionEndInternal(PlayableDirector director) { }
 
         public void StopPerformingAction()
         {
