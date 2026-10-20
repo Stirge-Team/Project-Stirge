@@ -543,6 +543,11 @@ MonoBehaviour:
   m_groundCheckDistance: 1
   m_groundCheckRadius: 0.5
   m_slopeLimit: 30
+  m_penCheckMaxNeighbours: 32
+  m_penCheckRadius: 3
+  m_penCheckMask:
+    serializedVersion: 2
+    m_Bits: 65
   m_enemy: {fileID: 8433020139153640328}
   m_nav: {fileID: 616382525492106720}
   m_navStoppingDistance: 0.5
