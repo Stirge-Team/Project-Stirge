@@ -623,8 +623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
   m_player: {fileID: 342028847}
-  m_inputDuration: 0.2
-  m_bufferDuration: 0.4
+  m_bufferedInputFrameLifetime: 10
 --- !u!114 &342028852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -919,13 +918,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 867691287701123348, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_maxPenCheckNeighbours
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354773783748330367, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1354773783748330367, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354773783748330367, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00000023841858
       objectReference: {fileID: 0}
     - target: {fileID: 2562831892648371485, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5742239276836861200, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_Name
@@ -937,7 +948,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.z

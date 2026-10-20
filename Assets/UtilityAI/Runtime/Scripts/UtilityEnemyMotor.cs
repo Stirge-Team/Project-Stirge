@@ -38,6 +38,13 @@ namespace Stirge.UtilityAI
         #endregion
 
         #region Transformation
+        protected override void OnMovePosition(Vector3 newPosition)
+        {
+            if (MovementState == MotorMovementState.Navigation)
+            {
+                SyncNavMeshAgentPosition();
+            }
+        }
         protected override void OnSetPosition(Vector3 newPosition)
         {
             if (MovementState == MotorMovementState.Navigation)
@@ -138,7 +145,7 @@ namespace Stirge.UtilityAI
 
             // determine position to sync to
             // Prefer spot on NavMesh, otherwise just use the current position
-            Vector3 syncPosition = NavMesh.SamplePosition(Rigidbody.position, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : Rigidbody.position;
+            Vector3 syncPosition = NavMesh.SamplePosition(Rigidbody.position, out NavMeshHit hit, 4f, NavMesh.AllAreas) ? hit.position : Rigidbody.position;
 
             PlaceAgentOnNavMesh(syncPosition);
         }

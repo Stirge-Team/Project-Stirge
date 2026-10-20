@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System;
+
 
 
 #if UNITY_EDITOR
@@ -44,16 +46,26 @@ namespace Stirge.Management
         [ContextMenu("Load Scenes")]
         public void LoadScenesInEditor()
         {
-            foreach (var scene in m_scenes)
+            try
             {
-                string[] guids = AssetDatabase.FindAssets(scene.m_sceneName, new string[] { "Assets/Scenes" });
-                for (int i = 0, sceneCount = guids.Length; i < sceneCount; i++)
+                foreach (var scene in m_scenes)
                 {
-                    string path = AssetDatabase.GUIDToAssetPath(guids[i]);
-                    if (path.Contains(".unity"))
-                        EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                    string[] guids = AssetDatabase.FindAssets(scene.m_sceneName, new string[] { "Assets/Scenes" });
+                    for (int i = 0, sceneCount = guids.Length; i < sceneCount; i++)
+                    {
+                        string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                        if (path.Contains(".unity"))
+                            EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                Debug.LogError("Failed to load scenes!\n" + e.Message, this);
+                return;
+            }
+
+            Debug.Log("Successfully loaded additional scenes into Editor!");
         }
 #endif
     }
