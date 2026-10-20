@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Stirge.Combat.Hitboxes
 {
     [System.Serializable]
-    public class SerializedHitboxData
+    public struct SerializedHitboxData
     {
         [Tooltip("The Mask the HitboxCollider will use to check for Hittables.")]
         [SerializeField] private LayerMask m_collisionMask;
@@ -12,8 +12,8 @@ namespace Stirge.Combat.Hitboxes
         [Tooltip("Details for the Statuses to inflict.")]
         [SerializeField] private StatusInflictData[] m_statusInflictData;
 
-        public LayerMask CollisionMask => m_collisionMask;
-        public int Damage => m_damage;
-        public StatusInflictData[] StatusInflictDatas => m_statusInflictData;
+        public readonly LayerMask CollisionMask => m_collisionMask;
+        public readonly int Damage => m_damage;
+        public readonly StatusInflictData[] StatusInflictDatas => m_statusInflictData;
     }
 }

@@ -25,6 +25,7 @@ namespace Stirge.AttackTimeline.HitboxTrack
         protected override void OnCreateClip(TimelineClip clip)
         {
             clip.displayName = "Hitbox";
+            clip.duration = 0.5d;
             base.OnCreateClip(clip);
         }
     }

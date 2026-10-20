@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Stirge.Combat
 {
@@ -10,46 +8,45 @@ namespace Stirge.Combat
     public class EnemySpawner : MonoBehaviour
     {
         [SerializeField] private bool m_spawnOnStart;
-        [SerializeField] private UtilityEnemy m_enemyPrefab;
+        [SerializeField] private GameObject m_enemyPrefab;
         [SerializeField, Min(0)] private int m_targetSpawnCount;
         [SerializeField] private Transform m_spawnLocation;
+        [SerializeField] private Vector3 m_spawnLocationRandomness;
 
-        private List<UtilityEnemy> m_spawnedEnemies;
+        private readonly List<UtilityEnemy> m_spawnedEnemies = new();
 
         private void Start()
         {
-            if(m_enemyPrefab == null)
+            if (m_enemyPrefab == null)
             {
-                Debug.LogException(new NullReferenceException("No enemy prefab loaded into spawner! Please put a valid enemy prefab into this spawner."), this);
+                Debug.LogException(new System.NullReferenceException("No enemy prefab loaded into spawner! Please put a valid enemy prefab into this spawner."), this);
                 enabled = false;
             }
-            m_spawnedEnemies = new();
-            if(m_spawnOnStart) FillEnemySpawns();
-        }
-        private void FillEnemySpawns(float count = 0)
-        {
-            if(count < 1) count = m_targetSpawnCount;
-
-            for (int i = 0; i < count; i++)
+            m_spawnedEnemies.Clear();
+            if (m_spawnOnStart)
             {
-                float angle = 2*Mathf.PI * ((i+1)/count);
-                Vector3 spawnPosition = Vector3.zero;//(m_spawnLocation != null ? m_spawnLocation.position : transform.position) + new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * m_enemyPrefab.Agent.NavMeshAgent.radius;
-                SpawnEnemy(spawnPosition);
+                FillSpawns();
+            }
+        }
+
+        private void FillSpawns()
+        {
+            for (int i = 0; i < m_targetSpawnCount; i++)
+            {
+                SpawnEnemy();
             }
         }
 
         private void SpawnEnemy()
         {
-            UtilityEnemy spawnedEnemy = Instantiate(m_enemyPrefab, m_spawnLocation != null ? m_spawnLocation.position : transform.position, Quaternion.identity); //spawn the enemy either at the spawn location or here
-            //spawnedEnemy.deathCallback = ReportDeath;
+            Vector3 spawnedPosition = m_spawnLocation != null ? m_spawnLocation.position : transform.position;
+            // each axis has random value in range -value to +value
+            spawnedPosition += new Vector3((Random.value * 2f - 1f) * m_spawnLocationRandomness.x,
+                                           (Random.value * 2f - 1f) * m_spawnLocationRandomness.y,
+                                           (Random.value * 2f - 1f) * m_spawnLocationRandomness.z);
+            UtilityEnemy spawnedEnemy = Instantiate(m_enemyPrefab, spawnedPosition, Quaternion.Euler(0, Random.value * 360f, 0)).GetComponentInChildren<UtilityEnemy>();
             spawnedEnemy.name = m_enemyPrefab.name;
-            m_spawnedEnemies.Add(spawnedEnemy);
-        }
-        private void SpawnEnemy(Vector3 spawnPosition)
-        {
-            UtilityEnemy spawnedEnemy = Instantiate(m_enemyPrefab, spawnPosition, Quaternion.identity);
-            //spawnedEnemy.deathCallback = ReportDeath;
-            spawnedEnemy.name = m_enemyPrefab.name;
+            spawnedEnemy.onDeath += ReportDeath;
             m_spawnedEnemies.Add(spawnedEnemy);
         }
 
@@ -61,56 +58,35 @@ namespace Stirge.Combat
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.CompareTag("Player")) //only do anything if the player enters the trigger box
+            // if not immediately active on start, only do anything if the player enters the trigger box
+            if (!m_spawnOnStart && other.gameObject.CompareTag("Player")) 
             {
-                FillEnemySpawns();
+                FillSpawns();
             }
         }
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(m_spawnLocation != null ? m_spawnLocation.position : transform.position, 1f);
+            Vector3 pos = m_spawnLocation != null ? m_spawnLocation.position : transform.position;
+            Gizmos.color = Color.limeGreen;
+            Gizmos.DrawCube(pos, m_spawnLocationRandomness);
         }
-        public void DebugStun(InputAction.CallbackContext context)
+
+        [ContextMenu("Knockback All Enemies")]
+        public void DebugKnockback()
         {
-            if (context.started)
+            foreach (UtilityEnemy enemy in m_spawnedEnemies)
             {
-                foreach (UtilityEnemy enemy in m_spawnedEnemies)
-                {
-                    enemy.EnterStun(3f);
-                }
+                //enemy.EnterKnockback(10f, new Vector2(1, 1), 1.3f, 0, false);
             }
         }
-        public void DebugKnockback(InputAction.CallbackContext context)
+        [ContextMenu("Damage All Enemies")]
+        public void DebugReduceHealth()
         {
-            if (context.started)
+            foreach (UtilityEnemy enemy in m_spawnedEnemies)
             {
-                foreach (UtilityEnemy enemy in m_spawnedEnemies)
-                {
-                    enemy.EnterKnockback(10f, new Vector2(1, 1), 1.3f, 0, false);
-                }
-            }
-        }
-        public void DebugAirJuggle(InputAction.CallbackContext context)
-        {
-            if (context.started)
-            {
-                foreach (UtilityEnemy enemy in m_spawnedEnemies)
-                {
-                    enemy.EnterAirJuggle(6f, Vector3.up, 1.3f, 0, false);
-                }
-            }
-        }
-        public void DebugReduceHealth(InputAction.CallbackContext context)
-        {
-            if (context.started)
-            {
-                foreach (UtilityEnemy enemy in m_spawnedEnemies)
-                {
-                    enemy.TakeDamage(1);
-                }
+                enemy.TakeDamage(1);
             }
         }
 #endif

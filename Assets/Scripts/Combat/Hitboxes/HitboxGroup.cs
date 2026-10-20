@@ -1,4 +1,3 @@
-using Stirge.Combat;
 using UnityEngine;
 
 namespace Stirge.Combat.Hitboxes

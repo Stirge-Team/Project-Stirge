@@ -1,5 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
 
 namespace Stirge.Management
 {
@@ -14,16 +21,40 @@ namespace Stirge.Management
 
         public sceneData[] m_scenes;
 
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        void Awake()
         {
-            foreach (var scene in m_scenes)
+            // get names of all current scenes
+            int activeSceneCount = SceneManager.sceneCount;
+            string[] activeScenes = new string[SceneManager.sceneCount];
+            for (int i = 0; i < activeSceneCount; i++)
             {
-                SceneManager.LoadScene(scene.m_sceneName, scene.m_loadMode);
+                activeScenes[i] = SceneManager.GetSceneAt(i).name;
+            }
+
+            // do not load scenes that are already loaded
+            for (int i = 0, count = m_scenes.Length; i < count; i++)
+            {
+                sceneData scene = m_scenes[i];
+                if (!activeScenes.Contains(scene.m_sceneName))
+                    SceneManager.LoadScene(scene.m_sceneName, scene.m_loadMode);
             }
         }
 
-        // Update is called once per frame
-        void Update() { }
+#if UNITY_EDITOR
+        [ContextMenu("Load Scenes")]
+        public void LoadScenesInEditor()
+        {
+            foreach (var scene in m_scenes)
+            {
+                string[] guids = AssetDatabase.FindAssets(scene.m_sceneName, new string[] { "Assets/Scenes" });
+                for (int i = 0, sceneCount = guids.Length; i < sceneCount; i++)
+                {
+                    string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                    if (path.Contains(".unity"))
+                        EditorSceneManager.OpenScene(path, OpenSceneMode.Additive);
+                }
+            }
+        }
+#endif
     }
 }

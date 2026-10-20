@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -39,8 +40,9 @@ namespace Stirge.Combat
         public EntityHealth Health => m_health;
 
         // public properties
+        public bool IsStunned => m_isStunned;
         public bool IsPerformingAction => m_isPerformingAction;
-        public float actualDamage
+        public float ActualDamage
         {
             get
             {
@@ -90,8 +92,13 @@ namespace Stirge.Combat
         {
             m_health.ModifyHealth(-Mathf.Abs(damage));
             OnDamageTaken(damage);
+            if (m_health._isDead)
+            {
+                OnDeath();
+            }
         }
         protected virtual void OnDamageTaken(int damage) { }
+        protected virtual void OnDeath() { }
 
         public bool IsDead()
         {
@@ -184,21 +191,26 @@ namespace Stirge.Combat
             return m_currentAction.CreateRuntimeStatusAtIndex(statusIndex);
         }
 
-        public bool GetIsStunned()
-        {
-            return m_isStunned;
-        }
         public void SetIsStunned(bool value, float stunLength = 0)
         {
             m_isStunned = value;
 
             if (value)
-                EnterStun(stunLength);
-        }
+            {
+                StartCoroutine(StunTimer());
+                OnStunned(stunLength);
+            }
 
-        public virtual void EnterStun(float stunLength) { throw new NotImplementedException(); }
-        public virtual void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
-        public virtual void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
+            IEnumerator StunTimer()
+            {
+                yield return new WaitForSeconds(stunLength);
+                m_isStunned = false;
+                OnNoLongerStunned();
+            }
+        }
+        protected virtual void OnStunned(float stunLength) { }
+        protected virtual void OnNoLongerStunned() { }
+
         #endregion
 
         #region Actions

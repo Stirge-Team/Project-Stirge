@@ -115,6 +115,11 @@ namespace Stirge.UtilityAI
 
         public bool SetDestination(Vector3 targetPosition)
         {
+            if (!m_nav.isOnNavMesh)
+            {
+
+            }
+            
             SetMovementState(MotorMovementState.Navigation);
             bool pathFound = m_nav.SetDestination(targetPosition);
             return pathFound;
@@ -131,24 +136,32 @@ namespace Stirge.UtilityAI
             // Also, I don't think this works
             // Could try using the grounded RaycastHit buffer to get a position
 
-            Vector3 currentDestination = m_nav.destination;
+            // determine position to sync to
+            // Prefer spot on NavMesh, otherwise just use the current position
+            Vector3 syncPosition = NavMesh.SamplePosition(Rigidbody.position, out NavMeshHit hit, 2f, NavMesh.AllAreas) ? hit.position : Rigidbody.position;
 
-            // determine position to sync to, prefer agent is on spot on NavMesh
-            Vector3 syncPosition;
-            if (NavMesh.SamplePosition(Rigidbody.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-                syncPosition = hit.position;
-            else
-                syncPosition = Rigidbody.position;
-
-            m_nav.Warp(syncPosition);
-
-            // if agent is active, then preserve destination after the warp
-            if (MovementState == MotorMovementState.Navigation)
-                m_nav.SetDestination(currentDestination);
+            PlaceAgentOnNavMesh(syncPosition);
         }
         private void SyncNavMeshAgentRotation()
         {
             m_nav.transform.rotation = Rigidbody.rotation; // does this work?
+        }
+        private void PlaceAgentOnNavMesh(Vector3 position)
+        {
+            if (!m_nav.isOnNavMesh)
+            {
+                // save the destination as Warp clears it
+                Vector3 currentDestination = m_nav.destination;
+                m_nav.Warp(position);
+
+                // restart the component as this can help with placing it on the NavMesh for some reason, Unity shit
+                m_nav.enabled = false;
+                m_nav.enabled = true;
+
+                // Set the destination if we are in Navigation mode
+                if (MovementState == MotorMovementState.Navigation)
+                    m_nav.SetDestination(currentDestination);
+            }
         }
         #endregion
 
