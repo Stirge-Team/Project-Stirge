@@ -11,7 +11,7 @@ public class AttackTimelineSelectorWindow : EditorWindow
         GetWindow<AttackTimelineSelectorWindow>("Timeline Selector");
     }
 
-    string folderPath = "";
+    string folderPath = "Assets\\";
     PlayableDirector director = null;
 
     public void OnSelectionChange()
