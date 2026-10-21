@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 namespace Stirge.Camera
 {
+    using Stirge.Combat;
     using UtilityAI;
 
     public class EnemyGroupHandler : MonoBehaviour
@@ -13,7 +14,7 @@ namespace Stirge.Camera
         [SerializeField]
         private float m_range = 10f;
         [SerializeField]
-        private Transform m_rangeOrigin;
+        private CombatEntity m_rangeOrigin;
         private CinemachineTargetGroup m_groupScript;
         private bool m_isActive => CameraStateManager.Instance.State != "LockOn";
         // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -29,7 +30,7 @@ namespace Stirge.Camera
             if(!m_isActive)
                 return;
 
-            foreach (var ene in FindObjectsByType<NavMeshAgent>(FindObjectsSortMode.None))
+            foreach (var ene in FindObjectsByType<CombatEntity>(FindObjectsSortMode.None))
             { 
                 //If this agent doesn't have a stirge enemy script - skip them
                 if (ene.GetComponentInParent<UtilityEnemy>() == null)
@@ -39,20 +40,20 @@ namespace Stirge.Camera
                 Transform eneTrans = ene.transform.parent.GetChild(0).transform;
 
                 //Check if the distance from the origin is within range
-                if (Vector3.Distance(eneTrans.position, m_rangeOrigin.position) <= m_range)
+                if (Vector3.Distance(ene.transform.position, m_rangeOrigin.transform.position) <= m_range)
                 {
                         //add the enemy to the list of targets
-                        AttemptAddMember(eneTrans, 0.5f, 1f);
+                        AttemptAddMember(ene, 0.5f, 1f);
                 }
                 else
                 {
                     //otherwise remove them - this works if they aren't in the list as the code will just skip over them
-                    m_groupScript.RemoveMember(eneTrans);
+                    m_groupScript.RemoveMember(ene.transform);
                 }
             }
 
             //if the current state is the combat state and the only target is the origin point
-            if (m_groupScript.Targets.Count <= 1 && CameraStateManager.Instance.State == "Combat" && m_groupScript.Targets[0].Object == m_rangeOrigin)
+            if (m_groupScript.Targets.Count <= 1 && CameraStateManager.Instance.State == "Combat" && m_groupScript.Targets[0].Object == m_rangeOrigin.transform)
             {
                 if (s_debug) Debug.Log("Only the origin remains. Returning to the explore camera & clearing all targets");
                 //exit the combat state
@@ -85,17 +86,17 @@ namespace Stirge.Camera
             }
         }
 
-        private void AttemptAddMember(Transform newMember, float weight, float radius)
+        private void AttemptAddMember(CombatEntity newMember, float weight, float radius)
         {
             foreach(var target in m_groupScript.Targets)
             {
-                if(newMember == target.Object)
+                if(newMember.transform == target.Object)
                     return;
             }
             
             if (s_debug) Debug.Log($"Adding {newMember.name} to the group of targets.");
 
-            m_groupScript.AddMember(newMember, weight, radius);
+            m_groupScript.AddMember(newMember.transform, weight, radius);
         }
     }
 }

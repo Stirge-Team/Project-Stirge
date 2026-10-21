@@ -1793,6 +1793,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552681412}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &566166941 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5387391105207413060, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+  m_PrefabInstance: {fileID: 921871855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &566166942 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8141254394682916539, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+  m_PrefabInstance: {fileID: 921871855}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd6c0afad80a47b5dac54b9c70cf7937, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Camera.LockOnCamera
 --- !u!1 &607132445
 GameObject:
   m_ObjectHideFlags: 0
@@ -2784,7 +2800,7 @@ PrefabInstance:
     - target: {fileID: 1336962676972417408, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_rangeOrigin
       value: 
-      objectReference: {fileID: 2001077769}
+      objectReference: {fileID: 2001077777}
     - target: {fileID: 3234605026587715191, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.3869
@@ -2928,7 +2944,7 @@ PrefabInstance:
     - target: {fileID: 8141254394682916539, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_originPoint
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2001077769}
     - target: {fileID: 8606716548774336035, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.23823
@@ -3251,6 +3267,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 566166942}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggerLockOn
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Stirge.Camera.LockOnCamera, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 1586204145904131630, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_PlayableAsset
       value: 
@@ -3295,10 +3331,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5169013462846126806, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_attackSnappingMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6050839656796171245, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_Name
       value: Timeline Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6715431048619669737, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_targetClients.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6715431048619669737, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: 'm_targetClients.Array.data[1]'
+      value: 
+      objectReference: {fileID: 566166941}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6460,6 +6508,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2202064621031587732, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
   m_PrefabInstance: {fileID: 1027503291}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2001077777 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5169013462846126806, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+  m_PrefabInstance: {fileID: 1027503291}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
 --- !u!1001 &2078812174
 PrefabInstance:
   m_ObjectHideFlags: 0
