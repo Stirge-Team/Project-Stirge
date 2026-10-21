@@ -10,7 +10,7 @@ namespace Stirge.UtilityAI
     public class SerializedAction : ScriptableObject
     {
         [SerializeField, Range(0, 5f)] protected float m_scoreScaling = 1f;
-        [SerializeField] protected bool m_shouldFlushPlayerInputBuffer;
+        [SerializeField] protected bool m_shouldFlushPlayerInputBuffer = true;
         [SerializeField] protected float m_duration;
         [SerializeField] protected string m_displayName;
         [SerializeField] protected ActionType m_actionType;
