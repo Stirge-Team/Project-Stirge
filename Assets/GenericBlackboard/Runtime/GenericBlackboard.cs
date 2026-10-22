@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Stirge.GenericBlackboard
 {
@@ -76,6 +77,7 @@ namespace Stirge.GenericBlackboard
         {
             if (!s_properties.TryGetValue(propertyName, out ValueIndex valueIndex) || valueIndex.table.valueType != typeof(TValue))
             {
+                Debug.LogError($"Property with name '{propertyName.Name}' and type '{typeof(TValue).Name}' does not exist in Blackboard for type {typeof(TBase).Name}.");
                 value = default;
                 return false;
             }
@@ -94,6 +96,7 @@ namespace Stirge.GenericBlackboard
         {
             if (!s_properties.TryGetValue(propertyName, out ValueIndex valueIndex) || !valueType.IsAssignableFrom(valueIndex.table.valueType))
             {
+                Debug.LogError($"Property with name '{propertyName.Name}' and type '{valueType.Name}' does not exist in Blackboard for type {typeof(TBase).Name}.");
                 value = default;
                 return false;
             }

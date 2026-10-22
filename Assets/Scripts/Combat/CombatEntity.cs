@@ -1,12 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.Timeline;
 
 namespace Stirge.Combat
 {
-    using AttackTimeline;
+    using Hitboxes;
     using UtilityAI;
 
     public enum ModifierType
@@ -23,42 +23,68 @@ namespace Stirge.Combat
         [SerializeField] private PlayableDirector m_director;
 
         // action fields
+        private Action m_currentAction;
         protected bool m_isPerformingAction;
 
         // status fields
         protected List<Status> m_inflictedStatuses = new();
         protected bool m_isStunned;
 
-        // properties
+        // combat fields
+        private float m_baseDamage;
+        private ModifierType m_damageModifierType;
+        private float m_damageModifier;
+
+        // reference properties
         public CombatEntityMotor Motor => m_motor;
         public EntityHealth Health => m_health;
+
+        // public properties
+        public bool IsStunned => m_isStunned;
         public bool IsPerformingAction => m_isPerformingAction;
+        public float ActualDamage
+        {
+            get
+            {
+                return m_damageModifierType switch
+                {
+                    ModifierType.Additive => m_baseDamage + m_damageModifier,
+                    ModifierType.Multiplicative => m_baseDamage * m_damageModifier,
+                    _ => m_baseDamage,
+                };
+            }
+        }
 
         #region UnityEvents
-        private void Awake()
+        protected void Awake()
         {
             AwakeThis();
         }
 
-        private void Update()
+        protected void Start()
         {
-            float deltaTime = Time.deltaTime;
-            UpdateThis(deltaTime);
-
-            UpdateStatuses(deltaTime);
+            StartThis();
         }
 
-        private void OnEnable()
+        protected void Update()
+        {
+            UpdateThis();
+
+            UpdateStatuses();
+        }
+
+        protected void OnEnable()
         {
             m_director.stopped += OnActionEnd;
         }
-        private void OnDisable()
+        protected void OnDisable()
         {
             m_director.stopped -= OnActionEnd;
         }
 
         protected virtual void AwakeThis() { }
-        protected virtual void UpdateThis(float deltaTime) { }
+        protected virtual void StartThis() { }
+        protected virtual void UpdateThis() { }
         #endregion
 
         #region Death State
@@ -66,8 +92,13 @@ namespace Stirge.Combat
         {
             m_health.ModifyHealth(-Mathf.Abs(damage));
             OnDamageTaken(damage);
+            if (m_health._isDead)
+            {
+                OnDeath();
+            }
         }
         protected virtual void OnDamageTaken(int damage) { }
+        protected virtual void OnDeath() { }
 
         public bool IsDead()
         {
@@ -76,16 +107,16 @@ namespace Stirge.Combat
         #endregion
 
         #region Status
-        public void InflictStatus(Status newStatus, CombatEntity user)
+        public void InflictStatus(CombatEntity inflicter, Status newStatus, StatusInflictData inflictData)
         {
             if (newStatus.DurationType == StatusDurationType.Instant)
             {
-                newStatus.OnApply(user, this);
+                newStatus.OnApply(inflicter, this);
                 return;
             }
             
             Type statusType = newStatus.StatusType;
-            int indexOfExistingStatus = GetIndexOfStatus(statusType);
+            int indexOfExistingStatus = GetIndexOfStatus(statusType, newStatus.DisplayName);
 
             // If a Status of the same type already exists
             if (indexOfExistingStatus != -1)
@@ -104,16 +135,16 @@ namespace Stirge.Combat
             }
 
             m_inflictedStatuses.Add(newStatus);
-            newStatus.OnApply(user, this);
+            newStatus.OnApply(inflicter, this);
         }
 
         /// <summary>
         /// Returns -1 if no <see cref="Status"/> of type <paramref name="statusType"/> is inflicted.
         /// </summary>
         /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
-        public int GetIndexOfStatus(Type statusType)
+        public int GetIndexOfStatus(Type statusType, string statusName)
         {
-            return m_inflictedStatuses.FindIndex(status => status.StatusType == statusType);
+            return m_inflictedStatuses.FindIndex(s => s.StatusType == statusType && s.DisplayName == statusName);
         }
         /// <summary>
         /// Returns -1 if no <see cref="Status"/> with name <paramref name="statusName"/> is inflicted.
@@ -132,7 +163,7 @@ namespace Stirge.Combat
             return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
         }
 
-        private void UpdateStatuses(float deltaTime)
+        private void UpdateStatuses()
         {
             List<int> indicesToRemove = new();
             int index = 0;
@@ -155,30 +186,43 @@ namespace Stirge.Combat
             }
         }
 
-        public bool GetIsStunned()
+        public Status CreateRuntimeStatusFromCurrentActionAtIndex(int statusIndex)
         {
-            return m_isStunned;
+            return m_currentAction.CreateRuntimeStatusAtIndex(statusIndex);
         }
+
         public void SetIsStunned(bool value, float stunLength = 0)
         {
             m_isStunned = value;
 
             if (value)
-                EnterStun(stunLength);
-        }
+            {
+                StartCoroutine(StunTimer());
+                OnStunned(stunLength);
+            }
 
-        public virtual void EnterStun(float stunLength) { throw new NotImplementedException(); }
-        public virtual void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
-        public virtual void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool m_ignoreGrounded) { throw new NotImplementedException(); }
+            IEnumerator StunTimer()
+            {
+                yield return new WaitForSeconds(stunLength);
+                m_isStunned = false;
+                OnNoLongerStunned();
+            }
+        }
+        protected virtual void OnStunned(float stunLength) { }
+        protected virtual void OnNoLongerStunned() { }
+
         #endregion
 
         #region Actions
-        public virtual void UseAction(TimelineAsset attackTimeline)
+        public virtual void PerformAction(Action action)
         {
             StopPerformingAction();
-            m_director.Play(attackTimeline);
-            m_motor.OnActionStart();
+            m_currentAction = action;
             m_isPerformingAction = true;
+
+            if (action.Timeline != null)
+                m_director.Play(action.Timeline);
+            m_motor.OnActionStart();
         }
 
         /// <summary>
@@ -187,40 +231,23 @@ namespace Stirge.Combat
         /// <param name="director"></param>
         public void OnActionEnd(PlayableDirector director)
         {
+            m_currentAction = null;
             m_isPerformingAction = false;
             m_motor.OnActionEnd();
+            OnActionEndInternal(director);
         }
+        protected virtual void OnActionEndInternal(PlayableDirector director) { }
 
         public void StopPerformingAction()
         {
             if (m_isPerformingAction)
             {
-                m_director.Stop();
+                m_director.Stop(); // OnActionEnd()
             }
-
-            // Set attacking to false
-            m_isPerformingAction = false;
         }
         #endregion
 
         #region Combat
-        private float m_baseDamage;
-        private ModifierType m_damageModifierType;
-        private float m_damageModifier;
-
-        public float actualDamage
-        {
-            get
-            {
-                return m_damageModifierType switch
-                {
-                    ModifierType.Additive => m_baseDamage + m_damageModifier,
-                    ModifierType.Multiplicative => m_baseDamage * m_damageModifier,
-                    _ => m_baseDamage,
-                };
-            }
-        }
-
         public void SetDamageModifier(ModifierType type, float modifier)
         {
             m_damageModifierType = type;
@@ -230,10 +257,18 @@ namespace Stirge.Combat
         {
             m_damageModifier -= modifier;
         }
+
         /// <inheritdoc/>
-        public override void OnHit(HitboxData hitboxData, CombatEntity attackingEntity)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices)
         {
-            hitboxData.OnHitEffect.OnHit(this, attackingEntity);
+            TakeDamage(hitboxData.Damage);
+            if (statusesToApplyIndices != null)
+            {
+                foreach (int statusIndex in statusesToApplyIndices)
+                {
+                    InflictStatus(attacker, CreateRuntimeStatusFromCurrentActionAtIndex(statusIndex), hitboxData.StatusInflictDatas[statusIndex]);
+                }
+            }
         }
 
         #endregion

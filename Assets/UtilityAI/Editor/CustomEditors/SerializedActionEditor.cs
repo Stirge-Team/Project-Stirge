@@ -9,6 +9,7 @@ namespace Stirge.UtilityAI.CustomEditors
     public class SerializedActionEditor : SerializedScorableEditor<Action>
     {
         private const string s_scoreScalingPropertyName = "m_scoreScaling";
+        private const string s_shouldFlushPlayerInputBufferPropertyName = "m_shouldFlushPlayerInputBuffer";
         private const string s_durationPropertyName = "m_duration";
         private const string s_displayNamePropertyName = "m_displayName";
         private const string s_actionTypePropertyName = "m_actionType";
@@ -19,9 +20,10 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_conditionsPropertyName = "m_conditions";
         private const string s_scoringMethodsPropertyName = "m_scoringMethods";
 
-        private static readonly string[] s_basePropertyNames = new string[10]
+        private static readonly string[] s_basePropertyNames = new string[11]
         {
             s_scoreScalingPropertyName,
+            s_shouldFlushPlayerInputBufferPropertyName,
             s_durationPropertyName,
             s_displayNamePropertyName,
             s_actionTypePropertyName,
@@ -34,6 +36,7 @@ namespace Stirge.UtilityAI.CustomEditors
         };
 
         private SerializedProperty m_scoreScalingProperty;
+        private SerializedProperty m_shouldFlushPlayerInputBufferProperty;
         private SerializedProperty m_durationProperty;
         private SerializedProperty m_displayNameProperty;
         private SerializedProperty m_actionTypeProperty;
@@ -51,6 +54,7 @@ namespace Stirge.UtilityAI.CustomEditors
         protected override void FindSerializedProperties()
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
+            m_shouldFlushPlayerInputBufferProperty = serializedObject.FindProperty(s_shouldFlushPlayerInputBufferPropertyName);
             m_durationProperty = serializedObject.FindProperty(s_durationPropertyName);
             m_displayNameProperty = serializedObject.FindProperty(s_displayNamePropertyName);
             m_actionTypeProperty = serializedObject.FindProperty(s_actionTypePropertyName);
@@ -65,6 +69,7 @@ namespace Stirge.UtilityAI.CustomEditors
         protected override void DrawBaseProperties()
         {
             EGL.PropertyField(m_scoreScalingProperty);
+            EGL.PropertyField(m_shouldFlushPlayerInputBufferProperty);
             EGL.PropertyField(m_durationProperty);
             EGL.PropertyField(m_displayNameProperty);
             EGL.PropertyField(m_actionTypeProperty);

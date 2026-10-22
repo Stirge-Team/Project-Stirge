@@ -2,29 +2,30 @@ using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
 
-namespace Stirge.AttackTimeline
+namespace Stirge.AttackTimeline.ComboTrack
 {
     using Input;
+    using UtilityAI;
 
     public class ComboMixer : PlayableBehaviour
     {
         private readonly AttackInput m_comboInput;
-        private readonly TimelineAsset m_comboTimeline;
+        private readonly SerializedAction m_comboAction;
 
         private PlayerInputProcessing m_boundPIP;
         private ComboState m_comboState;
 
         public ComboMixer() { }
-        public ComboMixer(AttackInput comboInput, TimelineAsset comboTimeline)
+        public ComboMixer(AttackInput comboInput, SerializedAction comboAction)
         {
             m_comboInput = comboInput;
-            m_comboTimeline = comboTimeline;
+            m_comboAction = comboAction;
             m_comboState = ComboState.Closed;
         }
 
-        public static ScriptPlayable<ComboMixer> Create(PlayableGraph graph, int inputCount, AttackInput comboInput, TimelineAsset comboTimeline)
+        public static ScriptPlayable<ComboMixer> Create(PlayableGraph graph, int inputCount, AttackInput comboInput, SerializedAction comboAction)
         {
-            return ScriptPlayable<ComboMixer>.Create(graph, new(comboInput, comboTimeline), inputCount);
+            return ScriptPlayable<ComboMixer>.Create(graph, new(comboInput, comboAction), inputCount);
         }
 
         public override void OnPlayableDestroy(Playable playable)
@@ -67,7 +68,7 @@ namespace Stirge.AttackTimeline
                 case ComboState.Closed:
                     if (HasInput())
                     {
-                        m_boundPIP.AddComboBinding(m_comboInput, m_comboTimeline);
+                        m_boundPIP.AddComboBinding(m_comboInput, m_comboAction);
                         m_comboState = ComboState.Open;
                     }
                     break;

@@ -13,6 +13,9 @@ namespace Stirge.UtilityAI.Statuses
 
         public override Type StatusType => typeof(DamageBuff);
 
+        /// <inheritdoc/>
+        public override void Setup(UtilityAI.Action action) { }
+
         public void Setup(ModifierType modifierType, float modifier)
         {
             m_type = modifierType;

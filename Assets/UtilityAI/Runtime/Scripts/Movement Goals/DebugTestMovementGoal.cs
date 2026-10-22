@@ -1,9 +1,10 @@
-using Stirge.Combat;
-using Stirge.Serialization;
 using UnityEngine;
 
 namespace Stirge.UtilityAI.MovementGoals
 {
+    using Combat;
+    using Serialization;
+
     public class DebugTestMovementGoal : MovementGoal, ISetupable<float, string, bool>
     {
         private float m_score;

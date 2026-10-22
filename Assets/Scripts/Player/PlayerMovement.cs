@@ -235,7 +235,7 @@ namespace Stirge.Player
             return false;
         }
 
-        public void AssignLockOnTarget(Transform target)
+        public void ReciveLockOnTarget(Transform target)
         {
             if (target != m_lockOnTarget)
             {
@@ -243,6 +243,10 @@ namespace Stirge.Player
             }
         }
 
+        public void ClearLockOnTarget()
+        {
+            CancelLockOn();
+        }
         public void CancelLockOn()
         {
             if (m_lockOnTarget != null)

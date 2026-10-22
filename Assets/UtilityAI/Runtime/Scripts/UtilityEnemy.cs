@@ -18,6 +18,8 @@ namespace Stirge.UtilityAI
         private UtilityBrain m_brain;
         private UtilityEnemyMotor m_enemyMotor;
 
+        public event Action<UtilityEnemy> onDeath;
+
         // component properties
         public UtilityBrain Brain => m_brain;
         public UtilityEnemyMotor EnemyMotor => m_enemyMotor;
@@ -27,17 +29,16 @@ namespace Stirge.UtilityAI
 
         // field properties
         public CombatEntity Target => m_target;
-        public Vector3 TargetPosition => m_targetPosition;
         public bool HasTarget => m_hasTarget;
         public float DistanceToTarget => m_hasTarget ? Vector3.Distance(Motor.GetPosition(), m_targetPosition) : float.PositiveInfinity;
 
         #region Unity Events
-        private void Awake()
+        protected override void AwakeThis()
         {
             m_enemyMotor = (UtilityEnemyMotor)Motor;
         }
 
-        private void Start()
+        protected override void StartThis()
         {
             //Time.fixedDeltaTime = 0.333f;
 
@@ -47,7 +48,7 @@ namespace Stirge.UtilityAI
             m_brain.Start();
         }
 
-        private void Update()
+        protected override void UpdateThis()
         {
             if (m_target != null)
                 m_targetPosition = m_target.Motor.GetPosition();
@@ -74,10 +75,23 @@ namespace Stirge.UtilityAI
             m_hasTarget = false;
         }
 
-        public bool IsNotWithinStoppingDistanceOf(Vector3 position)
+        public void SetDestination(Vector3 newDestination)
         {
-            return Vector3.SqrMagnitude(position - Motor.GetPosition()) > NavMeshAgent.stoppingDistance * NavMeshAgent.stoppingDistance;
+            
         }
         #endregion
+
+        #region DeathState
+        protected override void OnDeath()
+        {
+            onDeath.Invoke(this);
+            Destroy(transform.parent.gameObject);
+        }
+        #endregion
+
+        private void OnDrawGizmos()
+        {
+            m_brain?.OnDrawGizmos(this, m_target);
+        }
     }
 }

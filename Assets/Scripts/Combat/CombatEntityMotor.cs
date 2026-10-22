@@ -37,6 +37,14 @@ namespace Stirge.Combat
         [SerializeField, Min(0)] private float m_groundCheckRadius;
         [SerializeField, Range(0f, 90f)] private float m_slopeLimit;
 
+        [Header("Penetration Detection")]
+        [SerializeField, Range(1, 256)] private int m_penCheckMaxNeighbours;
+        [SerializeField, Min(0f)] private float m_penCheckRadius;
+        [SerializeField] private LayerMask m_penCheckMask;
+
+        // penetration detection
+        private Collider[] m_penCheckNeighbours;
+
         // velocities
         protected Vector3 m_currentVelocity;
         private Vector3 m_feetOffset;
@@ -93,6 +101,8 @@ namespace Stirge.Combat
 
             SetMovementState(MotorMovementState.Velocity);
 
+            m_penCheckNeighbours = new Collider[m_penCheckMaxNeighbours];
+
             OnStart();
         }
         protected virtual void OnStart() { }
@@ -133,9 +143,41 @@ namespace Stirge.Combat
             OnFixedUpdate();
         }
         protected virtual void OnFixedUpdate() { }
+
+        public void OnAnimatorMove()
+        {
+            MovePosition(m_rb.position + m_anim.deltaPosition);
+            SetRotation(m_rb.rotation * m_anim.deltaRotation);
+        }
         #endregion
 
         #region Transformation
+        /// <summary>
+        /// Transform the <see cref="CombatEntityMotor"/> with respect to collisions as defined in <see cref="m_penCheckMask"/>;
+        /// </summary>
+        /// <param name="newPosition"></param>
+        public void MovePosition(Vector3 newPosition)
+        {
+            m_rb.MovePosition(newPosition);
+
+            int count = Physics.OverlapSphereNonAlloc(newPosition, 2.5f, m_penCheckNeighbours, m_penCheckMask);
+            for (int i = 0; i < count; i++)
+            {
+                Collider other = m_penCheckNeighbours[i];
+                if (!other || other == m_col)
+                    continue;
+
+                if (Physics.ComputePenetration(m_col, m_rb.position, m_rb.rotation,
+                    other, other.transform.position, other.transform.rotation,
+                    out Vector3 direction, out float distance))
+                {
+                    m_rb.MovePosition(newPosition + direction * distance);
+                }
+            }
+
+            OnMovePosition(m_rb.position);
+        }
+        protected virtual void OnMovePosition(Vector3 newPosition) { }
         public void SetPosition(Vector3 newPosition)
         {
             //transform.position = newPosition;
@@ -161,14 +203,6 @@ namespace Stirge.Combat
         public Vector3 GetPosition()
         {
             return m_rb.position;
-        }
-        #endregion
-
-        #region Animation
-        public void OnAnimatorMove()
-        {
-            SetPosition(m_rb.position + m_anim.deltaPosition);
-            SetRotation(m_rb.rotation * m_anim.deltaRotation);
         }
         #endregion
 

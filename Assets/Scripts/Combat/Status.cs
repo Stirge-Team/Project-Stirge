@@ -1,10 +1,11 @@
 using System;
-using Stirge.Camera;
 using Unity.Cinemachine;
 using UnityEngine;
 
 namespace Stirge.Combat.OldStatus
 {
+    using Camera;
+
     [System.Serializable]
     public abstract class Status
     {
@@ -106,7 +107,7 @@ namespace Stirge.Combat.OldStatus
         public override void OnInflict(CombatEntity targetEntity, CombatEntity attackingEntity)
         {
             Vector3 dir = attackingEntity.Motor.transform.forward;
-            targetEntity.EnterKnockback(m_strength, dir, m_height, 0, m_ignoreGrounded);
+            //targetEntity.EnterKnockback(m_strength, dir, m_height, 0, m_ignoreGrounded);
         }
     }
 
@@ -130,7 +131,7 @@ namespace Stirge.Combat.OldStatus
 
         public override void OnInflict(CombatEntity targetEntity)
         {
-            targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0, m_ignoreGrounded);
+            //targetEntity.EnterAirJuggle(m_strength, Vector3.up, m_stallLength, 0, m_ignoreGrounded);
         }
     }
 

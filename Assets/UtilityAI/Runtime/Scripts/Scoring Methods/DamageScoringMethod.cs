@@ -9,7 +9,7 @@ namespace Stirge.UtilityAI.ScoringMethods
     {
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return m_scorable.damage;
+            return m_scorable.Damage;
         }
     }
 }

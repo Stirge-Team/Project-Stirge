@@ -34,6 +34,7 @@ namespace Stirge.UtilityAI
         public static bool Comparable = StirgeTypeHelper.IsNumericType(FirstType) && StirgeTypeHelper.IsNumericType(SecondType);
 
         private TScorable m_scorable;
+        private string m_displayName;
         private Operation m_operation;
         private ConditionType m_type;
 
@@ -43,6 +44,8 @@ namespace Stirge.UtilityAI
         private BlackboardPropertyName m_secondPropertyName;
         private ConditionPropertyTarget m_firstPropertyTarget;
         private ConditionPropertyTarget m_secondPropertyTarget;
+
+        public sealed override string DisplayName => m_displayName;
 
         public sealed override bool Evaluate(CombatEntity user, CombatEntity target)
         {
@@ -56,24 +59,12 @@ namespace Stirge.UtilityAI
                     return false;
                 }
 
-                if (user is UtilityEnemy enemyUser)
+                return m_operation switch
                 {
-                    return m_operation switch
-                    {
-                        Operation.Equal => GetFirstObject(enemyUser, target).Equals(GetSecondObject(enemyUser, target)),
-                        Operation.NotEqual => !GetFirstObject(enemyUser, target).Equals(GetSecondObject(enemyUser, target)),
-                        _ => LogNotComparableError(), // if operation is neither Equals or NotEquals, then its trying to compare
-                    };
-                }
-                else
-                {
-                    return m_operation switch
-                    {
-                        Operation.Equal => GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
-                        Operation.NotEqual => !GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
-                        _ => LogNotComparableError(), // if operation is neither Equals or NotEquals, then its trying to compare
-                    };
-                }
+                    Operation.Equal => GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
+                    Operation.NotEqual => !GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
+                    _ => LogNotComparableError(), // if operation is neither Equals or NotEquals, then its trying to compare
+                };
             }
 
             // if comparable, convert to single
@@ -99,7 +90,7 @@ namespace Stirge.UtilityAI
         }
 
         #region Get Objects
-        private T1 GetFirstObject<T>(T user, CombatEntity target) where T : CombatEntity
+        private T1 GetFirstObject(CombatEntity user, CombatEntity target)
         {
             return m_type switch
             {
@@ -107,7 +98,7 @@ namespace Stirge.UtilityAI
                 ConditionType.FirstPropertySecondObject or ConditionType.BothProperty =>
                     m_firstPropertyTarget switch
                     {
-                        ConditionPropertyTarget.User => GetFirstProperty(user, m_firstPropertyName),
+                        ConditionPropertyTarget.User => user is UtilityEnemy enemy ? GetFirstProperty<UtilityEnemy>(enemy, m_firstPropertyName) : GetFirstProperty<CombatEntity>(user, m_firstPropertyName),
                         ConditionPropertyTarget.Target => GetFirstProperty(target, m_firstPropertyName),
                         ConditionPropertyTarget.Scorable => GetFirstProperty(m_scorable, m_firstPropertyName),
                         _ => default
@@ -115,7 +106,7 @@ namespace Stirge.UtilityAI
                 _ => default,
             };
         }
-        private T2 GetSecondObject<T>(T user, CombatEntity target) where T : CombatEntity
+        private T2 GetSecondObject(CombatEntity user, CombatEntity target)
         {
             return m_type switch
             {
@@ -123,7 +114,7 @@ namespace Stirge.UtilityAI
                 ConditionType.FirstObjectSecondProperty or ConditionType.BothProperty =>
                     m_secondPropertyTarget switch
                     {
-                        ConditionPropertyTarget.User => GetSecondProperty(user, m_secondPropertyName),
+                        ConditionPropertyTarget.User => user is UtilityEnemy enemy ? GetSecondProperty<UtilityEnemy>(enemy, m_firstPropertyName) : GetSecondProperty<CombatEntity>(user, m_firstPropertyName),
                         ConditionPropertyTarget.Target => GetSecondProperty(target, m_secondPropertyName),
                         ConditionPropertyTarget.Scorable => GetSecondProperty(m_scorable, m_secondPropertyName),
                         _ => default
@@ -137,7 +128,7 @@ namespace Stirge.UtilityAI
         #endregion
 
         #region Setup
-        public sealed override void Setup<T>(T scorable)
+        public sealed override void Setup<T>(T scorable, string displayName)
         {
             m_scorable = scorable as TScorable;
         }

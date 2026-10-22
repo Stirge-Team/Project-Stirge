@@ -1,17 +1,18 @@
 using System.Linq;
+using UnityEngine;
 using UnityEngine.Timeline;
 
 namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
-    using UnityEngine;
 
     public enum ActionType
     {
         Melee,
         Ranged,
-        Movement
+        Movement,
+        Utility
     }
 
     /// <summary>
@@ -26,6 +27,10 @@ namespace Stirge.UtilityAI
         /// The returned score of this <see cref="Action"/> will be multiplied by this value.
         /// </summary>
         private float m_scoreScaling = 1f;
+        /// <summary>
+        /// If the <see cref="Player.Player"/> performs this <see cref="Action"/>, should the <see cref="Input.PlayerInputProcessing"/> buffer be flushed?
+        /// </summary>
+        private bool m_shouldFlushPlayerInputBuffer;
         /// <summary>
         /// The length of time in seconds the <see cref="UtilityBrain"/> will wait after this <see cref="Action"/> is Performed until it Evaluates a new <see cref="Action"/>.
         /// </summary>
@@ -62,24 +67,28 @@ namespace Stirge.UtilityAI
         /// The ScoringMethods that determine the score this <see cref="Action"/> will return when Evaluated.
         /// </summary>
         private IScoringMethod[] m_scoringMethods;
+        private SerializedStatus_Base[] m_serializedStatuses;
 
-        private bool m_performed;
-        private float m_lifeTime;
-
-        private bool[] m_inflictedStatuses;
+        protected bool m_performed;
 
         // properties
-        public float duration => m_duration;
-        public string displayName => m_displayName;
-        public ActionType actionType => m_actionType;
-        public float damage => m_damage;
-        public float range => m_range;
+        public bool ShouldFlushPlayerInputBuffer => m_shouldFlushPlayerInputBuffer;
+        public float Duration => m_duration;
+        public string DisplayName => m_displayName;
+        public ActionType ActionType => m_actionType;
+        public TimelineAsset Timeline => m_timeline;
+        public float Damage => m_damage;
+        public float Range => m_range;
 
         /// <inheritdoc/>
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
-            if (!Enumerable.All(m_conditions, condition => condition.Evaluate(user, target)))
-                return 0f;
+            // If any Condition is false, return 0 score
+            foreach (ICondition condition in m_conditions)
+            {
+                if (!condition.Evaluate(user, target))
+                    return 0f;
+            }
 
             // Get score from Scoring Methods
             int scoringMethodCount = m_scoringMethods.Length;
@@ -101,40 +110,32 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// What happens when the <paramref name="user"/> Performs this <see cref="Action"/>.
         /// </summary>
-        public void Perform(CombatEntity user, CombatEntity target)
+        public virtual void Perform(CombatEntity user, CombatEntity target)
         {
             if (!m_performed)
             {
                 m_performed = true;
-                
-                if (m_timeline != null)
-                    user.UseAction(m_timeline);
+                user.PerformAction(this);
             }
-
-            // Update Statuses
-            for (int i = 0, count = m_statuses.Length; i < count; i++)
-            {
-                Status status = m_statuses[i];
-
-                if (status.InflictCondition == StatusInflictCondition.AfterDelay && // If this Status is a Delay status
-                    !m_inflictedStatuses[i] && // If this Status has not yet been inflicted
-                    m_lifeTime >= status.InflictDelay) // If the required amount of time has passed
-                {
-                    status.Inflict(user, target);
-                    m_inflictedStatuses[i] = true;
-                }
-            }
-
-            m_lifeTime += Time.deltaTime;
-
-            PerformInternal(user, target);
         }
-        protected virtual void PerformInternal(CombatEntity user, CombatEntity target) { }
 
         public virtual void Reset()
         {
             m_performed = false;
-            m_lifeTime = 0f;
+        }
+
+        /// <summary>
+        /// Override to draw custom gizmos per Action.
+        /// </summary>
+        public virtual void OnDrawGizmos(CombatEntity user, CombatEntity target)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(user.Motor.GetPosition(), m_range);
+        }
+
+        public Status CreateRuntimeStatusAtIndex(int statusIndex)
+        {
+            return m_serializedStatuses[statusIndex].CreateRuntimeStatus(this);
         }
 
         #region Setup
@@ -143,52 +144,52 @@ namespace Stirge.UtilityAI
             m_statuses = statuses;
             m_conditions = conditions;
             m_scoringMethods = scoringMethods;
-
-            m_inflictedStatuses = new bool[statuses.Length];
         }
 
-        public static TAction Create<TAction>(float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, new()
+        public static TAction Create<TAction>(float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, new()
         {
             TAction action = new()
             {
                 m_scoreScaling = scaling,
+                m_shouldFlushPlayerInputBuffer = shouldFlushPlayerInputBuffer,
                 m_duration = duration,
                 m_displayName = displayName,
                 m_actionType = actionType,
                 m_timeline = timeline,
                 m_damage = damage,
                 m_range = range,
+                m_serializedStatuses = serializedStatuses,
             };
 
             return action;
         }
-        public static TAction Create<TAction, TArg>(TArg arg, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg>, new()
+        public static TAction Create<TAction, TArg>(TArg arg, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1>, new()
+        public static TAction Create<TAction, TArg0, TArg1>(TArg0 arg0, TArg1 arg1, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2>(TArg0 arg0, TArg1 arg1, TArg2 arg2, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2, arg3);
             return action;
         }
-        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
+        public static TAction Create<TAction, TArg0, TArg1, TArg2, TArg3, TArg4>(TArg0 arg0, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, float scaling, bool shouldFlushPlayerInputBuffer, float duration, string displayName, ActionType actionType, TimelineAsset timeline, float damage, float range, SerializedStatus_Base[] serializedStatuses) where TAction : Action, ISetupable<TArg0, TArg1, TArg2, TArg3, TArg4>, new()
         {
-            var action = Create<TAction>(scaling, duration, displayName, actionType, timeline, damage, range);
+            var action = Create<TAction>(scaling, shouldFlushPlayerInputBuffer, duration, displayName, actionType, timeline, damage, range, serializedStatuses);
             action.Setup(arg0, arg1, arg2, arg3, arg4);
             return action;
         }
