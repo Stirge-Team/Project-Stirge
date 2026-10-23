@@ -629,6 +629,11 @@ MonoBehaviour:
   m_groundCheckDistance: 1
   m_groundCheckRadius: 0.5
   m_slopeLimit: 45
+  m_penCheckMaxNeighbours: 16
+  m_penCheckRadius: 3
+  m_penCheckMask:
+    serializedVersion: 2
+    m_Bits: 65
   m_jumpHeight: 3
   m_coyoteTime: 0.2
   m_inputStrengthScalar:
@@ -717,7 +722,7 @@ PlayableDirector:
   m_GameObject: {fileID: 6050839656796171245}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+  m_PlayableAsset: {fileID: 0}
   m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1

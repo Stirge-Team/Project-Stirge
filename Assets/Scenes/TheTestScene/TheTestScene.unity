@@ -2942,6 +2942,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2001077769}
     - target: {fileID: 8141254394682916539, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_lockOnRange
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8141254394682916539, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_originPoint
       value: 
       objectReference: {fileID: 2001077769}
