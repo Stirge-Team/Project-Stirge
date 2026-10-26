@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Stirge.Sound;
 using UnityEngine;
 
 namespace Stirge.Combat.Hitboxes
@@ -45,7 +46,7 @@ namespace Stirge.Combat.Hitboxes
         protected override void EnableHitbox()
         {
             gameObject.SetActive(true);
-            
+
             //reset collided objects
             m_savedColliders.Clear();
             m_appliedStatuses.Clear();
@@ -83,6 +84,9 @@ namespace Stirge.Combat.Hitboxes
                 statusesToInflictIndices.Add(inflictData.StatusActionIndex);
             }
 
+            if (m_data.CameraShakePreset != null) m_data.CameraShakePreset.TriggerScreenShake();
+            if (m_data.HitstopPreset != null) m_data.HitstopPreset.TriggerHitstop();
+            if (m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
             hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflictIndices.ToArray());
         }
 
