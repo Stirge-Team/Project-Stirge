@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Stirge.Camera;
 using Stirge.Sound;
 using UnityEngine;
 
@@ -85,10 +84,9 @@ namespace Stirge.Combat.Hitboxes
                 statusesToInflictIndices.Add(inflictData.StatusActionIndex);
             }
 
-            if (m_data.CameraShakePreset != null) CameraShakeController.Instance.BeginScreenshake(m_data.CameraShakePreset);
-            TimeManager.Instance.SetTimeScaleForTime(m_data.HitstopScale, m_data.HitstopDuration);
-            //On hit sound? I'll save this for another branch.
-            if(m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
+            if (m_data.CameraShakePreset != null) m_data.CameraShakePreset.TriggerScreenShake();
+            if (m_data.HitstopPreset != null) m_data.HitstopPreset.TriggerHitstop();
+            if (m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
             hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflictIndices.ToArray());
         }
 

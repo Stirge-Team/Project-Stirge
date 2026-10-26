@@ -29,5 +29,11 @@ namespace Stirge.Camera
             m_duration = duration;
             m_strengthOverTime = new(new(0,1),new(1,0));
         }
+
+        public bool TriggerScreenShake()
+        {
+            CameraShakeController.Instance.BeginScreenshake(this);
+            return true;
+        }
     }
 }
