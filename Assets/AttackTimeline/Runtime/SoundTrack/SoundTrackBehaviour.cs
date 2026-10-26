@@ -11,19 +11,13 @@ namespace Stirge.AttackTimeline.SoundTrack
     {
         [SerializeField] private SoundClip m_clip;
         private bool m_played = false;
-
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if(m_played)
                 return;
 
-            SoundManager.Instance.PlaySoundClipAtPosition(m_clip, Vector3.zero);
+            SoundManager.Instance.PlaySoundClipAtPosition(m_clip, (playerData as Transform).position);
             m_played = true;
-        }
-        //I dont thing that this is being called but sound manager auto clears sounds so it should be fine
-        public override void OnGraphStop(Playable playable)
-        {
-            SoundManager.Instance.StopPlayingSoundClip(m_clip);
         }
     }
 }

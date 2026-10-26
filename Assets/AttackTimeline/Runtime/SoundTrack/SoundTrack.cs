@@ -6,12 +6,12 @@ namespace Stirge.AttackTimeline.SoundTrack
 {
     [Serializable]
     [TrackClipType(typeof(SoundTrackClip))]
+    [TrackBindingType(typeof(Transform))]
     public class SoundTrack : TrackAsset
     {
         protected override void OnCreateClip(TimelineClip clip)
         {
-            clip.duration = 0.5f;
-            base.OnCreateClip(clip);
+            clip.duration = 0.1f;
         }
     }
 }
