@@ -629,6 +629,11 @@ MonoBehaviour:
   m_groundCheckDistance: 1
   m_groundCheckRadius: 0.5
   m_slopeLimit: 45
+  m_penCheckMaxNeighbours: 0
+  m_penCheckRadius: 0
+  m_penCheckMask:
+    serializedVersion: 2
+    m_Bits: 0
   m_jumpHeight: 3
   m_coyoteTime: 0.2
   m_inputStrengthScalar:
@@ -698,11 +703,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e5bddcb2e1aabfba6a5de29abca0ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.Player
---- !u!1 &5675101187560846097 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 891253175325986391, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
-  m_PrefabInstance: {fileID: 4799812991401377094}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6050839656796171245 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
@@ -753,6 +753,8 @@ PlayableDirector:
     value: {fileID: 5078408277998946099}
   - key: {fileID: -7881673849416079213, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
     value: {fileID: 2624874332217427091}
+  - key: {fileID: 2199630320878319261, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+    value: {fileID: 2202064621031587732}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &6128610353820571304
