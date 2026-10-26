@@ -21,6 +21,10 @@ namespace Stirge.AttackTimeline.StatusTrack
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
+            // If game is not running, do not try to apply status
+            if (!Application.isPlaying)
+                return;
+
             if (m_inflicted)
                 return;
 
