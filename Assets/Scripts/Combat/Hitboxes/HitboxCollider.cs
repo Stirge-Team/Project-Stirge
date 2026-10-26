@@ -55,11 +55,6 @@ namespace Stirge.Combat.Hitboxes
             //reset vectors
             m_lastPos = transform.position;
             m_velocity = Vector3.zero;
-
-            if (m_data.CameraShakePreset == null)
-            {
-                Debug.LogWarning($"There is no screen shake preset attached to this move of {m_owner}");
-            }
         }
         protected override void DisableHitbox()
         {
@@ -93,7 +88,7 @@ namespace Stirge.Combat.Hitboxes
             if (m_data.CameraShakePreset != null) CameraShakeController.Instance.BeginScreenshake(m_data.CameraShakePreset);
             TimeManager.Instance.SetTimeScaleForTime(m_data.HitstopScale, m_data.HitstopDuration);
             //On hit sound? I'll save this for another branch.
-            //SoundManager.Instance.PlaySoundClipAtPosition(new SoundClip(), m_owner.transform.position);
+            if(m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
             hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflictIndices.ToArray());
         }
 
