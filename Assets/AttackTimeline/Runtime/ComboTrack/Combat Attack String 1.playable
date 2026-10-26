@@ -68,6 +68,9 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 8
       m_damage: 1
+      m_cameraShakePreset: {fileID: 11400000, guid: 5988a491bd0972b458fed2ad53868290, type: 2}
+      m_hitstopDuration: 1
+      m_hitstopScale: 0.2
       m_statusInflictData: []
 --- !u!114 &11400000
 MonoBehaviour:
