@@ -159,7 +159,8 @@ namespace Stirge.AttackTimeline.MoveTrack
                     targetTranslation = m_translation.Evaluate(t);
 
                 // targetTranslation - m_lastTargetTranslation = motion for this frame
-                m_boundMotor.MovePosition(m_boundMotor.transform.position + targetTranslation - m_lastTargetTranslation);
+                Vector3 motion = targetTranslation - m_lastTargetTranslation;
+                m_boundMotor.MovePosition(m_boundMotor.Rigidbody.position + motion);
 
                 m_lastTargetTranslation = targetTranslation;
             }

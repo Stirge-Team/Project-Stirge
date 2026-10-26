@@ -162,9 +162,10 @@ namespace Stirge.UtilityAI
             }
         }
 
-        public void OnDrawGizmos(CombatEntity user, CombatEntity target)
+        public void OnDrawGizmos(UtilityEnemy user, CombatEntity target)
         {
             CurrentAction?.OnDrawGizmos(user, target);
+            CurrentMovementGoal?.OnDrawGizmos(user, target);
         }
 
         #region Setup

@@ -167,7 +167,7 @@ MonoBehaviour:
   m_bindingType: 0
   m_defaultBindings:
   - m_attackInput: 1
-    m_attackTimeline: {fileID: 11400000, guid: f6fd9d4d45ceacd4a92b3ede8dc8058e, type: 2}
+    m_attackAction: {fileID: 0}
 --- !u!1 &195993712
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,6 +526,11 @@ MonoBehaviour:
   m_health: {fileID: 0}
   m_director: {fileID: 342028844}
   m_input: {fileID: 342028851}
+  m_snappingMaxAngle: 90
+  m_attackSnappingMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_softLockHoldRange: 2
 --- !u!114 &342028848
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -618,8 +623,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Input.PlayerInputProcessing
   m_player: {fileID: 342028847}
-  m_inputDuration: 0.2
-  m_bufferDuration: 0.4
+  m_bufferedInputFrameLifetime: 10
 --- !u!114 &342028852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -905,6 +909,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 591884751}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!136 &620254852 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 2809133658910849072, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+  m_PrefabInstance: {fileID: 1937892798}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &824695886
 GameObject:
   m_ObjectHideFlags: 0
@@ -983,6 +992,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1576594066 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7468844810941201109, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+  m_PrefabInstance: {fileID: 1937892798}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1576594071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576594066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 734619c99e9b52044a755184faf70314, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.Tools.ShowPenetration
+  m_radius: 3
+  m_maxNeighbours: 32
+  m_collider: {fileID: 620254852}
 --- !u!1 &1611800116
 GameObject:
   m_ObjectHideFlags: 0
@@ -1383,9 +1412,17 @@ PrefabInstance:
       propertyPath: m_serializedBrain
       value: 
       objectReference: {fileID: 11400000, guid: 37349f2dd120cd549af83425b115f513, type: 2}
-    - target: {fileID: 2562831892648371485, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 1354773783748330367, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -6.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354773783748330367, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.86
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354773783748330367, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.916
       objectReference: {fileID: 0}
     - target: {fileID: 5742239276836861200, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_Name
@@ -1393,15 +1430,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.61
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.86
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.916
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6709328750528566165, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1434,19 +1471,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7468844810941201109, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1576594071}
   m_SourcePrefab: {fileID: 100100000, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
---- !u!114 &1937892799 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -5993207503619758613, guid: 947e1c11a728fc8409c05ec2a52e6f4c, type: 3}
-  m_PrefabInstance: {fileID: 1937892798}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f1bf89b4b30ee64a81d07694866d79b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemy
 --- !u!1 &1998571760
 GameObject:
   m_ObjectHideFlags: 0
@@ -1617,7 +1646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Testing.ClickToSetTarget
   m_enemies:
-  - {fileID: 1937892799}
+  - {fileID: 0}
 --- !u!4 &2046166390
 Transform:
   m_ObjectHideFlags: 0
