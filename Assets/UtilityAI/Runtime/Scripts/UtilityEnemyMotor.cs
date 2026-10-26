@@ -101,6 +101,13 @@ namespace Stirge.UtilityAI
         #region Navigation
         protected override void UpdateNavigation()
         {
+            // If the Agent is not on the NavMesh, keep trying until it is
+            if (!m_nav.isOnNavMesh)
+            {
+                SyncNavMeshAgentPosition();
+                return;
+            }
+            
             // Move Rigidbody to follow NavMeshAgent's calculated path
             Vector3 nextPosition = m_nav.nextPosition;
             Rigidbody.MovePosition(nextPosition);
