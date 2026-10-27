@@ -38,7 +38,11 @@ namespace Stirge.Player
             }
             return false;
         }
-
+        public bool AddForceClamped(Vector3 force, float minimumStrength = 0)
+        {
+            if(force.magnitude > minimumStrength) { AddForce(force); return true; }
+            else return false;
+        }
         public void AddImpluse(Vector3 force)
         {
             SetMovementState(MotorMovementState.Force);
@@ -57,6 +61,11 @@ namespace Stirge.Player
         {
             // if leaving the ground, start coyote countdown
             m_coyoteCountdown = m_coyoteTime;
+        }
+        protected override void OnBecomeGrounded()
+        {
+            SetMovementState(MotorMovementState.Kinematic);
+            base.OnBecomeGrounded();
         }
     }
 }
