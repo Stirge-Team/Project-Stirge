@@ -99,6 +99,33 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     editor.OnInspectorGUI();
 
+                    EGL.BeginHorizontal();
+                    if (GUILayout.Button("Move Up"))
+                    {
+                        int newIndex = i--;
+                        if (newIndex >= 0)
+                        {
+                            conditionsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    if (GUILayout.Button("Move Down"))
+                    {
+                        int newIndex = i++;
+                        if (newIndex < count)
+                        {
+                            conditionsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    EGL.EndHorizontal();
+
                     if (GUILayout.Button("Remove Condition"))
                     {
                         DestroyImmediate(objectValue, true);
@@ -157,6 +184,33 @@ namespace Stirge.UtilityAI.CustomEditors
                         serializedObject.ApplyModifiedProperties();
 
                     editor.OnInspectorGUI();
+
+                    EGL.BeginHorizontal();
+                    if (GUILayout.Button("Move Up"))
+                    {
+                        int newIndex = i--;
+                        if (newIndex >= 0)
+                        {
+                            scoringMethodsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    if (GUILayout.Button("Move Down"))
+                    {
+                        int newIndex = i++;
+                        if (newIndex < count)
+                        {
+                            scoringMethodsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    EGL.EndHorizontal();
 
                     if (GUILayout.Button("Remove Scoring Method"))
                     {

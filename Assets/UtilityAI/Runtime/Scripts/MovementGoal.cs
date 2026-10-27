@@ -1,10 +1,10 @@
+using System.Linq;
 using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
-    using System.Linq;
 
     /// <summary>
     /// Part of the <see cref="UtilityBrain"/>. Used to determine how the <see cref="UtilityEnemy"/> positions itself and moves in the world.<br/>
@@ -75,6 +75,8 @@ namespace Stirge.UtilityAI
         /// It should reset any values back to their defaults as necessary in case this <see cref="MovementGoal"/> has been run already.
         /// </summary>
         public abstract void Reset();
+
+        public virtual void OnDrawGizmos(UtilityEnemy user, CombatEntity target) { }
 
         #region Setup
         public void Setup(ICondition[] conditions, IScoringMethod[] scoringMethods)

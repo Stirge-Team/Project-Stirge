@@ -17,24 +17,60 @@ namespace Stirge.UtilityAI.MovementGoals
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
             if (user.HasTarget)
-                return m_maxScore - Mathf.Min(m_maxScore, Vector3.Distance(target.Motor.GetPosition(), user.Motor.GetPosition()));
+            {
+                return Mathf.Min(m_maxScore, Vector3.Distance(user.Motor.GetPosition(), user.TargetPosition));
+            }
             else
                 return 0f;
         }
 
         public override void Perform(UtilityEnemy user, CombatEntity target)
         {
-            // if user has a target and its current destination is not within stopping distance of its Target's position
-            if (user.Motor.IsGrounded && target != null && Vector3.Distance(user.NavMeshAgent.destination, target.Motor.GetPosition()) > user.NavMeshAgent.stoppingDistance)
+            // if user does not have a target, then cancel
+            if (!user.HasTarget)
+                return;
+
+            // move to Navigation state if grounded and not performing an action
+            if (!user.IsPerformingAction && user.Motor.IsGrounded && user.Motor.MovementState != MotorMovementState.Navigation)
             {
-                // update nav destination
-                user.EnemyMotor.SetDestination(target.Motor.GetPosition());
+                user.Motor.SetMovementState(MotorMovementState.Navigation);
             }
+
+            // once moved to Navigation state
+            if (user.Motor.MovementState == MotorMovementState.Navigation)
+            {
+                // if not at the target
+                if (!ReachedTarget(user))
+                {
+                    user.NavMeshAgent.SetDestination(user.TargetPosition);
+                }
+            }
+        }
+
+        private bool TargetMoved(UtilityEnemy user)
+        {
+            if (!user.NavMeshAgent.hasPath)
+                return true;
+            return Vector3.Distance(user.TargetPosition, user.NavMeshAgent.destination) > user.NavMeshAgent.stoppingDistance;
+        }
+
+        private bool ReachedTarget(UtilityEnemy user)
+        {
+            return Vector3.Distance(user.Motor.GetPosition(), user.TargetPosition) <= user.NavMeshAgent.stoppingDistance;
         }
 
         public override void Reset()
         {
             
+        }
+
+        public override void OnDrawGizmos(UtilityEnemy user, CombatEntity target)
+        {
+            if (user.HasTarget)
+            {
+                Gizmos.color = Color.lightBlue;
+                Gizmos.DrawLine(user.Motor.GetPosition(), user.TargetPosition);
+            }
         }
     }
 }
