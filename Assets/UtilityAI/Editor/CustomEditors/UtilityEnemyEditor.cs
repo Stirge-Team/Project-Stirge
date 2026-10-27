@@ -12,10 +12,9 @@ namespace Stirge.UtilityAI.CustomEditors
     public class UtilityEnemyEditor : Editor
     {
         private UtilityEnemy m_enemy;
+        private bool m_enemyHasBrain;
 
         private static bool s_brainDebugInfoFoldout;
-        private static GUIStyle s_centredLabel;
-        private static bool s_centredLabelIsInitialised;
 
         private const string NUM_DISPLAY_FORMAT = "0.###";
 
@@ -23,12 +22,12 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             m_enemy = (UtilityEnemy)target;
             s_brainDebugInfoFoldout = true;
-            s_centredLabelIsInitialised = false;
+            m_enemyHasBrain = false;
         }
 
         public override bool RequiresConstantRepaint()
         {
-            return s_brainDebugInfoFoldout && m_enemy.Brain != null;
+            return s_brainDebugInfoFoldout && m_enemyHasBrain;
         }
 
         public override void OnInspectorGUI()
@@ -40,30 +39,26 @@ namespace Stirge.UtilityAI.CustomEditors
             s_brainDebugInfoFoldout = EGL.BeginFoldoutHeaderGroup(s_brainDebugInfoFoldout, new GUIContent("Utility Brain Debug Info"), EditorStyles.foldoutHeader);
             if (s_brainDebugInfoFoldout)
             {
-                if (m_enemy.Brain == null)
+                if (!m_enemy.TryGetBrainDebugInfo(out BrainDebugInfo info))
                 {
                     using (new EditorGUI.DisabledScope(true))
                     {
                         EGL.TextField("No Utility Brain exists!");
                     }
+                    m_enemyHasBrain = false;
                     return;
                 }
-
-                if (!s_centredLabelIsInitialised)
+                else
                 {
-                    s_centredLabel = new(GUI.skin.label) { alignment = TextAnchor.MiddleCenter };
-                    s_centredLabelIsInitialised = true;
+                    m_enemyHasBrain = true;
                 }
 
                 EGL.BeginVertical(GUI.skin.textArea);
 
-                BrainDebugInfo info = new();
-                m_enemy.Brain.GetBrainDebugInfo(ref info);
-
                 EGL.BeginHorizontal();
                 EGL.LabelField("Current Action");
                 bool hasCurrentAction = info.currentActionIndex != -1;
-                string currentActionText = hasCurrentAction ? info.actions[info.currentActionIndex].displayName : "null";
+                string currentActionText = hasCurrentAction ? info.actions[info.currentActionIndex].DisplayName : "null";
                 DrawDisabledText(!hasCurrentAction, currentActionText);
                 EGL.EndHorizontal();
 
@@ -103,7 +98,7 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     EGL.BeginHorizontal();
                     EGL.LabelField($"{i + 1}.", GUILayout.MaxWidth(30f));
-                    DrawDisabledText(isInvalid, action.displayName, Mathf.Max(0, actionScore).ToString(NUM_DISPLAY_FORMAT));
+                    DrawDisabledText(isInvalid, action.DisplayName, Mathf.Max(0, actionScore).ToString(NUM_DISPLAY_FORMAT));
                     EGL.EndHorizontal();
                 }
                 EditorGUI.indentLevel--;

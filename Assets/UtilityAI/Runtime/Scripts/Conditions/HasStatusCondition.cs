@@ -5,12 +5,12 @@ namespace Stirge.UtilityAI.Conditions
     using Combat;
     using Serialization;
 
-    public class HasStatusCondition : Condition<IScorable>, ISetupable<string, EntityTargetType>
+    public class HasStatusCondition : Condition<IScorable>, ISetupable<string, StatusTarget>
     {
         private string m_statusName;
-        private EntityTargetType m_target;
+        private StatusTarget m_target;
 
-        public void Setup(string statusName, EntityTargetType target)
+        public void Setup(string statusName, StatusTarget target)
         {
             m_statusName = statusName;
             m_target = target;
@@ -20,8 +20,8 @@ namespace Stirge.UtilityAI.Conditions
         {
             return m_target switch
             {
-                EntityTargetType.User => user.GetIndexOfStatus(m_statusName) != -1,
-                EntityTargetType.Target => target.GetIndexOfStatus(m_statusName) != -1,
+                StatusTarget.User => user.GetIndexOfStatus(m_statusName) != -1,
+                StatusTarget.Target => target.GetIndexOfStatus(m_statusName) != -1,
                 _ => false,
             };
         }

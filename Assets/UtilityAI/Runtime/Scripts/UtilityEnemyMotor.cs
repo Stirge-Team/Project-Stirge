@@ -11,9 +11,6 @@ namespace Stirge.UtilityAI
         [SerializeField] private UtilityEnemy m_enemy;
         [SerializeField] private NavMeshAgent m_nav;
 
-        [Header("Navigation Fields")]
-        [SerializeField, Min(0)] private float m_navStoppingDistance;
-
         // navigation
         private bool m_headingIsTargetPosition;
 
@@ -24,20 +21,19 @@ namespace Stirge.UtilityAI
         #region Unity Events
         protected override void OnStart()
         {
-            m_nav.enabled = false;
-
-            m_nav.autoBraking = false;
-            m_nav.autoRepath = false;
-            m_nav.updatePosition = false;
-            m_nav.updateRotation = false;
-            m_nav.speed = groundedMovementProperties.HorizontalTopSpeed;
-            m_nav.acceleration = groundedMovementProperties.Acceleration;
-            m_nav.stoppingDistance = m_navStoppingDistance;
-            m_nav.angularSpeed = groundedMovementProperties.AngularSpeed;
+            if (MovementState != MotorMovementState.Navigation)
+                m_nav.enabled = false;
         }
         #endregion
 
         #region Transformation
+        protected override void OnMovePosition(Vector3 newPosition)
+        {
+            if (MovementState == MotorMovementState.Navigation)
+            {
+                SyncNavMeshAgentPosition();
+            }
+        }
         protected override void OnSetPosition(Vector3 newPosition)
         {
             if (MovementState == MotorMovementState.Navigation)
@@ -89,18 +85,29 @@ namespace Stirge.UtilityAI
             m_nav.acceleration = newProperties.Acceleration;
             m_nav.angularSpeed = newProperties.AngularSpeed;
         }
+
+        protected override void OnBecomeGrounded()
+        {
+            if (!m_enemy.IsPerformingAction)
+                SetMovementState(MotorMovementState.Navigation);
+        }
+        protected override void OnBecomeNotGrounded()
+        {
+            if (!m_enemy.IsPerformingAction)
+                SetMovementState(MotorMovementState.Velocity);
+        }
         #endregion
 
         #region Navigation
         protected override void UpdateNavigation()
         {
-            // if has no path, change state
-            if (!m_nav.hasPath)
+            // If the Agent is not on the NavMesh, keep trying until it is
+            if (!m_nav.isOnNavMesh)
             {
-                SetMovementState(MotorMovementState.Velocity);
+                SyncNavMeshAgentPosition();
                 return;
             }
-
+            
             // Move Rigidbody to follow NavMeshAgent's calculated path
             Vector3 nextPosition = m_nav.nextPosition;
             Rigidbody.MovePosition(nextPosition);
@@ -108,43 +115,40 @@ namespace Stirge.UtilityAI
             // Optionally, update rotation manually
             if (m_nav.hasPath)
             {
-                Quaternion targetRotation = Quaternion.LookRotation(m_nav.desiredVelocity);
+                Vector3 dir = m_nav.desiredVelocity;
+                dir.y = 0;
+                Quaternion targetRotation = Quaternion.LookRotation(dir);
                 Rigidbody.MoveRotation(targetRotation);
             }
         }
 
-        public bool SetDestination(Vector3 targetPosition)
-        {
-            SetMovementState(MotorMovementState.Navigation);
-            bool pathFound = m_nav.SetDestination(targetPosition);
-            return pathFound;
-        }
-        public void ClearDestination()
-        {
-            if (m_nav.hasPath)
-                m_nav.isStopped = true;
-        }
-
         private void SyncNavMeshAgentPosition()
         {
-            // TODO: Check if NavAgent actually needs to be moved
-            // Also, I don't think this works
-            // Could try using the grounded RaycastHit buffer to get a position
+            // Check if NavAgent actually needs to be moved
+            if (m_nav.transform.position != Rigidbody.position)
+            {
+                // Sync to position on NavMesh
+                if (NavMesh.SamplePosition(Rigidbody.position, out NavMeshHit hit, 4f, NavMesh.AllAreas))
+                {
+                    m_nav.Warp(hit.position);
+                    if (!m_nav.isOnNavMesh)
+                    {
+                        // restart the component as this can help with placing it on the NavMesh for some reason, Unity shit
+                        m_nav.enabled = false;
+                        m_nav.enabled = true;
+                    }
 
-            Vector3 currentDestination = m_nav.destination;
-
-            // determine position to sync to, prefer agent is on spot on NavMesh
-            Vector3 syncPosition;
-            if (NavMesh.SamplePosition(Rigidbody.position, out NavMeshHit hit, 1.0f, NavMesh.AllAreas))
-                syncPosition = hit.position;
-            else
-                syncPosition = Rigidbody.position;
-
-            m_nav.Warp(syncPosition);
-
-            // if agent is active, then preserve destination after the warp
-            if (MovementState == MotorMovementState.Navigation)
-                m_nav.SetDestination(currentDestination);
+                    // NavMeshAgent.Warp() clears destination, so reset it if there's a target
+                    if (m_enemy.HasTarget)
+                    {
+                        m_nav.SetDestination(m_enemy.TargetPosition);
+                    }
+                }
+                else
+                {
+                    Debug.LogError($"Could not place Agent on NavMesh at position {Rigidbody.position}", NavMeshAgent);
+                }
+            }
         }
         private void SyncNavMeshAgentRotation()
         {
@@ -168,6 +172,7 @@ namespace Stirge.UtilityAI
             Rigidbody.isKinematic = true;
             m_nav.enabled = true;
             SyncNavMeshAgentPosition();
+            // no need to Set Destination as this happens in Sync
         }
 
         protected override void OnActionEndInternal()

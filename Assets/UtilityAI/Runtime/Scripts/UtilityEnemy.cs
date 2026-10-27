@@ -18,8 +18,9 @@ namespace Stirge.UtilityAI
         private UtilityBrain m_brain;
         private UtilityEnemyMotor m_enemyMotor;
 
+        public event Action<UtilityEnemy> onDeath;
+
         // component properties
-        public UtilityBrain Brain => m_brain;
         public UtilityEnemyMotor EnemyMotor => m_enemyMotor;
         public new Transform transform => Motor.transform;
         public Rigidbody Rigidbody => Motor.Rigidbody;
@@ -32,12 +33,12 @@ namespace Stirge.UtilityAI
         public float DistanceToTarget => m_hasTarget ? Vector3.Distance(Motor.GetPosition(), m_targetPosition) : float.PositiveInfinity;
 
         #region Unity Events
-        private void Awake()
+        protected override void AwakeThis()
         {
             m_enemyMotor = (UtilityEnemyMotor)Motor;
         }
 
-        private void Start()
+        protected override void StartThis()
         {
             //Time.fixedDeltaTime = 0.333f;
 
@@ -47,7 +48,7 @@ namespace Stirge.UtilityAI
             m_brain.Start();
         }
 
-        private void Update()
+        protected override void UpdateThis()
         {
             if (m_target != null)
                 m_targetPosition = m_target.Motor.GetPosition();
@@ -73,11 +74,33 @@ namespace Stirge.UtilityAI
             m_target = null;
             m_hasTarget = false;
         }
+        #endregion
 
-        public bool IsNotWithinStoppingDistanceOf(Vector3 position)
+        #region DeathState
+        protected override void OnDeath()
         {
-            return Vector3.SqrMagnitude(position - Motor.GetPosition()) > NavMeshAgent.stoppingDistance * NavMeshAgent.stoppingDistance;
+            onDeath.Invoke(this);
+            Destroy(transform.parent.gameObject);
         }
         #endregion
+
+#if UNITY_EDITOR
+        public bool TryGetBrainDebugInfo(out BrainDebugInfo info)
+        {
+            if (m_brain != null)
+            {
+                info = new();
+                m_brain.GetBrainDebugInfo(ref info);
+                return true;
+            }
+            info = null;
+            return false;
+        }
+
+        private void OnDrawGizmos()
+        {
+            m_brain?.OnDrawGizmos(this, m_target);
+        }
+#endif
     }
 }

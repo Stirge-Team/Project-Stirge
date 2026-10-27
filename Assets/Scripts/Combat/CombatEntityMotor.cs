@@ -18,12 +18,14 @@ namespace Stirge.Combat
     public abstract class CombatEntityMotor : MonoBehaviour
     {
         [Header("Components")]
+        [SerializeField] private Transform m_transform;
         [SerializeField] private Animator m_anim;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Collider m_col;
 
         [Header("Movement Fields")]
-        [SerializeField] private MotorMovementState m_defaultMovementState = MotorMovementState.Velocity;
+        [SerializeField] private MotorMovementState m_defaultGroundedMovementState = MotorMovementState.Velocity;
+        [SerializeField] private MotorMovementState m_defaultAerialMovementState = MotorMovementState.Velocity;
         [SerializeField] private LayerMask m_walkableLayers;
         [SerializeField] private MovementProperties m_groundedMovementProperties;
         [SerializeField] private MovementProperties m_aerialMovementProperties;
@@ -36,6 +38,14 @@ namespace Stirge.Combat
         [SerializeField, Min(0)] private float m_groundCheckRadius;
         [SerializeField, Range(0f, 90f)] private float m_slopeLimit;
 
+        [Header("Penetration Detection")]
+        [SerializeField, Range(1, 256)] private int m_penCheckMaxNeighbours;
+        [SerializeField, Min(0f)] private float m_penCheckRadius;
+        [SerializeField] private LayerMask m_penCheckMask;
+
+        // penetration detection
+        private Collider[] m_penCheckNeighbours;
+
         // velocities
         protected Vector3 m_currentVelocity;
         private Vector3 m_feetOffset;
@@ -47,10 +57,11 @@ namespace Stirge.Combat
         // movement state
         private MotorMovementState m_movementState = MotorMovementState.Kinematic;
         private float m_airTime;
-        private bool m_isGrounded;
+        private bool m_isGrounded = false;
         private readonly RaycastHit[] m_groundedCheckHits = new RaycastHit[10];
 
         // reference properties
+        public new Transform transform => m_transform;
         public Animator Animator => m_anim;
         public Rigidbody Rigidbody => m_rb;
         public Collider Collider => m_col;
@@ -59,7 +70,7 @@ namespace Stirge.Combat
         protected MovementProperties groundedMovementProperties => m_groundedMovementProperties;
         protected MovementProperties aerialMovementProperties => m_aerialMovementProperties;
         protected LayerMask walkableLayers => m_walkableLayers;
-        protected MotorMovementState defaultMovementState => m_defaultMovementState;
+        protected MotorMovementState defaultMovementState => m_defaultGroundedMovementState;
         protected Transform lookTarget => m_lookTarget;
         protected float horizontalTopSpeed => CurrentMovementProperties.HorizontalTopSpeed;
         protected float acceleration => CurrentMovementProperties.Acceleration;
@@ -90,6 +101,8 @@ namespace Stirge.Combat
             m_rb.useGravity = false;           
 
             SetMovementState(MotorMovementState.Velocity);
+
+            m_penCheckNeighbours = new Collider[m_penCheckMaxNeighbours];
 
             OnStart();
         }
@@ -131,9 +144,43 @@ namespace Stirge.Combat
             OnFixedUpdate();
         }
         protected virtual void OnFixedUpdate() { }
+
+        public void OnAnimatorMove()
+        {
+            if (m_anim.deltaPosition != Vector3.zero)
+                MovePosition(m_rb.position + m_anim.deltaPosition);
+            if (m_anim.deltaRotation != Quaternion.identity)
+                SetRotation(m_rb.rotation * m_anim.deltaRotation);
+        }
         #endregion
 
         #region Transformation
+        /// <summary>
+        /// Transform the <see cref="CombatEntityMotor"/> with respect to collisions as defined in <see cref="m_penCheckMask"/>;
+        /// </summary>
+        /// <param name="newPosition"></param>
+        public void MovePosition(Vector3 newPosition)
+        {
+            m_rb.MovePosition(newPosition);
+
+            int count = Physics.OverlapSphereNonAlloc(newPosition, 2.5f, m_penCheckNeighbours, m_penCheckMask);
+            for (int i = 0; i < count; i++)
+            {
+                Collider other = m_penCheckNeighbours[i];
+                if (!other || other == m_col)
+                    continue;
+
+                if (Physics.ComputePenetration(m_col, m_rb.position, m_rb.rotation,
+                    other, other.transform.position, other.transform.rotation,
+                    out Vector3 direction, out float distance))
+                {
+                    m_rb.MovePosition(newPosition + direction * distance);
+                }
+            }
+
+            OnMovePosition(m_rb.position);
+        }
+        protected virtual void OnMovePosition(Vector3 newPosition) { }
         public void SetPosition(Vector3 newPosition)
         {
             //transform.position = newPosition;
@@ -159,14 +206,6 @@ namespace Stirge.Combat
         public Vector3 GetPosition()
         {
             return m_rb.position;
-        }
-        #endregion
-
-        #region Animation
-        public void OnAnimatorMove()
-        {
-            SetPosition(m_rb.position + m_anim.deltaPosition);
-            SetRotation(m_rb.rotation * m_anim.deltaRotation);
         }
         #endregion
 
@@ -406,6 +445,12 @@ namespace Stirge.Combat
             m_rb.isKinematic = false;
             m_rb.linearVelocity = Vector3.zero;
             ResetVelocity();
+            Debug.Log("Action!");
+        }
+
+        private MotorMovementState GetDefaultMovementState()
+        {
+            return m_isGrounded ? m_defaultGroundedMovementState : m_defaultAerialMovementState;
         }
 
         public void OnActionStart()
@@ -417,11 +462,12 @@ namespace Stirge.Combat
 
         public void OnActionEnd()
         {
+            SetMovementState(GetDefaultMovementState());
             OnActionEndInternal();
         }
         protected virtual void OnActionEndInternal()
         {
-            SetMovementState(m_defaultMovementState);
+            
         }
         #endregion
 

@@ -99,6 +99,33 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     editor.OnInspectorGUI();
 
+                    EGL.BeginHorizontal();
+                    if (GUILayout.Button("Move Up"))
+                    {
+                        int newIndex = i--;
+                        if (newIndex >= 0)
+                        {
+                            conditionsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    if (GUILayout.Button("Move Down"))
+                    {
+                        int newIndex = i++;
+                        if (newIndex < count)
+                        {
+                            conditionsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    EGL.EndHorizontal();
+
                     if (GUILayout.Button("Remove Condition"))
                     {
                         DestroyImmediate(objectValue, true);
@@ -158,6 +185,33 @@ namespace Stirge.UtilityAI.CustomEditors
 
                     editor.OnInspectorGUI();
 
+                    EGL.BeginHorizontal();
+                    if (GUILayout.Button("Move Up"))
+                    {
+                        int newIndex = i--;
+                        if (newIndex >= 0)
+                        {
+                            scoringMethodsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    if (GUILayout.Button("Move Down"))
+                    {
+                        int newIndex = i++;
+                        if (newIndex < count)
+                        {
+                            scoringMethodsProperty.MoveArrayElement(i, newIndex);
+
+                            serializedObject.ApplyModifiedProperties();
+                            AssetDatabase.SaveAssets();
+                            AssetDatabase.Refresh();
+                        }
+                    }
+                    EGL.EndHorizontal();
+
                     if (GUILayout.Button("Remove Scoring Method"))
                     {
                         DestroyImmediate(objectValue, true);
@@ -187,16 +241,10 @@ namespace Stirge.UtilityAI.CustomEditors
 
         private void DrawAdditionalProperties()
         {
-            // Draw any Additional properties, unless its the non-generic Action type which has no more properties
-            string typeName = GetUIName(m_targetType);
-            if (typeName == GetUIName(typeof(Action)))
-                return;
-
-            EGL.LabelField(new GUIContent(typeName + " Properties"), EditorStyles.boldLabel);
-
             // Move to the first visible property
             EditorGUI.BeginChangeCheck();
             SerializedProperty prop = serializedObject.GetIterator();
+            bool drawnLabel = false;
             if (prop.NextVisible(true))
             {
                 do
@@ -204,6 +252,13 @@ namespace Stirge.UtilityAI.CustomEditors
                     // Skip the script reference and the properties we have already drawn
                     if (prop.name == "m_Script" || basePropertyNames.Contains(prop.name))
                         continue;
+
+                    // Draw label if not yet drawn
+                    if (!drawnLabel)
+                    {
+                        EGL.LabelField(new GUIContent(GetUIName(m_targetType) + " Properties"), EditorStyles.boldLabel);
+                        drawnLabel = true;
+                    }
 
                     // This draws everything else
                     EGL.PropertyField(prop, true);

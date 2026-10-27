@@ -8,7 +8,8 @@ namespace Stirge.UtilityAI
         [SerializeField, Range(0f, 5f)] protected float m_scoreScaling = 1f;
         [SerializeField] protected string m_displayName;
         [SerializeField] protected StatusStackType m_stackType;
-        [SerializeField, Range(1, 30)] protected int m_maxStacks;
+        [Tooltip("A Max Stacks of 0 will be treated as Infinite.")]
+        [SerializeField, Range(0, 30)] protected int m_maxStacks;
         [SerializeField] protected StatusDurationType m_durationType;
         [SerializeField] protected float m_duration;
         [SerializeField] protected SerializedCondition_Base[] m_conditions = new SerializedCondition_Base[0];
@@ -37,6 +38,6 @@ namespace Stirge.UtilityAI
             return scoringMethods;
         }
 
-        public abstract Status CreateRuntimeStatus();
+        public abstract Status CreateRuntimeStatus(Action action);
     }
 }

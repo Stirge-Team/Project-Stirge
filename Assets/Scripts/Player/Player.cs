@@ -4,7 +4,11 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
+    using Stirge.AttackTimeline;
+    using Stirge.Tools;
+    using Stirge.UtilityAI;
     using UnityEngine.InputSystem;
+    using UnityEngine.Playables;
 
     [RequireComponent(typeof(PlayerInputProcessing))]
     [RequireComponent(typeof(EntityHealth))]
@@ -12,6 +16,12 @@ namespace Stirge.Player
     {
         [Header("Player Properties")]
         [SerializeField] private PlayerInputProcessing m_input;
+        [Header("Attack Snapping")]
+        [SerializeField, Tooltip("The minimum angle (in degrees) to find a valid snapping target.")]
+        private float m_snappingMaxAngle = 90;
+        [SerializeField] private LayerMask m_attackSnappingMask;
+        private Transform m_softlockTarget = null; //either move this to the camera or put the hard lock on here (along with some of the lock on code.)
+        [SerializeField, Tooltip("How far until the soft lock target is cleared.")] private float m_softLockHoldRange = 2;
         protected PlayerMotor PlayerMotor => (PlayerMotor)base.Motor;
         protected Vector2 m_inputDirection;
         private Transform m_camTransform;
@@ -26,7 +36,7 @@ namespace Stirge.Player
             m_camTransform = UnityEngine.Camera.main.transform;
         }
 
-        protected override void UpdateThis(float deltaTime)
+        protected override void UpdateThis()
         {
             if (!IsPerformingAction)
             {
@@ -58,9 +68,56 @@ namespace Stirge.Player
                     Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
         }
+
+        public override void PerformAction(Action attackData)
+        {
+            if (m_softlockTarget == null || Vector3.Distance(transform.position, m_softlockTarget.position) > m_softLockHoldRange) //if the last target is out of range or dead
+            {
+                //clear the target as we're looking for a new one now
+                m_softlockTarget = null;
+                //Check for nearby enemies - range value to be pulled from the attack data later on.
+                //use the attack data to determine the range to check, TODO - currently not possible
+                RaycastHit[] hits = Physics.SphereCastAll(transform.position, attackData.Range, transform.forward, attackData.Range, m_attackSnappingMask);
+
+                if (hits.Length > 0)
+                {
+                    Debug.Log("Attempting to snap the player to a nearby target");
+                    //only check against a given angle infront of the player (90 degress currently) - the player whipping around might be annoying
+                    float recordAngle = m_snappingMaxAngle;
+                    foreach (var hit in hits)
+                    {
+                        if (AbsoluteParent.GetAbsoluteParent(hit.transform).GetComponentInChildren<CombatEntity>() && hit.transform != transform) //change to hittable later
+                        {
+                            //check angle against player forward
+                            Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
+                            float angleFromPlayer = Vector3.Angle(directionFromPlayer, transform.forward);
+                            Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
+                            if (Mathf.Abs(recordAngle) > Mathf.Abs(angleFromPlayer))
+                            {
+                                Debug.Log($"Closer attack target found at angle {Mathf.Abs(angleFromPlayer)}");
+                                m_softlockTarget = hit.transform;
+                                recordAngle = angleFromPlayer;
+                            }
+                        }
+                    }
+                }
+            }
+            //hard rotate the player towards valid target if there is one
+            if (m_softlockTarget != null)
+            {
+                transform.LookAt(new Vector3(m_softlockTarget.position.x, transform.position.y, m_softlockTarget.position.z)); //stupid ngl
+            }
+
+            base.PerformAction(attackData);
+        }
         public void OnMove(InputAction.CallbackContext context)
         {
             m_inputDirection = context.ReadValue<Vector2>();
+        }
+
+        protected override void OnActionEndInternal(PlayableDirector director)
+        {
+            m_input.ClearStoredComboAction();
         }
         #endregion
 
@@ -72,31 +129,11 @@ namespace Stirge.Player
         #endregion
 
         #region Status
-        public override void EnterStun(float stunLength)
+        protected override void OnStunned(float stunLength)
         {
             PlayerMotor.ResetHorizontalVelocity();
-            //m_anim.Play("hitstun");
             m_input.SetInputReading(false, stunLength);
         }
-        public override void EnterAirJuggle(float strength, Vector3 direction, float airStallLength, float stunLength, bool ignoreGrounded)
-        {
-            //lazy implementation - do more later
-            EnterStun(stunLength);
-        }
-        public override void EnterKnockback(float strength, Vector3 direction, float height, float stunLength, bool ignoreGrounded)
-        {
-            PlayerMotor.AddForce(direction * strength + transform.up * height); //override
-        }
         #endregion
-
-        public void BeginGoToPosition(Vector3 newPosition)
-        {
-            Vector3 direction = (newPosition - transform.position).normalized;
-            PlayerMotor.AddForce(direction * PlayerMotor.CurrentMovementProperties.Acceleration);
-        }
-        public void StopGoToPosition()
-        {
-            PlayerMotor.ResetHorizontalVelocity();
-        }
     }
 }

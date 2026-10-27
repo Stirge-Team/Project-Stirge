@@ -1,11 +1,26 @@
 using UnityEngine;
 using System;
+using System.Linq;
 
 namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
-    using System.Linq;
+
+    /// <summary>
+    /// Used to determine the target of a <see cref="Status"/>.
+    /// </summary>
+    public enum StatusTarget
+    {
+        /// <summary>
+        /// The <see cref="CombatEntity"/> that is using the <see cref="Action"/> the <see cref="Status"/> is apart of will be inflicted with the <see cref="Status"/>.
+        /// </summary>
+        User,
+        /// <summary>
+        /// The target of the <see cref="CombatEntity"/> that is using the <see cref="Action"/> the <see cref="Status"/> is apart of will be inflicted with the <see cref="Status"/>.
+        /// </summary>
+        Target
+    }
 
     /// <summary>
     /// Used to determine how a <see cref="Status"/> handles Stacking.
@@ -55,7 +70,7 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// The <see cref="CombatEntity"/> who applied this <see cref="Status"/>.
         /// </summary>
-        private CombatEntity m_user;
+        private CombatEntity m_inflicter;
 
         // fields
         /// <summary>
@@ -69,7 +84,7 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// Who this <see cref="Status"/> is targeting in an Attack.
         /// </summary>
-        protected EntityTargetType m_target;
+        protected StatusTarget m_target;
         /// <summary>
         /// How this <see cref="Status"/> handles Stacking.
         /// </summary>
@@ -86,7 +101,6 @@ namespace Stirge.UtilityAI
         /// For <see cref="Status"/> of <see cref="StatusDurationType.Timed"/>, the length of time in seconds it lasts for.
         /// </summary>
         protected float m_duration;
-        /// <summary>
         /// The Conditions that must be met for this <see cref="Status"/> to be Inflicted on its target.
         /// </summary>
         protected ICondition[] m_conditions;
@@ -100,10 +114,10 @@ namespace Stirge.UtilityAI
         protected float m_durationCountdown;
 
         // properties
-        protected CombatEntity user => m_user;
+        protected CombatEntity user => m_inflicter;
         public float ScoreScaling => m_scoreScaling;
         public string DisplayName => m_displayName;
-        public EntityTargetType Target => m_target;
+        public StatusTarget Target => m_target;
         public StatusStackType StackType => m_stackType;
         public int MaxStacks => m_maxStacks;
         public StatusDurationType DurationType => m_durationType;
@@ -126,26 +140,27 @@ namespace Stirge.UtilityAI
 
         /// <summary>
         /// What happens when this <see cref="Status"/> is first Inflicted onto <paramref name="target"/>.<br/>
-        /// For non-Instant <see cref="Status"/>es, this is where a reference to <paramref name="user"/> is stored in <see cref="m_user"/>.
+        /// For non-Instant <see cref="Status"/>es, this is where a reference to <paramref name="inflicter"/> is stored in <see cref="m_inflicter"/>.
         /// </summary>
-        public void OnApply(CombatEntity user, CombatEntity target)
+        public void OnApply(CombatEntity inflicter, CombatEntity target)
         {
-            if (m_durationType != StatusDurationType.Instant)
-                m_user = user;
-            OnApplyInternal(user, target);
+            m_inflicter = inflicter;
+            if (m_durationType == StatusDurationType.Timed)
+                m_durationCountdown = m_duration;
+            OnApplyInternal(inflicter, target);
         }
         /// <summary>
         /// Override to provide your <see cref="Status"/>es logic for what happens when the <see cref="Status"/> is initially inflicted.
         /// </summary>
-        protected abstract void OnApplyInternal(CombatEntity user, CombatEntity target);
+        protected abstract void OnApplyInternal(CombatEntity inflicter, CombatEntity target);
 
         /// <summary>
         /// What happens each frame while this <see cref="Status"/> is inflicted.
         /// </summary>
         public void Update(CombatEntity target)
         {
-            if (m_durationCountdown < m_duration)
-                m_durationCountdown += Time.deltaTime;
+            if (m_durationCountdown > 0)
+                m_durationCountdown -= Time.deltaTime;
             UpdateInternal(target);
         }
         /// <summary>
@@ -174,12 +189,9 @@ namespace Stirge.UtilityAI
         /// <returns></returns>
         public virtual bool ShouldThisClear(CombatEntity target)
         {
-            return m_durationType switch
-            {
-                StatusDurationType.Instant => true,
-                StatusDurationType.Timed => m_durationCountdown >= m_duration,
-                _ => false,
-            };
+            if (m_durationType == StatusDurationType.Timed && m_durationCountdown <= 0f)
+                return true;
+            return false;
         }
 
         public void AddStacks(int stackCount)
@@ -188,6 +200,12 @@ namespace Stirge.UtilityAI
         }
 
         #region Setup
+        /// <summary>
+        /// As <see cref="Action"/>s may be destroyed while this <see cref="Status"/> is still active, so if you need any properties from the <see cref="Action"/> this <see cref="Status"/> is from, then retrive them here.
+        /// </summary>
+        /// <param name="action"></param>
+        public virtual void Setup(Action action) { }
+
         public void Setup(ICondition[] conditions, IScoringMethod[] scoringMethods)
         {
             m_conditions = conditions;
@@ -201,9 +219,9 @@ namespace Stirge.UtilityAI
                 m_scoreScaling = scoreScaling,
                 m_displayName = displayName,
                 m_stackType = stackType,
-                m_maxStacks = maxStacks,
+                m_maxStacks = (maxStacks == 0 ? int.MaxValue : maxStacks), // if maxStacks is 0, treat it as infinite
                 m_durationType = durationType,
-                m_duration = duration
+                m_duration = duration,
             };
             return status;
         }
