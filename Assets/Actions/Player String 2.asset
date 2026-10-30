@@ -17,7 +17,7 @@ MonoBehaviour:
   m_duration: 1
   m_displayName: String 1
   m_actionType: 0
-  m_timeline: {fileID: 11400000, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
+  m_timeline: {fileID: 11400000, guid: ecea444381aaecd4ebab99e2e4bdc399, type: 2}
   m_damage: 1
   m_range: 1
   m_statuses: []
