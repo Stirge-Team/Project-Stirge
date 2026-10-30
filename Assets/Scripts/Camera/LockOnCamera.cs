@@ -8,7 +8,7 @@ namespace Stirge.Camera
 {
     public class LockOnCamera : MonoBehaviour
     {
-        private CinemachineTargetGroup m_groupScript;
+        //private CinemachineTargetGroup m_groupScript;
         [SerializeField]
         private Transform m_originPoint;
         [SerializeField]
@@ -28,7 +28,7 @@ namespace Stirge.Camera
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
-            m_groupScript = FindFirstObjectByType<CinemachineTargetGroup>();
+            //m_groupScript = FindFirstObjectByType<CinemachineTargetGroup>();
             m_playerObject = FindAnyObjectByType<PlayerMotor>();
             if (!m_playerObject)
             {
@@ -38,7 +38,7 @@ namespace Stirge.Camera
         }
 
         // Update is called once per frame
-        void Update()
+        /*void Update()
         {
             //Check if either the target is out of range or dead
             //We can assume 0 to be the target as that is how it is added to the array in the lock on startup
@@ -49,56 +49,55 @@ namespace Stirge.Camera
                     CameraStateManager.Instance.ChangeCameraState("Explore");
                 }
             }
-        }
+        }*/
         public void TriggerLockOn(InputAction.CallbackContext context)
         {
             //move this to the lock smith script
             if (context.performed == true)
+            {
                 //only perform the check if we're in the combat state
-                if (CameraStateManager.Instance.State == "Combat")
+                CombatEntity closestTarget = null;
+                float closestAngle = Mathf.Infinity;
+                //go though all the current targets
+                foreach (var ene in FindObjectsByType<CombatEntity>(FindObjectsSortMode.None))
                 {
-                    CombatEntity closestTarget = null;
-                    float closestAngle = Mathf.Infinity;
-                    //go though all the current targets
-                    foreach (var ene in m_groupScript.Targets)
-                    {
-                        //find the distance between the targets and the origin point
-                        Vector3 distance = ene.Object.position - m_originPoint.position;
-                        //if the target is the origin point and they aren't in range - skip 'em
-                        if (distance.sqrMagnitude > m_lockOnRange || ene.Object == m_originPoint)
-                            continue;
+                    //find the distance between the targets and the origin point
+                    Vector3 distance = ene.gameObject.transform.position - m_originPoint.position;
+                    //if the target is the origin point and they aren't in range - skip 'em
+                    if (distance.sqrMagnitude > m_lockOnRange || ene.gameObject.transform == m_originPoint)
+                        continue;
 
-                        //find the angle between the origin and the target and compare it the last known angle
-                        float newAngle = Vector3.Angle(distance.normalized, m_useOriginForward ? m_originPoint.forward : transform.forward);
-                        //if the new angle is greater...
-                        if (newAngle < closestAngle)
-                        {
-                            //..that is the new lock on target
-                            closestTarget = ene.Object.GetComponent<CombatEntity>();
-                            closestAngle = newAngle;
-                        }
-                    }
-                    //if there is a valid target
-                    if (closestTarget != null)
+                    //find the angle between the origin and the target and compare it the last known angle
+                    float newAngle = Vector3.Angle(distance.normalized, m_useOriginForward ? m_originPoint.forward : transform.forward);
+                    //if the new angle is greater...
+                    if (newAngle < closestAngle)
                     {
-                        Debug.Log("A lock on target has been found. Preping the group object...");
-                        CameraStateManager.Instance.ChangeCameraState("LockOn");
-                        FindAnyObjectByType<LockSmith>().SetNew(closestTarget, LockSmith.CheckIfTargetDead);
+                        //..that is the new lock on target
+                        closestTarget = ene;
+                        closestAngle = newAngle;
                     }
                 }
+                //if there is a valid target
+                if (closestTarget != null)
+                {
+                    Debug.Log("A lock on target has been found. Preping the group object...");
+                    CameraStateManager.Instance.ChangeCameraState("LockOn");
+                    FindAnyObjectByType<LockSmith>().SetNew(closestTarget, LockSmith.CheckIfTargetDead);
+                }
+
                 //leave this state if we're already in it
                 else if (CameraStateManager.Instance.State == "LockOn")
                 {
                     ExitLockOn();
                 }
+            }
         }
         public void ReciveLockOnTarget(CombatEntity target)
         {
             //reset the target list and add the origin and target
-            m_groupScript.Targets = new();
-            m_groupScript.AddMember(target.transform, m_lockOnWeight, 1f);
-            m_groupScript.AddMember(m_originPoint, 1 - m_lockOnWeight, 1f);
+            GetComponent<CinemachineCamera>().LookAt = target.transform;
         }
+        //For the lock on scripts
         public void ClearLockOnTarget()
         {
             ExitLockOn();

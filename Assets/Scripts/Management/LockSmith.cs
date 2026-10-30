@@ -129,7 +129,14 @@ public class LockSmith : MonoBehaviour
             {
                 if(m_currentLockOnTarget != null)
                 {
-                    client.BroadcastMessage("ReciveLockOnTarget", m_currentLockOnTarget);
+                    try
+                    {
+                        client.BroadcastMessage("ReciveLockOnTarget", m_currentLockOnTarget);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError($"Lock on client {client.name} doesn't have the function \"ReciveLockOnTarget\"!");
+                    }
                 }
                 else
                 {
