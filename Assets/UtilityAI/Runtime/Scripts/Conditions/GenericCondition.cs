@@ -61,8 +61,8 @@ namespace Stirge.UtilityAI
 
                 return m_operation switch
                 {
-                    Operation.Equal => GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
-                    Operation.NotEqual => !GetFirstObject(user, target).Equals(GetSecondObject(user, target)),
+                    Operation.Equal => Equals(GetFirstObject(user, target), GetSecondObject(user, target)),
+                    Operation.NotEqual => !Equals(GetFirstObject(user, target), GetSecondObject(user, target)),
                     _ => LogNotComparableError(), // if operation is neither Equals or NotEquals, then its trying to compare
                 };
             }

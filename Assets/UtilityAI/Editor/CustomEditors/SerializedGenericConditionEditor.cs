@@ -547,7 +547,7 @@ namespace Stirge.UtilityAI.CustomEditors
                (m_firstObject.valueType == ConditionValueType.Property && m_firstObject.propertyValue.IsNull) || (m_secondObject.valueType == ConditionValueType.Property && m_secondObject.propertyValue.IsNull))
             {
                 isValid = false;
-                EGL.HelpBox("Please select values for this Condition.", MessageType.Warning);
+                EGL.HelpBox("Please select values for this Condition. If you would like a value to be 'null', please select a constant value of type 'void'.", MessageType.Warning);
             }
             else
             {

@@ -97,6 +97,12 @@ namespace Stirge.UtilityAI
             Type firstType = Type.GetType(m_firstTypeAssemblyQualifiedName);
             Type secondType = Type.GetType(m_secondTypeAssemblyQualifiedName);
 
+            // if value is void, set it to type of other value
+            if (firstType == typeof(void))
+                firstType = secondType;
+            if (secondType == typeof(void))
+                secondType = firstType;
+
             // Can I improve this section? No reflection to create instance of Condition class?
             Type conditionType = (firstType.IsClass, secondType.IsClass) switch
             {
