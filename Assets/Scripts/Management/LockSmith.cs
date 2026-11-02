@@ -81,7 +81,7 @@ public class LockSmith : MonoBehaviour
     /// </summary>
     public void RemoveTarget()
     {
-        Debug.Log($"Removing target {m_currentLockOnTarget.name} as the lock on target.", this);
+        Debug.Log($"Removing target {(m_currentLockOnTarget != null ? m_currentLockOnTarget.name : "null object")} as the lock on target.", this);
         m_currentLockOnTarget = null;
         RemoveCondition();
         UpdateClients();
