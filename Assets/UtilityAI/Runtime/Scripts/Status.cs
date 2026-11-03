@@ -6,6 +6,7 @@ namespace Stirge.UtilityAI
 {
     using Combat;
     using Serialization;
+    using Stirge.Combat.Hitboxes;
 
     /// <summary>
     /// Used to determine the target of a <see cref="Status"/>.
@@ -36,7 +37,11 @@ namespace Stirge.UtilityAI
         /// </summary>
         Unstackable,
         /// <summary>
-        /// Additional copies of a <see cref="Status"/> cannot be added.
+        /// When an additional copy of a <see cref="Status"/> is added, it replaces the existing one.
+        /// </summary>
+        Single,
+        /// <summary>
+        /// Additional copies of a <see cref="Status"/> cannot be added and existing copies cannot be replaced.
         /// </summary>
         Unique,
     }
@@ -76,61 +81,71 @@ namespace Stirge.UtilityAI
         /// <summary>
         /// The returned score of this <see cref="Status"/> will be multiplied by this value.
         /// </summary>
-        protected float m_scoreScaling;
+        private float m_scoreScaling;
         /// <summary>
         /// The name of this <see cref="Status"/> for testing purposes and in case we want to be able to show the Player names of Statuses.
         /// </summary>
-        protected string m_displayName;
+        private string m_displayName;
         /// <summary>
-        /// Who this <see cref="Status"/> is targeting in an Attack.
+        /// How this <see cref="Status"/> handles Stacking. Please note, the Public Property <see cref="StackType"/> used to access this value can be overriden in child-class definitions,
+        /// meaning this value will not matter if so.
         /// </summary>
-        protected StatusTarget m_target;
-        /// <summary>
-        /// How this <see cref="Status"/> handles Stacking.
-        /// </summary>
-        protected StatusStackType m_stackType;
+        private StatusStackType m_stackType;
         /// <summary>
         /// For <see cref="Status"/>es of <see cref="StatusStackType.Stackable"/>, the max number of Stacks that can be applied for this type of <see cref="Status"/>.
         /// </summary>
         protected int m_maxStacks;
         /// <summary>
-        /// How long this <see cref="Status"/> lasts for when inflicted.
+        /// How long this <see cref="Status"/> lasts for when inflicted. Please note, the Public Property <see cref="DurationType"/> used to access this value can be overriden in child-class definitions,
+        /// meaning this value will not matter if so.
         /// </summary>
-        protected StatusDurationType m_durationType;
+        private StatusDurationType m_durationType;
         /// <summary>
         /// For <see cref="Status"/> of <see cref="StatusDurationType.Timed"/>, the length of time in seconds it lasts for.
         /// </summary>
         protected float m_duration;
         /// The Conditions that must be met for this <see cref="Status"/> to be Inflicted on its target.
         /// </summary>
-        protected ICondition[] m_conditions;
+        private ICondition[] m_conditions;
         /// <summary>
         /// The ScoringMethods that determine the score this <see cref="Status"/> will return when Evaluated as part of a <see cref="UtilityBrain"/> Evaluating the <see cref="Action"/> it is part of.
         /// </summary>
-        protected IScoringMethod[] m_scoringMethods;
+        private IScoringMethod[] m_scoringMethods;
 
         // variables
         protected int m_currentStacks;
-        protected float m_durationCountdown;
+        protected float m_countdown;
 
         // properties
-        protected CombatEntity user => m_inflicter;
+        protected CombatEntity inflicter => m_inflicter;
         public float ScoreScaling => m_scoreScaling;
         public string DisplayName => m_displayName;
-        public StatusTarget Target => m_target;
-        public StatusStackType StackType => m_stackType;
+        /// <summary>
+        /// Override to force a set value for <see cref="m_stackType"/>.
+        /// </summary>
+        public virtual StatusStackType StackType => m_stackType;
         public int MaxStacks => m_maxStacks;
-        public StatusDurationType DurationType => m_durationType;
+        /// <summary>
+        /// Override to force a set value for <see cref="m_durationType"/>.
+        /// </summary>
+        public virtual StatusDurationType DurationType => m_durationType;
         public float Duration => m_duration;
 
         public int CurrentStacks => m_currentStacks;
-        public float DurationCountdown => m_durationCountdown;
+        public float DurationCountdown => m_countdown;
 
         public abstract Type StatusType { get; }
 
         /// <inheritdoc/>
         public float Evaluate(UtilityEnemy user, CombatEntity target)
         {
+            // If any Condition is false, return 0 score
+            foreach (ICondition condition in m_conditions)
+            {
+                if (!condition.Evaluate(user, target))
+                    return 0f;
+            }
+
             float baseScore = (EvaluateInternal(user, target) + m_scoringMethods.Sum(s => s.Evaluate(user, target))) / (m_scoringMethods.Length + 1);
             return baseScore * m_scoreScaling;
         }
@@ -145,8 +160,8 @@ namespace Stirge.UtilityAI
         public void OnApply(CombatEntity inflicter, CombatEntity target)
         {
             m_inflicter = inflicter;
-            if (m_durationType == StatusDurationType.Timed)
-                m_durationCountdown = m_duration;
+            if (DurationType == StatusDurationType.Timed)
+                m_countdown = m_duration;
             OnApplyInternal(inflicter, target);
         }
         /// <summary>
@@ -159,14 +174,14 @@ namespace Stirge.UtilityAI
         /// </summary>
         public void Update(CombatEntity target)
         {
-            if (m_durationCountdown > 0)
-                m_durationCountdown -= Time.deltaTime;
+            if (m_countdown > 0)
+                m_countdown -= Time.deltaTime;
             UpdateInternal(target);
         }
         /// <summary>
         /// Override to provide your <see cref="Status"/>es logic for what happens each frame while the <see cref="Status"/> is inflicted.
         /// </summary>
-        protected abstract void UpdateInternal(CombatEntity target);
+        protected virtual void UpdateInternal(CombatEntity target) { }
 
         /// <summary>
         /// What happens when this <see cref="Status"/> is removed from the <paramref name="target"/>.
@@ -174,7 +189,7 @@ namespace Stirge.UtilityAI
         public void OnClear(CombatEntity target)
         {
             m_currentStacks = 0;
-            m_durationCountdown = 0f;
+            m_countdown = 0f;
             OnClearInternal(target);
         }
         /// <summary>
@@ -189,7 +204,7 @@ namespace Stirge.UtilityAI
         /// <returns></returns>
         public virtual bool ShouldThisClear(CombatEntity target)
         {
-            if (m_durationType == StatusDurationType.Timed && m_durationCountdown <= 0f)
+            if (DurationType == StatusDurationType.Timed && m_countdown <= 0f)
                 return true;
             return false;
         }
@@ -205,6 +220,19 @@ namespace Stirge.UtilityAI
         /// </summary>
         /// <param name="action"></param>
         public virtual void Setup(Action action) { }
+
+        /// <summary>
+        /// When a <see cref="Status"/> is created, you may want to initialise some values based on those stored in a <see cref="StatusInflictData"/>.<br/>
+        /// You can do that here.
+        /// </summary>
+        /// <param name="inflictData"></param>
+        public void Setup(StatusInflictData inflictData)
+        {
+            if (StackType == StatusStackType.Stackable)
+                AddStacks(inflictData.Stacks);
+            if (DurationType == StatusDurationType.Timed)
+                m_duration = inflictData.Duration;
+        }
 
         public void Setup(ICondition[] conditions, IScoringMethod[] scoringMethods)
         {

@@ -27,7 +27,6 @@ namespace Stirge.UtilityAI
         Scorable
     }
 
-    [CreateAssetMenu(menuName = "Utility AI/Serialized Condition", fileName = "New Condition", order = 450)]
     public class SerializedGenericCondition : SerializedCondition_Base
     {
         [SerializeField] private SerializedScorableType m_scorableType;

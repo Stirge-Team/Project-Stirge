@@ -7,6 +7,7 @@ using UnityEngine.Playables;
 namespace Stirge.Combat
 {
     using Hitboxes;
+    using Stirge.UtilityAI.Statuses;
     using UtilityAI;
 
     public enum ModifierType
@@ -29,6 +30,8 @@ namespace Stirge.Combat
         // status fields
         protected List<Status> m_inflictedStatuses = new();
         protected bool m_isStunned;
+
+        private float m_stunCountdown;
 
         // combat fields
         private float m_baseDamage;
@@ -68,6 +71,17 @@ namespace Stirge.Combat
 
         protected void Update()
         {
+            // update stun timer
+            if (m_stunCountdown > 0f)
+            {
+                m_stunCountdown -= Time.deltaTime;
+
+                if (m_stunCountdown <= 0f)
+                {
+                    StopStun();
+                }
+            }
+            
             UpdateThis();
 
             UpdateStatuses();
@@ -107,8 +121,10 @@ namespace Stirge.Combat
         #endregion
 
         #region Status
-        public void InflictStatus(CombatEntity inflicter, Status newStatus, StatusInflictData inflictData)
+        public void InflictStatus(CombatEntity inflicter, Status newStatus)
         {
+            // Instant statuses don't get added to the list of Inflicted Statuses,
+            // so there's no reason to do any checks, just apply the effect
             if (newStatus.DurationType == StatusDurationType.Instant)
             {
                 newStatus.OnApply(inflicter, this);
@@ -116,7 +132,16 @@ namespace Stirge.Combat
             }
             
             Type statusType = newStatus.StatusType;
-            int indexOfExistingStatus = GetIndexOfStatus(statusType, newStatus.DisplayName);
+            int indexOfExistingStatus;
+            // if Status is a Stun status, then 
+            if (statusType.IsSubclassOf(typeof(Stun)))
+            {
+                indexOfExistingStatus = GetFirstIndexOfStatusDerived(statusType);
+            }
+            else
+            {
+                indexOfExistingStatus = GetIndexOfStatus(statusType, newStatus.DisplayName);
+            }
 
             // If a Status of the same type already exists
             if (indexOfExistingStatus != -1)
@@ -124,43 +149,23 @@ namespace Stirge.Combat
                 switch (newStatus.StackType)
                 {
                     case StatusStackType.Stackable:
+                        // combine stacks
                         Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
                         existingStackableStatus.AddStacks(newStatus.CurrentStacks);
-                        return; // don't add again
+                        return; // don't add
+                    case StatusStackType.Single:
+                        ClearStatus(indexOfExistingStatus);
+                        break;
                     case StatusStackType.Unique:
-                        return; // don't add again
+                        return; // don't add
                     default:
                         break;
                 }
             }
 
+            // add the new Status
             m_inflictedStatuses.Add(newStatus);
             newStatus.OnApply(inflicter, this);
-        }
-
-        /// <summary>
-        /// Returns -1 if no <see cref="Status"/> of type <paramref name="statusType"/> is inflicted.
-        /// </summary>
-        /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
-        public int GetIndexOfStatus(Type statusType, string statusName)
-        {
-            return m_inflictedStatuses.FindIndex(s => s.StatusType == statusType && s.DisplayName == statusName);
-        }
-        /// <summary>
-        /// Returns -1 if no <see cref="Status"/> with name <paramref name="statusName"/> is inflicted.
-        /// </summary>
-        /// <returns>Index of first inflicted <see cref="Status"/> with matching <see cref="Status.DisplayName"/>.</returns>
-        public int GetIndexOfStatus(string statusName)
-        {
-            return m_inflictedStatuses.FindIndex(status => status.DisplayName == statusName);
-        }
-
-        /// <summary>
-        /// Returns the number of the provided <paramref name="statusType"/> the Enemy is inflicted with.
-        /// </summary>
-        public int GetNumberOfInflictedStatus(Type statusType)
-        {
-            return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
         }
 
         private void UpdateStatuses()
@@ -186,30 +191,98 @@ namespace Stirge.Combat
             }
         }
 
+        /// <summary>
+        /// Forcefully clear a <see cref="Status"/> ignoring any of its own clear logic.
+        /// </summary>
+        /// <param name="statusIndex"></param>
+        public void ClearStatus(int statusIndex)
+        {
+            Status toRemove = m_inflictedStatuses[statusIndex];
+            toRemove.OnClear(this);
+            m_inflictedStatuses.RemoveAt(statusIndex);
+        }
+
+        /// <summary>
+        /// Returns -1 if no <see cref="Status"/> of Type <paramref name="statusType"/> is inflicted.
+        /// </summary>
+        /// <returns>Index of first inflicted <see cref="Status"/> with matching type.</returns>
+        public int GetIndexOfStatus(Type statusType, string statusName)
+        {
+            return m_inflictedStatuses.FindIndex(s => s.StatusType == statusType && s.DisplayName == statusName);
+        }
+        /// <summary>
+        /// Returns -1 if no <see cref="Status"/> with name <paramref name="statusName"/> is inflicted.
+        /// </summary>
+        /// <returns>Index of first inflicted <see cref="Status"/> with matching <see cref="Status.DisplayName"/>.</returns>
+        public int GetIndexOfStatus(string statusName)
+        {
+            return m_inflictedStatuses.FindIndex(status => status.DisplayName == statusName);
+        }
+        /// <summary>
+        /// Returns -1 if no <see cref="Status"/> of Derived <see cref="Type"/> <paramref name="statusType"/> is inflicted.<br/>
+        /// If an inflicted <see cref="Status"/> *is* <see cref="Type"/> <paramref name="statusType"/>, it will not be counted.
+        /// </summary>
+        /// <param name="statusType"></param>
+        /// <returns>Index of first inflict <see cref="Status"/> of Derived <see cref="Type"/>.</returns>
+        public int GetFirstIndexOfStatusDerived(Type statusType)
+        {
+            return m_inflictedStatuses.FindIndex(s => s.StatusType.IsSubclassOf(statusType));
+        }
+
+        /// <summary>
+        /// Returns the number of the provided <paramref name="statusType"/> the Enemy is inflicted with.
+        /// </summary>
+        public int GetNumberOfInflictedStatus(Type statusType)
+        {
+            int count = 0;
+            foreach (Status s in m_inflictedStatuses)
+            {
+                if (s.StatusType == statusType)
+                    count++;
+            }
+            return count;
+            //return m_inflictedStatuses.FindAll(status => status.StatusType == statusType).Count;
+        }
+
+        /// <summary>
+        /// Used by the <see cref="AttackTimeline.StatusTrack.StatusTrack"/> and <see cref="HitboxCollider"/> to get references
+        /// to <see cref="Status"/>es from the <see cref="CombatEntity"/>'s current <see cref="Action"/>.<br/>
+        /// 
+        /// There's probably a better way to do this but I couldn't think of anything in the time I had available.
+        /// </summary>
+        /// <param name="statusIndex"></param>
+        /// <returns></returns>
         public Status CreateRuntimeStatusFromCurrentActionAtIndex(int statusIndex)
         {
             return m_currentAction.CreateRuntimeStatusAtIndex(statusIndex);
         }
 
-        public void SetIsStunned(bool value, float stunLength = 0)
+        #region Stun
+        public void StartStun(float duration)
         {
-            m_isStunned = value;
-
-            if (value)
+            if (duration <= 0f)
             {
-                StartCoroutine(StunTimer());
-                OnStunned(stunLength);
+                Debug.LogWarning($"Stun has an invalid duration of '{duration}' seconds!", this);
+                return;
             }
+            
+            m_stunCountdown = duration;
 
-            IEnumerator StunTimer()
+            m_isStunned = true;
+            OnStartStun(duration);
+        }
+        protected virtual void OnStartStun(float duration) { }
+        public void StopStun()
+        {
+            if (m_isStunned)
             {
-                yield return new WaitForSeconds(stunLength);
                 m_isStunned = false;
-                OnNoLongerStunned();
+                m_stunCountdown = 0f;
+                OnStopStun();
             }
         }
-        protected virtual void OnStunned(float stunLength) { }
-        protected virtual void OnNoLongerStunned() { }
+        protected virtual void OnStopStun() { }
+        #endregion
 
         #endregion
 
@@ -259,303 +332,21 @@ namespace Stirge.Combat
         }
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices, StatusInflictData[] statusInflictDatas)
         {
             TakeDamage(hitboxData.Damage);
             if (statusesToApplyIndices != null)
             {
-                foreach (int statusIndex in statusesToApplyIndices)
+                for (int i = 0, count = statusesToApplyIndices.Length; i < count; i++)
                 {
-                    InflictStatus(attacker, CreateRuntimeStatusFromCurrentActionAtIndex(statusIndex), hitboxData.StatusInflictDatas[statusIndex]);
+                    int statusIndex = statusesToApplyIndices[i];
+                    Status toInflict = CreateRuntimeStatusFromCurrentActionAtIndex(statusIndex);
+                    toInflict.Setup(statusInflictDatas[i]);
+                    InflictStatus(attacker, toInflict);
                 }
             }
         }
 
-        #endregion
-
-        #region Attack Node Logic (OLD)
-        /*
-        #region NodeLogic
-        private IEnumerator PlayAnimation(AnimationNode node)
-        {
-            // If there are issues with animator speed, check this first
-            // init
-            //m_anim.speed = node.Speed;
-            //m_anim.Play(node.AnimationStateName);
-
-            // running
-            yield return new WaitForSeconds(node.Time);
-
-            // exit
-            //m_anim.speed = 1;
-
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator ApproachTarget(ApproachTargetNode node)
-        {
-            // init
-            Vector3 targetPosition = m_targetTransform.position;
-
-            // running
-            //BeginGoToPosition(targetPosition);
-            //SetMovementSpeed(node.Speed);
-            bool withinRange = false;
-            while (!withinRange)
-            {
-                // If not using initial position, update position
-                if (!node.UseInitialPosition)
-                {
-                    targetPosition = m_targetTransform.position;
-                    //BeginGoToPosition(targetPosition);
-                }
-
-                // provide some leeway for vertical difference
-                Vector3 currentPos = GetPosition();
-                Vector3 endPos = targetPosition;
-                if (Mathf.Abs(GetPosition().y - targetPosition.y) < 2f) // arbitrary value
-                {
-                    // if the y-axis distance between the current and target position is not too far
-                    // treat the actual distance caculation as if they are on the same y-level
-                    currentPos.y = 0;
-                    endPos.y = 0;
-                }
-                if (Vector3.Distance(currentPos, endPos) <= node.StoppingDistance)
-                {
-                    withinRange = true;
-                    break;
-                }
-
-                yield return null;
-            }
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator Translate(TranslateNode node)
-        {
-            // init
-            Vector3 startPosition = GetPosition();
-            Vector3 endPosition;
-
-            if (node.IsLocalTranslation)
-            {
-                endPosition = startPosition + GetRotation() * node.Translation;
-            }
-            else
-            {
-                endPosition = startPosition + node.Translation;
-            }
-
-            float elapsedTime = 0f;
-            bool arrived = false;
-
-            // running
-            while (!arrived)
-            {
-                float t = Mathf.Clamp01(elapsedTime / node.Time);
-                SetPosition(Vector3.Lerp(startPosition, endPosition, t));
-
-                // if arrived at end position
-                if (t >= 1)
-                {
-                    arrived = true;
-                    break;
-                }
-
-                elapsedTime += Time.deltaTime;
-                yield return null;
-            }
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator Delay(DelayNode node)
-        {
-            // init
-
-            // running
-            yield return new WaitForSeconds(node.Delay);
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator TimedMove(TimedMoveNode node)
-        {
-            // init
-            Vector3 startPosition = GetPosition();
-            Vector3 endPosition = startPosition + GetRotation() * node.LocalOffset;
-
-            float time = node.Time;
-            float elapsedTime = 0f;
-            float stoppingDistance = node.StoppingDistance;
-            bool considerYPosition = node.ConsiderYPosition;
-
-            bool arrived = false;
-
-            // running
-            yield return new WaitForFixedUpdate();
-            while (!arrived)
-            {
-                float t = Mathf.Clamp01(elapsedTime / time);
-                MovePosition(Vector3.Lerp(startPosition, endPosition, t));
-
-                Vector3 currentPos = transform.position;
-                Vector3 targetPos = endPosition;
-                if (!considerYPosition)
-                {
-                    currentPos.y = 0;
-                    targetPos.y = 0;
-                }
-
-                // if arrived at end position
-                if (elapsedTime >= time || Vector3.Distance(currentPos, targetPos) <= stoppingDistance)
-                {
-                    arrived = true;
-                    break;
-                }
-
-                elapsedTime += Time.fixedDeltaTime;
-                yield return new WaitForFixedUpdate();
-            }        
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator CurveMove(CurveMoveNode node)
-        {
-            // init
-            Vector3 startPosition = GetPosition();
-            Vector3 endPosition = startPosition + GetRotation() * node.LocalOffset;
-
-            // WATCH: Unsure if last key in array will always be the key with the highest x/time value (the one at the end)
-            float time = node.Curve.keys[^1].time;
-            float elapsedTime = 0f;
-            float stoppingDistance = node.StoppingDistance;
-            bool considerYPosition = node.ConsiderYPosition;
-
-            bool arrived = false;
-
-            // running
-            yield return new WaitForFixedUpdate();
-            while (!arrived)
-            {
-                // divide by time to get normalised 0 - 1 t value as Lerp clamps t to 0 - 1
-                float t = Mathf.Clamp(node.Curve.Evaluate(elapsedTime), 0, time) / time;
-                MovePosition(Vector3.Lerp(startPosition, endPosition, t));
-
-                Vector3 currentPos = transform.position;
-                Vector3 targetPos = endPosition;
-                if (!considerYPosition)
-                {
-                    currentPos.y = 0;
-                    targetPos.y = 0;
-                }
-
-                // if arrived at end position
-                if (elapsedTime >= time || Vector3.Distance(currentPos, targetPos) <= stoppingDistance)
-                {
-                    arrived = true;
-                    break;
-                }
-
-                elapsedTime += Time.fixedDeltaTime;
-                yield return new WaitForFixedUpdate();
-            }
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator SpeedMove(SpeedMoveNode node)
-        {
-            // init
-            Vector3 endPosition = GetPosition() + GetRotation() * node.LocalOffset;
-
-            float speed = node.Speed;
-            float stoppingDistance = node.StoppingDistance;
-            bool considerYPosition = node.ConsiderYPosition;
-
-            bool arrived = false;
-
-            // running
-            yield return new WaitForFixedUpdate();
-            while (!arrived)
-            {
-                Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, speed * Time.fixedDeltaTime);
-                MovePosition(target);
-
-                Vector3 currentPos = transform.position;
-                Vector3 targetPos = endPosition;
-                if (!considerYPosition)
-                {
-                    currentPos.y = 0;
-                    targetPos.y = 0;
-                }
-
-                // if arrived at end position
-                if (Vector3.Distance(currentPos, targetPos) <= stoppingDistance)
-                {
-                    arrived = true;
-                    break;
-                }
-                yield return new WaitForFixedUpdate();
-            }
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        private IEnumerator AccelerateMove(AccelerateMoveNode node)
-        {
-            // init
-            Vector3 endPosition = GetPosition() + GetRotation() * node.LocalOffset;
-
-            float acceleration = node.Acceleration;
-            // If maxSpeed is not greater than 0, then there is no max speed
-            float maxSpeed = node.MaxSpeed > 0 ? node.MaxSpeed : Mathf.Infinity;
-            float stoppingDistance = node.StoppingDistance;
-            bool considerYPosition = node.ConsiderYPosition;
-
-            float currentSpeed = 0;
-            bool arrived = false;
-
-            // running
-            yield return new WaitForFixedUpdate();
-            while (!arrived)
-            {
-                // Increase speed by acceleration
-                if (currentSpeed < maxSpeed)
-                {
-                    currentSpeed += acceleration * Time.fixedDeltaTime;
-                    if (currentSpeed > maxSpeed)
-                        currentSpeed = maxSpeed;
-                }
-
-                Vector3 target = Vector3.MoveTowards(GetPosition(), endPosition, currentSpeed * Time.fixedDeltaTime);
-                MovePosition(target);
-
-                Vector3 currentPos = transform.position;
-                Vector3 targetPos = endPosition;
-                if (!considerYPosition)
-                {
-                    currentPos.y = 0;
-                    targetPos.y = 0;
-                }
-
-                // if arrived at end position
-                if (Vector3.Distance(currentPos, targetPos) <= stoppingDistance)
-                {
-                    arrived = true;
-                    break;
-                }
-                yield return new WaitForFixedUpdate();
-            }
-
-            // exit
-            if (s_debug) Debug.Log($"Finished processing {node.GetType().Name}.");
-        }
-        #endregion
-
-        #endregion
-        */
         #endregion
     }
 }

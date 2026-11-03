@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -42,6 +43,9 @@ namespace Stirge.UtilityAI.CustomEditors
         protected override SerializedProperty conditionsProperty => m_conditionsProperty;
         protected override SerializedProperty scoringMethodsProperty => m_scoringMethodsProperty;
 
+        private DrawData m_drawStackData = DrawData.Waiting;
+        private DrawData m_drawDurationData = DrawData.Waiting;
+
         protected override void FindSerializedProperties()
         {
             m_scoreScalingProperty = serializedObject.FindProperty(s_scoreScalingPropertyName);
@@ -58,10 +62,59 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             EGL.PropertyField(m_scoreScalingProperty);
             EGL.PropertyField(m_displayNameProperty);
-            EGL.PropertyField(m_stackTypeProperty);
-            EGL.PropertyField(m_maxStacksProperty);
-            EGL.PropertyField(m_durationTypeProperty);
-            EGL.PropertyField(m_durationProperty);
+
+            // stack data
+            if (m_drawStackData == DrawData.Waiting)
+            {
+                Type statusType = ((SerializedStatus_Base)target).StatusType;
+                // if statusType (the non-abstract Status class that is having its data drawn) has its own declaration of StackType,
+                // then do not draw the Stack properties
+                if (statusType.GetProperty(nameof(Status.StackType)).DeclaringType == statusType)
+                {
+                    m_drawStackData = DrawData.DoNot;
+                }
+                else
+                {
+                    m_drawStackData = DrawData.Do;
+                }
+            }
+            if (m_drawStackData == DrawData.Do)
+            {
+                EGL.PropertyField(m_stackTypeProperty);
+                // if Stackable
+                if ((StatusStackType)m_stackTypeProperty.intValue == StatusStackType.Stackable)
+                    EGL.PropertyField(m_maxStacksProperty);
+            }
+
+            // duration data
+            if (m_drawDurationData == DrawData.Waiting)
+            {
+                Type statusType = ((SerializedStatus_Base)target).StatusType;
+                // if statusType (the non-abstract Status class that is having its data drawn) has its own declaration of DurationType,
+                // then do not draw the Duration properties
+                if (statusType.GetProperty(nameof(Status.DurationType)).DeclaringType == statusType)
+                {
+                    m_drawDurationData = DrawData.DoNot;
+                }
+                else
+                {
+                    m_drawDurationData = DrawData.Do;
+                }
+            }
+            if (m_drawDurationData == DrawData.Do)
+            {
+                EGL.PropertyField(m_durationTypeProperty);
+                // if Timed
+                if ((StatusDurationType)m_durationTypeProperty.intValue == StatusDurationType.Timed)
+                    EGL.PropertyField(m_durationProperty);
+            }
+        }
+
+        private enum DrawData
+        {
+            Waiting,
+            DoNot,
+            Do
         }
     }
 }

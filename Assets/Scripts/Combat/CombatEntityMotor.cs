@@ -18,6 +18,7 @@ namespace Stirge.Combat
     public abstract class CombatEntityMotor : MonoBehaviour
     {
         [Header("Components")]
+        [SerializeField] private CombatEntity m_entity;
         [SerializeField] private Transform m_transform;
         [SerializeField] private Animator m_anim;
         [SerializeField] private Rigidbody m_rb;
@@ -85,6 +86,9 @@ namespace Stirge.Combat
         public bool IsGrounded => m_isGrounded;
         public float AirTime => m_airTime;
         public Vector3 FeetPosition => m_rb.position + m_feetOffset;
+
+        // public events
+        public event System.Action<CombatEntity> onBecomeGrounded;
 
         #region Unity Events
         private void Awake()
@@ -207,6 +211,10 @@ namespace Stirge.Combat
         {
             return m_rb.position;
         }
+        public Quaternion GetRotation()
+        {
+            return m_rb.rotation;
+        }
         #endregion
 
         #region Physics
@@ -232,6 +240,7 @@ namespace Stirge.Combat
                 // if changing from grounded to not grounded aka leaving ground
                 if (m_isGrounded)
                 {
+                    onBecomeGrounded?.Invoke(m_entity);
                     OnBecomeNotGrounded();
                 }
                 return false;
@@ -371,6 +380,12 @@ namespace Stirge.Combat
         {
             SetMovementState(MotorMovementState.Force);
             m_rb.AddForce(force);
+        }
+
+        public void SetVelocity(Vector3 velocity)
+        {
+            SetMovementState(MotorMovementState.Velocity);
+            m_currentVelocity = velocity;
         }
         public void AddVelocity(Vector3 velocity)
         {

@@ -5,6 +5,7 @@ namespace Stirge.AttackTimeline.StatusTrack
 {
     using Combat;
     using Combat.Hitboxes;
+    using Stirge.UtilityAI;
 
     [System.Serializable]
     public class StatusBehaviour : PlayableBehaviour
@@ -36,7 +37,10 @@ namespace Stirge.AttackTimeline.StatusTrack
             if (m_boundEntity == null)
                 return;
 
-            m_boundEntity.InflictStatus(m_boundEntity, m_boundEntity.CreateRuntimeStatusFromCurrentActionAtIndex(m_inflictData.StatusActionIndex), m_inflictData);
+            // init status with properties from StatusInflictData
+            Status toInflict = m_boundEntity.CreateRuntimeStatusFromCurrentActionAtIndex(m_inflictData.StatusActionIndex);
+            toInflict.Setup(m_inflictData);
+            m_boundEntity.InflictStatus(m_boundEntity, toInflict);
 
             m_inflicted = true;
         }

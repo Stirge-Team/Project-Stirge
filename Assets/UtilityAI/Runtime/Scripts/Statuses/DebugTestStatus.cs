@@ -17,15 +17,15 @@ namespace Stirge.UtilityAI.Statuses
 
         protected override void OnApplyInternal(CombatEntity inflicter, CombatEntity target)
         {
-            Debug.Log(m_displayName + " applied.");
+            Debug.Log(DisplayName + " applied.");
         }
         protected override void UpdateInternal(CombatEntity target)
         {
-            Debug.Log(m_displayName + " updated.");
+            Debug.Log(DisplayName + " updated.");
         }
         protected override void OnClearInternal(CombatEntity target)
         {
-            Debug.Log(m_displayName + " cleared.");
+            Debug.Log(DisplayName + " cleared.");
         }
     }
 }

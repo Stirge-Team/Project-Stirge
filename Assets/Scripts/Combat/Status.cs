@@ -77,12 +77,12 @@ namespace Stirge.Combat.OldStatus
         public override void OnInflict(CombatEntity targetEntity)
         {
             base.OnInflict(targetEntity);
-            targetEntity.SetIsStunned(true, Length);
+            targetEntity.StartStun(Length);
         }
 
         public override void OnClear(CombatEntity entity)
         {
-            entity.SetIsStunned(false);
+            entity.StopStun();
         }
     }
 
