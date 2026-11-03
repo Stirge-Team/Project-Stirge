@@ -591,7 +591,7 @@
     "m_ShaderOutputName": "Steps",
     "m_StageCapability": 3,
     "m_Value": {
-        "x": 5.0,
+        "x": 9.0,
         "y": 4.0,
         "z": 4.0,
         "w": 4.0
@@ -2417,7 +2417,7 @@
     "m_ActiveSubTarget": {
         "m_Id": "d23b515035f642c1a0f4657edae0d4d6"
     },
-    "m_AllowMaterialOverride": false,
+    "m_AllowMaterialOverride": true,
     "m_SurfaceType": 1,
     "m_ZTestMode": 4,
     "m_ZWriteControl": 0,
