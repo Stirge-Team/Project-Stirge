@@ -2808,9 +2808,41 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 65166111305523887, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 65166111305523887, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: AvoidObstacles.Strategy
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 65166111305523887, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: AvoidObstacles.CameraRadius
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 487424382739389959, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: Composition.DeadZone.Size.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 487424382739389959, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: Composition.DeadZone.Size.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 487424382739389959, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: Composition.HardLimits.Size.x
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 487424382739389959, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: Composition.HardLimits.Size.y
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 1142247164429218732, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_Name
       value: PackedCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 2554474282751506834, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: Lens.FieldOfView
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 2554474282751506834, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: Target.LookAtTarget
@@ -2822,7 +2854,11 @@ PrefabInstance:
       objectReference: {fileID: 385431811}
     - target: {fileID: 2623897731785976225, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: field of view
-      value: 60
+      value: 59.999935
+      objectReference: {fileID: 0}
+    - target: {fileID: 2623897731785976225, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: near clip plane
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 3234605026587715191, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2866,15 +2902,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.3869
+      value: -1.3869001
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.25
+      value: 2.3556483
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -17.25055
+      value: -18.26477
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2882,20 +2918,48 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.05187288
+      value: 0.051872898
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000012357374
+      value: 0.000000006954869
       objectReference: {fileID: 0}
     - target: {fileID: 4265002832720632163, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 6.418767e-10
+      value: -3.6125555e-10
       objectReference: {fileID: 0}
     - target: {fileID: 4677010761502810818, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_originPoint
       value: 
       objectReference: {fileID: 2001077769}
+    - target: {fileID: 4677010761502810818, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_lockTargetCameraRadius
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4677010761502810818, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_lockTargetCameraWeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6584265312065309039, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: Damping
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6584265312065309039, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6584265312065309039, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: FramingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6584265312065309039, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: FramingSize
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6584265312065309039, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: LateralAdjustment
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8669994018045876003, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.3869
@@ -2914,20 +2978,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8669994018045876003, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.051872876
+      value: 0.051872894
       objectReference: {fileID: 0}
     - target: {fileID: 8669994018045876003, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.000000012357373
+      value: 0.0000000069726136
       objectReference: {fileID: 0}
     - target: {fileID: 8669994018045876003, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 6.4187666e-10
+      value: -7.0287565e-10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6830264285074038967, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1985252414}
   m_SourcePrefab: {fileID: 100100000, guid: ae4777eac01693fbda08f8951615af84, type: 3}
 --- !u!1 &925962919
 GameObject:
@@ -4725,7 +4792,7 @@ MonoBehaviour:
   Targets:
   - Object: {fileID: 385431811}
     Weight: 1
-    Radius: 5
+    Radius: 3
   m_LegacyTargets: []
 --- !u!1 &1514568464
 GameObject:
@@ -5389,7 +5456,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4677010761502810818, guid: ae4777eac01693fbda08f8951615af84, type: 3}
   m_PrefabInstance: {fileID: 921871855}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1985252399}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd6c0afad80a47b5dac54b9c70cf7937, type: 3}
@@ -6429,6 +6496,50 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1960149765}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1985252399 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6830264285074038967, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+  m_PrefabInstance: {fileID: 921871855}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1985252414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1985252399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDeoccluder
+  CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 65
+  IgnoreTag: 
+  TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  MinimumDistanceFromTarget: 0.3
+  AvoidObstacles:
+    Enabled: 1
+    DistanceLimit: 0
+    MinimumOcclusionTime: 0
+    CameraRadius: 0.4
+    UseFollowTarget:
+      Enabled: 1
+      YOffset: 0
+    Strategy: 2
+    MaximumEffort: 4
+    SmoothingTime: 0
+    Damping: 0.4
+    DampingWhenOccluded: 0
+  ShotQualityEvaluation:
+    Enabled: 0
+    OptimalDistance: 10
+    NearLimit: 5
+    FarLimit: 30
+    MaxQualityBoost: 0.2
 --- !u!114 &1986811372 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3797984759455495647, guid: b2186e2e283c9c348b77dbe5b8f6e8b5, type: 3}

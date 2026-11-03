@@ -2,6 +2,7 @@ using System.Threading;
 using Stirge.Combat;
 using Stirge.Player;
 using Unity.Cinemachine;
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -20,6 +21,10 @@ namespace Stirge.Camera
         private float m_lockOnRange = 10f;
         [SerializeField, Min(0), Tooltip("How far the origin point and current lock on target have to get so the lock on exits.\nIf set to less then the lock on range, the range will be infinite.")]
         private float m_disengaugeRange = 20f;
+        [SerializeField, Tooltip("How much the camera should face the lock on target.")]
+        private float m_lockTargetCameraWeight = 1f;
+        [SerializeField, Tooltip("How much space the lock on target should have around it on screen.")]
+        private float m_lockTargetCameraRadius = 1f;
   
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -85,7 +90,7 @@ namespace Stirge.Camera
             //reset the targets array to just the player
             m_groupScript.Targets = new() { m_groupScript.Targets[0] };
             //while I would love to add the enemy here, the CTG Target class has no constructor unfortunatly :(
-            m_groupScript.AddMember(target.transform, 1, 5);
+            m_groupScript.AddMember(target.transform, m_lockTargetCameraWeight, m_lockTargetCameraRadius);
         }
         //For the lock on scripts
         public void ClearLockOnTarget()
