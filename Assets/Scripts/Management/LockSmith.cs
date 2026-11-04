@@ -4,8 +4,25 @@ using UnityEngine;
 
 public class LockSmith : MonoBehaviour
 {
+    private static LockSmith m_instance;
+    public static LockSmith Instance => m_instance;
+    void Start()
+    {
+        //singlton
+        if (m_instance == null)
+        {
+            m_instance = this;
+        }
+        else if (m_instance != this)
+        {
+            Debug.LogWarning("There are too many Lock Smiths in the scene! Please ensure that there is only 1 Lock Smith script!");
+            enabled = false;
+            return;
+        }
+    }
     private CombatEntity m_currentLockOnTarget;
     public CombatEntity CurrentLockOnTarget { get { return m_currentLockOnTarget; } }
+    public bool IsLockedOn => m_currentLockOnTarget != null;
     public delegate bool RemovalCondition(CombatEntity target);
     private RemovalCondition m_currentTargetRemovalCondition;
     private bool m_awaitRemoval => m_currentTargetRemovalCondition != null;
@@ -64,7 +81,7 @@ public class LockSmith : MonoBehaviour
     /// </summary>
     public void RemoveTarget()
     {
-        Debug.Log($"Removing target {m_currentLockOnTarget.name} as the lock on target.", this);
+        Debug.Log($"Removing target {(m_currentLockOnTarget != null ? m_currentLockOnTarget.name : "null object")} as the lock on target.", this);
         m_currentLockOnTarget = null;
         RemoveCondition();
         UpdateClients();
@@ -125,20 +142,27 @@ public class LockSmith : MonoBehaviour
     {
         foreach (var client in m_targetClients)
         {
-            try
+            if (m_currentLockOnTarget != null)
             {
-                if(m_currentLockOnTarget != null)
+                try
                 {
                     client.BroadcastMessage("ReciveLockOnTarget", m_currentLockOnTarget);
                 }
-                else
+                catch (Exception e)
+                {
+                    Debug.LogError($"Lock on client {client.name} doesn't have the function \"ReciveLockOnTarget\"! ({e})", this);
+                }
+            }
+            else
+            {
+                try
                 {
                     client.BroadcastMessage("ClearLockOnTarget");
                 }
-            }
-            catch (MissingMethodException e)
-            {
-                Debug.LogWarning($"Object {client.name} doesn't have the method \"ReciveLockOnTarget\". ({e})", this);
+                catch (Exception e)
+                {
+                    Debug.LogError($"Lock on client {client.name} doesn't have the function \"ClearLockOnTarget\"! ({e})", this);
+                }
             }
         }
     }
