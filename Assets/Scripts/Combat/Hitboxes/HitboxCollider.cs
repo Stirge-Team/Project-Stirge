@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Stirge.Sound;
+using Stirge.UtilityAI;
 using UnityEngine;
 
 namespace Stirge.Combat.Hitboxes
@@ -67,8 +68,7 @@ namespace Stirge.Combat.Hitboxes
 
         private void OnHittableHit(Hittable hitTarget)
         {
-            List<int> statusesToInflictIndices = new();
-            List<StatusInflictData> statusInflictDatas = new();
+            List<Status> statusesToInflict = new();
             for (int i = 0, count = m_data.StatusInflictDatas.Length; i < count; i++)
             {
                 // if the Status at this index has already been inflicted on this Hittable and should only be inflicted once, skip
@@ -85,9 +85,10 @@ namespace Stirge.Combat.Hitboxes
                     m_appliedStatuses[hitTarget].Add(i);
                 }
 
-                // add the StatusActionIndex to the list of Statuses to apply
-                statusesToInflictIndices.Add(inflictData.StatusActionIndex);
-                statusInflictDatas.Add(inflictData);
+                // create the status and set it up with the Inflict Data
+                Status toInflict = m_owner.CreateRuntimeStatusFromCurrentActionAtIndex(inflictData.StatusActionIndex);
+                toInflict.Setup(inflictData);
+                statusesToInflict.Add(toInflict);
             }
 
             // camera shake, hitstop, and sfx
@@ -96,7 +97,7 @@ namespace Stirge.Combat.Hitboxes
             if (m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
 
             // do the onhit
-            hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflictIndices.ToArray(), statusInflictDatas.ToArray());
+            hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflict.ToArray());
         }
 
 #if UNITY_EDITOR

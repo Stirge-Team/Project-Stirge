@@ -29,8 +29,6 @@ namespace Stirge.Combat
 
         // status fields
         protected List<Status> m_inflictedStatuses = new();
-        protected bool m_isStunned;
-
         private float m_stunCountdown;
 
         // combat fields
@@ -43,7 +41,7 @@ namespace Stirge.Combat
         public EntityHealth Health => m_health;
 
         // public properties
-        public bool IsStunned => m_isStunned;
+        public bool IsStunned => m_stunCountdown > 0f;
         public bool IsPerformingAction => m_isPerformingAction;
         public float ActualDamage
         {
@@ -71,8 +69,8 @@ namespace Stirge.Combat
 
         protected void Update()
         {
-            // update stun timer
-            if (m_stunCountdown > 0f)
+            // update stun timer if grounded
+            if (m_stunCountdown > 0f && Motor.IsGrounded)
             {
                 m_stunCountdown -= Time.deltaTime;
 
@@ -174,7 +172,7 @@ namespace Stirge.Combat
             int index = 0;
             foreach (Status status in m_inflictedStatuses)
             {
-                status.Update(this);
+                status.OnUpdate(this);
 
                 if (status.ShouldThisClear(this))
                 {
@@ -265,21 +263,17 @@ namespace Stirge.Combat
                 Debug.LogWarning($"Stun has an invalid duration of '{duration}' seconds!", this);
                 return;
             }
-            
-            m_stunCountdown = duration;
 
-            m_isStunned = true;
+            TryStopPerformingAction();
+
+            m_stunCountdown = duration;
             OnStartStun(duration);
         }
         protected virtual void OnStartStun(float duration) { }
         public void StopStun()
         {
-            if (m_isStunned)
-            {
-                m_isStunned = false;
-                m_stunCountdown = 0f;
-                OnStopStun();
-            }
+            m_stunCountdown = 0f;
+            OnStopStun();
         }
         protected virtual void OnStopStun() { }
         #endregion
@@ -289,9 +283,14 @@ namespace Stirge.Combat
         #region Actions
         public virtual void PerformAction(Action action)
         {
-            StopPerformingAction();
+            TryStopPerformingAction();
             m_currentAction = action;
             m_isPerformingAction = true;
+
+            if (IsStunned)
+            {
+                Debug.Log("stunned?");
+            }
 
             if (action.Timeline != null)
                 m_director.Play(action.Timeline);
@@ -311,7 +310,7 @@ namespace Stirge.Combat
         }
         protected virtual void OnActionEndInternal(PlayableDirector director) { }
 
-        public void StopPerformingAction()
+        public void TryStopPerformingAction()
         {
             if (m_isPerformingAction)
             {
@@ -332,17 +331,14 @@ namespace Stirge.Combat
         }
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices, StatusInflictData[] statusInflictDatas)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict)
         {
             TakeDamage(hitboxData.Damage);
-            if (statusesToApplyIndices != null)
+            if (statusesToInflict != null)
             {
-                for (int i = 0, count = statusesToApplyIndices.Length; i < count; i++)
+                foreach (Status s in statusesToInflict)
                 {
-                    int statusIndex = statusesToApplyIndices[i];
-                    Status toInflict = CreateRuntimeStatusFromCurrentActionAtIndex(statusIndex);
-                    toInflict.Setup(statusInflictDatas[i]);
-                    InflictStatus(attacker, toInflict);
+                    InflictStatus(attacker, s);
                 }
             }
         }

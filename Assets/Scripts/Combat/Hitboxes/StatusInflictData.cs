@@ -6,13 +6,13 @@ namespace Stirge.Combat.Hitboxes
     public class StatusInflictData
     {
         [Tooltip("The index of the Status on its Action to be inflicted.")]
-        [SerializeField] private int m_statusActionIndex;
+        [SerializeField, Min(0)] private int m_statusActionIndex;
         [Tooltip("If a target is hit multiple times, whether or not to inflict that Status multiple times.")]
         [SerializeField] private bool m_inflictOnlyOnce;
         [Tooltip("If the Status is stackable, how many stacks to inflict.")]
-        [SerializeField] private int m_stacks;
+        [SerializeField, Min(1)] private int m_stacks = 1;
         [Tooltip("If the Status is Timed, how long it should last.")]
-        [SerializeField] private float m_duration;
+        [SerializeField, Min(0f)] private float m_duration;
 
         public int StatusActionIndex => m_statusActionIndex;
         public bool InflictOnlyOnce => m_inflictOnlyOnce;

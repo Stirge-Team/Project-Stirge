@@ -11,7 +11,6 @@ namespace Stirge.UtilityAI
         [Tooltip("A Max Stacks of 0 will be treated as Infinite.")]
         [SerializeField, Range(0, 30)] protected int m_maxStacks;
         [SerializeField] protected StatusDurationType m_durationType;
-        [SerializeField] protected float m_duration;
         [SerializeField] protected SerializedCondition_Base[] m_conditions = new SerializedCondition_Base[0];
         [SerializeField] protected SerializedScoringMethod_Base[] m_scoringMethods = new SerializedScoringMethod_Base[0];
 

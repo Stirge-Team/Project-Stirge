@@ -19,7 +19,7 @@ namespace Stirge.UtilityAI.Statuses
         {
             Debug.Log(DisplayName + " applied.");
         }
-        protected override void UpdateInternal(CombatEntity target)
+        public override void OnUpdate(CombatEntity target)
         {
             Debug.Log(DisplayName + " updated.");
         }

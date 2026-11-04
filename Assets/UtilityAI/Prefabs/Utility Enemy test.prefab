@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd0583f8c2c5aba9be42557f3e144ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Management.EntityHealth
-  m_baseHealth: 3
+  m_baseHealth: 20
   m_healEvents:
     m_PersistentCalls:
       m_Calls: []
@@ -492,7 +492,7 @@ GameObject:
   - component: {fileID: 8260787191455650821}
   - component: {fileID: 1253250142346145131}
   m_Layer: 3
-  m_Name: Model
+  m_Name: Model/Motor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -527,6 +527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cb14ad2fe2f2a94b87e935d2fa8d973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.UtilityEnemyMotor
+  m_entity: {fileID: 8433020139153640328}
   m_transform: {fileID: 1354773783748330367}
   m_anim: {fileID: 8260787191455650821}
   m_rb: {fileID: 1848286768585000894}
@@ -535,7 +536,7 @@ MonoBehaviour:
   m_defaultAerialMovementState: 1
   m_walkableLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 64
   m_groundedMovementProperties: {fileID: 11400000, guid: 068a0da176690bd4ba709677146a0354, type: 2}
   m_aerialMovementProperties: {fileID: 11400000, guid: 068a0da176690bd4ba709677146a0354, type: 2}
   m_verticalTopSpeed: 10
@@ -549,7 +550,6 @@ MonoBehaviour:
   m_penCheckMask:
     serializedVersion: 2
     m_Bits: 65
-  m_enemy: {fileID: 8433020139153640328}
   m_nav: {fileID: 616382525492106720}
 --- !u!95 &8260787191455650821
 Animator:

@@ -99,7 +99,7 @@ namespace Stirge.AttackTimeline
                 return;
             }
 #endif
-            if (!m_boundAnimator.IsInTransition(0) && m_boundAnimator.GetCurrentAnimatorStateInfo(0).fullPathHash != m_targetAnimationStateHash)
+            if (!m_boundAnimator.IsInTransition(0) && m_boundAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash != m_targetAnimationStateHash)
             {
                 // Just in case, reset trigger before entering state
                 // If it is Set, then the Animation State will immediately exit

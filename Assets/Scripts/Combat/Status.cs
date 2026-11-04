@@ -82,7 +82,7 @@ namespace Stirge.Combat.OldStatus
 
         public override void OnClear(CombatEntity entity)
         {
-            entity.StopStun();
+            
         }
     }
 

@@ -3,13 +3,14 @@ using UnityEngine;
 namespace Stirge.Combat.Hitboxes
 {
     using Destroyable;
+    using Stirge.UtilityAI;
 
     public class HittableProp : Hittable
     {
         [SerializeField] private int m_health = 3;
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices = null, StatusInflictData[] statusInflictDatas = null)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict = null)
         {
             m_health -= hitboxData.Damage;
 

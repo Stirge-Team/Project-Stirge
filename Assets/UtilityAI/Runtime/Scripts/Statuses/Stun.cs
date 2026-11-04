@@ -13,7 +13,7 @@ namespace Stirge.UtilityAI.Statuses
         public sealed override StatusDurationType DurationType => StatusDurationType.Timed;
         public sealed override StatusStackType StackType => StatusStackType.Single;
 
-        public void Setup(string animationStateName)
+        public virtual void Setup(string animationStateName)
         {
             m_animationStateHash = Animator.StringToHash(animationStateName);
         }
@@ -22,6 +22,11 @@ namespace Stirge.UtilityAI.Statuses
         {
             PlayStunAnimation(target);
             target.StartStun(m_duration);
+        }
+
+        public override void OnUpdate(CombatEntity target)
+        {
+            m_countdown -= Time.deltaTime;
         }
 
         protected override void OnClearInternal(CombatEntity target)

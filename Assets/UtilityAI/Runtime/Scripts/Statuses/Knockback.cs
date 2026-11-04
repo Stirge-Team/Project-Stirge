@@ -6,13 +6,16 @@ namespace Stirge.UtilityAI.Statuses
     using Combat;
     using Serialization;
 
-    public class Knockback : Stun, ISetupable<float, Vector3, Knockback.LocalTo>
+    public class Knockback : Status, ISetupable<float, Vector3, Knockback.LocalTo>
     {
         private float m_strength;
         private Vector3 m_direction;
         private LocalTo m_localTo;
 
         public override Type StatusType => typeof(Knockback);
+
+        public override StatusStackType StackType => StatusStackType.Single;
+        public override StatusDurationType DurationType => StatusDurationType.Instant;
 
         public void Setup(float strength, Vector3 direction, LocalTo localTo)
         {
@@ -28,12 +31,6 @@ namespace Stirge.UtilityAI.Statuses
 
         protected override void OnApplyInternal(CombatEntity inflicter, CombatEntity target)
         {
-            PlayStunAnimation(target);
-
-            // if has a StunDuration
-            if (Duration > 0f)
-                target.Motor.onBecomeGrounded += OnClearInternal;
-
             Vector3 direction = m_localTo switch
             {
                 LocalTo.World => m_direction,
@@ -45,11 +42,14 @@ namespace Stirge.UtilityAI.Statuses
             target.Motor.SetVelocity(knockback);
         }
 
+        public override void OnUpdate(CombatEntity target)
+        {
+            
+        }
+
         protected override void OnClearInternal(CombatEntity target)
         {
-            // don't apply Stun until target has landed
-            target.StartStun(Duration);
-            target.Motor.onBecomeGrounded -= OnClearInternal;
+            
         }
 
         public enum LocalTo
