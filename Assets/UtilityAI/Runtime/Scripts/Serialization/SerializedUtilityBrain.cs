@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Stirge.UtilityAI
 {
-    [CreateAssetMenu(menuName = "Utility AI/Utility Brain", fileName = "New Brain", order = 448)]
+    [CreateAssetMenu(menuName = "Utility AI/Utility Brain", fileName = "New Brain")]
     public class SerializedUtilityBrain : ScriptableObject
     {
         [SerializeField] private SerializedAction[] m_serializedActions;

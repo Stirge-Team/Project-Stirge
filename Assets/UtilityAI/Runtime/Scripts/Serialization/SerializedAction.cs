@@ -6,7 +6,7 @@ namespace Stirge.UtilityAI
 {
     using Serialization;
 
-    [CreateAssetMenu(menuName = "Utility AI/Serialized Action", fileName = "New Serialized Action", order = 449)]
+    [CreateAssetMenu(menuName = "Utility AI/Serialized Actions/Action", fileName = "New Action")]
     public class SerializedAction : ScriptableObject
     {
         [SerializeField, Range(0, 5f)] protected float m_scoreScaling = 1f;

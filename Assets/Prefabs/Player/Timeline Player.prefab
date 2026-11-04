@@ -613,11 +613,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73f4dd88a9b4d6242bfefd1f6f4745b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Player.PlayerMotor
+  m_entity: {fileID: 5169013462846126806}
   m_transform: {fileID: 2202064621031587732}
   m_anim: {fileID: 2564161512617394268}
   m_rb: {fileID: 7438401560705065281}
   m_col: {fileID: 6330139077499344260}
-  m_defaultMovementState: 1
+  m_defaultGroundedMovementState: 1
+  m_defaultAerialMovementState: 1
   m_walkableLayers:
     serializedVersion: 2
     m_Bits: 64

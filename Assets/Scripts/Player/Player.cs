@@ -131,10 +131,10 @@ namespace Stirge.Player
         #endregion
 
         #region Status
-        protected override void OnStunned(float stunLength)
+        protected override void OnStartStun(float duration)
         {
             PlayerMotor.ResetHorizontalVelocity();
-            m_input.SetInputReading(false, stunLength);
+            m_input.SetInputReading(false, duration);
         }
         #endregion
     }

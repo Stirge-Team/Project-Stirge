@@ -18,7 +18,7 @@ namespace Stirge.UtilityAI.Actions
 
         public override void Perform(CombatEntity user, CombatEntity target)
         {
-            if (user is UtilityEnemy enemy)
+            if (!user.IsStunned && user is UtilityEnemy enemy)
             {
                 int count = Physics.OverlapSphereNonAlloc(enemy.EnemyMotor.GetPosition(), Range, m_targetColliders, m_mask, QueryTriggerInteraction.Ignore);
                 for (int i = 0; i < count; i++)

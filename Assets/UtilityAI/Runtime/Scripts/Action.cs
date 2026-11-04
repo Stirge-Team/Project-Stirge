@@ -112,7 +112,7 @@ namespace Stirge.UtilityAI
         /// </summary>
         public virtual void Perform(CombatEntity user, CombatEntity target)
         {
-            if (!m_performed)
+            if (!m_performed && !user.IsStunned)
             {
                 m_performed = true;
                 user.PerformAction(this);

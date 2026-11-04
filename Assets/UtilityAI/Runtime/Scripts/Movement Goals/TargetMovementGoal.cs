@@ -27,7 +27,7 @@ namespace Stirge.UtilityAI.MovementGoals
         public override void Perform(UtilityEnemy user, CombatEntity target)
         {
             // if user does not have a target, then cancel
-            if (!user.HasTarget)
+            if (!user.HasTarget || user.IsStunned)
                 return;
 
             // move to Navigation state if grounded and not performing an action

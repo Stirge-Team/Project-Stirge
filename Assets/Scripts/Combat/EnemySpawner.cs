@@ -22,6 +22,11 @@ namespace Stirge.Combat
                 Debug.LogException(new System.NullReferenceException("No enemy prefab loaded into spawner! Please put a valid enemy prefab into this spawner."), this);
                 enabled = false;
             }
+            if (m_spawnLocation == null)
+            {
+                Debug.LogWarning($"No Spawn Location for {nameof(EnemySpawner)} '{name}' set, using object position.", this);
+                m_spawnLocation = transform;
+            }
             m_spawnedEnemies.Clear();
             if (m_spawnOnStart)
             {
@@ -39,11 +44,17 @@ namespace Stirge.Combat
 
         private void SpawnEnemy()
         {
-            Vector3 spawnedPosition = m_spawnLocation != null ? m_spawnLocation.position : transform.position;
+            Vector3 spawnedPosition = m_spawnLocation.position;
+
+            // multiply by rotation to get correct orientation
+            Vector3 randomness = m_spawnLocation.rotation * m_spawnLocationRandomness;
+
             // each axis has random value in range -value to +value
-            spawnedPosition += new Vector3((Random.value * 2f - 1f) * m_spawnLocationRandomness.x,
-                                           (Random.value * 2f - 1f) * m_spawnLocationRandomness.y,
-                                           (Random.value * 2f - 1f) * m_spawnLocationRandomness.z);
+            spawnedPosition += new Vector3((Random.value * 2f - 1f) * randomness.x,
+                                           (Random.value * 2f - 1f) * randomness.y,
+                                           (Random.value * 2f - 1f) * randomness.z);
+
+            // Spawn enemy
             UtilityEnemy spawnedEnemy = Instantiate(m_enemyPrefab, spawnedPosition, Quaternion.Euler(0, Random.value * 360f, 0)).GetComponentInChildren<UtilityEnemy>();
             spawnedEnemy.name = m_enemyPrefab.name;
             spawnedEnemy.onDeath += ReportDeath;
@@ -68,9 +79,13 @@ namespace Stirge.Combat
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            Vector3 pos = m_spawnLocation != null ? m_spawnLocation.position : transform.position;
+            Transform spawnTransform = m_spawnLocation != null ? m_spawnLocation : transform;
+            Vector3 pos = spawnTransform.position - transform.position;
+            Vector3 size = Vector3.Max(new(0.3f, 0.3f, 0.3f), m_spawnLocationRandomness);
+
+            Gizmos.matrix = spawnTransform.localToWorldMatrix;
             Gizmos.color = Color.limeGreen;
-            Gizmos.DrawCube(pos, m_spawnLocationRandomness);
+            Gizmos.DrawCube(pos, size);
         }
 
         [ContextMenu("Knockback All Enemies")]

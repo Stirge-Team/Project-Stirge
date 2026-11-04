@@ -3,13 +3,14 @@ using UnityEngine;
 namespace Stirge.Combat.Hitboxes
 {
     using Destroyable;
+    using Stirge.UtilityAI;
 
     public class HittableProp : Hittable
     {
         [SerializeField] private int m_health = 3;
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, int[] statusesToApplyIndices)
+        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict = null)
         {
             m_health -= hitboxData.Damage;
 
@@ -22,7 +23,10 @@ namespace Stirge.Combat.Hitboxes
 
         public void BlowUp(Vector3 statusPosition, Vector3 hitboxVelocityVector)
         {
-            GetComponent<Destroyable>().Destroy(statusPosition, hitboxVelocityVector);
+            if (TryGetComponent(out Destroyable destroyable))
+            { 
+                destroyable.Destroy(statusPosition, hitboxVelocityVector);
+            }
         }
     }
 }

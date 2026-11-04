@@ -5,6 +5,6 @@ namespace Stirge.UtilityAI.MovementGoals
     using Serialization;
 
     [NameOverride("World Position", 0)]
-    [CreateAssetMenu(menuName = "Utility AI/Serialized Movement Goals/Move To World Position", fileName = "New Move To World Position Goal", order = 453)]
+    [CreateAssetMenu(menuName = "Utility AI/Serialized Movement Goals/Move To World Position", fileName = "New Move To World Position Goal")]
     public class SerializedMoveToWorldPositionGoal : SerializedMovementGoal<MoveToWorldPositionGoal, Vector3> { }
 }

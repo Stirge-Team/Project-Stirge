@@ -18,6 +18,7 @@ namespace Stirge.Combat
     public abstract class CombatEntityMotor : MonoBehaviour
     {
         [Header("Components")]
+        [SerializeField] private CombatEntity m_entity;
         [SerializeField] private Transform m_transform;
         [SerializeField] private Animator m_anim;
         [SerializeField] private Rigidbody m_rb;
@@ -62,6 +63,7 @@ namespace Stirge.Combat
 
         // reference properties
         public new Transform transform => m_transform;
+        public CombatEntity Entity => m_entity;
         public Animator Animator => m_anim;
         public Rigidbody Rigidbody => m_rb;
         public Collider Collider => m_col;
@@ -85,6 +87,9 @@ namespace Stirge.Combat
         public bool IsGrounded => m_isGrounded;
         public float AirTime => m_airTime;
         public Vector3 FeetPosition => m_rb.position + m_feetOffset;
+
+        // public events
+        public event System.Action<CombatEntity> onBecomeGrounded;
 
         #region Unity Events
         private void Awake()
@@ -137,6 +142,9 @@ namespace Stirge.Combat
                 case MotorMovementState.Navigation:
                     UpdateNavigation();
                     break;
+                case MotorMovementState.Action:
+                    UpdateAction();
+                    break;
                 default:
                     break;
             }
@@ -167,7 +175,7 @@ namespace Stirge.Combat
             for (int i = 0; i < count; i++)
             {
                 Collider other = m_penCheckNeighbours[i];
-                if (!other || other == m_col)
+                if (other == null || other == m_col)
                     continue;
 
                 if (Physics.ComputePenetration(m_col, m_rb.position, m_rb.rotation,
@@ -181,6 +189,7 @@ namespace Stirge.Combat
             OnMovePosition(m_rb.position);
         }
         protected virtual void OnMovePosition(Vector3 newPosition) { }
+
         public void SetPosition(Vector3 newPosition)
         {
             //transform.position = newPosition;
@@ -206,6 +215,10 @@ namespace Stirge.Combat
         public Vector3 GetPosition()
         {
             return m_rb.position;
+        }
+        public Quaternion GetRotation()
+        {
+            return m_rb.rotation;
         }
         #endregion
 
@@ -238,12 +251,6 @@ namespace Stirge.Combat
             }
             else
             {
-                // if changing from not grounded to grounded aka landing
-                if (!m_isGrounded)
-                {
-                    OnBecomeGrounded();
-                }
-
                 // get closest hit walkable object
                 RaycastHit closestHit = m_groundedCheckHits[0];
                 if (hitCount > 1)
@@ -261,9 +268,16 @@ namespace Stirge.Combat
                 }
 
                 // if the closest object does not meet the slope limit requirements, then the
-                // Enemy is NOT standing
+                // Entity is NOT grounded
                 if (Vector3.Angle(closestHit.normal, Vector3.up) > m_slopeLimit)
                     return false;
+
+                // if changing from not grounded to grounded aka landing
+                if (!m_isGrounded)
+                {
+                    onBecomeGrounded?.Invoke(m_entity);
+                    OnBecomeGrounded();
+                }
 
                 return true;
             }
@@ -346,6 +360,14 @@ namespace Stirge.Combat
         // It is defined here so that the FixedUpdate does not need to be overriden to add the Navigation case.
         protected virtual void UpdateNavigation() { }
 
+        private void UpdateAction()
+        {
+            m_rb.linearVelocity = Vector3.zero;
+
+            OnUpdateAction();
+        }
+        protected virtual void OnUpdateAction() { }
+
         public void ResetHorizontalVelocity()
         {
             m_currentVelocity.x = 0;
@@ -371,6 +393,12 @@ namespace Stirge.Combat
         {
             SetMovementState(MotorMovementState.Force);
             m_rb.AddForce(force);
+        }
+
+        public void SetVelocity(Vector3 velocity)
+        {
+            SetMovementState(MotorMovementState.Velocity);
+            m_currentVelocity = velocity;
         }
         public void AddVelocity(Vector3 velocity)
         {
@@ -446,7 +474,6 @@ namespace Stirge.Combat
             m_rb.isKinematic = false;
             m_rb.linearVelocity = Vector3.zero;
             ResetVelocity();
-            Debug.Log("Action!");
         }
 
         private MotorMovementState GetDefaultMovementState()
