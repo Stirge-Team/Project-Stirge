@@ -10,6 +10,7 @@ namespace Stirge.Camera
 
     public class EnemyGroupHandler : MonoBehaviour
     {
+        /*
         private static bool s_debug = false;
         [SerializeField]
         private float m_range = 10f;
@@ -98,5 +99,6 @@ namespace Stirge.Camera
 
             m_groupScript.AddMember(newMember.transform, weight, radius);
         }
+        */
     }
 }

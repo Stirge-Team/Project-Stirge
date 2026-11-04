@@ -403,7 +403,8 @@ namespace Stirge.Combat
                 switch (m_movementState)
                 {
                     case MotorMovementState.Force:
-
+                        OnMovementStateChangedToForce();
+                        break;
                     case MotorMovementState.Velocity:
                         OnMovementStateChangedToVelocity();
                         break;

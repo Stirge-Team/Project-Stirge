@@ -24,6 +24,7 @@ namespace Stirge.Player
         [SerializeField, Tooltip("How far until the soft lock target is cleared.")] private float m_softLockHoldRange = 2;
         protected PlayerMotor PlayerMotor => (PlayerMotor)base.Motor;
         protected Vector2 m_inputDirection;
+        public bool IsGettingMovementInput => m_inputDirection.magnitude > 0;
         private Transform m_camTransform;
 
         #region UnityEvents
@@ -51,11 +52,12 @@ namespace Stirge.Player
                 if (PlayerMotor.HorizontalSpeed < PlayerMotor.CurrentMovementProperties.HorizontalTopSpeed ||
                    Vector3.Angle(PlayerMotor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
                 {
-                    PlayerMotor.AddForce(PlayerMotor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * PlayerMotor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                    PlayerMotor.AddForceClamped(PlayerMotor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * PlayerMotor.CurrentMovementProperties.Acceleration * Time.deltaTime);
                 }
+                else if(!IsGettingMovementInput && PlayerMotor.IsGrounded) PlayerMotor.SetMovementState(MotorMovementState.Kinematic);
+                
+                PlayerMotor.AddForceClamped(PlayerMotor.HorizontalDirection * -PlayerMotor.CurrentMovementProperties.Friction * Mathf.Clamp01(PlayerMotor.HorizontalSpeed) * Time.deltaTime);
             }
-
-            PlayerMotor.AddForce(PlayerMotor.HorizontalDirection * -PlayerMotor.CurrentMovementProperties.Friction * Mathf.Clamp01(PlayerMotor.HorizontalSpeed) * Time.deltaTime);
         }
         #endregion
 
