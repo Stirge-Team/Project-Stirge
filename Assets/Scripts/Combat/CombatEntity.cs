@@ -287,11 +287,6 @@ namespace Stirge.Combat
             m_currentAction = action;
             m_isPerformingAction = true;
 
-            if (IsStunned)
-            {
-                Debug.Log("stunned?");
-            }
-
             if (action.Timeline != null)
                 m_director.Play(action.Timeline);
             m_motor.OnActionStart();

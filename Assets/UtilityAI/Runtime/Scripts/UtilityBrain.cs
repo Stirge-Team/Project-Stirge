@@ -42,8 +42,13 @@ namespace Stirge.UtilityAI
             EvaluateActions(user, target);
             EvaluateMovementGoals(user, target);
 
-            CurrentAction?.Perform(user, target);
-            CurrentMovementGoal?.Perform(user, target);
+            // prevent stunned Enemies from performing,
+            // but still allow evaluation?
+            if (!user.IsStunned)
+            {
+                CurrentAction?.Perform(user, target);
+                CurrentMovementGoal?.Perform(user, target);
+            }
         }
 
         private void EvaluateActions(UtilityEnemy user, CombatEntity target)

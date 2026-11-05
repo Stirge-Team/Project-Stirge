@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc2753d86d1c624408a2db60db52a9ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AttackTimeline.HitboxCollider
-  m_owner: {fileID: 0}
+  m_owner: {fileID: 8433020139153640328}
 --- !u!136 &7620143308642088406
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -331,7 +331,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -534,14 +534,16 @@ MonoBehaviour:
   m_col: {fileID: 2809133658910849072}
   m_defaultGroundedMovementState: 3
   m_defaultAerialMovementState: 1
-  m_walkableLayers:
-    serializedVersion: 2
-    m_Bits: 64
   m_groundedMovementProperties: {fileID: 11400000, guid: 068a0da176690bd4ba709677146a0354, type: 2}
   m_aerialMovementProperties: {fileID: 11400000, guid: 068a0da176690bd4ba709677146a0354, type: 2}
+  m_drag: 0.05
   m_verticalTopSpeed: 10
   m_maxFallingSpeed: 5
   m_fallSpeedMultiplier: 0
+  m_slopeSlipperyness: 3
+  m_walkableLayers:
+    serializedVersion: 2
+    m_Bits: 64
   m_groundCheckDistance: 1
   m_groundCheckRadius: 0.5
   m_slopeLimit: 30

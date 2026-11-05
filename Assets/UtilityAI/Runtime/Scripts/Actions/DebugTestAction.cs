@@ -28,8 +28,7 @@ namespace Stirge.UtilityAI.Actions
 
         public override void Perform(CombatEntity user, CombatEntity target)
         {
-            if (!user.IsStunned)
-                Debug.Log(m_message);
+            Debug.Log(m_message);
         }
     }
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e3e542b754e2b440818a2234e9bae89, type: 3}
   m_Name: Default Movement Properties
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.MovementProperties
-  m_horizontalTopSpeed: 5
+  m_horizontalTopSpeed: 8
   m_acceleration: 3
   m_angularSpeed: 4
   m_friction: 0.1

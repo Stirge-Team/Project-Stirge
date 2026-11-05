@@ -43,7 +43,6 @@ namespace Stirge.Input
         private void FixedUpdate()
         {
             // Remove old Buffered Inputs
-            // Count down so that indices are preserved upon removal
             for (int i = 0, count = m_buffer.Count; i < count; i++)
             {
                 // if lifetime is ended
@@ -87,8 +86,12 @@ namespace Stirge.Input
         /// <param name="newInput"></param>
         private void ProcessBuffer(AttackInput newInput = default)
         {
+            // if the player is stunned, do not allow processing
+            if (m_player.IsStunned)
+                return;
+
             // if new input is not empty, add it to the buffer
-            if (newInput != 0)
+            if (newInput != AttackInput.Empty)
             {
                 // if buffer is at max size, pop oldest value (always at 0)
                 if (m_buffer.Count == MAX_BUFFER_LENGTH)
@@ -120,9 +123,9 @@ namespace Stirge.Input
                     m_buffer.GetRange(index, size).ForEach(buf => processedInput |= buf.Input);
 
                     // first check for Combo Actions
+                    // If an action is found, it is stored in the m_storedComboAction variable
                     if (TryGetComboBinding(processedInput, out m_storedComboAction))
                     {
-                        // If an action is found, it is stored in the m_storedComboAction variable
                         if (m_storedComboAction.ShouldFlushPlayerInputBuffer)
                             FlushBuffer();
                         // instead of performing the Action here, wait until the current Action's Timeline Signal emitter tells us to perform it
@@ -180,11 +183,16 @@ namespace Stirge.Input
             m_buffer.Clear();
         }
 
+        /// <summary>
+        /// This is called by a Signal Emitter in an Action's Combo Track.
+        /// </summary>
         public void TryPerformStoredComboAction()
         {
             if (m_storedComboAction != null)
             {
-                m_player.PerformAction(m_storedComboAction.CreateRuntimeAction());
+                // Do not allow the Player to perform the Combo Action if they are stunned
+                if (!m_player.IsStunned)
+                    m_player.PerformAction(m_storedComboAction.CreateRuntimeAction());
                 m_storedComboAction = null;
             }
         }
@@ -197,28 +205,28 @@ namespace Stirge.Input
         #region Unity Input
         public void GetAInput(InputAction.CallbackContext context)
         {
-            if (context.started)
+            if (context.performed)
             {
                 ProcessBuffer(AttackInput.A);
             }
         }
         public void GetBInput(InputAction.CallbackContext context)
         {
-            if (context.started)
+            if (context.performed)
             {
                 ProcessBuffer(AttackInput.B);
             }
         }
         public void GetXInput(InputAction.CallbackContext context)
         {
-            if (context.started)
+            if (context.performed)
             {
                 ProcessBuffer(AttackInput.X);
             }
         }
         public void GetYInput(InputAction.CallbackContext context)
         {
-            if (context.started)
+            if (context.performed)
             {
                 ProcessBuffer(AttackInput.Y);
             }

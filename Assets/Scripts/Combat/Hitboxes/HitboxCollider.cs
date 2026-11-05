@@ -35,6 +35,12 @@ namespace Stirge.Combat.Hitboxes
 
         private void Start()
         {
+            if (m_owner == null)
+            {
+                Debug.LogError($"{nameof(HitboxCollider)} '{name}' has a null reference for property '{nameof(m_owner)}'. Please assign it!", this);
+                enabled = false;
+                return;
+            }
             m_lastPos = transform.position;
         }
 
