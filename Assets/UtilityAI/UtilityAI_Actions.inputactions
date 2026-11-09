@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "UtilityAI_Actions",
+    "maps": [
+        {
+            "name": "Testing",
+            "id": "3d7b0cde-75d6-4c2b-91b5-e1986124f923",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "20e2a78e-f6f0-4aff-9a15-da5bfa0c82bc",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5a7229f0-3226-43bf-a72f-998e1c02664d",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

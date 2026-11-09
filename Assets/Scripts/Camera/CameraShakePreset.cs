@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Stirge.Camera
 {
     [CreateAssetMenu(fileName = "NewCameraShakePreset", menuName = "Stirge/CameraShakePreset", order = 1)]
-    public class CameraShakePreset : ScriptableObject
+    public class CameraShakePreset : ScriptableObject //thinking of just making this a class/struct, since you *can* copy-paste class data from one to another, so this being a SO is a bit redundant.
     {
         [HideInInspector]
         public float AmplitudeGain => m_amplitude;
@@ -28,6 +28,12 @@ namespace Stirge.Camera
             m_frequency = freq;
             m_duration = duration;
             m_strengthOverTime = new(new(0,1),new(1,0));
+        }
+
+        public bool TriggerScreenShake()
+        {
+            CameraShakeController.Instance.BeginScreenshake(this);
+            return true;
         }
     }
 }

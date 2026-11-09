@@ -1,99 +1,77 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace Stirge.Input
 {
-    using Combat.Attacks;
     using Player;
-    using System.Linq;
+    using UtilityAI;
 
     [System.Flags]
     public enum AttackInput
     {
+        Empty = 0,
         A = 1,
         B = 2,
         X = 4,
         Y = 8,
-        ERR = 16
+        L = 16,
+        R = 32,
     }
 
     public class PlayerInputProcessing : MonoBehaviour
     {
-        #region Singleton
-        public static PlayerInputProcessing Instance { get; private set; }
+        private const int MAX_BUFFER_LENGTH = 5;
+        private const int MAX_SEQUENCE_LENGTH = 3;
 
-        private void Awake()
-        {
-            if (Instance != null)
-            {
-                Destroy(Instance); // you could do Instance.gameObject but if the PIP is attached to the player then that would destroy the player, up to you
-            }
-
-            Instance = this;
-            Init();
-        }
-        private void Init()
-        {
-            m_comboBindings = new();
-        }
-        #endregion
-
+        [Header("References")]
         [SerializeField] private Player m_player;
 
-        [SerializeField] private float m_inputBufferTime = 0.2f;
-        public const int MaxSequenceLength = 5;
+        [Header("Buffer Properties")]
+        [SerializeField] private int m_bufferedInputFrameLifetime = 10;
 
-        private Dictionary<AttackInput, AttackData> m_groundedBindings = new();
-        private Dictionary<AttackInput, AttackData> m_airBindings = new();
+        private AttackBindingDictionary m_groundedBindings = new();
+        private AttackBindingDictionary m_airBindings = new();
+        private AttackBindingDictionary m_comboBindings = new(); // if combos are never going to have branching paths, this can just become an AttackBinding
 
-        // if combos are never going to have branching paths, this can just become an AttackBinding
-        private Dictionary<AttackInput, AttackData> m_comboBindings;
+        private SerializedAction m_storedComboAction;
 
-        private List<AttackInput> m_sequence = new();
+        private readonly List<BufferedInput> m_buffer = new() { Capacity = MAX_BUFFER_LENGTH };
 
-        private float m_bufferTimer = 0;
-
-        public List<KeyValuePair<AttackInput, AttackData>> ComboBindings
+        private void FixedUpdate()
         {
-            get
+            // Remove old Buffered Inputs
+            // Count down so that indices are preserved upon removal
+            for (int i = 0, count = m_buffer.Count; i < count; i++)
             {
-                return m_comboBindings != null ? m_comboBindings.ToList() : null;
+                // if lifetime is ended
+                if (m_buffer[i].Timestamp + m_bufferedInputFrameLifetime * Time.fixedDeltaTime <= Time.time)
+                {
+                    m_buffer.RemoveAt(i);
+                    i--;
+                    count--;
+                }
             }
-        }
 
-        private void Update()
-        {
-            if (m_bufferTimer <= 0)
-            {
-                ProcessSequence();
-                m_sequence.Clear();
-                m_bufferTimer = m_inputBufferTime;
-            }
-            if (m_sequence.Count > 0)
-            {
-                m_bufferTimer -= Time.deltaTime;
-            }
+            // process the buffer
+            ProcessBuffer();
         }
 
         #region Bindings
-        public void SetGroundedBindings(Dictionary<AttackInput, AttackData> bindings)
+        public void SetGroundedBindings(AttackBinding[] bindings)
         {
-            m_groundedBindings = new(bindings);
+            m_groundedBindings = new(bindings.ToDictionary(binding => binding.AttackInput, binding => binding.AttackAction));
         }
-        public void SetAirBindings(Dictionary<AttackInput, AttackData> bindings)
+        public void SetAirBindings(AttackBinding[] bindings)
         {
-            m_airBindings = new(bindings);
+            m_airBindings = new(bindings.ToDictionary(binding => binding.AttackInput, binding => binding.AttackAction));
         }
 
-        public void AddComboBinding(AttackBinding binding)
+        public void AddComboBinding(AttackInput comboInput, SerializedAction comboAction)
         {
-            m_comboBindings.Add(binding.attackInput, binding.attackData);
-        }
-        public void SetComboBinding(Dictionary<AttackInput, AttackData> bindings)
-        {
-            m_comboBindings = new(bindings);
+            m_comboBindings.Add(comboInput, comboAction);
         }
         public void ClearComboBinding()
         {
@@ -101,72 +79,118 @@ namespace Stirge.Input
         }
         #endregion
 
-        #region Sequence Processing
-        private void ProcessSequence()
+        #region Input Processing
+        /// <summary>
+        /// I used the top comment on this post as reference. <br/>
+        /// https://www.reddit.com/r/gamedev/comments/1iw22v/comment/cb8s3vq/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+        /// </summary>
+        /// <param name="newInput"></param>
+        private void ProcessBuffer(AttackInput newInput = default)
         {
-            // this prioritises long inputs first by first checking input length of 'size', then 'size - 1' until it has checked each input individually (size = 1)
-            // or an action has been processed, at which point it stops
+            // if new input is not empty, add it to the buffer
+            if (newInput != 0)
+            {
+                // if buffer is at max size, pop oldest value (always at 0)
+                if (m_buffer.Count == MAX_BUFFER_LENGTH)
+                {
+                    m_buffer.RemoveAt(0);
+                }
 
-            // The oldest inputs will be at the start of the sequence while the newest inputs will be at the end
-            // we start by processing the oldest inputs to prioritise buttons the player pressed first
-            int sequenceLength = m_sequence.Count; // = 3 { A, B, X }
-            int size = sequenceLength; // = 3 // = 2 // = 1
+                // add new value to end of list
+                m_buffer.Add(new(newInput));
+            }
+
+            // if the Player has a Combo Action it needs to perform, then do not try to perform a different action
+            if (m_storedComboAction != null)
+                return;
+
+            // now check the buffer for valid Action inputs
+            int bufferLength = m_buffer.Count;
+            int size = Mathf.Min(bufferLength, MAX_SEQUENCE_LENGTH);
             while (size > 0)
             {
+                // Prioritise inputs that were performed earlier, so start at index 0, which is the earliest input
                 int index = 0;
-                // this checks all possible sequences of length "size" within m_sequence
-                while (size + index <= sequenceLength) // 3 + 0 = 3 // 2 + 0 = 2 // 2 + 1 = 3 // 1 + 0 = 1 // 1 + 1 = 2 // 1 + 2 = 3
+
+                // while the range we are checking does not extend outside the bounds of the buffer
+                while (index + size <= bufferLength) // may need to be <, not <=
                 {
-                    AttackInput input = 0;
-                    for (int i = index; i < size + index; i++) // i = 0; i < 3; // i = 0; i < 2; // i = 1; i < 3; // i = 0; i < 1 // i = 1; i < 2 // i = 2; i < 3;
+                    // Get the input
+                    AttackInput processedInput = 0;
+                    m_buffer.GetRange(index, size).ForEach(buf => processedInput |= buf.Input);
+
+                    // first check for Combo Actions
+                    if (TryGetComboBinding(processedInput, out m_storedComboAction))
                     {
-                        input |= m_sequence[i]; // A,B,X // A,B // B,X // A // B // X
-                    }
-                    if (ProcessInput(input))
+                        // If an action is found, it is stored in the m_storedComboAction variable
+                        if (m_storedComboAction.ShouldFlushPlayerInputBuffer)
+                            FlushBuffer();
+                        // instead of performing the Action here, wait until the current Action's Timeline Signal emitter tells us to perform it
                         return;
+                    }
+
+                    // only check for standard Actions if the Player is not already peforming an action
+                    if (!m_player.IsPerformingAction)
+                    {
+                        // see if the input has a valid binding
+                        if (TryGetStandardBinding(processedInput, out SerializedAction foundAction))
+                        {
+                            Action newAction = foundAction.CreateRuntimeAction();
+                            if (newAction.ShouldFlushPlayerInputBuffer)
+                                FlushBuffer();
+                            m_player.PerformAction(newAction);
+                            return;
+                        }
+                    }
+
                     index++;
                 }
-                // next loop, we will check all possible sequence of length "size - 1"
+
                 size--;
-                // this continues until size is 0 or an input is processed
             }
         }
 
-        public bool ProcessInput(AttackInput input)
+        private bool TryGetComboBinding(AttackInput input, out SerializedAction boundAction)
         {
-            // Combo Bindings does not check if the player is in an available state,
-            // As combo attacks can interrupt other actions
-            if (m_comboBindings.TryGetValue(input, out AttackData attackData))
+            // Combo Bindings are checked first as they take priority over the standard bindings
+            if (m_comboBindings.TryGetValue(input, out boundAction))
             {
-                m_player.UseAttack(attackData);
-                ClearComboBinding();
+                ClearComboBinding(); // clear combo binding so you can't buffer multiple of the same combo attack
                 return true;
             }
-            // check if the player is in a state where they are able to attack
-            if (!m_player.IsAttacking)
-            {
-                // grounded bindings
-                if (m_player.IsGrounded() && m_groundedBindings.TryGetValue(input, out attackData))
-                {
-                    m_player.UseAttack(attackData);
-                    return true;
-                }
-                // air bindings
-                else if (m_airBindings.TryGetValue(input, out attackData))
-                {
-                    m_player.UseAttack(attackData);
-                    return true;
-                }
-            }
-
             return false;
         }
 
-        private void AddInputToSequence(AttackInput input)
+        private bool TryGetStandardBinding(AttackInput input, out SerializedAction boundAction)
         {
-            if (m_sequence.Count == MaxSequenceLength)
-                m_sequence.RemoveAt(0);
-            m_sequence.Add(input);
+            // grounded bindings
+            if (m_player.Motor.IsGrounded)
+            {
+                return m_groundedBindings.TryGetValue(input, out boundAction);
+            }
+            // air bindings
+            else
+            {
+                return m_airBindings.TryGetValue(input, out boundAction);
+            }
+        }
+
+        private void FlushBuffer()
+        {
+            m_buffer.Clear();
+        }
+
+        public void TryPerformStoredComboAction()
+        {
+            if (m_storedComboAction != null)
+            {
+                m_player.PerformAction(m_storedComboAction.CreateRuntimeAction());
+                m_storedComboAction = null;
+            }
+        }
+        public void ClearStoredComboAction()
+        {
+            m_storedComboAction = null;
         }
         #endregion
 
@@ -175,33 +199,33 @@ namespace Stirge.Input
         {
             if (context.started)
             {
-                AddInputToSequence(AttackInput.A);
+                ProcessBuffer(AttackInput.A);
             }
         }
         public void GetBInput(InputAction.CallbackContext context)
         {
             if (context.started)
             {
-                AddInputToSequence(AttackInput.B);
+                ProcessBuffer(AttackInput.B);
             }
         }
         public void GetXInput(InputAction.CallbackContext context)
         {
             if (context.started)
             {
-                AddInputToSequence(AttackInput.X);
+                ProcessBuffer(AttackInput.X);
             }
         }
         public void GetYInput(InputAction.CallbackContext context)
         {
             if (context.started)
             {
-                AddInputToSequence(AttackInput.Y);
+                ProcessBuffer(AttackInput.Y);
             }
         }
         #endregion
 
-        //Disabling should 
+        #region State
         public void SetInputReading(bool setTo, float time = 1)
         {
             enabled = setTo;
@@ -213,5 +237,37 @@ namespace Stirge.Input
             yield return new WaitForSeconds(time);
             enabled = true;
         }
+        #endregion
+
+        private class AttackBindingDictionary : Dictionary<AttackInput, SerializedAction>
+        {
+            public AttackBindingDictionary() : base() { }
+            public AttackBindingDictionary(IEnumerable<KeyValuePair<AttackInput, SerializedAction>> collection) : base(collection) { }
+            public AttackBindingDictionary(IDictionary<AttackInput, SerializedAction> dictionary) : base(dictionary) { }
+        }
+
+        [System.Serializable]
+        public struct BufferedInput
+        {
+            [SerializeField] private AttackInput m_input;
+            [SerializeField] private float m_timestamp;
+
+            public readonly AttackInput Input => m_input;
+            public readonly float Timestamp => m_timestamp;
+
+            public BufferedInput(AttackInput input)
+            {
+                m_input = input;
+                m_timestamp = Time.time;
+            }
+        }
+
+#if UNITY_EDITOR
+        public void GetDebugData(out AttackBinding[] comboBindings, out BufferedInput[] buffer)
+        {
+            comboBindings = m_comboBindings.ToList().ConvertAll(e => new AttackBinding(e.Key, e.Value)).ToArray();
+            buffer = m_buffer.ToArray();
+        }
+#endif
     }
 }

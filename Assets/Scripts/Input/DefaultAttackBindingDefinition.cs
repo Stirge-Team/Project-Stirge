@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 namespace Stirge.Input
 {
@@ -16,17 +15,17 @@ namespace Stirge.Input
 
         [Header("Properties")]
         [SerializeField] private BindingType m_bindingType;
-        [SerializeField] private List<AttackBinding> m_defaultBindings;
+        [SerializeField] private AttackBinding[] m_defaultBindings;
 
         private void Start()
         {
             switch (m_bindingType)
             {
                 case BindingType.Grounded:
-                    m_inputManager.SetGroundedBindings(AttackBinding.ConvertToDictionary(m_defaultBindings));
+                    m_inputManager.SetGroundedBindings(m_defaultBindings);
                     break;
                 case BindingType.Air:
-                    m_inputManager.SetAirBindings(AttackBinding.ConvertToDictionary(m_defaultBindings));
+                    m_inputManager.SetAirBindings(m_defaultBindings);
                     break;
             }
 

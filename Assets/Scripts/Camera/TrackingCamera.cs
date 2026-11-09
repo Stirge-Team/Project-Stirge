@@ -708,9 +708,9 @@ namespace Stirge.Camera
             //Change the state
             m_camState = CameraStates.LockOn;
             //pass target to player
-            m_primaryTarget
-                .GetComponent<Player.PlayerMovement>()
-                .AssignLockOnTarget(m_lockedOnTarget);
+            //m_primaryTarget
+               // .GetComponent<Player.PlayerMovement>()
+              //  .AssignLockOnTarget(m_lockedOnTarget);
         }
 
         private Transform[] VerifyTargets()

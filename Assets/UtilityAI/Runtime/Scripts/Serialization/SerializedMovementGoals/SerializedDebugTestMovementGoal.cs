@@ -1,0 +1,13 @@
+using UnityEngine;
+
+namespace Stirge.UtilityAI.MovementGoals
+{
+    using Serialization;
+
+    [NameOverride("Score", 0), NameOverride("Message", 1), NameOverride("Use Cosine instead of Sine", 2)]
+    [CreateAssetMenu(menuName = "Utility AI/Serialized Movement Goals/Debug Test", fileName = "New Debug Test Movement Goal", order = 453)]
+    public class SerializedDebugTestMovementGoal : SerializedMovementGoal<DebugTestMovementGoal, float, string, bool>
+    {
+
+    }
+}

@@ -78,7 +78,7 @@ MonoBehaviour:
   Instructions:
   - FullHash: 1753252674
     Camera: {fileID: 3940210522826784155}
-    ActivateAfter: 0.5
+    ActivateAfter: 0
     MinDuration: 0
   - FullHash: -1982969619
     Camera: {fileID: 6667807469204513570}
@@ -159,7 +159,7 @@ MonoBehaviour:
     UseFollowTarget:
       Enabled: 0
       YOffset: 0
-    Strategy: 0
+    Strategy: 2
     MaximumEffort: 4
     SmoothingTime: 0
     Damping: 0.4

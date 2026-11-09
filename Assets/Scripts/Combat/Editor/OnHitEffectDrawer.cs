@@ -3,7 +3,7 @@ using UnityEditor;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Stirge.Combat
+namespace Stirge.Combat.OldStatus
 {
     using Tools;
     

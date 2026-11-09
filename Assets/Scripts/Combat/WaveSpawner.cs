@@ -1,11 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Stirge.Combat
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using Enemy;
-    using UnityEngine.Events;
+    using UtilityAI;
 
     public class WaveSpawner : MonoBehaviour
     {
@@ -13,14 +13,14 @@ namespace Stirge.Combat
         public class WaveEnemyData
         {
             [SerializeField]
-            private Enemy m_type;
+            private UtilityEnemy m_type;
             [SerializeField]
             private int m_maxCount = 1;
             private int m_spawnedCount;
             public bool _spawnsAvalible => m_spawnedCount < m_maxCount;
-            public Enemy SpawnEnemy(Vector3 pos)
+            public UtilityEnemy SpawnEnemy(Vector3 pos)
             {
-                Enemy newEnemy = Instantiate(m_type, pos, Quaternion.identity);
+                UtilityEnemy newEnemy = Instantiate(m_type, pos, Quaternion.identity);
                 newEnemy.name = m_type.name;
                 m_spawnedCount++;
                 return newEnemy;
@@ -53,13 +53,13 @@ namespace Stirge.Combat
             {
                 m_spawnRateCountdown = m_spawnRate;
                 m_spawnIndex = 0;
-                if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("Enemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
+                if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("UtilityEnemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
             }
-            public Enemy[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
+            public UtilityEnemy[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
             {
                 if (m_delayComplete && m_spawnCountdownComplete && !_outOfSpawns && spawner._activeEnemies.Count() < m_maxSpawnCount) //check countdowns
                 {
-                    Enemy[] batch = new Enemy[m_batchSpawn];
+                    UtilityEnemy[] batch = new UtilityEnemy[m_batchSpawn];
                     for (int x = 0; x < m_batchSpawn; x++) //spawn the batch amount
                     {
                         if(spawner._activeEnemies.Count() + x >= m_maxSpawnCount && !m_canBatchOverflow) break;
@@ -87,7 +87,7 @@ namespace Stirge.Combat
                 if (!m_delayComplete) m_startDelay -= Time.deltaTime;
                 if (!m_spawnCountdownComplete) m_spawnRateCountdown -= Time.deltaTime;
 
-                Enemy[] mt = new Enemy[0];
+                UtilityEnemy[] mt = new UtilityEnemy[0];
                 return mt;
             }
         }
@@ -100,8 +100,8 @@ namespace Stirge.Combat
         [SerializeField]
         private UnityEvent m_completeEvent;
 
-        private List<Enemy> m_activeEnemies = new();
-        public List<Enemy> _activeEnemies { get { return m_activeEnemies; } }
+        private List<UtilityEnemy> m_activeEnemies = new();
+        public List<UtilityEnemy> _activeEnemies { get { return m_activeEnemies; } }
         private ParticleInstancer m_particles;
         [SerializeField]
         private string m_spawnParticleName;
@@ -142,20 +142,20 @@ namespace Stirge.Combat
                 m_currentWave.Init();
             }
 
-            Enemy[] enemyBatch = m_currentWave.AttemptSpawnEnemy(transform.position, this);
+            UtilityEnemy[] enemyBatch = m_currentWave.AttemptSpawnEnemy(transform.position, this);
             foreach (var newEnemy in enemyBatch)
             {
                 if (newEnemy)
                 {
                     //other spawn functions
                     m_activeEnemies.Add(newEnemy); //save to list
-                    newEnemy.deathCallback = RemoveEnemyFromActiveList;
+                    //newEnemy.deathCallback = RemoveEnemyFromActiveList;
                     m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
                 }
             }
 
         }
-        private void RemoveEnemyFromActiveList(Enemy deadGuy)
+        private void RemoveEnemyFromActiveList(UtilityEnemy deadGuy)
         {
             if (m_activeEnemies.Contains(deadGuy))
                 m_activeEnemies.Remove(deadGuy);
