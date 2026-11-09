@@ -382,7 +382,7 @@ namespace Stirge.UtilityAI.CustomEditors
                                 obj.constantValue = sByteValue;
                                 break;
                             case var n when n == typeof(void).Name:
-                                EGL.LabelField("null", EditorStyles.textField);
+                                EGL.LabelField("void : null", EditorStyles.textField);
                                 obj.constantValue = null;
                                 break;
                             default:

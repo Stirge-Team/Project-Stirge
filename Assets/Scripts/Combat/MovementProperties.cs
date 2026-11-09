@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Stirge.Combat
 {
-    [CreateAssetMenu(menuName = "Movement Properties", fileName = "New Movement Properties", order = 452)]
+    [CreateAssetMenu(menuName = "Movement Properties", fileName = "New Movement Properties")]
     public class MovementProperties : ScriptableObject
     {
         [SerializeField, Min(0f)] private float m_horizontalTopSpeed;

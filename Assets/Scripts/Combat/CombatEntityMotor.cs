@@ -17,23 +17,31 @@ namespace Stirge.Combat
 
     public abstract class CombatEntityMotor : MonoBehaviour
     {
-        [Header("Components")]
+        [Header("References")]
+        [SerializeField] private CombatEntity m_entity;
         [SerializeField] private Transform m_transform;
         [SerializeField] private Animator m_anim;
         [SerializeField] private Rigidbody m_rb;
         [SerializeField] private Collider m_col;
 
-        [Header("Movement Fields")]
+        [Header("Movement")]
         [SerializeField] private MotorMovementState m_defaultGroundedMovementState = MotorMovementState.Velocity;
         [SerializeField] private MotorMovementState m_defaultAerialMovementState = MotorMovementState.Velocity;
-        [SerializeField] private LayerMask m_walkableLayers;
         [SerializeField] private MovementProperties m_groundedMovementProperties;
         [SerializeField] private MovementProperties m_aerialMovementProperties;
+
+        [Header("Velocity")]
+        [Tooltip("Represents a percentage of the current velocity to reduce by each second.")]
+        [SerializeField, Range(0f, 1f)] private float m_drag = 0.05f;
         [SerializeField, Min(0f)] private float m_verticalTopSpeed;
         [SerializeField, Min(0f)] private float m_maxFallingSpeed;
         [SerializeField, Min(0f)] private float m_fallSpeedMultiplier;
 
+        [Header("Sliding")]
+        [SerializeField, Min(0f)] private float m_slopeSlipperyness = 5f;
+
         [Header("Grounded Check")]
+        [SerializeField] private LayerMask m_walkableLayers;
         [SerializeField, Min(0)] private float m_groundCheckDistance;
         [SerializeField, Min(0)] private float m_groundCheckRadius;
         [SerializeField, Range(0f, 90f)] private float m_slopeLimit;
@@ -50,6 +58,11 @@ namespace Stirge.Combat
         protected Vector3 m_currentVelocity;
         private Vector3 m_feetOffset;
 
+        // sliding
+        private Vector3 m_slideObjectPosition;
+        private Vector3 m_slideNormal;
+        private float m_slideTimer;
+
         // heading
         protected Vector3 m_targetHeading;
         private Transform m_lookTarget;
@@ -62,6 +75,7 @@ namespace Stirge.Combat
 
         // reference properties
         public new Transform transform => m_transform;
+        public CombatEntity Entity => m_entity;
         public Animator Animator => m_anim;
         public Rigidbody Rigidbody => m_rb;
         public Collider Collider => m_col;
@@ -83,8 +97,12 @@ namespace Stirge.Combat
         public MovementProperties CurrentMovementProperties => m_isGrounded ? m_groundedMovementProperties : m_aerialMovementProperties;
         public MotorMovementState MovementState => m_movementState;
         public bool IsGrounded => m_isGrounded;
+        public bool IsSliding => m_slideNormal != Vector3.zero;
         public float AirTime => m_airTime;
         public Vector3 FeetPosition => m_rb.position + m_feetOffset;
+
+        // public events
+        public event System.Action<CombatEntity> onBecomeGrounded;
 
         #region Unity Events
         private void Awake()
@@ -137,6 +155,9 @@ namespace Stirge.Combat
                 case MotorMovementState.Navigation:
                     UpdateNavigation();
                     break;
+                case MotorMovementState.Action:
+                    UpdateAction();
+                    break;
                 default:
                     break;
             }
@@ -145,7 +166,7 @@ namespace Stirge.Combat
         }
         protected virtual void OnFixedUpdate() { }
 
-        public void OnAnimatorMove()
+        private void OnAnimatorMove()
         {
             if (m_anim.deltaPosition != Vector3.zero)
                 MovePosition(m_rb.position + m_anim.deltaPosition);
@@ -167,7 +188,7 @@ namespace Stirge.Combat
             for (int i = 0; i < count; i++)
             {
                 Collider other = m_penCheckNeighbours[i];
-                if (!other || other == m_col)
+                if (other == null || other == m_col)
                     continue;
 
                 if (Physics.ComputePenetration(m_col, m_rb.position, m_rb.rotation,
@@ -181,6 +202,7 @@ namespace Stirge.Combat
             OnMovePosition(m_rb.position);
         }
         protected virtual void OnMovePosition(Vector3 newPosition) { }
+
         public void SetPosition(Vector3 newPosition)
         {
             //transform.position = newPosition;
@@ -207,6 +229,10 @@ namespace Stirge.Combat
         {
             return m_rb.position;
         }
+        public Quaternion GetRotation()
+        {
+            return m_rb.rotation;
+        }
         #endregion
 
         #region Physics
@@ -229,6 +255,25 @@ namespace Stirge.Combat
             // if no hits, not grounded
             if (hitCount == 0)
             {
+                // check for a surface to slide on
+                if (Physics.BoxCast(
+                    m_rb.position,
+                    new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius),
+                    Vector3.down,
+                    out RaycastHit slideHit,
+                    m_rb.rotation,
+                    m_groundCheckDistance,
+                    ~0, // this is all layers, can be changed to specific layers later
+                    QueryTriggerInteraction.Ignore))
+                {
+                    m_slideObjectPosition = slideHit.collider.transform.position;
+                    m_slideNormal = slideHit.normal;
+                }
+                else
+                {
+                    m_slideNormal = Vector3.zero;
+                }
+
                 // if changing from grounded to not grounded aka leaving ground
                 if (m_isGrounded)
                 {
@@ -238,17 +283,12 @@ namespace Stirge.Combat
             }
             else
             {
-                // if changing from not grounded to grounded aka landing
-                if (!m_isGrounded)
-                {
-                    OnBecomeGrounded();
-                }
-
-                // get closest hit walkable object
+                // get closest hit walkable object,
+                // as we assume that is the object the Entity is standing on
                 RaycastHit closestHit = m_groundedCheckHits[0];
                 if (hitCount > 1)
                 {
-                    float closestDistance = Vector3.Distance(closestHit.point, m_rb.position);
+                    float closestDistance = Vector3.Distance(closestHit.point, FeetPosition);
                     for (int i = 1; i < hitCount; i++)
                     {
                         float distance = Vector3.Distance(m_groundedCheckHits[i].point, FeetPosition);
@@ -261,9 +301,24 @@ namespace Stirge.Combat
                 }
 
                 // if the closest object does not meet the slope limit requirements, then the
-                // Enemy is NOT standing
+                // Entity is NOT grounded
                 if (Vector3.Angle(closestHit.normal, Vector3.up) > m_slopeLimit)
+                {
+                    // However, the Entity is still on this object, so start sliding on it
+                    m_slideObjectPosition = closestHit.collider.transform.position;
+                    m_slideNormal = closestHit.normal;
                     return false;
+                }
+
+                // reset slide normal as Entity is not sliding
+                m_slideNormal = Vector3.zero;
+
+                // if changing from not-grounded to grounded aka landing
+                if (!m_isGrounded)
+                {
+                    onBecomeGrounded?.Invoke(m_entity);
+                    OnBecomeGrounded();
+                }
 
                 return true;
             }
@@ -299,25 +354,65 @@ namespace Stirge.Combat
         {
             OnPreUpdateVelocity();
 
+            // Entity is not standing on Ground object
             if (!m_isGrounded)
             {
-                if (m_fallSpeedMultiplier == 0)
+                // if Entity is sliding
+                if (m_slideNormal != Vector3.zero)
                 {
-                    m_currentVelocity += Time.fixedDeltaTime * Physics.gravity;
+                    // while sliding, increase timer (used like acceleration)
+                    m_slideTimer += Time.fixedDeltaTime;
+
+                    // if normal is up, then on flat surface. If so, pick arbitrary direction to slide instead
+                    if (m_slideNormal == Vector3.up)
+                    {
+                        // slide away from centre of object we're sliding on
+                        // this is fine? but should probably be changed later
+                        Vector3 slideDirection = GetPosition() - m_slideObjectPosition; // Vector from object centre to Entity position
+                        slideDirection.y = 0; // remove any vertical displacement
+                        slideDirection = slideDirection.normalized; // normalise for direction
+                        Vector3 slideVelocity = m_slopeSlipperyness * m_slideTimer * slideDirection;
+                        m_currentVelocity = slideVelocity;
+                    }
+                    // otherwise slide based on slope angle using dot product
+                    else
+                    {
+                        Vector3 slideDirection = Vector3.ProjectOnPlane(Vector3.down, m_slideNormal);
+                        Vector3 slideVelocity = m_slopeSlipperyness * m_slideTimer * Vector3.Dot(Vector3.down, slideDirection) * slideDirection;
+                        m_currentVelocity = slideVelocity;
+                    }
                 }
+                // if not sliding, let gravity do its thing, and add falling velocity
                 else
                 {
-                    m_currentVelocity += m_fallSpeedMultiplier * m_airTime * Time.fixedDeltaTime * Physics.gravity;
+                    m_slideTimer = 0f;
+                    if (m_fallSpeedMultiplier == 0)
+                    {
+                        m_currentVelocity += Time.fixedDeltaTime * Physics.gravity;
+                    }
+                    else
+                    {
+                        m_currentVelocity += m_fallSpeedMultiplier * m_airTime * Time.fixedDeltaTime * Physics.gravity;
+                    }
                 }
             }
 
+            // Apply drag
+            // sloppy as actual drag is based on the square of the velocity but this is quicker/easier
+            if (m_drag != 0f)
+                m_currentVelocity *= 1f - m_drag * Time.fixedDeltaTime;
+
+            // Clamp vertical and horizontal parts of the velocity
             float verticalvelocity = m_currentVelocity.y;
-            verticalvelocity = Mathf.Min(verticalvelocity, verticalvelocity < 0 ? m_maxFallingSpeed : m_verticalTopSpeed);
+            verticalvelocity = Mathf.Clamp(verticalvelocity, -m_maxFallingSpeed, m_verticalTopSpeed);
+            // verticalVelocity = Mathf.Min(verticalvelocity, verticalvelocity < 0 ? m_maxFallingSpeed : m_verticalTopSpeed);
 
             Vector2 horizontalVelocity = new(m_currentVelocity.x, m_currentVelocity.z);
             horizontalVelocity = Vector2.ClampMagnitude(horizontalVelocity, horizontalTopSpeed);
 
-            m_rb.linearVelocity = new Vector3(horizontalVelocity.x, verticalvelocity, horizontalVelocity.y);
+            Vector3 clampedVelocity = new(horizontalVelocity.x, verticalvelocity, horizontalVelocity.y);
+
+            m_rb.linearVelocity = clampedVelocity;
 
             OnPostUpdateVelocity();
         }
@@ -342,9 +437,19 @@ namespace Stirge.Combat
         protected virtual void OnPreUpdateHeading() { }
         protected virtual void OnPostUpdateHeading() { }
 
-        // Unless we want to add a NavMeshAgent to the player, this only needs to be implemented for the UtilityEnemy.
-        // It is defined here so that the FixedUpdate does not need to be overriden to add the Navigation case.
+        /// <summary>
+        /// Unless we want to add a NavMeshAgent to the player, this only needs to be implemented for the UtilityEnemy.<br/>
+        /// It is defined here so that the FixedUpdate does not need to be overriden to add the Navigation case.<br/>
+        /// </summary>
         protected virtual void UpdateNavigation() { }
+
+        private void UpdateAction()
+        {
+            m_rb.linearVelocity = Vector3.zero;
+
+            OnUpdateAction();
+        }
+        protected virtual void OnUpdateAction() { }
 
         public void ResetHorizontalVelocity()
         {
@@ -371,6 +476,12 @@ namespace Stirge.Combat
         {
             SetMovementState(MotorMovementState.Force);
             m_rb.AddForce(force);
+        }
+
+        public void SetVelocity(Vector3 velocity)
+        {
+            SetMovementState(MotorMovementState.Velocity);
+            m_currentVelocity = velocity;
         }
         public void AddVelocity(Vector3 velocity)
         {
@@ -446,7 +557,6 @@ namespace Stirge.Combat
             m_rb.isKinematic = false;
             m_rb.linearVelocity = Vector3.zero;
             ResetVelocity();
-            Debug.Log("Action!");
         }
 
         private MotorMovementState GetDefaultMovementState()
