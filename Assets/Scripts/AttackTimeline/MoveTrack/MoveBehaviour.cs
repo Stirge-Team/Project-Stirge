@@ -104,7 +104,7 @@ namespace Stirge.AttackTimeline.MoveTrack
                     // If there is an active clip, preview the Movement of that clip
                     if (activeClip != null)
                     {
-                        double sampleTime = currentTime - activeClip.start;
+                        double sampleTime = (currentTime - activeClip.start) / activeClip.duration;
                         Vector3 targetTranslation;
                         if (m_isLocal)
                             targetTranslation = m_boundMotor.transform.rotation * m_translation.Evaluate((float)sampleTime);
