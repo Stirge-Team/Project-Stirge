@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +14,6 @@ namespace Stirge.UtilityAI.CustomEditors
         private const string s_stackTypePropertyName = "m_stackType";
         private const string s_maxStacksPropertyName = "m_maxStacks";
         private const string s_durationTypePropertyName = "m_durationType";
-        private const string s_durationPropertyName = "m_duration";
         private const string s_conditionsPropertyName = "m_conditions";
         private const string s_scoringMethodsPropertyName = "m_scoringMethods";
 
@@ -24,7 +24,6 @@ namespace Stirge.UtilityAI.CustomEditors
             s_stackTypePropertyName,
             s_maxStacksPropertyName,
             s_durationTypePropertyName,
-            s_durationPropertyName,
             s_conditionsPropertyName,
             s_scoringMethodsPropertyName
         };
@@ -34,13 +33,15 @@ namespace Stirge.UtilityAI.CustomEditors
         private SerializedProperty m_stackTypeProperty;
         private SerializedProperty m_maxStacksProperty;
         private SerializedProperty m_durationTypeProperty;
-        private SerializedProperty m_durationProperty;
         private SerializedProperty m_conditionsProperty;
         private SerializedProperty m_scoringMethodsProperty;
 
         protected override string[] basePropertyNames => s_basePropertyNames;
         protected override SerializedProperty conditionsProperty => m_conditionsProperty;
         protected override SerializedProperty scoringMethodsProperty => m_scoringMethodsProperty;
+
+        private DrawData m_drawStackData = DrawData.Waiting;
+        private DrawData m_drawDurationData = DrawData.Waiting;
 
         protected override void FindSerializedProperties()
         {
@@ -49,7 +50,6 @@ namespace Stirge.UtilityAI.CustomEditors
             m_stackTypeProperty = serializedObject.FindProperty(s_stackTypePropertyName);
             m_maxStacksProperty = serializedObject.FindProperty(s_maxStacksPropertyName);
             m_durationTypeProperty = serializedObject.FindProperty(s_durationTypePropertyName);
-            m_durationProperty = serializedObject.FindProperty(s_durationPropertyName);
             m_conditionsProperty = serializedObject.FindProperty(s_conditionsPropertyName);
             m_scoringMethodsProperty = serializedObject.FindProperty(s_scoringMethodsPropertyName);
         }
@@ -58,10 +58,55 @@ namespace Stirge.UtilityAI.CustomEditors
         {
             EGL.PropertyField(m_scoreScalingProperty);
             EGL.PropertyField(m_displayNameProperty);
-            EGL.PropertyField(m_stackTypeProperty);
-            EGL.PropertyField(m_maxStacksProperty);
-            EGL.PropertyField(m_durationTypeProperty);
-            EGL.PropertyField(m_durationProperty);
+
+            // stack data
+            if (m_drawStackData == DrawData.Waiting)
+            {
+                if (DeclaresPropertyAtAll(nameof(Status.StackType)))
+                {
+                    m_drawStackData = DrawData.DoNot;
+                }
+                else
+                {
+                    m_drawStackData = DrawData.Do;
+                }
+            }
+            if (m_drawStackData == DrawData.Do)
+            {
+                EGL.PropertyField(m_stackTypeProperty);
+                // if Stackable
+                if ((StatusStackType)m_stackTypeProperty.intValue == StatusStackType.Stackable)
+                    EGL.PropertyField(m_maxStacksProperty);
+            }
+
+            // duration data
+            if (m_drawDurationData == DrawData.Waiting)
+            {
+                if (DeclaresPropertyAtAll(nameof(Status.DurationType)))
+                {
+                    m_drawDurationData = DrawData.DoNot;
+                }
+                else
+                {
+                    m_drawDurationData = DrawData.Do;
+                }
+            }
+            if (m_drawDurationData == DrawData.Do)
+            {
+                EGL.PropertyField(m_durationTypeProperty);
+            }
+        }
+
+        private bool DeclaresPropertyAtAll(string propertyName)
+        {
+            return ((SerializedStatus_Base)target).StatusType.GetProperty(propertyName).DeclaringType != typeof(Status);
+        }
+
+        private enum DrawData
+        {
+            Waiting,
+            DoNot,
+            Do
         }
     }
 }

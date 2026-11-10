@@ -4,7 +4,6 @@ namespace Stirge.Player
 {
     using Combat;
     using Input;
-    using Stirge.AttackTimeline;
     using Stirge.Tools;
     using Stirge.UtilityAI;
     using UnityEngine.InputSystem;
@@ -64,11 +63,14 @@ namespace Stirge.Player
         #region Inputs
         public void AttemptJump(InputAction.CallbackContext context)
         {
-            if (context.performed && !IsPerformingAction)
+            // prevent Player from jumping while Performing an Action or while Stunned
+            if (context.performed && !IsPerformingAction && !IsStunned)
+            {
                 if (PlayerMotor.OnJump())
                 {
                     Health.StartInvincibility(1, EntityHealth.InvincibilityType.NoModifiations);
                 }
+            }
         }
 
         public override void PerformAction(Action attackData)
@@ -114,7 +116,11 @@ namespace Stirge.Player
         }
         public void OnMove(InputAction.CallbackContext context)
         {
-            m_inputDirection = context.ReadValue<Vector2>();
+            // prevent movement input while Player is stunned
+            if (IsStunned)
+                m_inputDirection = Vector2.zero;
+            else
+                m_inputDirection = context.ReadValue<Vector2>();
         }
 
         protected override void OnActionEndInternal(PlayableDirector director)
@@ -131,10 +137,10 @@ namespace Stirge.Player
         #endregion
 
         #region Status
-        protected override void OnStunned(float stunLength)
+        protected override void OnStartStun(float duration)
         {
             PlayerMotor.ResetHorizontalVelocity();
-            m_input.SetInputReading(false, stunLength);
+            m_input.SetInputReading(false, duration);
         }
         #endregion
     }

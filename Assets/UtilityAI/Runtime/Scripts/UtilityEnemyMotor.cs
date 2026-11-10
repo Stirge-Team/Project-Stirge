@@ -8,8 +8,8 @@ namespace Stirge.UtilityAI
     public class UtilityEnemyMotor : CombatEntityMotor
     {
         [Header("Enemy Components")]
-        [SerializeField] private UtilityEnemy m_enemy;
         [SerializeField] private NavMeshAgent m_nav;
+        private UtilityEnemy m_enemy;
 
         // navigation
         private bool m_headingIsTargetPosition;
@@ -19,6 +19,10 @@ namespace Stirge.UtilityAI
         public bool HeadingIsTargetPosition => m_headingIsTargetPosition;
 
         #region Unity Events
+        protected override void OnAwake()
+        {
+            m_enemy = (UtilityEnemy)Entity;
+        }
         protected override void OnStart()
         {
             if (MovementState != MotorMovementState.Navigation)
@@ -70,12 +74,13 @@ namespace Stirge.UtilityAI
             if (m_headingIsTargetPosition)
             {
                 // determine what target heading is
-                m_targetHeading = (m_enemy.Target.Motor.GetPosition() - Rigidbody.position).normalized;
+                m_targetHeading = (m_enemy.Target.Motor.GetPosition() - GetPosition()).normalized;
                 m_targetHeading.y = 0;
             }
             else
             {
-                m_targetHeading = m_currentVelocity.normalized;
+                if (m_currentVelocity != Vector3.zero)
+                    m_targetHeading = m_currentVelocity.normalized;
             }
         }
 
@@ -116,9 +121,13 @@ namespace Stirge.UtilityAI
             if (m_nav.hasPath)
             {
                 Vector3 dir = m_nav.desiredVelocity;
-                dir.y = 0;
-                Quaternion targetRotation = Quaternion.LookRotation(dir);
-                Rigidbody.MoveRotation(targetRotation);
+                // only update look direction if direction is not zero
+                if (dir != Vector3.zero)
+                {
+                    dir.y = 0;
+                    Quaternion targetRotation = Quaternion.LookRotation(dir);
+                    Rigidbody.MoveRotation(targetRotation);
+                }
             }
         }
 
@@ -171,6 +180,7 @@ namespace Stirge.UtilityAI
         {
             Rigidbody.isKinematic = true;
             m_nav.enabled = true;
+            m_nav.isStopped = false;
             SyncNavMeshAgentPosition();
             // no need to Set Destination as this happens in Sync
         }

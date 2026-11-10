@@ -10,13 +10,13 @@ namespace Stirge.UtilityAI
     {
         [Header("Utility Properties")]
         [SerializeField] private SerializedUtilityBrain m_serializedBrain;
+        private UtilityEnemyMotor m_enemyMotor;
 
         private CombatEntity m_target;
         private Vector3 m_targetPosition;
         private bool m_hasTarget = false;
 
         private UtilityBrain m_brain;
-        private UtilityEnemyMotor m_enemyMotor;
 
         public event Action<UtilityEnemy> onDeath;
 
@@ -24,7 +24,7 @@ namespace Stirge.UtilityAI
         public UtilityEnemyMotor EnemyMotor => m_enemyMotor;
         public new Transform transform => Motor.transform;
         public Rigidbody Rigidbody => Motor.Rigidbody;
-        public NavMeshAgent NavMeshAgent => EnemyMotor.NavMeshAgent;
+        public NavMeshAgent NavMeshAgent => m_enemyMotor.NavMeshAgent;
 
         // field properties
         public CombatEntity Target => m_target;
@@ -81,6 +81,21 @@ namespace Stirge.UtilityAI
         {
             onDeath.Invoke(this);
             Destroy(transform.parent.gameObject);
+        }
+        #endregion
+
+        #region Status
+        protected override void OnStartStun(float duration)
+        {
+            if (Motor.MovementState == MotorMovementState.Navigation)
+            {
+                EnemyMotor.NavMeshAgent.isStopped = true;
+            }
+        }
+        protected override void OnStopStun()
+        {
+            if (EnemyMotor.NavMeshAgent.isStopped)
+                EnemyMotor.NavMeshAgent.isStopped = false;
         }
         #endregion
 

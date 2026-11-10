@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Stirge.Sound;
+using Stirge.UtilityAI;
 using UnityEngine;
 
 namespace Stirge.Combat.Hitboxes
@@ -32,6 +33,17 @@ namespace Stirge.Combat.Hitboxes
             }
         }
 
+        private void Start()
+        {
+            if (m_owner == null)
+            {
+                Debug.LogError($"{nameof(HitboxCollider)} '{name}' has a null reference for property '{nameof(m_owner)}'. Please assign it!", this);
+                enabled = false;
+                return;
+            }
+            m_lastPos = transform.position;
+        }
+
         private void Update()
         {
             m_velocity = transform.position - m_lastPos;
@@ -62,7 +74,7 @@ namespace Stirge.Combat.Hitboxes
 
         private void OnHittableHit(Hittable hitTarget)
         {
-            List<int> statusesToInflictIndices = new();
+            List<Status> statusesToInflict = new();
             for (int i = 0, count = m_data.StatusInflictDatas.Length; i < count; i++)
             {
                 // if the Status at this index has already been inflicted on this Hittable and should only be inflicted once, skip
@@ -70,9 +82,8 @@ namespace Stirge.Combat.Hitboxes
                 if (m_appliedStatuses.ContainsKey(hitTarget) && m_appliedStatuses[hitTarget].Contains(i))
                     continue;
 
-                StatusInflictData inflictData = m_data.StatusInflictDatas[i];
-
                 // if the Status at this index should only be inflicted once, add its index to the tracking list
+                StatusInflictData inflictData = m_data.StatusInflictDatas[i];
                 if (inflictData.InflictOnlyOnce)
                 {
                     // create Dictionary entry for this Hittable if it doesn't exist
@@ -80,14 +91,19 @@ namespace Stirge.Combat.Hitboxes
                     m_appliedStatuses[hitTarget].Add(i);
                 }
 
-                // add the StatusActionIndex to the list of Statuses to apply
-                statusesToInflictIndices.Add(inflictData.StatusActionIndex);
+                // create the status and set it up with the Inflict Data
+                Status toInflict = m_owner.CreateRuntimeStatusFromCurrentActionAtIndex(inflictData.StatusActionIndex);
+                toInflict.Setup(inflictData);
+                statusesToInflict.Add(toInflict);
             }
 
+            // camera shake, hitstop, and sfx
             if (m_data.CameraShakePreset != null) m_data.CameraShakePreset.TriggerScreenShake();
             if (m_data.HitstopPreset != null) m_data.HitstopPreset.TriggerHitstop();
             if (m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
-            hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflictIndices.ToArray());
+
+            // do the onhit
+            hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflict.ToArray());
         }
 
 #if UNITY_EDITOR
