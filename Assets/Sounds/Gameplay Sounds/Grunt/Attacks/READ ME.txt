@@ -1,0 +1,5 @@
+
+USES:
+
+- AttackGruntSwing is for the arm swing attack
+- AttackGruntImpact is for when the attack actually connects with the player
