@@ -3,3 +3,4 @@ USES:
 
 - GroundImpact can be used for both the player when they land from an aerial attack and when an enemy is knocked down
 - PlayerJump is played when the player jumps
+- PlayerDodge is played when the player uses their dodge

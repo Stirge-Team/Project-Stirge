@@ -1,0 +1,5 @@
+
+USES:
+
+- CandleLoop is for when players get close to a lit candle and can hear the flame
+- ChurchAmbiance is some background noise/music to play over the game
