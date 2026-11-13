@@ -13,14 +13,14 @@ namespace Stirge.Combat
         public class WaveEnemyData
         {
             [SerializeField]
-            private UtilityEnemy m_type;
+            private GameObject m_type;
             [SerializeField]
             private int m_maxCount = 1;
             private int m_spawnedCount;
             public bool _spawnsAvalible => m_spawnedCount < m_maxCount;
-            public UtilityEnemy SpawnEnemy(Vector3 pos)
+            public GameObject SpawnEnemy(Vector3 pos)
             {
-                UtilityEnemy newEnemy = Instantiate(m_type, pos, Quaternion.identity);
+                GameObject newEnemy = Instantiate(m_type, pos, Quaternion.identity);
                 newEnemy.name = m_type.name;
                 m_spawnedCount++;
                 return newEnemy;
@@ -55,11 +55,11 @@ namespace Stirge.Combat
                 m_spawnIndex = 0;
                 if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("UtilityEnemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
             }
-            public UtilityEnemy[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
+            public GameObject[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
             {
                 if (m_delayComplete && m_spawnCountdownComplete && !_outOfSpawns && spawner._activeEnemies.Count() < m_maxSpawnCount) //check countdowns
                 {
-                    UtilityEnemy[] batch = new UtilityEnemy[m_batchSpawn];
+                    GameObject[] batch = new GameObject[m_batchSpawn];
                     for (int x = 0; x < m_batchSpawn; x++) //spawn the batch amount
                     {
                         if(spawner._activeEnemies.Count() + x >= m_maxSpawnCount && !m_canBatchOverflow) break;
@@ -87,7 +87,7 @@ namespace Stirge.Combat
                 if (!m_delayComplete) m_startDelay -= Time.deltaTime;
                 if (!m_spawnCountdownComplete) m_spawnRateCountdown -= Time.deltaTime;
 
-                UtilityEnemy[] mt = new UtilityEnemy[0];
+                GameObject[] mt = new GameObject[0];
                 return mt;
             }
         }
@@ -100,8 +100,8 @@ namespace Stirge.Combat
         [SerializeField]
         private UnityEvent m_completeEvent;
 
-        private List<UtilityEnemy> m_activeEnemies = new();
-        public List<UtilityEnemy> _activeEnemies { get { return m_activeEnemies; } }
+        private List<GameObject> m_activeEnemies = new();
+        public List<GameObject> _activeEnemies { get { return m_activeEnemies; } }
         private ParticleInstancer m_particles;
         [SerializeField]
         private string m_spawnParticleName;
@@ -142,7 +142,7 @@ namespace Stirge.Combat
                 m_currentWave.Init();
             }
 
-            UtilityEnemy[] enemyBatch = m_currentWave.AttemptSpawnEnemy(transform.position, this);
+            GameObject[] enemyBatch = m_currentWave.AttemptSpawnEnemy(transform.position, this);
             foreach (var newEnemy in enemyBatch)
             {
                 if (newEnemy)
@@ -150,12 +150,12 @@ namespace Stirge.Combat
                     //other spawn functions
                     m_activeEnemies.Add(newEnemy); //save to list
                     //newEnemy.deathCallback = RemoveEnemyFromActiveList;
-                    m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
+                    if(m_particles != null) m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
                 }
             }
 
         }
-        private void RemoveEnemyFromActiveList(UtilityEnemy deadGuy)
+        private void RemoveEnemyFromActiveList(GameObject deadGuy)
         {
             if (m_activeEnemies.Contains(deadGuy))
                 m_activeEnemies.Remove(deadGuy);
