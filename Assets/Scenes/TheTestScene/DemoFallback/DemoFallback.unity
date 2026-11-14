@@ -157,13 +157,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 34835173}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.41718298, y: 0.5709277, z: -0.5709277, w: 0.41718298}
+  m_LocalRotation: {x: 0, y: 0.80741364, z: 0, w: 0.58998585}
   m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 90, y: 107.688, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 107.688, z: 0}
 --- !u!1 &45550323
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,7 +592,7 @@ MonoBehaviour:
     m_maxSpawnCount: 3
     m_enemyList:
     - m_type: {fileID: 5742239276836861200, guid: e32f9b5ece751b0dbb80db4f052c869d, type: 3}
-      m_maxCount: 3
+      m_spawnCap: 3
   - m_spawnArea: {x: 0, y: -5, z: 8, w: 8}
     m_startDelay: 0
     m_spawnRate: 0.1
@@ -601,13 +601,25 @@ MonoBehaviour:
     m_maxSpawnCount: 3
     m_enemyList:
     - m_type: {fileID: 5742239276836861200, guid: e32f9b5ece751b0dbb80db4f052c869d, type: 3}
-      m_maxCount: 3
+      m_spawnCap: 3
   m_completeEvent:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 599466371}
         m_TargetAssemblyTypeName: Stirge.Combat.WaveSpawner, Assembly-CSharp
         m_MethodName: StartWaves
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 599466371}
+        m_TargetAssemblyTypeName: Stirge.Combat.WaveSpawner, Assembly-CSharp
+        m_MethodName: ResetWaves
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -795,7 +807,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 1, z: 100}
+  m_LocalScale: {x: 15, y: 1, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 45550324}

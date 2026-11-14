@@ -7,6 +7,7 @@ namespace Stirge.Input
 {
     public class PlayerInputProcessingDebug : MonoBehaviour
     {
+        #if UNITY_EDITOR
         [SerializeField] private PlayerInputProcessing m_pip;
         
         [SerializeField] private AttackInput[] m_inputs;
@@ -27,5 +28,6 @@ namespace Stirge.Input
                 m_actions[i] = binding.AttackAction;
             }
         }
+        #endif
     }
 }

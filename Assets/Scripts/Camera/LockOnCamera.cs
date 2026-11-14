@@ -1,10 +1,6 @@
-using System.Threading;
 using Stirge.Combat;
-using Stirge.Player;
 using Unity.Cinemachine;
-using UnityEditor.EditorTools;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 namespace Stirge.Camera

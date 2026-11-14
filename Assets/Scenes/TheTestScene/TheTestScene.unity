@@ -1236,6 +1236,7 @@ GameObject:
   - component: {fileID: 360177126}
   - component: {fileID: 360177125}
   - component: {fileID: 360177127}
+  - component: {fileID: 360177128}
   m_Layer: 0
   m_Name: Scene Management
   m_TagString: Untagged
@@ -1285,6 +1286,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b07ba04ae2c58145bf529990415b9a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneRestarter
+--- !u!114 &360177128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360177124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77399c20b6c8ca338ab36afeaa347f99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameExit
 --- !u!1 &376114114
 GameObject:
   m_ObjectHideFlags: 0
@@ -3323,23 +3336,111 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_ActionId
+      value: e8a55c9f-21af-4f86-8ad6-5f018aebff0f
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_ActionId
+      value: 760cb475-eb4d-448b-9eb6-38f6ab52ae83
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_ActionName
+      value: 'Player/Restart[/Keyboard/ctrl,/Keyboard/r]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_ActionName
+      value: 'Player/Exit[/Keyboard/ctrl,/Keyboard/q]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1702694676}
     - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 360177127}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 360177128}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: TriggerLockOn
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ReloadCurrentScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Exit
       objectReference: {fileID: 0}
     - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Stirge.Camera.LockOnCamera, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneRestarter, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: SceneRestarter, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Stirge.Management.GameExit, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 796190690318032605, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}
+      propertyPath: m_ActionEvents.Array.data[8].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1586204145904131630, guid: a5567fffbdfe9bb47b27eb55590e9b52, type: 3}

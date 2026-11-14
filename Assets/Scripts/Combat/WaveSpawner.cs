@@ -15,9 +15,13 @@ namespace Stirge.Combat
             [SerializeField]
             private GameObject m_type;
             [SerializeField]
-            private int m_maxCount = 1;
+            private int m_spawnCap = 1;
             private int m_spawnedCount;
-            public bool _spawnsAvalible => m_spawnedCount < m_maxCount;
+            public void Init()
+            {
+                m_spawnedCount = 0;
+            }
+            public bool _spawnsAvalible => m_spawnedCount < m_spawnCap;
             public UtilityEnemy SpawnEnemy(Vector3 pos)
             {
                 if (!m_type.GetComponentInChildren<UtilityEnemy>())
@@ -60,6 +64,10 @@ namespace Stirge.Combat
                 m_spawnRateCountdown = m_spawnRate;
                 m_spawnIndex = 0;
                 if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("UtilityEnemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
+                foreach(var enemies in m_enemyList)
+                {
+                    enemies.Init();
+                }
             }
             public UtilityEnemy[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
             {
@@ -79,7 +87,7 @@ namespace Stirge.Combat
                             Vector3 position = origin + new Vector3(m_spawnArea.x, 0, m_spawnArea.y) + new Vector3(rndXBound, 0, rndZBound); //origin + set offset + rnd offset within range
 
                             //TODO: Add player avoidance spawn code so that enemies don't spawn on the player
-                            
+
                             //attempt spawn enemy
                             batch[x] = m_enemyList[m_spawnIndex].SpawnEnemy(position); //instance the enemy and save
                             m_spawnRateCountdown = m_spawnRate; //reset countdown
@@ -129,6 +137,13 @@ namespace Stirge.Combat
             m_waveIndex = 0;
             m_currentWave.Init();
         }
+        public void ResetWaves()
+        {
+            foreach (var wave in m_waves)
+            {
+                wave.Init();
+            }
+        }
         public void StopWaves()
         {
             enabled = false;
@@ -136,16 +151,17 @@ namespace Stirge.Combat
 
         void Update()
         {
-            if (_wavesCompleted)
-            {
-                StopWaves();
-                m_completeEvent.Invoke();
-                return;
-            }
 
             if (m_activeEnemies.Count == 0 && m_currentWave._outOfSpawns) //there are no enemies to be spawned and there are no more living, move on to the next wave
             {
                 m_waveIndex++;
+                if (_wavesCompleted)
+                {
+                    StopWaves();
+                    m_completeEvent.Invoke();
+                    return;
+                }
+                else 
                 m_currentWave.Init();
             }
 
@@ -160,12 +176,13 @@ namespace Stirge.Combat
                     if (m_particles != null) m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
                 }
             }
-
         }
         private void RemoveEnemyFromActiveList(UtilityEnemy deadGuy)
         {
             if (m_activeEnemies.Contains(deadGuy))
+            {
                 m_activeEnemies.Remove(deadGuy);
+            }
         }
 
         void OnDrawGizmos()
