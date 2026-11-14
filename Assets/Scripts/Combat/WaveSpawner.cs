@@ -18,12 +18,18 @@ namespace Stirge.Combat
             private int m_maxCount = 1;
             private int m_spawnedCount;
             public bool _spawnsAvalible => m_spawnedCount < m_maxCount;
-            public GameObject SpawnEnemy(Vector3 pos)
+            public UtilityEnemy SpawnEnemy(Vector3 pos)
             {
+                if (!m_type.GetComponentInChildren<UtilityEnemy>())
+                {
+                    Debug.LogError($"Given object {m_type.name} is **not** a valid Enemy object! Please ensure that the given object has the \"Utility Enemy\" component attached to one of its children.");
+                    return null;
+                }
+
                 GameObject newEnemy = Instantiate(m_type, pos, Quaternion.identity);
                 newEnemy.name = m_type.name;
                 m_spawnedCount++;
-                return newEnemy;
+                return newEnemy.GetComponentInChildren<UtilityEnemy>();
             }
         }
         [System.Serializable]
@@ -55,15 +61,15 @@ namespace Stirge.Combat
                 m_spawnIndex = 0;
                 if (m_batchSpawn > m_maxSpawnCount && m_canBatchOverflow) Debug.LogWarning("UtilityEnemy batch spawn count exceeds the maximum enemy count. Please keep the Batch Spawn value less then or equal to the max limit unless this was intened.");
             }
-            public GameObject[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
+            public UtilityEnemy[] AttemptSpawnEnemy(Vector3 origin, WaveSpawner spawner)
             {
                 if (m_delayComplete && m_spawnCountdownComplete && !_outOfSpawns && spawner._activeEnemies.Count() < m_maxSpawnCount) //check countdowns
                 {
-                    GameObject[] batch = new GameObject[m_batchSpawn];
+                    UtilityEnemy[] batch = new UtilityEnemy[m_batchSpawn];
                     for (int x = 0; x < m_batchSpawn; x++) //spawn the batch amount
                     {
-                        if(spawner._activeEnemies.Count() + x >= m_maxSpawnCount && !m_canBatchOverflow) break;
-                        
+                        if (spawner._activeEnemies.Count() + x >= m_maxSpawnCount && !m_canBatchOverflow) break;
+
                         if (m_enemyList[m_spawnIndex]._spawnsAvalible) //check for any avalible spawns
                         {
 
@@ -73,13 +79,14 @@ namespace Stirge.Combat
                             Vector3 position = origin + new Vector3(m_spawnArea.x, 0, m_spawnArea.y) + new Vector3(rndXBound, 0, rndZBound); //origin + set offset + rnd offset within range
 
                             //TODO: Add player avoidance spawn code so that enemies don't spawn on the player
-
+                            
+                            //attempt spawn enemy
                             batch[x] = m_enemyList[m_spawnIndex].SpawnEnemy(position); //instance the enemy and save
                             m_spawnRateCountdown = m_spawnRate; //reset countdown
                             if (!m_enemyList[m_spawnIndex]._spawnsAvalible) m_spawnIndex++; //increase the spawn index if all the avalible enemies of that type have spawned.
 
                         }
-                        
+
                     }
                     return batch;
                 }
@@ -87,7 +94,7 @@ namespace Stirge.Combat
                 if (!m_delayComplete) m_startDelay -= Time.deltaTime;
                 if (!m_spawnCountdownComplete) m_spawnRateCountdown -= Time.deltaTime;
 
-                GameObject[] mt = new GameObject[0];
+                UtilityEnemy[] mt = new UtilityEnemy[0];
                 return mt;
             }
         }
@@ -100,8 +107,8 @@ namespace Stirge.Combat
         [SerializeField]
         private UnityEvent m_completeEvent;
 
-        private List<GameObject> m_activeEnemies = new();
-        public List<GameObject> _activeEnemies { get { return m_activeEnemies; } }
+        private List<UtilityEnemy> m_activeEnemies = new();
+        public List<UtilityEnemy> _activeEnemies { get { return m_activeEnemies; } }
         private ParticleInstancer m_particles;
         [SerializeField]
         private string m_spawnParticleName;
@@ -142,20 +149,20 @@ namespace Stirge.Combat
                 m_currentWave.Init();
             }
 
-            GameObject[] enemyBatch = m_currentWave.AttemptSpawnEnemy(transform.position, this);
+            UtilityEnemy[] enemyBatch = m_currentWave.AttemptSpawnEnemy(transform.position, this);
             foreach (var newEnemy in enemyBatch)
             {
                 if (newEnemy)
                 {
                     //other spawn functions
                     m_activeEnemies.Add(newEnemy); //save to list
-                    //newEnemy.deathCallback = RemoveEnemyFromActiveList;
-                    if(m_particles != null) m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
+                    newEnemy.GetComponentInChildren<UtilityEnemy>().onDeath += RemoveEnemyFromActiveList;
+                    if (m_particles != null) m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
                 }
             }
 
         }
-        private void RemoveEnemyFromActiveList(GameObject deadGuy)
+        private void RemoveEnemyFromActiveList(UtilityEnemy deadGuy)
         {
             if (m_activeEnemies.Contains(deadGuy))
                 m_activeEnemies.Remove(deadGuy);
@@ -163,7 +170,7 @@ namespace Stirge.Combat
 
         void OnDrawGizmos()
         {
-            if(m_waves != null) foreach (var wave in m_waves)
+            if (m_waves != null) foreach (var wave in m_waves)
             {
                 Gizmos.color = new Color(0.5f, 0.5f, 0.5f, m_gizmoAlpha);
                 Gizmos.DrawCube(transform.position + new Vector3(wave.SpawnArea.x, 0, wave.SpawnArea.y), new(wave.SpawnArea.z, 1, wave.SpawnArea.w));

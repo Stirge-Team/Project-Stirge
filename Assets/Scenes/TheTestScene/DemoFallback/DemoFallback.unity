@@ -119,6 +119,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &34835173
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 34835175}
+  - component: {fileID: 34835174}
+  m_Layer: 0
+  m_Name: PlayerSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &34835174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34835173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de39eb5a53ce7cec2bd81cf6a79c62ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSpawnPoint
+  m_transparency: 0.5
+--- !u!4 &34835175
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 34835173}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.41718298, y: 0.5709277, z: -0.5709277, w: 0.41718298}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 107.688, z: 0}
 --- !u!1 &45550323
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,6 +563,7 @@ GameObject:
   m_Component:
   - component: {fileID: 599466372}
   - component: {fileID: 599466371}
+  - component: {fileID: 599466373}
   m_Layer: 0
   m_Name: SpawnerA
   m_TagString: Untagged
@@ -538,28 +584,40 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Combat.WaveSpawner
   m_waves:
-  - m_spawnArea: {x: 0, y: 10, z: 10, w: 10}
+  - m_spawnArea: {x: 0, y: 5, z: 8, w: 8}
     m_startDelay: 0
     m_spawnRate: 0.1
     m_batchSpawn: 1
     m_canBatchOverflow: 0
     m_maxSpawnCount: 3
     m_enemyList:
-    - m_type: {fileID: 4644142117502312047, guid: e3ccd974115210ccb9ed461f6fd20a14, type: 3}
+    - m_type: {fileID: 5742239276836861200, guid: e32f9b5ece751b0dbb80db4f052c869d, type: 3}
       m_maxCount: 3
-  - m_spawnArea: {x: 0, y: -10, z: 10, w: 10}
+  - m_spawnArea: {x: 0, y: -5, z: 8, w: 8}
     m_startDelay: 0
     m_spawnRate: 0.1
     m_batchSpawn: 1
     m_canBatchOverflow: 0
     m_maxSpawnCount: 3
     m_enemyList:
-    - m_type: {fileID: 4644142117502312047, guid: e3ccd974115210ccb9ed461f6fd20a14, type: 3}
+    - m_type: {fileID: 5742239276836861200, guid: e32f9b5ece751b0dbb80db4f052c869d, type: 3}
       m_maxCount: 3
   m_completeEvent:
     m_PersistentCalls:
-      m_Calls: []
-  m_spawnParticleName: 
+      m_Calls:
+      - m_Target: {fileID: 599466371}
+        m_TargetAssemblyTypeName: Stirge.Combat.WaveSpawner, Assembly-CSharp
+        m_MethodName: StartWaves
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  m_spawnParticleName: Spawn
   m_gizmoAlpha: 1
 --- !u!4 &599466372
 Transform:
@@ -576,6 +634,25 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &599466373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 599466370}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41da0b8c4a10e7915b79b04983cafe25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ParticleInstancer
+  m_particles:
+  - m_name: Spawn
+    m_particleEffect: {fileID: 7307422956041462421, guid: fa20e410a0bfb6a86a6ca57d86e1d21f, type: 3}
+    m_defaultLocation: {fileID: 0}
+  - m_name: Spawn
+    m_particleEffect: {fileID: 5811371191471910201, guid: 2a3caf475e40e8823aa4e710e51293d8, type: 3}
+    m_defaultLocation: {fileID: 0}
 --- !u!1 &795858047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1176,3 +1253,4 @@ SceneRoots:
   - {fileID: 203844589}
   - {fileID: 45550324}
   - {fileID: 599466372}
+  - {fileID: 34835175}
