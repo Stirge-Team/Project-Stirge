@@ -40,9 +40,9 @@ namespace Stirge.AttackTimeline.MoveTrack
         {
             return ScriptPlayable<MoveBehaviour>.Create(graph, new MoveBehaviour(translation, isLocal));
         }
-
         public override void OnPlayableDestroy(Playable playable)
         {
+            #if UNITY_EDITOR
             if (m_boundMotor != null)
             {
                 if (!Application.isPlaying)
@@ -50,7 +50,9 @@ namespace Stirge.AttackTimeline.MoveTrack
                     m_boundMotor.transform.position = m_previewInitialPosition;
                 }
             }
+            #endif
         }
+
 
         // Called when the state of the playable is set to Paused
         public override void OnBehaviourPause(Playable playable, FrameData info)

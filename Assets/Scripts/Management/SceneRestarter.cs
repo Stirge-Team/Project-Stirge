@@ -8,6 +8,7 @@ public class SceneRestarter : MonoBehaviour
     {
         if (context.performed)
         {
+            Debug.Log($"Loading scene {SceneManager.GetActiveScene().name}...");
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
