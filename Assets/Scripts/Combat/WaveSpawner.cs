@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 namespace Stirge.Combat
 {
+    using Stirge.Management;
     using UtilityAI;
 
     public class WaveSpawner : MonoBehaviour
@@ -172,7 +173,7 @@ namespace Stirge.Combat
                 {
                     //other spawn functions
                     m_activeEnemies.Add(newEnemy); //save to list
-                    newEnemy.GetComponentInChildren<UtilityEnemy>().onDeath += RemoveEnemyFromActiveList;
+                    newEnemy.onDeath += RemoveEnemyFromActiveList;
                     if (m_particles != null) m_particles.PlayParticle(m_spawnParticleName, newEnemy.transform);
                 }
             }
@@ -182,6 +183,8 @@ namespace Stirge.Combat
             if (m_activeEnemies.Contains(deadGuy))
             {
                 m_activeEnemies.Remove(deadGuy);
+                //le bandaid fix
+                FindAnyObjectByType<KillCounter>().UpdateCounter();
             }
         }
 
