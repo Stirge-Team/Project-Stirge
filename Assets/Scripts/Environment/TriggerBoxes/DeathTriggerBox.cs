@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using Stirge.Combat;
-using UnityEditor.Build;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
 namespace Stirge.Environment

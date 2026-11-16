@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedAction
   m_scoreScaling: 1
   m_shouldFlushPlayerInputBuffer: 1
-  m_duration: 1
+  m_duration: 0.84
   m_displayName: String 1
   m_actionType: 0
   m_timeline: {fileID: 11400000, guid: c34314639f6f14942a77d016fdb59f2b, type: 2}
   m_damage: 1
   m_range: 1
-  m_statuses: []
+  m_statuses:
+  - {fileID: 11400000, guid: 5999a511116d4364798792e0b2bc87c7, type: 2}
   m_conditions: []
   m_scoringMethods: []
