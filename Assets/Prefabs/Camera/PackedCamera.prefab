@@ -60,8 +60,8 @@ GameObject:
   - component: {fileID: 2554474282751506834}
   - component: {fileID: 1977239239310411550}
   - component: {fileID: 487424382739389959}
-  - component: {fileID: 262188531760244417}
   - component: {fileID: 6584265312065309039}
+  - component: {fileID: 262188531760244417}
   - component: {fileID: 4677010761502810818}
   - component: {fileID: 7574891531911947050}
   - component: {fileID: 1803027244605528510}
@@ -222,6 +222,27 @@ MonoBehaviour:
     Time: 0.4
     Smoothing: 0.2
     IgnoreY: 0
+--- !u!114 &6584265312065309039
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6830264285074038967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eb4843bae7d24943842ea23130dcd55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineGroupFraming
+  FramingMode: 0
+  FramingSize: 1
+  CenterOffset: {x: 0, y: 0}
+  Damping: 2
+  SizeAdjustment: 2
+  LateralAdjustment: 0
+  FovRange: {x: 60, y: 60}
+  DollyRange: {x: -5, y: 0}
+  OrthoSizeRange: {x: 1, y: 1000}
 --- !u!114 &262188531760244417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,27 +295,6 @@ MonoBehaviour:
         DecelTime: 0
   PlayerIndex: -1
   AutoEnableInputs: 1
---- !u!114 &6584265312065309039
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6830264285074038967}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eb4843bae7d24943842ea23130dcd55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineGroupFraming
-  FramingMode: 0
-  FramingSize: 1
-  CenterOffset: {x: 0, y: 0}
-  Damping: 2
-  SizeAdjustment: 2
-  LateralAdjustment: 0
-  FovRange: {x: 60, y: 60}
-  DollyRange: {x: -5, y: 0}
-  OrthoSizeRange: {x: 1, y: 1000}
 --- !u!114 &4677010761502810818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,19 +379,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 357489587008446718, guid: 06a7f68baffc15faf87972d861b43146, type: 3}
       propertyPath: field of view
-      value: 59.99998
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 1995005084200423484, guid: 06a7f68baffc15faf87972d861b43146, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.306778
+      value: -4.4238625
       objectReference: {fileID: 0}
     - target: {fileID: 1995005084200423484, guid: 06a7f68baffc15faf87972d861b43146, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.7880316
+      value: 2.5696309
       objectReference: {fileID: 0}
     - target: {fileID: 1995005084200423484, guid: 06a7f68baffc15faf87972d861b43146, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.0094256
+      value: -7.1625586
       objectReference: {fileID: 0}
     - target: {fileID: 1995005084200423484, guid: 06a7f68baffc15faf87972d861b43146, type: 3}
       propertyPath: m_LocalRotation.w
