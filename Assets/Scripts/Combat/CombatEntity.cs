@@ -286,10 +286,10 @@ namespace Stirge.Combat
             TryStopPerformingAction();
             m_currentAction = action;
             m_isPerformingAction = true;
+            m_motor.OnActionStart();
 
             if (action.Timeline != null)
                 m_director.Play(action.Timeline);
-            m_motor.OnActionStart();
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace Stirge.Combat
         }
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict)
+        protected override void HitInternal(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict)
         {
             TakeDamage(hitboxData.Damage);
             if (statusesToInflict != null)

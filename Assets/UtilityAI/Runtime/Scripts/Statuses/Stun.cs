@@ -41,7 +41,7 @@ namespace Stirge.UtilityAI.Statuses
 
         protected void PlayStunAnimation(CombatEntity target)
         {
-            target.Motor.Animator.Play(m_animationStateHash);
+            target.Motor.animator.Play(m_animationStateHash);
         }
     }
 }

@@ -43,11 +43,11 @@ namespace Stirge.UtilityAI
         {
             if (IsGrounded)
             {
-                Animator.SetFloat(m_speedPropertyHash, Rigidbody.linearVelocity.magnitude / m_nav.speed);
+                animator.SetFloat(m_speedPropertyHash, Rigidbody.linearVelocity.magnitude / m_nav.speed);
             }
             else
             {
-                Animator.SetFloat(m_speedPropertyHash, 0f);
+                animator.SetFloat(m_speedPropertyHash, 0f);
             }
         }
         #endregion
@@ -118,14 +118,14 @@ namespace Stirge.UtilityAI
             if (!m_enemy.IsPerformingAction)
                 SetMovementState(MotorMovementState.Navigation);
 
-            Animator.SetBool(m_isGroundedPropertyHash, true);
+            animator.SetBool(m_isGroundedPropertyHash, true);
         }
         protected override void OnBecomeNotGrounded()
         {
             if (!m_enemy.IsPerformingAction)
                 SetMovementState(MotorMovementState.Velocity);
 
-            Animator.SetBool(m_isGroundedPropertyHash, false);
+            animator.SetBool(m_isGroundedPropertyHash, false);
         }
         #endregion
 

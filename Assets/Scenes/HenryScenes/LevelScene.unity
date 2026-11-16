@@ -397,7 +397,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &60138662
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5590,7 +5590,7 @@ GameObject:
   - component: {fileID: 650241410}
   - component: {fileID: 650241409}
   - component: {fileID: 650241408}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cathedral Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11486,10 +11486,10 @@ Light:
   m_GameObject: {fileID: 1462973873}
   m_Enabled: 1
   serializedVersion: 12
-  m_Type: 1
-  m_Color: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}
-  m_Intensity: 0.75
-  m_Range: 10
+  m_Type: 2
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 100
+  m_Range: 100
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -14515,7 +14515,7 @@ GameObject:
   - component: {fileID: 1821819885}
   - component: {fileID: 1821819884}
   - component: {fileID: 1821819883}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Terrain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14910,7 +14910,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &1864140395
 AudioListener:
   m_ObjectHideFlags: 0
