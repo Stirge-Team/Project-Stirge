@@ -1,0 +1,5 @@
+
+USES:
+
+- SwordImpacts are two variations for blood impacts when a player attack hits an enemy
+- SwordSwings are used for the swing of the sword. Three for variation sake.

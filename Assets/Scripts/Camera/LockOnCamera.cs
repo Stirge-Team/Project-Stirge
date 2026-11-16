@@ -1,10 +1,6 @@
-using System.Threading;
 using Stirge.Combat;
-using Stirge.Player;
 using Unity.Cinemachine;
-using UnityEditor.EditorTools;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 namespace Stirge.Camera
@@ -13,6 +9,7 @@ namespace Stirge.Camera
     {
         private CinemachineTargetGroup m_groupScript;
         private LockSmith m_lockSmith;
+        [Header("LockOn Settings")]
         [SerializeField, Tooltip("What transform to base the range maths on. Normally, this would be the player.")]
         private Transform m_originPoint;
         [SerializeField, Tooltip("Setting this to TRUE, will chose enemies cloest to the direction the origin point is facing as the lock on target.\nSetting this to FALSE will chose a target cloest to the center of the screen instead.")]
@@ -25,6 +22,9 @@ namespace Stirge.Camera
         private float m_lockTargetCameraWeight = 1f;
         [SerializeField, Tooltip("How much space the lock on target should have around it on screen.")]
         private float m_lockTargetCameraRadius = 1f;
+        [Header("Camera settings")]
+        [SerializeField, Tooltip("How much space the camera needs around it")]
+        private float m_cameraSize;
   
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
@@ -41,6 +41,11 @@ namespace Stirge.Camera
             {
                 LockSmith.Instance.RemoveTarget();
             }
+        }
+        void LateUpdate()
+        {
+            Debug.DrawRay(m_originPoint.position, (m_originPoint.position - transform.position).normalized * 10, Color.red);
+            //Physics.SphereCastAll(m_originPoint.position, m_cameraSize, );;
         }
         public void TriggerLockOn(InputAction.CallbackContext context)
         {

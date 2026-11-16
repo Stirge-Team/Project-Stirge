@@ -1,0 +1,6 @@
+
+USES:
+
+- GruntAttackGrowl is used when attacking, they growl right before and as they swing
+- GruntDeath is played when they die from an attack
+- GruntGrowl has two variations for when they're hurt by an attack

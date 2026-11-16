@@ -16,6 +16,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Restart",
+                    "type": "Button",
+                    "id": "e8a55c9f-21af-4f86-8ad6-5f018aebff0f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "A (Jump)",
                     "type": "Button",
                     "id": "97bfa9bc-2c5f-45c0-b047-052c886e3f06",
@@ -64,6 +73,15 @@
                     "name": "Hurtself",
                     "type": "Button",
                     "id": "00cb3722-002a-476b-bb20-b230b0b2cff3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Exit",
+                    "type": "Button",
+                    "id": "760cb475-eb4d-448b-9eb6-38f6ab52ae83",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -204,6 +222,39 @@
                     "isPartOfComposite": false
                 },
                 {
+                    "name": "Button With One Modifier",
+                    "id": "5533b3b2-3df7-45c0-aa18-2f2febeb73a5",
+                    "path": "ButtonWithOneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Restart",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Modifier",
+                    "id": "6672be09-4953-46aa-9806-c1a57b02780c",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Restart",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Button",
+                    "id": "15e32fe1-8114-4256-b340-21711d2f3681",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Restart",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
                     "name": "",
                     "id": "5290250a-a3bd-4a96-85d0-32b0e2fadf7e",
                     "path": "<Keyboard>/space",
@@ -323,6 +374,39 @@
                     "action": "Hurtself",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "Button With One Modifier",
+                    "id": "1726c75c-7ea6-4599-bd7c-2076bd571a56",
+                    "path": "ButtonWithOneModifier",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Modifier",
+                    "id": "d774c221-7444-407d-bb71-b1d591dc1f1f",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Button",
+                    "id": "82a2fa5b-d8d6-4f2e-bffa-fa1350c068c7",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }

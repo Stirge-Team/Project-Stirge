@@ -604,6 +604,6 @@ namespace Stirge.Combat
             Handles.DrawWireDisc(FeetPosition, Quaternion.AngleAxis(m_slopeLimit, Vector3.right) * Vector3.up, 0.75f);
         }
         #endregion
-    }
 #endif
+    }
 }

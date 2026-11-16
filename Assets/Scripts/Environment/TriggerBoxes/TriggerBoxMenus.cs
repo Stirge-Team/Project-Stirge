@@ -23,7 +23,7 @@ namespace Stirge
         {
             CreateBoxRoot<SimpleTriggerBox>();
         }
-
+        #if UNITY_EDITOR
         [MenuItem(m_triggerBoxObjectMenuRoot + "Death Box")]
         static void CreateNewDeathBox()
         {
@@ -41,5 +41,6 @@ namespace Stirge
         {
             CreateBoxRoot<ReTriggerBox>();
         }
+        #endif
     }
 }

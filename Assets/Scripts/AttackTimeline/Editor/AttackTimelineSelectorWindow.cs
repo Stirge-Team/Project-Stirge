@@ -14,6 +14,8 @@ public class AttackTimelineSelectorWindow : EditorWindow
     string folderPath = "Assets\\";
     PlayableDirector director = null;
 
+    Vector2 scrollPos;
+
     public void OnSelectionChange()
     {
         if (Application.isPlaying) return;
@@ -25,7 +27,7 @@ public class AttackTimelineSelectorWindow : EditorWindow
         {
             director = newTarget.GetComponent<PlayableDirector>();
         }
-        
+ 
     }
 
     public void OnGUI()
@@ -52,6 +54,8 @@ public class AttackTimelineSelectorWindow : EditorWindow
             assets[i] = AssetDatabase.LoadAssetByGUID<TimelineAsset>(timelineAssetGUID[i]);
 
         }
+
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
         if (assets != null) 
         {
@@ -100,5 +104,7 @@ public class AttackTimelineSelectorWindow : EditorWindow
 
             EditorGUI.EndDisabledGroup();
         }
+
+        EditorGUILayout.EndScrollView();
     }
 }
