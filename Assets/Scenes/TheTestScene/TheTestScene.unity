@@ -2764,6 +2764,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PackedCamera
       objectReference: {fileID: 0}
+    - target: {fileID: 1803027244605528510, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2554474282751506834, guid: ae4777eac01693fbda08f8951615af84, type: 3}
       propertyPath: Lens.FieldOfView
       value: 60
