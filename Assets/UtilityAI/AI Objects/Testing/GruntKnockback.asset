@@ -19,6 +19,6 @@ MonoBehaviour:
   m_durationType: 1
   m_conditions: []
   m_scoringMethods: []
-  m_arg0: 30
-  m_arg1: {x: 0, y: 0.4, z: 2}
+  m_arg0: 50
+  m_arg1: {x: 0, y: 0, z: 10}
   m_arg2: 1
