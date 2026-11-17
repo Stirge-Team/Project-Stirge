@@ -1,3 +1,4 @@
+using Mono.Cecil.Cil;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -22,6 +23,9 @@ namespace Stirge.Sound
         [SerializeField, Range(-3f, 3f)] private float m_pitch;
         [SerializeField, Range(-1f, 1f)] private float m_stereoPan;
         [SerializeField, Range(0f, 1f)] private float m_spatialBlend;
+        [SerializeField, Range(0f, 1.1f)] private float m_reverbZoneMix;
+        [SerializeField, Min(0f), Tooltip("How far into the clip to start playing from.\nGood for cutting off silence from the start of clips!")]
+        private float m_startTimeOffset;
 
         public AudioResource AudioResource => m_audioResource;
         public AudioMixerGroup MixerGroup => m_mixerGroup;
@@ -36,6 +40,8 @@ namespace Stirge.Sound
         public float Pitch => m_pitch;
         public float StereoPan => m_stereoPan;
         public float SpatialBlend => m_spatialBlend;
+        public float ReverbZoneMix => m_reverbZoneMix;
+        public float StartTimeOffset => m_startTimeOffset;
 
         private void Reset()
         {
@@ -52,6 +58,8 @@ namespace Stirge.Sound
             m_pitch = 1f;
             m_stereoPan = 0f;
             m_spatialBlend = 0f;
+            m_reverbZoneMix = 1f;
+            m_startTimeOffset = 0f;
         }
     }
 }

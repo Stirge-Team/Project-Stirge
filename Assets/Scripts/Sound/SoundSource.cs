@@ -32,8 +32,10 @@ namespace Stirge.Sound
             m_audioSource.pitch = soundClip.Pitch;
             m_audioSource.panStereo = soundClip.StereoPan;
             m_audioSource.spatialBlend = soundClip.SpatialBlend;
+            m_audioSource.reverbZoneMix = soundClip.ReverbZoneMix;
 
             m_audioSource.Play();
+            m_audioSource.time = soundClip.StartTimeOffset;
         }
         private void Update()
         {
