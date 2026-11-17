@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 public class CameraOccluder : CinemachineExtension
@@ -7,24 +8,46 @@ public class CameraOccluder : CinemachineExtension
     private float m_cameraSize = 0.2f;
     [SerializeField, Tooltip("What collision layers to include when checking camera occlusion.")]
     private LayerMask m_occlusionMasks;
- 
-    void LateUpdate()
-    {
-        var CamFromOrigin = transform.position - ComponentOwner.Follow.position;
 
-        Debug.DrawRay(ComponentOwner.Follow.position + transform.up * m_cameraSize, CamFromOrigin.normalized * CamFromOrigin.magnitude, Color.blueViolet);
-        Debug.DrawRay(ComponentOwner.Follow.position - transform.up * m_cameraSize, CamFromOrigin.normalized * CamFromOrigin.magnitude, Color.blueViolet);
-        Debug.DrawRay(ComponentOwner.Follow.position + transform.right * m_cameraSize, CamFromOrigin.normalized * CamFromOrigin.magnitude, Color.blueViolet);
-        Debug.DrawRay(ComponentOwner.Follow.position - transform.right * m_cameraSize, CamFromOrigin.normalized * CamFromOrigin.magnitude, Color.blueViolet);
-        var hits = Physics.SphereCastAll(ComponentOwner.Follow.position, m_cameraSize, CamFromOrigin.normalized, CamFromOrigin.magnitude, m_occlusionMasks);
-        if (hits.Length > 0)
+    protected override void PostPipelineStageCallback(CinemachineVirtualCameraBase vcam, CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
+    {
+        var target = vcam.Follow;
+        if(target != null)
+        state.PositionCorrection += KeepLineOfSight(ref state, TargetPositionCache.GetTargetPosition(target) + TargetPositionCache.GetTargetRotation(target) * Vector3.up);
+
+    }
+    Vector3 KeepLineOfSight(ref CameraState state, Vector3 lookAtPos)
+    {
+        var camPos = state.GetCorrectedPosition();
+        var hitInfo = new RaycastHit();
+        var newPos = CheckForBlocker(camPos, lookAtPos, m_occlusionMasks, ref hitInfo);
+
+        if(hitInfo.collider != null)
         {
-            Debug.Log($"Camera is blocked by {hits[0].collider.name}.");
-            Debug.DrawRay(hits[0].point, Vector3.up * 10, Color.green);
-            //use the first object between the player and camera
-            //move away from the object equal to m_cameraSize
-            ForceCameraPosition(hits[0].point - CamFromOrigin.normalized * m_cameraSize, transform.rotation);
+            return newPos - camPos;
         }
 
+        return Vector3.zero;
+    }
+    Vector3 CheckForBlocker(Vector3 cameraPos, Vector3 lookAtPos, int LayerMask, ref RaycastHit hitInfo)
+    {
+        var direciton = cameraPos - lookAtPos;
+        var targetDistance = direciton.magnitude;
+
+                Debug.DrawRay(lookAtPos + transform.up * m_cameraSize, direciton.normalized * targetDistance, Color.blueViolet);
+                Debug.DrawRay(lookAtPos - transform.up * m_cameraSize, direciton.normalized * targetDistance, Color.blueViolet);
+                Debug.DrawRay(lookAtPos + transform.right * m_cameraSize, direciton.normalized * targetDistance, Color.blueViolet);
+                Debug.DrawRay(lookAtPos - transform.right * m_cameraSize, direciton.normalized * targetDistance, Color.blueViolet);
+        
+        if(Physics.SphereCast(lookAtPos, m_cameraSize, direciton, out hitInfo, targetDistance, LayerMask))
+        //if (hits.Length > 0)
+        {
+            Debug.Log($"Camera is blocked by {hitInfo.collider.name}.");
+            Debug.DrawRay(hitInfo.point, Vector3.up * 10, Color.green);
+            //use the first object between the player and camera
+            //move away from the object equal to m_cameraSize
+            return hitInfo.point + hitInfo.normal * m_cameraSize;
+        }
+        return cameraPos;
     }
 }

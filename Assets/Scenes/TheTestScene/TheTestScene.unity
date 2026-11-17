@@ -2972,20 +2972,11 @@ PrefabInstance:
       propertyPath: HorizontalAxis.Value
       value: -90
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1803027244605528510, guid: ae4777eac01693fbda08f8951615af84, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6830264285074038967, guid: ae4777eac01693fbda08f8951615af84, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1702694677}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae4777eac01693fbda08f8951615af84, type: 3}
---- !u!1 &921871856 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6830264285074038967, guid: ae4777eac01693fbda08f8951615af84, type: 3}
-  m_PrefabInstance: {fileID: 921871855}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &925962919
 GameObject:
   m_ObjectHideFlags: 0
@@ -5679,28 +5670,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4677010761502810818, guid: ae4777eac01693fbda08f8951615af84, type: 3}
   m_PrefabInstance: {fileID: 921871855}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 921871856}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bd6c0afad80a47b5dac54b9c70cf7937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.Camera.LockOnCamera
---- !u!114 &1702694677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 921871856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b9453c66b2c968cf895e7ce05fc8a15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraOccluder
-  m_cameraSize: 0.2
-  m_occlusionMasks:
-    serializedVersion: 2
-    m_Bits: 65
 --- !u!1 &1779255328
 GameObject:
   m_ObjectHideFlags: 0

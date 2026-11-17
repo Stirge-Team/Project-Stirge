@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 262188531760244417}
   - component: {fileID: 4677010761502810818}
   - component: {fileID: 7574891531911947050}
-  - component: {fileID: 1803027244605528510}
+  - component: {fileID: 5129965550319731754}
   m_Layer: 0
   m_Name: CineCam
   m_TagString: Untagged
@@ -330,7 +330,7 @@ MonoBehaviour:
   AmplitudeGain: 0
   FrequencyGain: 0
   m_NoiseOffsets: {x: 0, y: 0, z: 0}
---- !u!114 &1803027244605528510
+--- !u!114 &5129965550319731754
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -339,36 +339,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6830264285074038967}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbe43d662878a7c43bcd44d43c9e2094, type: 3}
+  m_Script: {fileID: 11500000, guid: 9b9453c66b2c968cf895e7ce05fc8a15, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineDeoccluder
-  CollideAgainst:
+  m_EditorClassIdentifier: Assembly-CSharp::CameraOccluder
+  m_cameraSize: 0.2
+  m_occlusionMasks:
     serializedVersion: 2
     m_Bits: 65
-  IgnoreTag: 
-  TransparentLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  MinimumDistanceFromTarget: 0.3
-  AvoidObstacles:
-    Enabled: 1
-    DistanceLimit: 0
-    MinimumOcclusionTime: 0
-    CameraRadius: 0.4
-    UseFollowTarget:
-      Enabled: 1
-      YOffset: 0
-    Strategy: 2
-    MaximumEffort: 4
-    SmoothingTime: 0
-    Damping: 0.4
-    DampingWhenOccluded: 0
-  ShotQualityEvaluation:
-    Enabled: 0
-    OptimalDistance: 10
-    NearLimit: 5
-    FarLimit: 30
-    MaxQualityBoost: 0.2
 --- !u!1001 &2350874570439018847
 PrefabInstance:
   m_ObjectHideFlags: 0
