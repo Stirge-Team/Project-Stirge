@@ -115,8 +115,15 @@ namespace Stirge.UtilityAI
 
         protected override void OnBecomeGrounded()
         {
-            if (!m_enemy.IsPerformingAction)
+            if (m_enemy.IsPerformingAction)
+            {
+                // no sliding from knockback if still actioning
+                ResetVelocity();
+            }
+            else
+            {
                 SetMovementState(MotorMovementState.Navigation);
+            }
 
             animator.SetBool(m_isGroundedPropertyHash, true);
         }
@@ -211,7 +218,7 @@ namespace Stirge.UtilityAI
             // no need to Set Destination as this happens in Sync
         }
 
-        protected override void OnActionEndInternal()
+        public override void OnActionEnd()
         {
             if (IsGrounded)
                 SetMovementState(MotorMovementState.Navigation);

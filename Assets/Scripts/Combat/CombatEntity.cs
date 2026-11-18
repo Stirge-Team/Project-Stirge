@@ -36,6 +36,9 @@ namespace Stirge.Combat
         private ModifierType m_damageModifierType;
         private float m_damageModifier;
 
+        // events
+        public event System.Action OnBecomeStunned;
+
         // reference properties
         public CombatEntityMotor Motor => m_motor;
         public EntityHealth Health => m_health;

@@ -68,7 +68,7 @@ namespace Stirge.Combat
         private Transform m_lookTarget;
 
         // movement state
-        private MotorMovementState m_movementState = MotorMovementState.Kinematic;
+        private MotorMovementState m_movementState;
         private float m_airTime;
         private bool m_isGrounded = false;
         private readonly RaycastHit[] m_groundedCheckHits = new RaycastHit[10];
@@ -340,6 +340,7 @@ namespace Stirge.Combat
         {
             m_airTime = 0f;
             ResetVerticalVelocity();
+            SetMovementState(m_defaultGroundedMovementState);
         }
         protected virtual void OnBecomeNotGrounded()
         {
@@ -583,12 +584,7 @@ namespace Stirge.Combat
         }
         protected virtual void OnActionStartInternal() { }
 
-        public void OnActionEnd()
-        {
-            SetMovementState(GetDefaultMovementState());
-            OnActionEndInternal();
-        }
-        protected virtual void OnActionEndInternal() { }
+        public virtual void OnActionEnd() { }
         #endregion
 
 #if UNITY_EDITOR

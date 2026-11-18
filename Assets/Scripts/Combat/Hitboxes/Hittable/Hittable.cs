@@ -25,7 +25,7 @@ namespace Stirge.Combat.Hitboxes
         public void Hit(CombatEntity attacker, SerializedHitboxData statusData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict = null)
         {
             HitInternal(attacker, statusData, hitPosition, hitVelocity, statusesToInflict);
-            OnHit.Invoke(attacker, hitPosition, hitVelocity);
+            OnHit?.Invoke(attacker, hitPosition, hitVelocity);
         }
 
         /// <summary>

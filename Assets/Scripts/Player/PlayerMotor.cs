@@ -99,7 +99,7 @@ namespace Stirge.Player
         #region Combat
         private void OnHit(CombatEntity attacker, Vector3 hitPosition, Vector3 hitVelocity)
         {
-            m_targetHeading = -hitVelocity.normalized;
+            //m_targetHeading = -hitVelocity.normalized;
 
             if (m_player.Health._isDead)
                 animator.Play(m_deathAnimHash);
