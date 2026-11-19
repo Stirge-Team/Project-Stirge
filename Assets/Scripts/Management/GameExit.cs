@@ -6,11 +6,12 @@ namespace Stirge.Management
     {
         public void Exit()
         {
-            #if UNITY_EDITOR
-                Debug.Log("So yeh the game would close here.");
-                return;
-            #endif
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+            return;
+#else
             Application.Quit();
+#endif
         }
     }
 }

@@ -104,7 +104,7 @@ namespace Stirge.UtilityAI
         /// <inheritdoc cref="IScorable.Evaluate"/>
         protected virtual float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return 0f;
+            return 1f;
         }
 
         /// <summary>

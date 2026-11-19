@@ -7,9 +7,17 @@ namespace Stirge.UtilityAI
 
     public class UtilityEnemyMotor : CombatEntityMotor
     {
-        [Header("Enemy Components")]
+        [Header("Enemy References")]
         [SerializeField] private NavMeshAgent m_nav;
         private UtilityEnemy m_enemy;
+
+        [Header("Enemy Animation Properties")]
+        [SerializeField] private string m_isGroundedPropertyName = "IsGrounded";
+        [SerializeField] private string m_speedPropertyName = "Speed";
+
+        // animation properties
+        private int m_isGroundedPropertyHash;
+        private int m_speedPropertyHash;
 
         // navigation
         private bool m_headingIsTargetPosition;
@@ -22,11 +30,25 @@ namespace Stirge.UtilityAI
         protected override void OnAwake()
         {
             m_enemy = (UtilityEnemy)Entity;
+
+            m_isGroundedPropertyHash = Animator.StringToHash(m_isGroundedPropertyName);
+            m_speedPropertyHash = Animator.StringToHash(m_speedPropertyName);
         }
         protected override void OnStart()
         {
             if (MovementState != MotorMovementState.Navigation)
                 m_nav.enabled = false;
+        }
+        protected override void OnUpdate()
+        {
+            if (IsGrounded)
+            {
+                animator.SetFloat(m_speedPropertyHash, Rigidbody.linearVelocity.magnitude / m_nav.speed);
+            }
+            else
+            {
+                animator.SetFloat(m_speedPropertyHash, 0f);
+            }
         }
         #endregion
 
@@ -93,13 +115,24 @@ namespace Stirge.UtilityAI
 
         protected override void OnBecomeGrounded()
         {
-            if (!m_enemy.IsPerformingAction)
+            if (m_enemy.IsPerformingAction)
+            {
+                // no sliding from knockback if still actioning
+                ResetVelocity();
+            }
+            else
+            {
                 SetMovementState(MotorMovementState.Navigation);
+            }
+
+            animator.SetBool(m_isGroundedPropertyHash, true);
         }
         protected override void OnBecomeNotGrounded()
         {
             if (!m_enemy.IsPerformingAction)
                 SetMovementState(MotorMovementState.Velocity);
+
+            animator.SetBool(m_isGroundedPropertyHash, false);
         }
         #endregion
 
@@ -185,7 +218,7 @@ namespace Stirge.UtilityAI
             // no need to Set Destination as this happens in Sync
         }
 
-        protected override void OnActionEndInternal()
+        public override void OnActionEnd()
         {
             if (IsGrounded)
                 SetMovementState(MotorMovementState.Navigation);

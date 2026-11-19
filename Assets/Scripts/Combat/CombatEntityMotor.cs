@@ -68,7 +68,7 @@ namespace Stirge.Combat
         private Transform m_lookTarget;
 
         // movement state
-        private MotorMovementState m_movementState = MotorMovementState.Kinematic;
+        private MotorMovementState m_movementState;
         private float m_airTime;
         private bool m_isGrounded = false;
         private readonly RaycastHit[] m_groundedCheckHits = new RaycastHit[10];
@@ -76,7 +76,7 @@ namespace Stirge.Combat
         // reference properties
         public new Transform transform => m_transform;
         public CombatEntity Entity => m_entity;
-        public Animator Animator => m_anim;
+        public Animator animator => m_anim;
         public Rigidbody Rigidbody => m_rb;
         public Collider Collider => m_col;
 
@@ -136,6 +136,18 @@ namespace Stirge.Combat
             OnUpdate();
         }
         protected virtual void OnUpdate() { }
+
+        private void OnEnable()
+        {
+            OnEnableInternal();
+        }
+        protected virtual void OnEnableInternal() { }
+
+        private void OnDisable()
+        {
+            OnDisableInternal();
+        }
+        protected virtual void OnDisableInternal() { }
 
         private void FixedUpdate()
         {
@@ -328,6 +340,7 @@ namespace Stirge.Combat
         {
             m_airTime = 0f;
             ResetVerticalVelocity();
+            SetMovementState(m_defaultGroundedMovementState);
         }
         protected virtual void OnBecomeNotGrounded()
         {
@@ -554,7 +567,7 @@ namespace Stirge.Combat
         }
         protected virtual void OnMovementStateChangedToAction()
         {
-            m_rb.isKinematic = false;
+            m_rb.isKinematic = true;
             m_rb.linearVelocity = Vector3.zero;
             ResetVelocity();
         }
@@ -571,37 +584,38 @@ namespace Stirge.Combat
         }
         protected virtual void OnActionStartInternal() { }
 
-        public void OnActionEnd()
-        {
-            SetMovementState(GetDefaultMovementState());
-            OnActionEndInternal();
-        }
-        protected virtual void OnActionEndInternal()
-        {
-            
-        }
+        public virtual void OnActionEnd() { }
         #endregion
 
 #if UNITY_EDITOR
         #region Debug
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             if (m_rb == null || m_col == null)
                 return;
 
+            // grounded check distance
             Handles.color = Color.blue;
             Vector3 cubePos = (m_rb.position + m_rb.position + (Vector3.down * m_groundCheckDistance)) / 2f;
             Handles.DrawWireCube(cubePos, new Vector3(m_groundCheckRadius, m_groundCheckDistance, m_groundCheckRadius));
 
+            // grounded check radius
             Handles.color = Color.green;
             m_feetOffset = new(0f, -m_col.bounds.extents.y, 0f);
-            Handles.DrawWireCube(FeetPosition, new Vector3(m_groundCheckRadius, 0.08f, m_groundCheckRadius));
+            Handles.DrawWireCube(FeetPosition, new Vector3(m_groundCheckRadius, m_groundCheckRadius / 10f, m_groundCheckRadius));
 
+            // ground slope limit visualiser
             Handles.color = Color.magenta;
             //Vector3 p1 = Quaternion.AngleAxis(m_slopeLimit, transform.right) * transform.forward + FeetPosition;
             //Vector3 p2 = Quaternion.AngleAxis(m_slopeLimit, transform.right) * -transform.forward + FeetPosition;
             //Handles.DrawLine(p1, p2);
             Handles.DrawWireDisc(FeetPosition, Quaternion.AngleAxis(m_slopeLimit, Vector3.right) * Vector3.up, 0.75f);
+
+            // penetration check radius
+            Handles.color = Color.red;
+            Handles.DrawWireDisc(m_rb.position, Vector3.up, m_penCheckRadius);
+            Handles.DrawWireDisc(m_rb.position, Vector3.right, m_penCheckRadius);
+            Handles.DrawWireDisc(m_rb.position, Vector3.forward, m_penCheckRadius);
         }
         #endregion
 #endif
