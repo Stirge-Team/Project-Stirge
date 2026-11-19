@@ -10,7 +10,7 @@ namespace Stirge.Combat.Hitboxes
         [SerializeField] private int m_health = 3;
 
         /// <inheritdoc/>
-        public override void OnHit(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict = null)
+        protected override void HitInternal(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict = null)
         {
             m_health -= hitboxData.Damage;
 
