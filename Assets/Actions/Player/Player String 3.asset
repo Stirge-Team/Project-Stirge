@@ -22,5 +22,6 @@ MonoBehaviour:
   m_range: 1
   m_statuses:
   - {fileID: 11400000, guid: 5999a511116d4364798792e0b2bc87c7, type: 2}
+  - {fileID: 11400000, guid: aae41c5990fb19a4bbc8ef32dad826cb, type: 2}
   m_conditions: []
   m_scoringMethods: []

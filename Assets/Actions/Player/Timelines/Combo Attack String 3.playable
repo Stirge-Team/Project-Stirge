@@ -146,7 +146,14 @@ MonoBehaviour:
         serializedVersion: 2
         m_Bits: 8
       m_damage: 1
-      m_statusInflictData: []
+      m_cameraShakePreset: {fileID: 0}
+      m_hitstopPreset: {fileID: 0}
+      m_hitSound: {fileID: 0}
+      m_statusInflictData:
+      - m_statusActionIndex: 0
+        m_inflictOnlyOnce: 0
+        m_stacks: 0
+        m_duration: 0
 --- !u!114 &8983783573663061627
 MonoBehaviour:
   m_ObjectHideFlags: 1
