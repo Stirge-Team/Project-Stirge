@@ -345,7 +345,7 @@ MonoBehaviour:
   m_cameraSize: 0.2
   m_occlusionMasks:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 321
 --- !u!1001 &2350874570439018847
 PrefabInstance:
   m_ObjectHideFlags: 0
