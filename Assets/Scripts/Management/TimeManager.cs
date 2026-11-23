@@ -23,7 +23,7 @@ public class TimeManager : MonoBehaviour
     }
     #endregion
 
-    [SerializeField, Min(0)] private float m_defaultTimeScale = 1;
+    [SerializeField, Min(0f)] private float m_defaultTimeScale = 1f;
 
     private Coroutine m_currentTimeScaleCoroutine;
 
@@ -81,4 +81,18 @@ public class TimeManager : MonoBehaviour
         if (m_currentTimeScaleCoroutine != null)
             StopCoroutine(m_currentTimeScaleCoroutine);
     }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        // update timescale if changed in editor while playing
+        if (Application.isPlaying || UnityEditor.EditorApplication.isPlaying)
+        {
+            if (m_defaultTimeScale != Time.timeScale)
+            {
+                SetDefaultTimeScale();
+            }
+        }
+    }
+#endif
 }

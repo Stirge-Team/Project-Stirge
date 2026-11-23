@@ -95,7 +95,7 @@ public class AttackTimelineSelectorWindow : EditorWindow
             {
                 EditorGUILayout.BeginHorizontal();
 
-                EditorGUILayout.LabelField(director.playableAsset.name);
+                EditorGUILayout.LabelField(director.playableAsset != null ? director.playableAsset.name : "null");
 
                 EditorGUILayout.LabelField("Currently Selected");
 

@@ -13,8 +13,10 @@ namespace Stirge.Player
     [RequireComponent(typeof(EntityHealth))]
     public class Player : CombatEntity
     {
-        [Header("Player Properties")]
+        [Header("Player References")]
         [SerializeField] private PlayerInputProcessing m_input;
+        [SerializeField] private UnityEngine.Camera m_camera;
+
         [Header("Attack Snapping")]
         [SerializeField, Tooltip("The minimum angle (in degrees) to find a valid snapping target.")]
         private float m_snappingMaxAngle = 90;
@@ -23,8 +25,7 @@ namespace Stirge.Player
         [SerializeField, Tooltip("How far until the soft lock target is cleared.")] private float m_softLockHoldRange = 2;
         protected PlayerMotor PlayerMotor => (PlayerMotor)base.Motor;
         protected Vector2 m_inputDirection;
-        public bool IsGettingMovementInput => m_inputDirection.magnitude > 0;
-        private Transform m_camTransform;
+        public bool IsGettingMovementInput => m_inputDirection.magnitude > 0f;
 
         #region UnityEvents
         protected override void AwakeThis()
@@ -33,19 +34,24 @@ namespace Stirge.Player
             {
                 Debug.LogError("Player is missing key components. Please ensure that the movement and input scripts are attached to the player!");
             }
-            m_camTransform = UnityEngine.Camera.main.transform;
+
+            if (m_camera == null)
+            {
+                m_camera = UnityEngine.Camera.main;
+            }
         }
 
         protected override void UpdateThis()
         {
             if (!IsPerformingAction)
             {
-                Vector3 attemptedMoveDirection = (new Vector3(m_camTransform.forward.x, 0, m_camTransform.forward.z) * m_inputDirection.y +
-                                                  new Vector3(m_camTransform.right.x, 0, m_camTransform.right.z) * m_inputDirection.x).normalized;
+                Transform camTransform = m_camera.transform;
+                Vector3 attemptedMoveDirection = (new Vector3(camTransform.forward.x, 0, camTransform.forward.z) * m_inputDirection.y +
+                                                  new Vector3(camTransform.right.x, 0, camTransform.right.z) * m_inputDirection.x).normalized;
                 //TODO player rotation and lock on stuff here
                 if (attemptedMoveDirection.sqrMagnitude > 0)
                 {
-                    PlayerMotor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), PlayerMotor.CurrentMovementProperties.AngularSpeed));
+                    PlayerMotor.SetRotation(Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attemptedMoveDirection), PlayerMotor.CurrentMovementProperties.AngularSpeed * Time.fixedDeltaTime));
                 }
 
                 if (PlayerMotor.HorizontalSpeed < PlayerMotor.CurrentMovementProperties.HorizontalTopSpeed ||
@@ -73,34 +79,38 @@ namespace Stirge.Player
             }
         }
 
-        public override void PerformAction(Action attackData)
+        public override void PerformAction(Action action)
         {
-            if (m_softlockTarget == null || Vector3.Distance(transform.position, m_softlockTarget.position) > m_softLockHoldRange) //if the last target is out of range or dead
+            // if action is an Attack
+            if (action.ActionType is ActionType.Melee or ActionType.Ranged)
             {
-                //clear the target as we're looking for a new one now
-                m_softlockTarget = null;
-                //Check for nearby enemies - range value to be pulled from the attack data later on.
-                //use the attack data to determine the range to check, TODO - currently not possible
-                RaycastHit[] hits = Physics.SphereCastAll(transform.position, attackData.Range, transform.forward, attackData.Range, m_attackSnappingMask);
-
-                if (hits.Length > 0)
+                if (m_softlockTarget == null || Vector3.Distance(transform.position, m_softlockTarget.position) > m_softLockHoldRange) //if the last target is out of range or dead
                 {
-                    Debug.Log("Attempting to snap the player to a nearby target");
-                    //only check against a given angle infront of the player (90 degress currently) - the player whipping around might be annoying
-                    float recordAngle = m_snappingMaxAngle;
-                    foreach (var hit in hits)
+                    //clear the target as we're looking for a new one now
+                    m_softlockTarget = null;
+                    //Check for nearby enemies - range value to be pulled from the attack data later on.
+                    //use the attack data to determine the range to check, TODO - currently not possible
+                    RaycastHit[] hits = Physics.SphereCastAll(transform.position, action.Range, transform.forward, action.Range, m_attackSnappingMask);
+
+                    if (hits.Length > 0)
                     {
-                        if (AbsoluteParent.GetAbsoluteParent(hit.transform).GetComponentInChildren<CombatEntity>() && hit.transform != transform) //change to hittable later
+                        Debug.Log("Attempting to snap the player to a nearby target");
+                        //only check against a given angle infront of the player (90 degress currently) - the player whipping around might be annoying
+                        float recordAngle = m_snappingMaxAngle;
+                        foreach (var hit in hits)
                         {
-                            //check angle against player forward
-                            Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
-                            float angleFromPlayer = Vector3.Angle(directionFromPlayer, transform.forward);
-                            Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
-                            if (Mathf.Abs(recordAngle) > Mathf.Abs(angleFromPlayer))
+                            if (AbsoluteParent.GetAbsoluteParent(hit.transform).GetComponentInChildren<CombatEntity>() && hit.transform != transform) //change to hittable later
                             {
-                                Debug.Log($"Closer attack target found at angle {Mathf.Abs(angleFromPlayer)}");
-                                m_softlockTarget = hit.transform;
-                                recordAngle = angleFromPlayer;
+                                //check angle against player forward
+                                Vector3 directionFromPlayer = (hit.transform.position - transform.position).normalized;
+                                float angleFromPlayer = Vector3.Angle(directionFromPlayer, transform.forward);
+                                Debug.Log($"Angle to nearby enemy, {hit.transform.name}, is: {angleFromPlayer}");
+                                if (Mathf.Abs(recordAngle) > Mathf.Abs(angleFromPlayer))
+                                {
+                                    Debug.Log($"Closer attack target found at angle {Mathf.Abs(angleFromPlayer)}");
+                                    m_softlockTarget = hit.transform;
+                                    recordAngle = angleFromPlayer;
+                                }
                             }
                         }
                     }
@@ -112,7 +122,7 @@ namespace Stirge.Player
                 transform.LookAt(new Vector3(m_softlockTarget.position.x, transform.position.y, m_softlockTarget.position.z)); //stupid ngl
             }
 
-            base.PerformAction(attackData);
+            base.PerformAction(action);
         }
         public void OnMove(InputAction.CallbackContext context)
         {

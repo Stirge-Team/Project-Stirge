@@ -19,4 +19,4 @@ MonoBehaviour:
   m_durationType: 0
   m_conditions: []
   m_scoringMethods: []
-  m_arg: hitstun
+  m_arg: Hitstun

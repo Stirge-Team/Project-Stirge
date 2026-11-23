@@ -103,7 +103,7 @@ namespace Stirge.Combat.Hitboxes
             if (m_data.HitSound != null) SoundManager.Instance.PlaySoundClipAtPosition(m_data.HitSound, m_owner.transform.position);
 
             // do the onhit
-            hitTarget.OnHit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflict.ToArray());
+            hitTarget.Hit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflict.ToArray());
         }
 
 #if UNITY_EDITOR

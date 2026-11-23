@@ -12,7 +12,9 @@ namespace Stirge.Tools
 
         public readonly Vector3 Evaluate(float time)
         {
-            return new(m_x.Evaluate(time), m_y.Evaluate(time), m_z.Evaluate(time));
+            return new(m_x != null ? m_x.Evaluate(time) : 0f,
+                       m_y != null ? m_y.Evaluate(time) : 0f,
+                       m_z != null ? m_z.Evaluate(time) : 0f);
         }
     }
 }
