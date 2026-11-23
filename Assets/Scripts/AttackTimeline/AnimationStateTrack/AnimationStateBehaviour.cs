@@ -64,6 +64,7 @@ namespace Stirge.AttackTimeline
             if (m_boundAnimator == null)
                 return;
 
+            m_hasPlayed = false;
             m_boundAnimator.SetTrigger(m_exitParameterID);
         }
 
@@ -117,7 +118,7 @@ namespace Stirge.AttackTimeline
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
             // This block allows us to do logic specifically when a clip stops playing.
-            if (m_boundAnimator != null && m_hasExitTrigger && Application.isPlaying)
+            if (m_boundAnimator != null && Application.isPlaying)
             {
                 float duration = (float)playable.GetDuration();
                 float time = (float)playable.GetTime();
@@ -126,7 +127,9 @@ namespace Stirge.AttackTimeline
                 if (info.effectivePlayState == PlayState.Paused && count > duration || Mathf.Approximately(time, duration))
                 {
                     // Put end of clip logic here
-                    m_boundAnimator.SetTrigger(m_exitParameterID);
+                    m_hasPlayed = false;
+                    if (m_hasExitTrigger)
+                        m_boundAnimator.SetTrigger(m_exitParameterID);
                 }
             }
         }
