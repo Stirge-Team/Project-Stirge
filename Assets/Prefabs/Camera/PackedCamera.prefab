@@ -154,13 +154,13 @@ MonoBehaviour:
   Orbits:
     Top:
       Radius: 4.56
-      Height: 1.25
+      Height: 1.75
     Center:
       Radius: 4.8
       Height: 0.5
     Bottom:
       Radius: 4.99
-      Height: -0.5
+      Height: -1
     SplineCurvature: 0.00029999999
   RecenteringTarget: 2
   HorizontalAxis:
@@ -216,7 +216,7 @@ MonoBehaviour:
       Offset: {x: 0, y: 0}
   CenterOnActivate: 1
   TargetOffset: {x: 0, y: 0, z: 0}
-  Damping: {x: 0.5, y: 0.5}
+  Damping: {x: 0.5, y: 0.2}
   Lookahead:
     Enabled: 0
     Time: 0.4
@@ -237,7 +237,7 @@ MonoBehaviour:
   FramingMode: 0
   FramingSize: 1
   CenterOffset: {x: 0, y: 0}
-  Damping: 2
+  Damping: 3
   SizeAdjustment: 2
   LateralAdjustment: 0
   FovRange: {x: 60, y: 60}
@@ -313,6 +313,7 @@ MonoBehaviour:
   m_disengaugeRange: 10
   m_lockTargetCameraWeight: 1
   m_lockTargetCameraRadius: 1
+  m_cameraSize: 0
 --- !u!114 &7574891531911947050
 MonoBehaviour:
   m_ObjectHideFlags: 0
