@@ -333,7 +333,7 @@ MonoBehaviour:
       m_damage: 1
       m_cameraShakePreset: {fileID: 0}
       m_hitstopPreset: {fileID: 0}
-      m_hitSound: {fileID: 0}
+      m_hitSound: {fileID: 11400000, guid: 84c0060a4a3e5ba00a6cdb2d8123c0e5, type: 2}
       m_statusInflictData: []
 --- !u!114 &9210138913336981625
 MonoBehaviour:

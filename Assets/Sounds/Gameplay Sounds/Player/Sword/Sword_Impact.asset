@@ -18,10 +18,11 @@ MonoBehaviour:
   m_bypassEffects: 0
   m_bypassListenerEffects: 0
   m_bypassReverbZones: 0
-  m_loop: 1
+  m_loop: 0
   m_priority: 128
   m_volume: 1
   m_pitch: 1
   m_stereoPan: 0
   m_spatialBlend: 0
   m_reverbZoneMix: 1
+  m_startTimeOffset: 0
