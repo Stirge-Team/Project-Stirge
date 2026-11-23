@@ -117,7 +117,11 @@ MonoBehaviour:
       - m_statusActionIndex: 0
         m_inflictOnlyOnce: 1
         m_stacks: 1
-        m_duration: 0.5
+        m_duration: 1
+      - m_statusActionIndex: 1
+        m_inflictOnlyOnce: 1
+        m_stacks: 1
+        m_duration: 1
 --- !u!114 &-524321169988568667
 MonoBehaviour:
   m_ObjectHideFlags: 1
