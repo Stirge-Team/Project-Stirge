@@ -66,7 +66,7 @@ namespace Stirge.UtilityAI
     }
 
     /// <summary>
-    /// Part of Attack <see cref="Action"/>s. They are applied to <see cref="CombatEntity"/> objects when certain  conditions are met.<br/>
+    /// Part of <see cref="Action"/>s. They are applied to <see cref="CombatEntity"/> when certain conditions are met.<br/>
     /// When inheriting this class, you must also implement either <see cref="INotSetupable"/> or one of the <see cref="ISetupable{TArg}"/> interfaces.
     /// The number of generic arguments in <see cref="ISetupable{TArg}"/> should be equal to the number of unique properties you want your <see cref="Status"/> to have.
     /// </summary>
@@ -95,7 +95,7 @@ namespace Stirge.UtilityAI
         /// For <see cref="Status"/>es of <see cref="StatusStackType.Stackable"/>, the max number of Stacks that can be applied for this type of <see cref="Status"/><br/>
         /// If this value is 0, the max number of Stacks will be treated as Infinite.
         /// </summary>
-        protected int m_maxStacks;
+        private int m_maxStacks;
         /// <summary>
         /// How long this <see cref="Status"/> lasts for when inflicted. Please note, the Public Property <see cref="DurationType"/> used to access this value can be overriden in child-class definitions,
         /// meaning this value will not matter if so.
@@ -109,9 +109,11 @@ namespace Stirge.UtilityAI
         /// </summary>
         private IScoringMethod[] m_scoringMethods;
 
-        // variables
-        protected float m_duration;
-        protected int m_currentStacks;
+        // private fields
+        private float m_duration;
+        private int m_currentStacks;
+
+        // protected fields
         protected float m_countdown;
 
         // properties
@@ -149,7 +151,10 @@ namespace Stirge.UtilityAI
         }
 
         /// <inheritdoc cref="IScorable.Evaluate"/>
-        protected abstract float EvaluateInternal(UtilityEnemy user, CombatEntity target);
+        protected virtual float EvaluateInternal(UtilityEnemy user, CombatEntity target)
+        {
+            return 1f;
+        }
 
         /// <summary>
         /// What happens when this <see cref="Status"/> is first Inflicted onto <paramref name="target"/>.<br/>
@@ -198,7 +203,7 @@ namespace Stirge.UtilityAI
             return false;
         }
 
-        public void AddStacks(int stackCount)
+        public void ModifyStacks(int stackCount)
         {
             m_currentStacks += stackCount;
             // a max stacks of zero is infinite
@@ -208,20 +213,20 @@ namespace Stirge.UtilityAI
 
         #region Setup
         /// <summary>
-        /// As <see cref="Action"/>s may be destroyed while this <see cref="Status"/> is still active, so if you need any properties from the <see cref="Action"/> this <see cref="Status"/> is from, then retrive them here.
+        /// <see cref="Action"/>s may be destroyed while a <see cref="Status"/> is still active, so if you need any properties from the <see cref="Action"/> this <see cref="Status"/> is from, then retrive them here.
         /// </summary>
         /// <param name="action"></param>
         public virtual void Setup(Action action) { }
 
         /// <summary>
-        /// When a <see cref="Status"/> is created, you may want to initialise some values based on those stored in a <see cref="StatusInflictData"/>.<br/>
+        /// When a <see cref="Status"/> is created, you may want to initialise some values based on those stored in a <see cref="StatusInflictData"/> object.<br/>
         /// You can do that here.
         /// </summary>
         /// <param name="inflictData"></param>
         public void Setup(StatusInflictData inflictData)
         {
             if (StackType == StatusStackType.Stackable)
-                AddStacks(inflictData.Stacks);
+                ModifyStacks(inflictData.Stacks);
             if (DurationType == StatusDurationType.Timed)
                 m_duration = inflictData.Duration;
         }

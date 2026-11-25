@@ -159,7 +159,7 @@ namespace Stirge.Combat
                     case StatusStackType.Stackable:
                         // combine stacks
                         Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
-                        existingStackableStatus.AddStacks(newStatus.CurrentStacks);
+                        existingStackableStatus.ModifyStacks(newStatus.CurrentStacks);
                         return; // don't add
                     case StatusStackType.Single:
                         ClearStatus(indexOfExistingStatus);

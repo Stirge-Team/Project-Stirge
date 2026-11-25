@@ -21,7 +21,7 @@ namespace Stirge.UtilityAI.Statuses
         protected override void OnApplyInternal(CombatEntity inflicter, CombatEntity target)
         {
             PlayStunAnimation(target);
-            target.StartStun(m_duration);
+            target.StartStun(Duration);
         }
 
         public override void OnUpdate(CombatEntity target)
