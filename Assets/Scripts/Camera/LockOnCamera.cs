@@ -22,10 +22,7 @@ namespace Stirge.Camera
         private float m_lockTargetCameraWeight = 1f;
         [SerializeField, Tooltip("How much space the lock on target should have around it on screen.")]
         private float m_lockTargetCameraRadius = 1f;
-        [Header("Camera settings")]
-        [SerializeField, Tooltip("How much space the camera needs around it")]
-        private float m_cameraSize;
-  
+
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
@@ -41,11 +38,6 @@ namespace Stirge.Camera
             {
                 LockSmith.Instance.RemoveTarget();
             }
-        }
-        void LateUpdate()
-        {
-            Debug.DrawRay(m_originPoint.position, (m_originPoint.position - transform.position).normalized * 10, Color.red);
-            //Physics.SphereCastAll(m_originPoint.position, m_cameraSize, );;
         }
         public void TriggerLockOn(InputAction.CallbackContext context)
         {
@@ -111,7 +103,7 @@ namespace Stirge.Camera
 
         public void OnDrawGizmos()
         {
-            if(m_originPoint)
+            if (m_originPoint)
             {
                 Gizmos.color = Color.white;
                 Gizmos.DrawWireSphere(m_originPoint.position, m_lockOnRange);

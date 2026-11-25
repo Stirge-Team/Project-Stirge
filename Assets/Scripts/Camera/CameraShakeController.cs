@@ -41,8 +41,8 @@ namespace Stirge.Camera
         private IEnumerator ScreenshakeCoroutine(CinemachineBasicMultiChannelPerlin shaker, CameraShakePreset preset)
         {
             Debug.Log($"Beginning screen shake on {shaker.name} with an amplitude of {preset.AmplitudeGain} and frequency of {preset.FrequencyGain} and a time of {preset.Duration} second(s).");
-            shaker.AmplitudeGain = preset.AmplitudeGain; //set
-            shaker.FrequencyGain = preset.FrequencyGain;
+            shaker.AmplitudeGain = preset.AmplitudeGain * PlayerPrefs.GetFloat("shakeIntensity", 1); //set
+            shaker.FrequencyGain = preset.FrequencyGain * PlayerPrefs.GetFloat("shakeIntensity", 1);
 
             float remainingTime = preset.Duration;
             while (remainingTime > 0)
