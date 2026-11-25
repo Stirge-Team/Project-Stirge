@@ -88,6 +88,11 @@ namespace Stirge.Combat
             UpdateStatuses();
         }
 
+        protected void FixedUpdate()
+        {
+            FixedUpdateThis();
+        }
+
         protected void OnEnable()
         {
             m_director.stopped += OnActionEnd;
@@ -100,6 +105,7 @@ namespace Stirge.Combat
         protected virtual void AwakeThis() { }
         protected virtual void StartThis() { }
         protected virtual void UpdateThis() { }
+        protected virtual void FixedUpdateThis() { }
         #endregion
 
         #region Death State

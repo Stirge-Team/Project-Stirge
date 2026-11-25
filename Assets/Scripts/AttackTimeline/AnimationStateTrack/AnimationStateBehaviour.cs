@@ -104,13 +104,13 @@ namespace Stirge.AttackTimeline
 #endif
             //if (!m_boundAnimator.IsInTransition(0) && m_boundAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash != m_targetAnimationStateHash)
             // if Animation has not yet played and Animator is not currently in a Transition
-            if (!m_hasPlayed && !m_boundAnimator.IsInTransition(0))
+            if (!m_hasPlayed)
             {
                 // Just in case, reset trigger before entering state
                 // If it's Set, then the Animation State will immediately exit
                 if (m_hasExitTrigger)
                     m_boundAnimator.ResetTrigger(m_exitParameterID);
-                m_boundAnimator.Play(m_targetAnimationStateHash);
+                m_boundAnimator.Play(m_targetAnimationStateHash, 0, 0f);
                 m_hasPlayed = true;
             }
         }

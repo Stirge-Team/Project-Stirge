@@ -357,7 +357,7 @@ namespace Stirge.Combat
 
         private void UpdateAction()
         {
-            m_rb.linearVelocity = Vector3.zero;
+            //m_rb.linearVelocity = Vector3.zero;
 
             OnUpdateAction();
         }
