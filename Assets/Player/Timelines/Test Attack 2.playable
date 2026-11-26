@@ -16,12 +16,20 @@ MonoBehaviour:
     m_hitboxData:
       m_collisionMask:
         serializedVersion: 2
-        m_Bits: 0
-      m_damage: 0
-      m_cameraShakePreset: {fileID: 0}
-      m_hitstopPreset: {fileID: 0}
-      m_hitSound: {fileID: 0}
-      m_statusInflictData: []
+        m_Bits: 8
+      m_damage: 1
+      m_cameraShakePreset: {fileID: 11400000, guid: 5988a491bd0972b458fed2ad53868290, type: 2}
+      m_hitstopPreset: {fileID: 11400000, guid: 7decbdcd914ef3cf5a3e93adc5b19622, type: 2}
+      m_hitSound: {fileID: 11400000, guid: ea04eb019c361c6d78e221c771ced5e5, type: 2}
+      m_statusInflictData:
+      - m_statusActionIndex: 0
+        m_inflictOnlyOnce: 1
+        m_stacks: 0
+        m_duration: 10
+      - m_statusActionIndex: 1
+        m_inflictOnlyOnce: 1
+        m_stacks: 0
+        m_duration: 1
 --- !u!114 &-5709559017085161125
 MonoBehaviour:
   m_ObjectHideFlags: 1
