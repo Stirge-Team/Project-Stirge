@@ -12,12 +12,18 @@ namespace Stirge.UtilityAI
         private UtilityEnemy m_enemy;
 
         [Header("Enemy Animation Properties")]
+        [SerializeField] private string m_deathAnimationStateName = "Death";
+        [Space]
         [SerializeField] private string m_isGroundedPropertyName = "IsGrounded";
         [SerializeField] private string m_speedPropertyName = "Speed";
+        [SerializeField] private string m_isPerformingActionPropertyName = "IsPerformingAction";
 
         // animation properties
+        private int m_deathAnimationStateHash;
+
         private int m_isGroundedPropertyHash;
         private int m_speedPropertyHash;
+        private int m_isPerformingActionPropertyHash;
 
         // navigation
         private bool m_headingIsTargetPosition;
@@ -31,8 +37,11 @@ namespace Stirge.UtilityAI
         {
             m_enemy = (UtilityEnemy)Entity;
 
+            m_deathAnimationStateHash = Animator.StringToHash(m_deathAnimationStateName);
+
             m_isGroundedPropertyHash = Animator.StringToHash(m_isGroundedPropertyName);
             m_speedPropertyHash = Animator.StringToHash(m_speedPropertyName);
+            m_isPerformingActionPropertyHash = Animator.StringToHash(m_isPerformingActionPropertyName);
         }
         protected override void OnStart()
         {
@@ -218,12 +227,31 @@ namespace Stirge.UtilityAI
             // no need to Set Destination as this happens in Sync
         }
 
+        protected override void OnActionStartInternal()
+        {
+            // set action bool
+            animator.SetBool(m_isPerformingActionPropertyHash, true);
+        }
+
         public override void OnActionEnd()
         {
+            // set movement state based on if its grounded
             if (IsGrounded)
                 SetMovementState(MotorMovementState.Navigation);
             else
                 SetMovementState(MotorMovementState.Velocity);
+
+            // set action bool
+            animator.SetBool(m_isPerformingActionPropertyHash, false);
+        }
+        #endregion
+
+        #region Death
+        public void OnStartDeath()
+        {
+            animator.Play(m_deathAnimationStateHash);
+            ResetVelocity();
+            SetMovementState(MotorMovementState.Kinematic);
         }
         #endregion
 

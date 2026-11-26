@@ -6,6 +6,20 @@ namespace Stirge.Combat.Hitboxes
     {
         [SerializeField] private HitboxCollider[] m_hitboxes = new HitboxCollider[0];
 
+        private void Awake()
+        {
+            if (m_owner == null)
+            {
+                Debug.LogError("Please provide a reference to the Combat Entity owner of this Hitbox Group!", this);
+                enabled = false;
+                return;
+            }
+            foreach (HitboxCollider hitbox in m_hitboxes)
+            {
+                hitbox.SetOwner(m_owner);
+            }
+        }
+
         public override void InitHitbox(SerializedHitboxData hitboxData)
         {
             foreach (HitboxCollider hitbox in m_hitboxes)
@@ -24,7 +38,7 @@ namespace Stirge.Combat.Hitboxes
         {
             foreach (HitboxCollider hitbox in m_hitboxes)
             {
-                hitbox.isActive = true;
+                hitbox.isActive = false;
             }
         }
     }

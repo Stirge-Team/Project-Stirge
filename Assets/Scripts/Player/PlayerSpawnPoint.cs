@@ -15,11 +15,14 @@ namespace Stirge.Player
 
         void OnDrawGizmos()
         {
-            Color imlazy = new(0, 0, 0, m_transparency);
-            Gizmos.color = Color.red - imlazy;
-            Gizmos.DrawCube(transform.position, new(1, 2, 1));
-            Gizmos.color += imlazy;
-            Gizmos.DrawLine(transform.position, transform.position + transform.forward);
+            Gizmos.matrix = transform.localToWorldMatrix;
+            Gizmos.color = new(1f, 0f, 0f, 1f - m_transparency);
+            Gizmos.DrawCube(Vector3.zero, new(1f, 2f, 1f));
+
+            UnityEditor.Handles.matrix = transform.localToWorldMatrix;
+            UnityEditor.Handles.color = Color.blue;
+            UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
+            //Gizmos.DrawLine(Vector3.zero, Vector3.forward);
         }
     }
 }

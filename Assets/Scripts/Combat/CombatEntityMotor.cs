@@ -65,7 +65,6 @@ namespace Stirge.Combat
 
         // heading
         protected Vector3 m_targetHeading;
-        private Transform m_lookTarget;
 
         // movement state
         private MotorMovementState m_movementState;
@@ -85,7 +84,6 @@ namespace Stirge.Combat
         protected MovementProperties aerialMovementProperties => m_aerialMovementProperties;
         protected LayerMask walkableLayers => m_walkableLayers;
         protected MotorMovementState defaultMovementState => m_defaultGroundedMovementState;
-        protected Transform lookTarget => m_lookTarget;
         protected float horizontalTopSpeed => CurrentMovementProperties.HorizontalTopSpeed;
         protected float acceleration => CurrentMovementProperties.Acceleration;
         protected float angularSpeed => CurrentMovementProperties.AngularSpeed;
@@ -247,106 +245,7 @@ namespace Stirge.Combat
         }
         #endregion
 
-        #region Physics
-        private bool PerformIsGroundedCheck()
-        {
-            if (!m_col)
-                return false;
-
-            // check the area under the Enemy to check for objects on Layers marked in m_walkableLayers
-            int hitCount = Physics.BoxCastNonAlloc(
-                m_rb.position,
-                new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius),
-                Vector3.down,
-                m_groundedCheckHits,
-                m_rb.rotation,
-                m_groundCheckDistance,
-                m_walkableLayers,
-                QueryTriggerInteraction.Ignore);
-
-            // if no hits, not grounded
-            if (hitCount == 0)
-            {
-                // check for a surface to slide on
-                if (Physics.BoxCast(
-                    m_rb.position,
-                    new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius),
-                    Vector3.down,
-                    out RaycastHit slideHit,
-                    m_rb.rotation,
-                    m_groundCheckDistance,
-                    ~0, // this is all layers, can be changed to specific layers later
-                    QueryTriggerInteraction.Ignore))
-                {
-                    m_slideObjectPosition = slideHit.collider.transform.position;
-                    m_slideNormal = slideHit.normal;
-                }
-                else
-                {
-                    m_slideNormal = Vector3.zero;
-                }
-
-                // if changing from grounded to not grounded aka leaving ground
-                if (m_isGrounded)
-                {
-                    OnBecomeNotGrounded();
-                }
-                return false;
-            }
-            else
-            {
-                // get closest hit walkable object,
-                // as we assume that is the object the Entity is standing on
-                RaycastHit closestHit = m_groundedCheckHits[0];
-                if (hitCount > 1)
-                {
-                    float closestDistance = Vector3.Distance(closestHit.point, FeetPosition);
-                    for (int i = 1; i < hitCount; i++)
-                    {
-                        float distance = Vector3.Distance(m_groundedCheckHits[i].point, FeetPosition);
-                        if (distance < closestDistance)
-                        {
-                            closestHit = m_groundedCheckHits[i];
-                            closestDistance = distance;
-                        }
-                    }
-                }
-
-                // if the closest object does not meet the slope limit requirements, then the
-                // Entity is NOT grounded
-                if (Vector3.Angle(closestHit.normal, Vector3.up) > m_slopeLimit)
-                {
-                    // However, the Entity is still on this object, so start sliding on it
-                    m_slideObjectPosition = closestHit.collider.transform.position;
-                    m_slideNormal = closestHit.normal;
-                    return false;
-                }
-
-                // reset slide normal as Entity is not sliding
-                m_slideNormal = Vector3.zero;
-
-                // if changing from not-grounded to grounded aka landing
-                if (!m_isGrounded)
-                {
-                    onBecomeGrounded?.Invoke(m_entity);
-                    OnBecomeGrounded();
-                }
-
-                return true;
-            }
-        }
-
-        protected virtual void OnBecomeGrounded()
-        {
-            m_airTime = 0f;
-            ResetVerticalVelocity();
-            SetMovementState(m_defaultGroundedMovementState);
-        }
-        protected virtual void OnBecomeNotGrounded()
-        {
-            
-        }
-
+        #region Update
         private void UpdateForce()
         {
             OnPreUpdateForce();
@@ -458,32 +357,111 @@ namespace Stirge.Combat
 
         private void UpdateAction()
         {
-            m_rb.linearVelocity = Vector3.zero;
+            //m_rb.linearVelocity = Vector3.zero;
 
             OnUpdateAction();
         }
         protected virtual void OnUpdateAction() { }
+        #endregion
 
-        public void ResetHorizontalVelocity()
+        #region Physics
+        private bool PerformIsGroundedCheck()
         {
-            m_currentVelocity.x = 0;
-            m_currentVelocity.z = 0;
-        }
-        public void ResetVerticalVelocity()
-        {
-            m_currentVelocity.y = 0;
-        }
-        public void ResetVelocity()
-        {
-            m_currentVelocity = Vector3.zero;
-        }
+            if (!m_col)
+                return false;
 
-        public void SetLookTarget(Transform newTarget)
-        {
-            m_lookTarget = newTarget;
-            OnSetLookTarget(newTarget);
+            // check the area under the Enemy to check for objects on Layers marked in m_walkableLayers
+            int hitCount = Physics.BoxCastNonAlloc(
+                m_rb.position,
+                new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius),
+                Vector3.down,
+                m_groundedCheckHits,
+                m_rb.rotation,
+                m_groundCheckDistance,
+                m_walkableLayers,
+                QueryTriggerInteraction.Ignore);
+
+            // if no hits, not grounded
+            if (hitCount == 0)
+            {
+                // check for a surface to slide on
+                if (Physics.BoxCast(
+                    m_rb.position,
+                    new Vector3(m_groundCheckRadius, 0.1f, m_groundCheckRadius),
+                    Vector3.down,
+                    out RaycastHit slideHit,
+                    m_rb.rotation,
+                    m_groundCheckDistance,
+                    ~0, // this is all layers, can be changed to specific layers later
+                    QueryTriggerInteraction.Ignore))
+                {
+                    m_slideObjectPosition = slideHit.collider.transform.position;
+                    m_slideNormal = slideHit.normal;
+                }
+                else
+                {
+                    m_slideNormal = Vector3.zero;
+                }
+
+                // if changing from grounded to not grounded aka leaving ground
+                if (m_isGrounded)
+                {
+                    OnBecomeNotGrounded();
+                }
+                return false;
+            }
+            else
+            {
+                // get closest hit walkable object,
+                // as we assume that is the object the Entity is standing on
+                RaycastHit closestHit = m_groundedCheckHits[0];
+                if (hitCount > 1)
+                {
+                    float closestDistance = Vector3.Distance(closestHit.point, FeetPosition);
+                    for (int i = 1; i < hitCount; i++)
+                    {
+                        float distance = Vector3.Distance(m_groundedCheckHits[i].point, FeetPosition);
+                        if (distance < closestDistance)
+                        {
+                            closestHit = m_groundedCheckHits[i];
+                            closestDistance = distance;
+                        }
+                    }
+                }
+
+                // if the closest object does not meet the slope limit requirements, then the
+                // Entity is NOT grounded
+                if (Vector3.Angle(closestHit.normal, Vector3.up) > m_slopeLimit)
+                {
+                    // However, the Entity is still on this object, so start sliding on it
+                    m_slideObjectPosition = closestHit.collider.transform.position;
+                    m_slideNormal = closestHit.normal;
+                    return false;
+                }
+
+                // reset slide normal as Entity is not sliding
+                m_slideNormal = Vector3.zero;
+
+                // if changing from not-grounded to grounded aka landing
+                if (!m_isGrounded)
+                {
+                    onBecomeGrounded?.Invoke(m_entity);
+                    OnBecomeGrounded();
+                }
+
+                return true;
+            }
         }
-        protected virtual void OnSetLookTarget(Transform newTarget) { }
+        protected virtual void OnBecomeGrounded()
+        {
+            m_airTime = 0f;
+            ResetVerticalVelocity();
+            SetMovementState(m_defaultGroundedMovementState);
+        }
+        protected virtual void OnBecomeNotGrounded()
+        {
+
+        }
 
         public void AddForce(Vector3 force)
         {
@@ -501,6 +479,19 @@ namespace Stirge.Combat
             SetMovementState(MotorMovementState.Velocity);
             m_currentVelocity += velocity;
         }
+        public void ResetHorizontalVelocity()
+        {
+            m_currentVelocity.x = 0;
+            m_currentVelocity.z = 0;
+        }
+        public void ResetVerticalVelocity()
+        {
+            m_currentVelocity.y = 0;
+        }
+        public void ResetVelocity()
+        {
+            m_currentVelocity = Vector3.zero;
+        }
 
         public void ChangeGroundedMovementProperties(MovementProperties newProperties)
         {
@@ -517,7 +508,7 @@ namespace Stirge.Combat
         protected virtual void OnChangeAerialMovementProperties(MovementProperties newProperties) { }
         #endregion
 
-        #region State
+        #region Movement State
         public void SetMovementState(MotorMovementState newState)
         {
             if (m_movementState != newState)
@@ -577,6 +568,9 @@ namespace Stirge.Combat
             return m_isGrounded ? m_defaultGroundedMovementState : m_defaultAerialMovementState;
         }
 
+        #endregion
+
+        #region Action
         public void OnActionStart()
         {
             SetMovementState(MotorMovementState.Action);

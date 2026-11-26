@@ -64,6 +64,7 @@ namespace Stirge.AttackTimeline
             if (m_boundAnimator == null)
                 return;
 
+            m_hasPlayed = false;
             m_boundAnimator.SetTrigger(m_exitParameterID);
         }
 
@@ -103,13 +104,13 @@ namespace Stirge.AttackTimeline
 #endif
             //if (!m_boundAnimator.IsInTransition(0) && m_boundAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash != m_targetAnimationStateHash)
             // if Animation has not yet played and Animator is not currently in a Transition
-            if (!m_hasPlayed && !m_boundAnimator.IsInTransition(0))
+            if (!m_hasPlayed)
             {
                 // Just in case, reset trigger before entering state
                 // If it's Set, then the Animation State will immediately exit
                 if (m_hasExitTrigger)
                     m_boundAnimator.ResetTrigger(m_exitParameterID);
-                m_boundAnimator.Play(m_targetAnimationStateHash);
+                m_boundAnimator.Play(m_targetAnimationStateHash, 0, 0f);
                 m_hasPlayed = true;
             }
         }
@@ -117,7 +118,7 @@ namespace Stirge.AttackTimeline
         public override void OnBehaviourPause(Playable playable, FrameData info)
         {
             // This block allows us to do logic specifically when a clip stops playing.
-            if (m_boundAnimator != null && m_hasExitTrigger && Application.isPlaying)
+            if (m_boundAnimator != null && Application.isPlaying)
             {
                 float duration = (float)playable.GetDuration();
                 float time = (float)playable.GetTime();
@@ -126,7 +127,9 @@ namespace Stirge.AttackTimeline
                 if (info.effectivePlayState == PlayState.Paused && count > duration || Mathf.Approximately(time, duration))
                 {
                     // Put end of clip logic here
-                    m_boundAnimator.SetTrigger(m_exitParameterID);
+                    m_hasPlayed = false;
+                    if (m_hasExitTrigger)
+                        m_boundAnimator.SetTrigger(m_exitParameterID);
                 }
             }
         }

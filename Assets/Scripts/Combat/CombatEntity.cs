@@ -88,6 +88,11 @@ namespace Stirge.Combat
             UpdateStatuses();
         }
 
+        protected void FixedUpdate()
+        {
+            FixedUpdateThis();
+        }
+
         protected void OnEnable()
         {
             m_director.stopped += OnActionEnd;
@@ -100,17 +105,25 @@ namespace Stirge.Combat
         protected virtual void AwakeThis() { }
         protected virtual void StartThis() { }
         protected virtual void UpdateThis() { }
+        protected virtual void FixedUpdateThis() { }
         #endregion
 
         #region Death State
-        public void TakeDamage(int damage)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="damage"></param>
+        /// <returns>True if the <see cref="CombatEntity"/> is dead as a result of this damage.</returns>
+        public bool TakeDamage(int damage)
         {
             m_health.ModifyHealth(-Mathf.Abs(damage));
             OnDamageTaken(damage);
             if (m_health._isDead)
             {
                 OnDeath();
+                return true;
             }
+            return false;
         }
         protected virtual void OnDamageTaken(int damage) { }
         protected virtual void OnDeath() { }
@@ -152,7 +165,7 @@ namespace Stirge.Combat
                     case StatusStackType.Stackable:
                         // combine stacks
                         Status existingStackableStatus = m_inflictedStatuses[indexOfExistingStatus];
-                        existingStackableStatus.AddStacks(newStatus.CurrentStacks);
+                        existingStackableStatus.ModifyStacks(newStatus.CurrentStacks);
                         return; // don't add
                     case StatusStackType.Single:
                         ClearStatus(indexOfExistingStatus);
@@ -331,12 +344,15 @@ namespace Stirge.Combat
         /// <inheritdoc/>
         protected override void HitInternal(CombatEntity attacker, SerializedHitboxData hitboxData, Vector3 hitPosition, Vector3 hitVelocity, Status[] statusesToInflict)
         {
-            TakeDamage(hitboxData.Damage);
-            if (statusesToInflict != null)
+            // if does not die to damage
+            if (!TakeDamage(hitboxData.Damage))
             {
-                foreach (Status s in statusesToInflict)
+                if (statusesToInflict != null)
                 {
-                    InflictStatus(attacker, s);
+                    foreach (Status s in statusesToInflict)
+                    {
+                        InflictStatus(attacker, s);
+                    }
                 }
             }
         }
