@@ -48,6 +48,37 @@ MonoBehaviour:
   m_inputs: 
   m_actions: []
   m_buffer: []
+--- !u!1 &5996649388538908789
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2630431580800902359}
+  m_Layer: 7
+  m_Name: CameraTrackingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2630431580800902359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5996649388538908789}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.75, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2202064621031587732}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6093367319957886603
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,6 +235,10 @@ PrefabInstance:
       propertyPath: m_movement
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 369394295828842384, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_attackSnappingMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 1253332100919465643, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_Name
       value: Timeline Player
@@ -246,6 +281,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2124328068652129529, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_animationEvents.Array.data[9].m_event.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2282863805716366767, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: 'm_targetClients.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2521300203340706763, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
@@ -454,7 +493,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[7].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
@@ -471,7 +510,7 @@ PrefabInstance:
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6050839656796171245}
+      objectReference: {fileID: 0}
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -521,6 +560,10 @@ PrefabInstance:
       value: OnMove
       objectReference: {fileID: 0}
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TriggerLockOn
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: GetYInput
       objectReference: {fileID: 0}
@@ -545,6 +588,10 @@ PrefabInstance:
       value: Stirge.Player.Player, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Stirge.Camera.LockOnCamera, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: Stirge.Input.PlayerInputProcessing, Assembly-CSharp
       objectReference: {fileID: 0}
@@ -567,6 +614,10 @@ PrefabInstance:
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5301017458216903579, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
@@ -594,7 +645,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -0.32656267
       objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.y
@@ -602,7 +653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10
+      value: 0.74
       objectReference: {fileID: 0}
     - target: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       propertyPath: m_LocalRotation.w
@@ -644,6 +695,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6416019091389093433}
+    - targetCorrespondingSourceObject: {fileID: 6634666910204183250, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2630431580800902359}
     - targetCorrespondingSourceObject: {fileID: 6203158849771649335, guid: f866205383c0e9a49bfefdb11699ba29, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2621077372334911405}
@@ -715,11 +769,12 @@ MonoBehaviour:
   m_groundCheckDistance: 1
   m_groundCheckRadius: 0.5
   m_slopeLimit: 45
-  m_penCheckMaxNeighbours: 16
+  m_penCheckMaxNeighbours: 1
   m_penCheckRadius: 3
   m_penCheckMask:
     serializedVersion: 2
     m_Bits: 65
+  m_player: {fileID: 5169013462846126806}
   m_jumpHeight: 3
   m_coyoteTime: 0.2
   m_inputStrengthScalar:
@@ -746,6 +801,10 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  m_speedPropertyName: IsMoving
+  m_isGroundedPropertyName: IsGrounded
+  m_hitstunAnimName: hitstun
+  m_deathAnimName: Death
 --- !u!114 &3424669242315363460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -753,7 +812,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 922542620977902085}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 17fcc1a313f313da1889e0d681272eef, type: 3}
   m_Name: 
@@ -803,44 +862,46 @@ PlayableDirector:
   m_GameObject: {fileID: 6050839656796171245}
   m_Enabled: 1
   serializedVersion: 3
-  m_PlayableAsset: {fileID: 0}
+  m_PlayableAsset: {fileID: 11400000, guid: c34314639f6f14942a77d016fdb59f2b, type: 2}
   m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
-  - key: {fileID: 1520716225027555939, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+  - key: {fileID: 2836517628436428104, guid: ab2401b7d6b6f8e448b43b73989f4b5a, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: 1520716225027555939, guid: ab2401b7d6b6f8e448b43b73989f4b5a, type: 2}
     value: {fileID: 351646950934871454}
-  - key: {fileID: 2836517628436428104, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+  - key: {fileID: 1513721580128296113, guid: ab2401b7d6b6f8e448b43b73989f4b5a, type: 2}
+    value: {fileID: 4393938619520782032}
+  - key: {fileID: -34652771630130755, guid: ab2401b7d6b6f8e448b43b73989f4b5a, type: 2}
+    value: {fileID: 5078408277998946099}
+  - key: {fileID: -1902602398223457147, guid: ecea444381aaecd4ebab99e2e4bdc399, type: 2}
     value: {fileID: 2564161512617394268}
-  - key: {fileID: -1902602398223457147, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
-    value: {fileID: 2564161512617394268}
-  - key: {fileID: 1424619810209171277, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
+  - key: {fileID: 1424619810209171277, guid: ecea444381aaecd4ebab99e2e4bdc399, type: 2}
     value: {fileID: 351646950934871454}
-  - key: {fileID: 8983783573663061627, guid: 73f3cd9975204503db70ca474a885928, type: 2}
-    value: {fileID: 2564161512617394268}
-  - key: {fileID: -2334714950854955191, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
-    value: {fileID: 2564161512617394268}
-  - key: {fileID: -4301679229365754484, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
+  - key: {fileID: 3444433323272981702, guid: ecea444381aaecd4ebab99e2e4bdc399, type: 2}
     value: {fileID: 4393938619520782032}
-  - key: {fileID: 6197333039739855809, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: 2601080034313008511, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: -6557302341939186198, guid: f25df3b7166eb354ab1867ced9750be1, type: 2}
-    value: {fileID: 0}
-  - key: {fileID: 6898388389850298764, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+  - key: {fileID: 4984792515155876593, guid: ecea444381aaecd4ebab99e2e4bdc399, type: 2}
+    value: {fileID: 5078408277998946099}
+  - key: {fileID: 8983783573663061627, guid: c34314639f6f14942a77d016fdb59f2b, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: -8774706919791677572, guid: c34314639f6f14942a77d016fdb59f2b, type: 2}
     value: {fileID: 4393938619520782032}
-  - key: {fileID: 7806402832635424903, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
+  - key: {fileID: 7327488767678399686, guid: c34314639f6f14942a77d016fdb59f2b, type: 2}
     value: {fileID: 5078408277998946099}
-  - key: {fileID: 776693735092523934, guid: 448a2e8346ee2404a934423c00af1e2f, type: 2}
+  - key: {fileID: -2334714950854955191, guid: 7f9c9b953c5ad46419b4844963eace70, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: 3201274867141815109, guid: 7f9c9b953c5ad46419b4844963eace70, type: 2}
+    value: {fileID: 4393938619520782032}
+  - key: {fileID: -3362103708191029161, guid: 9ddce618fd47c0a41a5e8b0c1178ccf4, type: 2}
+    value: {fileID: 2564161512617394268}
+  - key: {fileID: -3326087792096756802, guid: 9ddce618fd47c0a41a5e8b0c1178ccf4, type: 2}
+    value: {fileID: 4393938619520782032}
+  - key: {fileID: 788528360227935686, guid: 9ddce618fd47c0a41a5e8b0c1178ccf4, type: 2}
     value: {fileID: 5078408277998946099}
-  - key: {fileID: 1165568888908013818, guid: 73f3cd9975204503db70ca474a885928, type: 2}
-    value: {fileID: 5078408277998946099}
-  - key: {fileID: -7881673849416079213, guid: c71365bec79cea1fd9c46cda7d1606d6, type: 2}
+  - key: {fileID: -7086732793190925739, guid: 7f9c9b953c5ad46419b4844963eace70, type: 2}
     value: {fileID: 2624874332217427091}
-  - key: {fileID: 2199630320878319261, guid: 87aaa84a1874b9944b045b0355e64a34, type: 2}
-    value: {fileID: 2202064621031587732}
   m_ExposedReferences:
     m_References: []
 --- !u!114 &6128610353820571304

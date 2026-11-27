@@ -145,6 +145,7 @@ MonoBehaviour:
   m_health: {fileID: 7777841883624343424}
   m_director: {fileID: 1999182695581357326}
   m_serializedBrain: {fileID: 11400000, guid: 37349f2dd120cd549af83425b115f513, type: 2}
+  m_deathDelay: 2
 --- !u!320 &1999182695581357326
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -431,7 +432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 748a8e875b6555c46865a4367e55c059, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Stirge.AttackTimeline.HitboxGroup
-  m_owner: {fileID: 0}
+  m_owner: {fileID: 8433020139153640328}
   m_hitboxes:
   - {fileID: 4588078049164037000}
 --- !u!1 &5742239276836861200
@@ -541,6 +542,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65
   m_nav: {fileID: 616382525492106720}
+  m_deathAnimationStateName: Death
+  m_isGroundedPropertyName: IsGrounded
+  m_speedPropertyName: Speed
+  m_isPerformingActionPropertyName: IsPerformingAction
 --- !u!95 &8260787191455650821
 Animator:
   serializedVersion: 7

@@ -19,12 +19,16 @@ namespace Stirge.Player
 
         [Header("Player Animation Properties")]
         [SerializeField] private string m_speedPropertyName;
+        [SerializeField] private string m_isGroundedPropertyName;
         [SerializeField] private string m_hitstunAnimName;
         [SerializeField] private string m_deathAnimName;
 
         private int m_speedPropertyHash;
+        private int m_isGroundedPropertyHash;
         private int m_hitstunAnimHash;
         private int m_deathAnimHash;
+
+        private float m_speedSmoothVelocity;
 
         // public properties
         public Vector3 HorizontalVelocity =>
@@ -41,11 +45,14 @@ namespace Stirge.Player
         protected override void OnAwake()
         {
             m_speedPropertyHash = Animator.StringToHash(m_speedPropertyName);
+            m_isGroundedPropertyHash = Animator.StringToHash(m_isGroundedPropertyName);
             m_hitstunAnimHash = Animator.StringToHash(m_hitstunAnimName);
             m_deathAnimHash = Animator.StringToHash(m_deathAnimName);
         }
         protected override void OnUpdate()
         {
+            animator.SetBool(m_isGroundedPropertyHash, IsGrounded);
+            
             if (m_coyoteCountdown > 0)
             {
                 m_coyoteCountdown -= Time.deltaTime;
@@ -57,9 +64,8 @@ namespace Stirge.Player
             }
             else
             {
-                Vector3 horizontalVelocity = Rigidbody.linearVelocity;
-                horizontalVelocity.y = 0f;
-                animator.SetFloat(m_speedPropertyHash, horizontalVelocity.magnitude / groundedMovementProperties.HorizontalTopSpeed);
+                float newValue = Mathf.SmoothDamp(animator.GetFloat(m_speedPropertyHash), HorizontalSpeed / groundedMovementProperties.HorizontalTopSpeed, ref m_speedSmoothVelocity, 0.1f); 
+                animator.SetFloat(m_speedPropertyHash, newValue);
             }
         }
 
@@ -104,7 +110,7 @@ namespace Stirge.Player
             if (m_player.Health._isDead)
                 animator.Play(m_deathAnimHash);
             else
-                animator.Play(m_hitstunAnimHash);
+                animator.Play(m_hitstunAnimHash, 0, 0f);
         }
 
         protected override void OnMovementStateChangedToAction()
