@@ -112,7 +112,7 @@ MonoBehaviour:
       m_damage: 1
       m_cameraShakePreset: {fileID: 11400000, guid: 5988a491bd0972b458fed2ad53868290, type: 2}
       m_hitstopPreset: {fileID: 11400000, guid: 7decbdcd914ef3cf5a3e93adc5b19622, type: 2}
-      m_hitSound: {fileID: 11400000, guid: a8487ea6b827ea9f6b5e97d5f90fb2b6, type: 2}
+      m_hitSound: {fileID: 11400000, guid: 508556997fd83b6ee8c738395e017773, type: 2}
       m_statusInflictData:
       - m_statusActionIndex: 0
         m_inflictOnlyOnce: 1
