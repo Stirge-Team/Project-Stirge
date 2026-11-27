@@ -4,6 +4,7 @@ using UnityEngine;
 namespace Stirge.UtilityAI
 {
     using Combat;
+    using System.Collections;
     using UnityEngine.AI;
 
     public class UtilityEnemy : CombatEntity
@@ -11,6 +12,7 @@ namespace Stirge.UtilityAI
         [Header("Utility Properties")]
         [SerializeField] private SerializedUtilityBrain m_serializedBrain;
         private UtilityEnemyMotor m_enemyMotor;
+        [SerializeField, Min(0f)] private float m_deathDelay = 2f;
 
         private CombatEntity m_target;
         private Vector3 m_targetPosition;
@@ -53,7 +55,7 @@ namespace Stirge.UtilityAI
             if (m_target != null)
                 m_targetPosition = m_target.Motor.GetPosition();
             
-            m_brain.Update(this, m_target);
+            m_brain?.Update(this, m_target);
         }
         #endregion
 
@@ -79,8 +81,16 @@ namespace Stirge.UtilityAI
         #region DeathState
         protected override void OnDeath()
         {
-            onDeath.Invoke(this);
-            Destroy(transform.parent.gameObject);
+            m_brain = null;
+            EnemyMotor.OnStartDeath();
+            StartCoroutine(DestroyMe());
+
+            IEnumerator DestroyMe()
+            {
+                yield return new WaitForSeconds(m_deathDelay);
+                onDeath?.Invoke(this);
+                Destroy(transform.parent.gameObject);
+            }
         }
         #endregion
 

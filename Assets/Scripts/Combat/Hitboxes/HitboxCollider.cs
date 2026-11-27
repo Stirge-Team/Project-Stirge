@@ -35,6 +35,8 @@ namespace Stirge.Combat.Hitboxes
 
         private void Start()
         {
+            // keep this check in Start as this may be part of a HitboxGroup,
+            // which assigns its owner to all of its HitboxColliders in Awake, which will happen before this check
             if (m_owner == null)
             {
                 Debug.LogError($"{nameof(HitboxCollider)} '{name}' has a null reference for property '{nameof(m_owner)}'. Please assign it!", this);
@@ -104,6 +106,11 @@ namespace Stirge.Combat.Hitboxes
 
             // do the onhit
             hitTarget.Hit(m_owner, m_data, hitTarget.transform.position, m_velocity, statusesToInflict.ToArray());
+        }
+
+        public void SetOwner(CombatEntity owner)
+        {
+            m_owner = owner;
         }
 
 #if UNITY_EDITOR

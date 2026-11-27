@@ -266,7 +266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6709328750528566165}
   m_Layer: 3
-  m_Name: Grunt Prefab
+  m_Name: OLD_Grunt Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

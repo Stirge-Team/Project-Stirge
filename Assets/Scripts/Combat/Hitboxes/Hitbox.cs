@@ -8,7 +8,7 @@ namespace Stirge.Combat.Hitboxes
 
         protected SerializedHitboxData m_data;
 
-        private bool m_isActive;
+        private bool m_isActive = false;
         public bool isActive
         {
             get => m_isActive;
