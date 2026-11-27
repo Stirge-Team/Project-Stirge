@@ -39,7 +39,7 @@ namespace Stirge.UtilityAI.Statuses
 
         protected override float EvaluateInternal(UtilityEnemy user, CombatEntity target)
         {
-            return m_modifier * m_duration;
+            return m_modifier * Duration;
         }
     }
 }

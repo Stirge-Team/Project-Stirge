@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5080345411845564648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77adab2cde0281d4dba287a0213e76c4, type: 3}
+  m_Name: HasTargetCondition
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Conditions.SerializedHasTargetCondition
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 997f0d9f84c5e5a46a243b8678d7d979, type: 3}
+  m_Name: Grunt Animated Attack
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.SerializedAction
+  m_scoreScaling: 1
+  m_shouldFlushPlayerInputBuffer: 1
+  m_duration: 3
+  m_displayName: Grunt Attack
+  m_actionType: 0
+  m_timeline: {fileID: 11400000, guid: 4294eba606159ec42beff58fa7513e15, type: 2}
+  m_damage: 1
+  m_range: 1.5
+  m_statuses:
+  - {fileID: 11400000, guid: aae41c5990fb19a4bbc8ef32dad826cb, type: 2}
+  m_conditions:
+  - {fileID: -5080345411845564648}
+  - {fileID: 1860610863265297057}
+  m_scoringMethods: []
+--- !u!114 &1860610863265297057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a7c6db68a0703c4eb2beae8939cc887, type: 3}
+  m_Name: TargetWithinRangeCondition
+  m_EditorClassIdentifier: Assembly-CSharp::Stirge.UtilityAI.Conditions.SerializedTargetWithinRangeCondition

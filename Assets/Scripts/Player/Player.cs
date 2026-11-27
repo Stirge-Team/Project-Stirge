@@ -41,7 +41,7 @@ namespace Stirge.Player
             }
         }
 
-        protected override void UpdateThis()
+        protected override void FixedUpdateThis()
         {
             if (!IsPerformingAction)
             {
@@ -57,11 +57,11 @@ namespace Stirge.Player
                 if (PlayerMotor.HorizontalSpeed < PlayerMotor.CurrentMovementProperties.HorizontalTopSpeed ||
                    Vector3.Angle(PlayerMotor.HorizontalDirection, attemptedMoveDirection) > 90.0f)
                 {
-                    PlayerMotor.AddForceClamped(PlayerMotor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * PlayerMotor.CurrentMovementProperties.Acceleration * Time.deltaTime);
+                    PlayerMotor.AddForceClamped(PlayerMotor.InputStrengthScalar.Evaluate(m_inputDirection.sqrMagnitude) * m_inputDirection.magnitude * transform.forward * PlayerMotor.CurrentMovementProperties.Acceleration * Time.fixedDeltaTime);
                 }
-                else if (!IsGettingMovementInput && PlayerMotor.IsGrounded) PlayerMotor.SetMovementState(MotorMovementState.Kinematic);
-
-                PlayerMotor.AddForceClamped(PlayerMotor.HorizontalDirection * -PlayerMotor.CurrentMovementProperties.Friction * Mathf.Clamp01(PlayerMotor.HorizontalSpeed) * Time.deltaTime);
+                else if(!IsGettingMovementInput && PlayerMotor.IsGrounded) PlayerMotor.SetMovementState(MotorMovementState.Kinematic);
+                
+                PlayerMotor.AddForceClamped(PlayerMotor.HorizontalDirection * -PlayerMotor.CurrentMovementProperties.Friction * Mathf.Clamp01(PlayerMotor.HorizontalSpeed) * Time.fixedDeltaTime);
             }
         }
         #endregion

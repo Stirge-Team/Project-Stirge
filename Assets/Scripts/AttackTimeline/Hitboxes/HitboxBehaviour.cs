@@ -14,6 +14,11 @@ namespace Stirge.AttackTimeline.HitboxTrack
         private Hitbox m_boundHitbox;
         private bool m_initialised = false;
 
+        public override void OnPlayableCreate(Playable playable)
+        {
+            m_initialised = false;
+        }
+
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
             if (m_initialised)
@@ -30,6 +35,7 @@ namespace Stirge.AttackTimeline.HitboxTrack
 
             // Enable Hitbox using found Data
             m_boundHitbox.InitHitbox(m_hitboxData);
+            m_initialised = true;
         }
 
         public void SetBoundHitbox(Hitbox hitbox)
