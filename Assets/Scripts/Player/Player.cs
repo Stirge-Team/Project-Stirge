@@ -115,11 +115,11 @@ namespace Stirge.Player
                         }
                     }
                 }
-            }
-            //hard rotate the player towards valid target if there is one
-            if (m_softlockTarget != null)
-            {
-                transform.LookAt(new Vector3(m_softlockTarget.position.x, transform.position.y, m_softlockTarget.position.z)); //stupid ngl
+                //hard rotate the player towards valid target if there is one
+                if (m_softlockTarget != null)
+                {
+                    transform.LookAt(new Vector3(m_softlockTarget.position.x, transform.position.y, m_softlockTarget.position.z)); //stupid ngl
+                }
             }
 
             base.PerformAction(action);
