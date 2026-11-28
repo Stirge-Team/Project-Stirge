@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/TheTestScene/DemoFallback/DemoFallback.unity
     guid: d936ab69209cb0a2d86f3069d66dfaf6
   - enabled: 1
+    path: Assets/Scenes/TheTestScene/DemoFallback/DemoFallback2.unity
+    guid: cde2689fefae7b5eda115e93969fd2ba
+  - enabled: 0
+    path: Assets/Scenes/HenryScenes/LevelScene.unity
+    guid: 98e0fcb78ba30bb4f94bd16d1a1345d3
+  - enabled: 1
     path: Assets/Scenes/TheTestScene/TheTestScene.unity
     guid: 1de112644ead50afa963af44b445b8fc
   - enabled: 0
@@ -17,9 +23,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/TestingScenes/StressTesting/LevelEnvironment.unity
     guid: c6690661e190090ae90499d115cf99fc
-  - enabled: 1
-    path: Assets/Scenes/HenryScenes/LevelScene.unity
-    guid: 98e0fcb78ba30bb4f94bd16d1a1345d3
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

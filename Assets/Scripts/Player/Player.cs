@@ -15,7 +15,7 @@ namespace Stirge.Player
     {
         [Header("Player References")]
         [SerializeField] private PlayerInputProcessing m_input;
-        [SerializeField] private UnityEngine.Camera m_camera;
+        private UnityEngine.Camera m_camera;
 
         [Header("Attack Snapping")]
         [SerializeField, Tooltip("The minimum angle (in degrees) to find a valid snapping target.")]
