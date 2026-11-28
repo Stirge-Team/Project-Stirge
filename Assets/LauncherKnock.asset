@@ -20,5 +20,5 @@ MonoBehaviour:
   m_conditions: []
   m_scoringMethods: []
   m_arg0: 20
-  m_arg1: {x: 0, y: 1, z: 0.1}
+  m_arg1: {x: 0, y: 1, z: 0}
   m_arg2: 1
