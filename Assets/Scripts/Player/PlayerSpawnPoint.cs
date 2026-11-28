@@ -13,6 +13,7 @@ namespace Stirge.Player
             player.Motor.SetPositionAndRotation(transform.position, transform.rotation);
         }
 
+        #if UNITY_EDITOR
         void OnDrawGizmos()
         {
             Gizmos.matrix = transform.localToWorldMatrix;
@@ -24,5 +25,6 @@ namespace Stirge.Player
             UnityEditor.Handles.ArrowHandleCap(0, Vector3.zero, Quaternion.identity, 1f, EventType.Repaint);
             //Gizmos.DrawLine(Vector3.zero, Vector3.forward);
         }
+        #endif
     }
 }

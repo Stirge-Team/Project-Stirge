@@ -436,6 +436,7 @@ MonoBehaviour:
   m_health: {fileID: 8738539788031970495}
   m_director: {fileID: 8778068723582427885}
   m_input: {fileID: 351646950934871454}
+  m_camera: {fileID: 0}
   m_snappingMaxAngle: 90
   m_attackSnappingMask:
     serializedVersion: 2
@@ -476,6 +477,8 @@ PlayableDirector:
     value: {fileID: 2965714533324031407}
   - key: {fileID: 6674671388039720424, guid: ee36883b83525af4a945f6d6accdae99, type: 2}
     value: {fileID: 3191918945730973949}
+  - key: {fileID: 1541820574794891578, guid: ee36883b83525af4a945f6d6accdae99, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References: []
 --- !u!136 &6330139077499344260
@@ -2004,6 +2007,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   m_speedPropertyName: Speed
+  m_isGroundedPropertyName: 
   m_hitstunAnimName: Hitstun
   m_deathAnimName: Death
 --- !u!95 &2965714533324031407
